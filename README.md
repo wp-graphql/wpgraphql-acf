@@ -1,2 +1,1 @@
-# wp-graphql-acf-2
-Re-architecture of WPGraphQL for ACF
+# WPGraphQL for Advanced Custom Fields (redux)
