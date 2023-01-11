@@ -148,11 +148,6 @@ class Registry {
 
 		foreach ( $fields as $acf_field ) {
 
-			// if it's a cloned field, skip it, it will be applied by the interface
-			if ( ! empty( $acf_field['_clone'] ) ) {
-				continue;
-			}
-
 			// if the field is explicitly set to not show in graphql, leave it out of the schema
 			if ( isset( $acf_field['show_in_graphql'] ) && false === $acf_field['show_in_graphql'] ) {
 				continue;
@@ -163,9 +158,12 @@ class Registry {
 				continue;
 			}
 
+			if ( isset( $acf_field['_clone'] ) ) {
+				continue;
+			}
+
 			$graphql_field_name = self::get_graphql_field_name( $acf_field );
 			$graphql_fields[ $graphql_field_name ] = self::map_acf_field_to_graphql( $acf_field, $acf_field_group );
-
 		}
 
 		return $graphql_fields;
@@ -373,23 +371,10 @@ class Registry {
 		$node = $root['node'] ?: null;
 		$node_id = \WPGraphQLAcf\Utils::get_node_acf_id( $node ) ?: null;
 
-		if ( ! empty( $field_config['_clone'] ) ) {
-			$field_key = $field_config['__key'];
-		} else {
-			$field_key = $field_config['key'];
-		}
+		$field_key = $field_config['key'] ?: null;
 
 		if ( empty( $field_key ) ) {
 			return null;
-		}
-
-		if ( 'colour' === $field_config['name'] )  {
-			wp_send_json( [
-				'$field_config' => $field_config,
-				'$root' => $root,
-				'$node' => $node,
-				'$node_id' => $node_id,
-			]);
 		}
 
 		// If the root being passed down already has a value
@@ -420,6 +405,13 @@ class Registry {
 		if ( null !== $value ) {
 			return $value;
 		}
+
+//      @todo: cloned fields aren't resolving properly now. Need to look into this further. I believe it's because we don't add the cloned field key to the field that's added to the schema, just the original key...
+//		if ( ! empty( $field_config['_clone'] ) ) {
+//			$field_key = $field_config['name'];
+//		} else {
+//			$field_key = $field_config['name'];
+//		}
 
 		$value = get_field( $field_key, $node_id, $should_format_value );
 		$value = self::prepare_acf_field_value( $value, $root, $node_id, $field_config );
@@ -682,13 +674,20 @@ class Registry {
 
 			if ( empty( self::$registered_field_groups[ $type_name . '_Fields' ] ) ) {
 
+				$interfaces[] = 'AcfFieldGroupFields';
+
+				// Unset itself from the interfaces to implement
+				if ( ( $key = array_search( strtolower( $type_name . '_Fields' ), array_map( 'strtolower', $interfaces ), true ) ) !== false ) {
+					unset( $interfaces[ $key ] );
+				}
+
 				// Add an Interface to the Schema representing the Fields of the ACF Field Group
 				register_graphql_interface_type( $type_name . '_Fields', [
 					'kind'            => 'interface',
 					'eagerlyLoadType' => true,
 					'name'            => $type_name . '_Fields',
 					'description'     => sprintf( __( 'Interface representing fields of the ACF "%s" Field Group', 'wp-graphql-acf' ), $type_name ),
-					'interfaces'      => [ 'AcfFieldGroupFields' ],
+					'interfaces'      => $interfaces,
 					'fields'          => $fields,
 					'locations'       => $locations,
 					'acf_field_group' => $acf_field_group,
@@ -707,7 +706,7 @@ class Registry {
 					'eagerlyLoadType' => empty( $locations ),
 					'name'            => $type_name,
 					'description'     => sprintf( __( 'Added by WPGraphQL for ACF Redux', 'wp-graphql-acf' ), $type_name ),
-					'interfaces'      => $interfaces,
+					'interfaces'      => [ $type_name . '_Fields' ],
 					'fields'          => $fields,
 					'locations'       => $locations,
 					'acf_field_group' => $acf_field_group,

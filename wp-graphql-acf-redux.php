@@ -40,9 +40,6 @@ if ( ! function_exists( 'graphql_acf_init' ) ) {
 	 * @return void
 	 */
 	function graphql_acf_init() {
-		/**
-		 * Return an instance of the action
-		 */
 		$wp_graphql_acf = new \WPGraphQLAcf();
 		add_action( 'plugins_loaded', [ $wp_graphql_acf, 'init' ] );
 	}
