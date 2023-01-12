@@ -72,12 +72,10 @@ modules:
       adminEmail: '%TEST_SITE_ADMIN_EMAIL%'
       title: 'Test'
       plugins:
-        - wp-graphql-acf-redux/tests/_bootstrap/bootstrap.php
         - advanced-custom-fields-pro/acf.php
         - wp-graphql/wp-graphql.php
         - wp-graphql-acf-redux/wp-graphql-acf-redux.php
       activatePlugins:
-        - wp-graphql-acf-redux/tests/_bootstrap/bootstrap.php
         - advanced-custom-fields-pro/acf.php
         - wp-graphql/wp-graphql.php
         - wp-graphql-acf-redux/wp-graphql-acf-redux.php
