@@ -137,14 +137,22 @@ class Registry {
 	 */
 	public static function get_fields_for_field_group( array $acf_field_group ): array {
 
+		// Set the default field for each field group
 		$graphql_fields['fieldGroupName'] = [
 			'type'        => 'String',
 			'description' => __( 'The name of the field group', 'wp-graphql-acf' ),
+
+			// this field is required to be registered to ensure the field group doesn't have
+			// no fields at all, but is marked deprecated as it is not an actual field
+			// of the field group as defined by the ACF Field Group
 			'deprecationReason' => __( 'Use __typename instead', 'wp-graphql-acf' ),
 		];
 
 		// @phpstan-ignore-next-line
 		$fields = $acf_field_group['sub_fields'] ?? acf_get_fields( $acf_field_group );
+
+		// Track cloned fields so that their keys can be passed down in the field config for use in resolvers
+		$cloned_fields = [];
 
 		foreach ( $fields as $acf_field ) {
 
@@ -158,12 +166,24 @@ class Registry {
 				continue;
 			}
 
+			$graphql_field_name = self::get_graphql_field_name( $acf_field );
+
 			if ( isset( $acf_field['_clone'] ) ) {
+				$cloned_fields[ $graphql_field_name ] = $acf_field;
 				continue;
 			}
 
-			$graphql_field_name = self::get_graphql_field_name( $acf_field );
 			$graphql_fields[ $graphql_field_name ] = self::map_acf_field_to_graphql( $acf_field, $acf_field_group );
+		}
+
+		// If there are cloned fields, pass the cloned field key to the field config for use in resolution
+		if ( ! empty( $cloned_fields ) ) {
+			foreach ( $cloned_fields as $cloned_field ) {
+				$graphql_field_name = self::get_graphql_field_name( $cloned_field );
+				$original_key = $graphql_fields[ $graphql_field_name ]['acf_field']['key'] ?? null;
+				$graphql_fields[ $graphql_field_name ]['acf_field']['key_original'] = $original_key;
+				$graphql_fields[ $graphql_field_name ]['acf_field']['cloned_key'] = $cloned_field['key'];
+			}
 		}
 
 		return $graphql_fields;
@@ -257,7 +277,6 @@ class Registry {
 					$field_config['type'] = $type_name;
 					break;
 
-
 				case 'flexible_content':
 
 					$parent_type     = self::get_field_group_graphql_type_name( $acf_field_group );
@@ -278,11 +297,8 @@ class Registry {
 								],
 							],
 							'resolveType'     => function( $object ) use ( $layout_interface_prefix ) {
-
 								$layout = $object['acf_fc_layout'] ?? null;
-
 								return Utils::format_type_name( $layout_interface_prefix . ' ' . $layout );
-
 							}
 						] );
 
@@ -292,18 +308,26 @@ class Registry {
 
 					$layouts = [];
 					foreach ( $acf_field['layouts'] as $layout ) {
-						$layout_name = Utils::format_type_name( $layout_interface_prefix . ' ' . self::get_graphql_field_name( $layout ) );
 
+						// Format the name of the group using the layout prefix + the layout name
+						$layout_name = Utils::format_type_name( $layout_interface_prefix . ' ' . self::get_field_group_graphql_type_name( $layout ) );
+
+						// set the graphql_field_name using the $layout_name
+						$layout['graphql_field_name'] = $layout_name;
+
+						// Pass that the layout is a flexLayout (compared to a standard field group)
+						$layout['isFlexLayout']       = true;
+
+						// Get interfaces, including cloned field groups, for the layout
 						$interfaces                   = self::get_field_group_interfaces( $layout );
-						$interfaces[]                 = $layout_interface_name;
 
+						// Add the layout interface name as an interface. This is the type that is returned as a list of for accessing all layouts of the flex field
+						$interfaces[]                 = $layout_interface_name;
 						$layout['eagerlyLoadType']    = true;
 						$layout['graphql_field_name'] = $layout_name;
 						$layout['fields']             = self::get_fields_for_field_group( $layout );
 						$layout['interfaces']         = $interfaces;
-
 						$layouts[ $layout_name ]      = $layout;
-
 					}
 
 					if ( ! empty( $layouts ) ) {
@@ -366,12 +390,14 @@ class Registry {
 	 */
 	public static function resolve_field( $root, array $args, AppContext $context, ResolveInfo $info ) {
 
+
 		// @todo: Handle options pages??
 		$field_config = $info->fieldDefinition->config['acf_field'] ?? [];
 		$node = $root['node'] ?: null;
 		$node_id = \WPGraphQLAcf\Utils::get_node_acf_id( $node ) ?: null;
+		$field_key = $field_config['cloned_key'] ?? ( $field_config['key'] ?: null );
 
-		$field_key = $field_config['key'] ?: null;
+		$should_format_value = self::should_format_field_value( $field_config['type'] );
 
 		if ( empty( $field_key ) ) {
 			return null;
@@ -388,8 +414,6 @@ class Registry {
 			return null;
 		}
 
-		$should_format_value = self::should_format_field_value( $field_config['type'] );
-
 		/**
 		 * Filter the field value before resolving.
 		 *
@@ -405,13 +429,6 @@ class Registry {
 		if ( null !== $value ) {
 			return $value;
 		}
-
-//      @todo: cloned fields aren't resolving properly now. Need to look into this further. I believe it's because we don't add the cloned field key to the field that's added to the schema, just the original key...
-//		if ( ! empty( $field_config['_clone'] ) ) {
-//			$field_key = $field_config['name'];
-//		} else {
-//			$field_key = $field_config['name'];
-//		}
 
 		$value = get_field( $field_key, $node_id, $should_format_value );
 		$value = self::prepare_acf_field_value( $value, $root, $node_id, $field_config );
