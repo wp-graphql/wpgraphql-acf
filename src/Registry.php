@@ -381,7 +381,7 @@ class Registry {
 	}
 
 	/**
-	 * @param             $root
+	 * @param mixed       $root
 	 * @param array       $args
 	 * @param AppContext  $context
 	 * @param ResolveInfo $info
@@ -389,7 +389,6 @@ class Registry {
 	 * @return mixed
 	 */
 	public function resolve_field( $root, array $args, AppContext $context, ResolveInfo $info ) {
-
 
 		// @todo: Handle options pages??
 		$field_config = $info->fieldDefinition->config['acf_field'] ?? [];
