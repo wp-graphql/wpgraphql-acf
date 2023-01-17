@@ -24,4 +24,8 @@ wp plugin install advanced-custom-fields --activate --allow-root
 wp plugin activate wp-graphql-acf-redux --allow-root
 
 # Some version of acf-pro that let's tests pass.
-wp plugin install https://github.com/wp-premium/advanced-custom-fields-pro/archive/refs/heads/master.zip --activate --allow-root
+if [ ! -d ${PLUGINS_DIR}/advanced-custom-fields-pro ]; then
+    wp plugin install https://github.com/wp-premium/advanced-custom-fields-pro/archive/refs/heads/master.zip --activate --allow-root
+else
+    echo "Warning: Advanced Custom Fields Pro plugin already installed"
+fi
