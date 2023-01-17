@@ -46,7 +46,7 @@ case "$subcommand" in
                 a )
                     echo "Build app"
                     docker build $BUILD_NO_CACHE -f docker/Dockerfile \
-                        -t wpgraphql-acf-app:${TAG}-wp${WP_VERSION}-php${PHP_VERSION} \
+                        -t wp-graphql-acf:${TAG}-wp${WP_VERSION}-php${PHP_VERSION} \
                         --build-arg WP_VERSION=${WP_VERSION} \
                         --build-arg PHP_VERSION=${PHP_VERSION} \
                         --build-arg DOCKER_REGISTRY=${DOCKER_REGISTRY} \
@@ -55,14 +55,14 @@ case "$subcommand" in
                 t )
                     echo "Build app"
                     docker build $BUILD_NO_CACHE -f docker/Dockerfile \
-                        -t wpgraphql-acf-app:${TAG}-wp${WP_VERSION}-php${PHP_VERSION} \
+                        -t wp-graphql-acf:${TAG}-wp${WP_VERSION}-php${PHP_VERSION} \
                         --build-arg WP_VERSION=${WP_VERSION} \
                         --build-arg PHP_VERSION=${PHP_VERSION} \
                         --build-arg DOCKER_REGISTRY=${DOCKER_REGISTRY} \
                         .
                     echo "Build testing"
                     docker build $BUILD_NO_CACHE -f docker/Dockerfile.testing \
-                        -t wpgraphql-acf-testing:${TAG}-wp${WP_VERSION}-php${PHP_VERSION} \
+                        -t wp-graphql-acf-testing:${TAG}-wp${WP_VERSION}-php${PHP_VERSION} \
                         --build-arg WP_VERSION=${WP_VERSION} \
                         --build-arg PHP_VERSION=${PHP_VERSION} \
                         --build-arg DOCKER_REGISTRY=${DOCKER_REGISTRY} \
