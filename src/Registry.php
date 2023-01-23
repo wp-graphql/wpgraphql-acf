@@ -45,6 +45,7 @@ class Registry {
 	 */
 	public function get_acf_field_groups(): array {
 
+		// @phpstan-ignore-next-line
 		$all_acf_field_groups = acf_get_field_groups();
 		$graphql_field_groups = [];
 		foreach ( $all_acf_field_groups as $acf_field_group ) {
@@ -58,7 +59,6 @@ class Registry {
 			$graphql_field_groups[ $acf_field_group['key'] ] = $acf_field_group;
 		}
 
-		// @phpstan-ignore-next-line
 		return $graphql_field_groups;
 
 	}
@@ -427,6 +427,7 @@ class Registry {
 			return $value;
 		}
 
+		// @phpstan-ignore-next-line
 		$value = get_field( $field_key, $node_id, $should_format_value );
 		$value = $this->prepare_acf_field_value( $value, $root, $node_id, $field_config );
 
@@ -728,7 +729,7 @@ class Registry {
 
 				$this->registered_field_groups[ $type_name ] = $acf_field_group;
 
-			}       
+			}
 		}
 
 	}

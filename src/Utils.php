@@ -37,6 +37,7 @@ class Utils {
 				$id = 'user_' . absint( $node->userId );
 				break;
 			case $node instanceof Comment:
+				// @phpstan-ignore-next-line
 				$id = 'comment_' . absint( $node->databaseId );
 				break;
 			case is_array( $node ) && isset( $node['post_id'] ) && 'options' === $node['post_id']:
@@ -149,7 +150,7 @@ class Utils {
 				],
 			]);
 
-			$possible_types = $interface_query['data']['__type']['possibleTypes'];
+			$possible_types = is_array( $interface_query ) && isset( $interface_query['data']['__type']['possibleTypes'] ) ? $interface_query['data']['__type']['possibleTypes'] : [];
 			asort( $possible_types );
 
 			if ( ! empty( $possible_types ) && is_array( $possible_types ) ) {
@@ -163,7 +164,7 @@ class Utils {
 
 					$graphql_types[ $type_key ] = $type_label;
 				}
-			}       
+			}
 		}
 
 		/**
@@ -191,10 +192,8 @@ class Utils {
 		 */
 		global $acf_options_page;
 
-		if ( isset( $acf_options_page ) ) {
-			/**
-			 * Get a list of post types that have been registered to show in graphql
-			 */
+		if ( isset( $acf_options_page ) && function_exists( 'acf_get_options_pages' ) ) {
+			// Get a list of post types that have been registered to show in graphql
 			$graphql_options_pages = acf_get_options_pages();
 
 			/**
@@ -220,7 +219,7 @@ class Utils {
 					 */
 					$page_title = $options_page['page_title'];
 					$type_label = $page_title . $label;
-					$type_name  = isset( $options_page['graphql_field_name'] ) ? \WPGraphQL\Utils\Utils::format_type_name( $options_page['graphql_field_name'] ) : self::format_type_name( $options_page['menu_slug'] );
+					$type_name  = isset( $options_page['graphql_field_name'] ) ? \WPGraphQL\Utils\Utils::format_type_name( $options_page['graphql_field_name'] ) : \WPGraphQL\Utils\Utils::format_type_name( $options_page['menu_slug'] );
 
 					$graphql_types[ $type_name ] = $type_label;
 				}
@@ -228,6 +227,30 @@ class Utils {
 		}
 
 		return $graphql_types;
+	}
+
+	/**
+	 * Returns string of the items in the array list. Limit allows string to be limited length.
+	 *
+	 * @param array $list
+	 * @param int $limit
+	 *
+	 * @return string
+	 */
+	public static function array_list_by_limit( array $list, $limit = 5 ): string {
+		$flat_list = '';
+		$total     = count( $list );
+
+		// Labels.
+		$labels     = $list;
+		$labels     = array_slice( $labels, 0, $limit );
+		$flat_list .= implode( ', ', $labels );
+
+		// More.
+		if ( $total > $limit ) {
+			$flat_list .= ', ...';
+		}
+		return $flat_list;
 	}
 
 }
