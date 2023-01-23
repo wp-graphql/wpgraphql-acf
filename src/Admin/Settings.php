@@ -97,7 +97,7 @@ class Settings {
 	public function register_meta_boxes() {
 		add_meta_box( 'wpgraphql-acf-meta-box', __( 'GraphQL', 'wp-graphql-acf' ), [
 			$this,
-			'display_metabox'
+			'display_metabox',
 		], [ 'acf-field-group' ] );
 	}
 
@@ -201,15 +201,15 @@ class Settings {
 		?>
 		<div class="acf-hidden">
 			<input type="hidden" name="acf_field_group[key]"
-			       value="<?php echo $field_group['key']; ?>"/>
+				   value="<?php echo $field_group['key']; ?>"/>
 		</div>
 		<script type="text/javascript">
-            if (typeof acf !== 'undefined') {
-                acf.newPostbox({
-                    'id': 'wpgraphql-acf-meta-box',
-                    'label': <?php echo $this->is_acf6_or_higher ? 'top' : "'left'"; ?>
-                });
-            }
+			if (typeof acf !== 'undefined') {
+				acf.newPostbox({
+					'id': 'wpgraphql-acf-meta-box',
+					'label': <?php echo $this->is_acf6_or_higher ? 'top' : "'left'"; ?>
+				});
+			}
 		</script>
 		<?php
 
@@ -275,11 +275,11 @@ class Settings {
 		global $post;
 
 		if ( ( $screen === 'post-new.php' || $screen === 'post.php' ) && ( isset( $post->post_type ) && 'acf-field-group' === $post->post_type ) ) {
-			wp_enqueue_script( 'graphql-acf', plugins_url( '/assets/admin/js/main.js', __DIR__ ), array(
+			wp_enqueue_script( 'graphql-acf', plugins_url( '/assets/admin/js/main.js', __DIR__ ), [
 				'jquery',
 				'acf-input',
-				'acf-field-group'
-			) );
+				'acf-field-group',
+			] );
 		}
 	}
 
