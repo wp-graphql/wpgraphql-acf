@@ -145,8 +145,7 @@ class LocationRules {
 				if ( ( $key = array_search( $type, $this->mapped_field_groups[ $field_group ] ) ) !== false ) {
 					unset( $this->mapped_field_groups[ $field_group ][ $key ] );
 				}
-			}
-
+			}       
 		}
 
 		// Return the mapped field groups, with the unset fields (if any) removed
@@ -502,9 +501,7 @@ class LocationRules {
 						$this->set_graphql_type( $field_group_name, $graphql_name );
 					}
 				}
-			}
-
-
+			}       
 		}
 
 		if ( '!=' === $operator ) {
@@ -674,8 +671,7 @@ class LocationRules {
 						}
 					}
 				}
-			}
-
+			}       
 		}
 
 		// If a single post is used as not equal,
@@ -723,7 +719,7 @@ class LocationRules {
 
 			$hierarchical_post_types = get_post_types( [
 				'show_in_graphql' => true,
-				'hierarchical'    => true
+				'hierarchical'    => true,
 			] );
 
 			if ( empty( $hierarchical_post_types ) ) {
@@ -772,8 +768,7 @@ class LocationRules {
 					if ( ! empty( $graphql_name ) ) {
 						$this->set_graphql_type( $field_group_name, $graphql_name );
 					}
-				}
-
+				}           
 			} else {
 				if ( in_array( $value, $allowed_taxonomies, true ) ) {
 					$tax_object   = get_taxonomy( $value );
@@ -782,9 +777,7 @@ class LocationRules {
 						$this->set_graphql_type( $field_group_name, $graphql_name );
 					}
 				}
-			}
-
-
+			}       
 		}
 
 		if ( '!=' === $operator ) {
@@ -805,8 +798,7 @@ class LocationRules {
 				$graphql_name = isset( $tax_object->graphql_single_name ) ? $tax_object->graphql_single_name : null;
 				if ( ! empty( $graphql_name ) ) {
 					$this->unset_graphql_type( $field_group_name, $graphql_name );
-				}
-
+				}           
 			}
 		}
 
@@ -856,8 +848,7 @@ class LocationRules {
 				// show the field group on the Comment Type
 			} else {
 				$this->set_graphql_type( $field_group_name, 'Comment' );
-			}
-
+			}       
 		}
 
 	}
@@ -886,8 +877,7 @@ class LocationRules {
 				// show the field group on all Menus
 			} else {
 				$this->set_graphql_type( $field_group_name, 'Menu' );
-			}
-
+			}       
 		}
 
 	}
@@ -916,8 +906,7 @@ class LocationRules {
 				// show the field group on all MenuItems
 			} else {
 				$this->set_graphql_type( $field_group_name, 'MenuItem' );
-			}
-
+			}       
 		}
 
 	}

@@ -18,7 +18,7 @@ if ( ! class_exists( 'WPGraphQLAcf' ) ) {
 // If this file doesn't exist, the plugin was likely installed from Composer
 // and the autoloader is included in the parent project
 if ( file_exists( __DIR__ . '/vendor/autoload.php' ) ) {
-	require_once( __DIR__ . '/vendor/autoload.php' );
+	require_once __DIR__ . '/vendor/autoload.php';
 }
 
 if ( ! defined( 'WPGRAPHQL_FOR_ACF_VERSION' ) ) {
