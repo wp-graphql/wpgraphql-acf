@@ -9,6 +9,8 @@ namespace WPGraphQLAcf\Admin;
 
 use WPGraphQLAcf\LocationRules;
 use WPGraphQLAcf\Utils;
+use WPGraphQLAcf\Registry;
+
 
 /**
  * Class ACF_Settings
@@ -47,6 +49,9 @@ class Settings {
 		 */
 		add_action( 'wp_ajax_get_acf_field_group_graphql_types', [ $this, 'ajax_callback' ] );
 
+		add_filter( 'manage_acf-field-group_posts_columns', [ $this, 'wpgraphql_admin_table_column_headers' ], 11, 1 );
+
+		add_action( 'manage_acf-field-group_posts_custom_column', [ $this, 'wpgraphql_admin_table_columns_html' ], 11, 2 );
 	}
 
 	/**
@@ -174,6 +179,25 @@ class Settings {
 			true
 		);
 
+		/**
+		 * Render a field in the Field Group settings to show interfaces for a Field Group to be shown in GraphQL.
+		 */
+		$interfaces = Registry::get_field_group_interfaces( $field_group );
+		acf_render_field_wrap(
+			[
+				'label'        => __( 'Interfaces', 'acf' ),
+				'instructions' => __( 'If the field group is active, and this is set to show, the fields in this group will be available in the WPGraphQL Schema based on the respective Location rules.' ),
+				'type'         => 'message',
+				'name'         => 'graphql_interfaces',
+				'prefix'       => 'acf_field_group',
+				'message'        => ! empty( $interfaces ) ? $i = '<ul><li>' . join( '</li><li>', $interfaces ) . '</li></ul>' : [],
+				'readonly' => true,
+			],
+			'div',
+			'label',
+			true
+		);
+
 		?>
 		<div class="acf-hidden">
 			<input type="hidden" name="acf_field_group[key]"
@@ -256,6 +280,72 @@ class Settings {
 				'acf-input',
 				'acf-field-group'
 			) );
+		}
+	}
+
+	/**
+	 * Add header to the field group admin page columns showing types and interfaces
+	 *
+	 * @param array $_columns The column headers to add the values to.
+	 *
+	 * @return array The column headers with the added wp-graphql columns
+	 */
+	public function wpgraphql_admin_table_column_headers( $_columns ) {
+
+		$columns = [];
+		$is_added = false;
+
+		foreach( $_columns as $name => $value ) {
+			$columns[ $name ] = $value;
+			// After the location column, add the wpgraphql specific columns
+			if ( 'acf-location' == $name ) {
+				$columns['acf-wpgraphql-type'] = 'WPGraphQL Type';
+				$columns['acf-wpgraphql-interfaces'] = 'WPGraphQL Interface(s)';
+				$columns['acf-wpgraphql-locations'] = 'WPGraphQL Locations';
+				$is_added = true;
+			}
+		}
+		// If not added after the specific column, add to the end of the list
+		if ( ! $is_added ) {
+			$columns['acf-wpgraphql-type'] = 'WPGraphQL Type';
+			$columns['acf-wpgraphql-interfaces'] = 'WPGraphQL Interface(s)';
+			$columns['acf-wpgraphql-locations'] = 'WPGraphQL Locations';
+		}
+
+		return $columns;
+	}
+
+	/**
+	 * Add values to the field group admin page columns showing types and interfaces
+	 *
+	 * @param array $column_name The column being processed.
+	 * @param int   $post_id     The field group id being processed
+	 */
+	public function wpgraphql_admin_table_columns_html( $column_name, $post_id ) {
+		global $field_group;
+
+		if ( $column_name === 'acf-wpgraphql-type' ) {
+			$field_group = acf_get_field_group( $post_id );
+			if ( $field_group ) {
+				$type_name = Registry::get_field_group_graphql_type_name( $field_group );
+				echo '<span class="acf-wpgraphql-type">' . acf_esc_html( $type_name ) . '</span>';
+			}
+		} else if ( $column_name === 'acf-wpgraphql-interfaces' ) {
+			$field_group = acf_get_field_group( $post_id );
+			if ( $field_group ) {
+				$interfaces = Registry::get_field_group_interfaces( $field_group );
+
+				$html = Utils::array_list_by_limit( $interfaces, 5 );
+				echo '<span class="acf-wpgraphql-interfaces">' . acf_esc_html( $html ) . '</span>';
+			}
+		} else if ( $column_name === 'acf-wpgraphql-locations' ) {
+			$field_group = acf_get_field_group( $post_id );
+			$acf_field_groups = Registry::get_acf_field_groups();
+			$locations = Registry::get_graphql_locations_for_field_group( $field_group, $acf_field_groups );
+			if ( $locations ) {
+				$html =Utils:: array_list_by_limit( $locations, 5 );
+				echo '<span class="acf-wpgraphql-location-types">' . acf_esc_html( $html ) . '</span>';
+			}
 		}
 	}
 

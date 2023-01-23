@@ -231,4 +231,25 @@ class Utils {
 		return $graphql_types;
 	}
 
+	/**
+	 * Returns string of the items in the array list. Limit allows string to be limited length.
+	 *
+	 * @return string
+	 */
+	public static function array_list_by_limit( $list, $limit=5 ) {
+		$flat_list = '';
+		$total = count( $list );
+
+		// Labels.
+		$labels = $list;
+		$labels = array_slice( $labels, 0, $limit );
+		$flat_list  .= implode( ', ', $labels );
+
+		// More.
+		if ( $total > $limit ) {
+			$flat_list .= ', ...';
+		}
+		return $flat_list;
+	}
+
 }
