@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "bebed6d5d64b8835586c754643cb506b",
+    "content-hash": "711026b39dfa5b91af2d62414e3faaa5",
     "packages": [
         {
             "name": "appsero/client",
@@ -2069,6 +2069,9 @@
                 "illuminate/support": ">=4.0.0",
                 "php": ">=5.3.0"
             },
+            "replace": {
+                "mikemclin/laravel-wp-password": "self.version"
+            },
             "require-dev": {
                 "mockery/mockery": "~0.9",
                 "phpunit/phpunit": "~4.0",
@@ -2495,16 +2498,16 @@
         },
         {
             "name": "php-stubs/wordpress-stubs",
-            "version": "v5.9.5",
+            "version": "v6.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-stubs/wordpress-stubs.git",
-                "reference": "13ecf204a7e6d215a7c0d23e2aa27940fe617717"
+                "reference": "19e7966c8e70a99a4824b3e5d1526680a151f13b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-stubs/wordpress-stubs/zipball/13ecf204a7e6d215a7c0d23e2aa27940fe617717",
-                "reference": "13ecf204a7e6d215a7c0d23e2aa27940fe617717",
+                "url": "https://api.github.com/repos/php-stubs/wordpress-stubs/zipball/19e7966c8e70a99a4824b3e5d1526680a151f13b",
+                "reference": "19e7966c8e70a99a4824b3e5d1526680a151f13b",
                 "shasum": ""
             },
             "replace": {
@@ -2536,9 +2539,9 @@
             ],
             "support": {
                 "issues": "https://github.com/php-stubs/wordpress-stubs/issues",
-                "source": "https://github.com/php-stubs/wordpress-stubs/tree/v5.9.5"
+                "source": "https://github.com/php-stubs/wordpress-stubs/tree/v6.1.0"
             },
-            "time": "2022-11-09T05:32:14+00:00"
+            "time": "2022-11-09T05:33:25+00:00"
         },
         {
             "name": "php-webdriver/webdriver",
@@ -6920,21 +6923,21 @@
         },
         {
             "name": "szepeviktor/phpstan-wordpress",
-            "version": "v1.1.1",
+            "version": "v1.1.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/szepeviktor/phpstan-wordpress.git",
-                "reference": "99cfea6b4c15af12dec09110b25dbc7521363f78"
+                "reference": "e644df734e1bbe95810e0f617d17df091048a94e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/szepeviktor/phpstan-wordpress/zipball/99cfea6b4c15af12dec09110b25dbc7521363f78",
-                "reference": "99cfea6b4c15af12dec09110b25dbc7521363f78",
+                "url": "https://api.github.com/repos/szepeviktor/phpstan-wordpress/zipball/e644df734e1bbe95810e0f617d17df091048a94e",
+                "reference": "e644df734e1bbe95810e0f617d17df091048a94e",
                 "shasum": ""
             },
             "require": {
                 "php": "^7.2 || ^8.0",
-                "php-stubs/wordpress-stubs": "^4.7 || ^5.0",
+                "php-stubs/wordpress-stubs": "^4.7 || ^5.0 || ^6.0",
                 "phpstan/phpstan": "^1.6",
                 "symfony/polyfill-php73": "^1.12.0"
             },
@@ -6973,15 +6976,19 @@
             ],
             "support": {
                 "issues": "https://github.com/szepeviktor/phpstan-wordpress/issues",
-                "source": "https://github.com/szepeviktor/phpstan-wordpress/tree/v1.1.1"
+                "source": "https://github.com/szepeviktor/phpstan-wordpress/tree/v1.1.3"
             },
             "funding": [
                 {
                     "url": "https://www.paypal.me/szepeviktor",
                     "type": "custom"
+                },
+                {
+                    "url": "https://github.com/szepeviktor",
+                    "type": "github"
                 }
             ],
-            "time": "2022-05-11T18:41:40+00:00"
+            "time": "2022-09-22T13:14:50+00:00"
         },
         {
             "name": "theseer/tokenizer",
@@ -7677,5 +7684,5 @@
     "platform-overrides": {
         "php": "7.3"
     },
-    "plugin-api-version": "2.3.0"
+    "plugin-api-version": "2.0.0"
 }

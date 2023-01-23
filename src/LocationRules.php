@@ -49,8 +49,9 @@ class LocationRules {
 	 *
 	 * @param array $acf_field_groups
 	 */
-	public function __construct( $acf_field_groups = [] ) {
-		$this->acf_field_groups = isset( $acf_field_groups ) && ! empty( $acf_field_groups ) ? $acf_field_groups : acf_get_field_groups();
+	public function __construct( array $acf_field_groups = [] ) {
+		// @phpstan-ignore-next-line
+		$this->acf_field_groups = ! empty( $acf_field_groups ) ? $acf_field_groups : acf_get_field_groups();
 	}
 
 	/**
@@ -93,8 +94,10 @@ class LocationRules {
 	 *
 	 * @param string $field_group_name  The name of the ACF Field Group
 	 * @param string $graphql_type_name The name of the GraphQL Type
+	 *
+	 * @return void
 	 */
-	public function set_graphql_type( string $field_group_name, string $graphql_type_name ) {
+	public function set_graphql_type( string $field_group_name, string $graphql_type_name ): void {
 		$this->mapped_field_groups[ Utils::format_field_name( $field_group_name ) ][] = $this->format_type_name( $graphql_type_name );
 	}
 
@@ -104,8 +107,10 @@ class LocationRules {
 	 *
 	 * @param string $field_group_name  The name of the ACF Field Group
 	 * @param string $graphql_type_name The name of the GraphQL Type
+	 *
+	 * @return void
 	 */
-	public function unset_graphql_type( string $field_group_name, string $graphql_type_name ) {
+	public function unset_graphql_type( string $field_group_name, string $graphql_type_name ): void {
 		$this->unset_types[ $this->format_field_name( $field_group_name ) ][] = $this->format_type_name( $graphql_type_name );
 	}
 
@@ -145,7 +150,7 @@ class LocationRules {
 				if ( ( $key = array_search( $type, $this->mapped_field_groups[ $field_group ] ) ) !== false ) {
 					unset( $this->mapped_field_groups[ $field_group ][ $key ] );
 				}
-			}       
+			}
 		}
 
 		// Return the mapped field groups, with the unset fields (if any) removed
@@ -167,7 +172,7 @@ class LocationRules {
 	 *
 	 * @return bool
 	 */
-	public function check_for_conflicts( array $and_params, $param, $allowed_params = [] ) {
+	public function check_for_conflicts( array $and_params, $param, array $allowed_params = [] ): bool {
 
 		if ( empty( $and_params ) ) {
 			return false;
@@ -201,11 +206,11 @@ class LocationRules {
 	 * If we detect conflicting rules, the rule set is not applied at all.
 	 *
 	 * @param array $and_params The parameters of the rule group
-	 * @param mixed $param      The current param being evaluated
+	 * @param string $param      The current param being evaluated
 	 *
 	 * @return bool
 	 */
-	public function check_params_for_conflicts( array $and_params = [], string $param = '' ) {
+	public function check_params_for_conflicts( array $and_params = [], string $param = '' ): bool {
 		switch ( $param ) {
 			case 'post_type':
 				$allowed_and_params = [
@@ -296,8 +301,10 @@ class LocationRules {
 	 * @param string $param            The parameter of the rule
 	 * @param string $operator         The operator of the rule
 	 * @param string $value            The value of the rule
+	 *
+	 * @return void
 	 */
-	public function determine_rules( string $field_group_name, string $param, string $operator, string $value ) {
+	public function determine_rules( string $field_group_name, string $param, string $operator, string $value ): void {
 
 		// Depending on the param of the rule, there's different logic to
 		// map to the Schema
@@ -387,7 +394,7 @@ class LocationRules {
 		if ( ! empty( $this->acf_field_groups ) ) {
 			foreach ( $this->acf_field_groups as $field_group ) {
 
-				$field_group_name = isset( $field_group['graphql_field_name'] ) ? $field_group['graphql_field_name'] : $field_group['title'];
+				$field_group_name = $field_group['graphql_field_name'] ?? $field_group['title'];
 
 				if ( ! empty( $field_group['location'] ) && is_array( $field_group['location'] ) ) {
 
@@ -400,9 +407,9 @@ class LocationRules {
 								$and_params = wp_list_pluck( $location_rule_group, 'param' );
 								$and_params = ! empty( $and_params ) ? array_values( $and_params ) : [];
 
-								$operator = isset( $rule['operator'] ) ? $rule['operator'] : '==';
-								$param    = isset( $rule['param'] ) ? $rule['param'] : null;
-								$value    = isset( $rule['value'] ) ? $rule['value'] : null;
+								$operator = $rule['operator'] ?? '==';
+								$param    = $rule['param'] ?? null;
+								$value    = $rule['value'] ?? null;
 
 								if ( empty( $param ) || empty( $value ) ) {
 									continue;
@@ -440,7 +447,6 @@ class LocationRules {
 				// Post templates are returned as an array of arrays. PHPStan believes they're returned as
 				// an array of strings and believes this will always evaluate to false.
 				// We should ignore the phpstan check here.
-				// @phpstan-ignore-next-line
 				if ( ! empty( $post_type_templates ) && is_array( $post_type_templates ) ) {
 					foreach ( $post_type_templates as $file => $name ) {
 
@@ -471,8 +477,10 @@ class LocationRules {
 	 * @param string $param            The parameter of the rule
 	 * @param string $operator         The operator of the rule
 	 * @param string $value            The value of the rule
+	 *
+	 * @return void
 	 */
-	public function determine_post_type_rules( string $field_group_name, string $param, string $operator, string $value ) {
+	public function determine_post_type_rules( string $field_group_name, string $param, string $operator, string $value ): void {
 		$allowed_post_types = get_post_types( [ 'show_in_graphql' => true ] );
 
 		if ( empty( $allowed_post_types ) ) {
@@ -487,8 +495,12 @@ class LocationRules {
 				// loop over and set all post types
 				foreach ( $allowed_post_types as $allowed_post_type ) {
 
+					if ( $allowed_post_type instanceof \WP_Post_Type ) {
+						$allowed_post_type = $allowed_post_type->name;
+					}
+
 					$post_type_object = get_post_type_object( $allowed_post_type );
-					$graphql_name     = isset( $post_type_object->graphql_single_name ) ? $post_type_object->graphql_single_name : null;
+					$graphql_name     = $post_type_object->graphql_single_name ?? null;
 					if ( ! empty( $graphql_name ) ) {
 						$this->set_graphql_type( $field_group_name, $graphql_name );
 					}
@@ -496,12 +508,12 @@ class LocationRules {
 			} else {
 				if ( in_array( $value, $allowed_post_types, true ) ) {
 					$post_type_object = get_post_type_object( $value );
-					$graphql_name     = isset( $post_type_object->graphql_single_name ) ? $post_type_object->graphql_single_name : null;
+					$graphql_name     = $post_type_object->graphql_single_name ?? null;
 					if ( ! empty( $graphql_name ) ) {
 						$this->set_graphql_type( $field_group_name, $graphql_name );
 					}
 				}
-			}       
+			}
 		}
 
 		if ( '!=' === $operator ) {
@@ -509,8 +521,13 @@ class LocationRules {
 			if ( 'all' !== $value ) {
 				// loop over and set all post types
 				foreach ( $allowed_post_types as $allowed_post_type ) {
+
+					if ( $allowed_post_type instanceof \WP_Post_Type ) {
+						$allowed_post_type = $allowed_post_type->name;
+					}
+
 					$post_type_object = get_post_type_object( $allowed_post_type );
-					$graphql_name     = isset( $post_type_object->graphql_single_name ) ? $post_type_object->graphql_single_name : null;
+					$graphql_name     = $post_type_object->graphql_single_name ?? null;
 					if ( ! empty( $graphql_name ) ) {
 						$this->set_graphql_type( $field_group_name, $graphql_name );
 					}
@@ -518,7 +535,7 @@ class LocationRules {
 			}
 
 			$post_type_object = get_post_type_object( $value );
-			$graphql_name     = isset( $post_type_object->graphql_single_name ) ? $post_type_object->graphql_single_name : null;
+			$graphql_name     = $post_type_object->graphql_single_name ?? null;
 			if ( ! empty( $graphql_name ) ) {
 				$this->unset_graphql_type( $field_group_name, $graphql_name );
 			}
@@ -532,8 +549,10 @@ class LocationRules {
 	 * @param string $param            The parameter of the rule
 	 * @param string $operator         The operator of the rule
 	 * @param string $value            The value of the rule
+	 *
+	 * @return void
 	 */
-	public function determine_post_template_rules( string $field_group_name, string $param, string $operator, string $value ) {
+	public function determine_post_template_rules( string $field_group_name, string $param, string $operator, string $value ): void {
 
 		$templates = $this->get_graphql_post_template_types();
 
@@ -570,8 +589,10 @@ class LocationRules {
 	 * @param string $param            The parameter of the rule
 	 * @param string $operator         The operator of the rule
 	 * @param string $value            The value of the rule
+	 *
+	 * @return void
 	 */
-	public function determine_post_status_rules( string $field_group_name, string $param, string $operator, string $value ) {
+	public function determine_post_status_rules( string $field_group_name, string $param, string $operator, string $value ): void {
 		// @todo: Should post status affect the GraphQL Schema at all?
 		// If a field group is set to show on "post_status == publish" as the only rule, what post type does that apply to? All? 🤔
 		// If a field group is set to show on "post_status != draft" does that mean the field group should be available on all post types in the Schema by default?
@@ -587,8 +608,12 @@ class LocationRules {
 		$allowed_post_types = get_post_types( [ 'show_in_graphql' => true ] );
 		foreach ( $allowed_post_types as $post_type ) {
 
+			if ( $post_type instanceof \WP_Post_Type ) {
+				$post_type = $post_type->name;
+			}
+
 			$post_type_object = get_post_type_object( $post_type );
-			$graphql_name     = isset( $post_type_object->graphql_single_name ) ? $post_type_object->graphql_single_name : null;
+			$graphql_name     = $post_type_object->graphql_single_name ?? null;
 			if ( ! empty( $graphql_name ) ) {
 				$this->set_graphql_type( $field_group_name, $graphql_name );
 			}
@@ -603,11 +628,13 @@ class LocationRules {
 	 * @param string $param            The parameter of the rule
 	 * @param string $operator         The operator of the rule
 	 * @param string $value            The value of the rule
+	 *
+	 * @return void
 	 */
-	public function determine_post_format_rules( string $field_group_name, string $param, string $operator, string $value ) {
+	public function determine_post_format_rules( string $field_group_name, string $param, string $operator, string $value ): void {
 
 		$post_format_taxonomy   = get_taxonomy( 'post_format' );
-		$post_format_post_types = $post_format_taxonomy->object_type;
+		$post_format_post_types = $post_format_taxonomy->object_type ?? [];
 
 		if ( ! is_array( $post_format_post_types ) || empty( $post_format_post_types ) ) {
 			return;
@@ -620,7 +647,7 @@ class LocationRules {
 		foreach ( $allowed_post_types as $post_type ) {
 			if ( in_array( $post_type, $post_format_post_types, true ) ) {
 				$post_type_object = get_post_type_object( $value );
-				$graphql_name     = isset( $post_type_object->graphql_single_name ) ? $post_type_object->graphql_single_name : null;
+				$graphql_name     = $post_type_object->graphql_single_name ?? null;
 				if ( ! empty( $graphql_name ) ) {
 					$this->set_graphql_type( $field_group_name, $graphql_name );
 				}
@@ -636,8 +663,10 @@ class LocationRules {
 	 * @param string $param            The parameter of the rule
 	 * @param string $operator         The operator of the rule
 	 * @param string $value            The value of the rule
+	 *
+	 * @return void
 	 */
-	public function determine_post_taxonomy_rules( string $field_group_name, string $param, string $operator, string $value ) {
+	public function determine_post_taxonomy_rules( string $field_group_name, string $param, string $operator, string $value ): void {
 
 		// If Post Taxonomy is used to qualify a field group location,
 		// It will be added to the Schema for the Post post type
@@ -652,8 +681,10 @@ class LocationRules {
 	 * @param string $param            The parameter of the rule
 	 * @param string $operator         The operator of the rule
 	 * @param string $value            The value of the rule
+	 *
+	 * @return void
 	 */
-	public function determine_post_rules( string $field_group_name, string $param, string $operator, string $value ) {
+	public function determine_post_rules( string $field_group_name, string $param, string $operator, string $value ): void {
 
 		// If a Single post is used to qualify a field group location,
 		// It will be added to the Schema for the GraphQL Type for the post_type of the Post
@@ -665,13 +696,11 @@ class LocationRules {
 				$post = get_post( absint( $value ) );
 				if ( $post instanceof \WP_Post ) {
 					$post_type_object = get_post_type_object( $post->post_type );
-					if ( isset( $post_type_object->show_in_graphql ) && true === $post_type_object->show_in_graphql ) {
-						if ( isset( $post_type_object->graphql_single_name ) ) {
-							$this->set_graphql_type( $field_group_name, $post_type_object->graphql_single_name );
-						}
+					if ( $post_type_object && true === $post_type_object->show_in_graphql && isset( $post_type_object->graphql_single_name ) ) {
+						$this->set_graphql_type( $field_group_name, $post_type_object->graphql_single_name );
 					}
 				}
-			}       
+			}
 		}
 
 		// If a single post is used as not equal,
@@ -687,8 +716,12 @@ class LocationRules {
 			// loop over and set all post types
 			foreach ( $allowed_post_types as $allowed_post_type ) {
 
+				if ( $allowed_post_type instanceof \WP_Post_Type ) {
+					$allowed_post_type = $allowed_post_type->name;
+				}
+
 				$post_type_object = get_post_type_object( $allowed_post_type );
-				$graphql_name     = isset( $post_type_object->graphql_single_name ) ? $post_type_object->graphql_single_name : null;
+				$graphql_name     = $post_type_object->graphql_single_name ?? null;
 				if ( ! empty( $graphql_name ) ) {
 					$this->set_graphql_type( $field_group_name, $graphql_name );
 				}
@@ -704,8 +737,10 @@ class LocationRules {
 	 * @param string $param            The parameter of the rule
 	 * @param string $operator         The operator of the rule
 	 * @param string $value            The value of the rule
+	 *
+	 * @return void
 	 */
-	public function determine_page_type_rules( string $field_group_name, string $param, string $operator, string $value ) {
+	public function determine_page_type_rules( string $field_group_name, string $param, string $operator, string $value ): void {
 
 		// If front_page or posts_page is set to equal_to or not_equal_to
 		// then the field group should be shown on the Post type
@@ -729,8 +764,12 @@ class LocationRules {
 			// loop over and set all post types
 			foreach ( $hierarchical_post_types as $allowed_post_type ) {
 
+				if ( $allowed_post_type instanceof \WP_Post_Type ) {
+					$allowed_post_type = $allowed_post_type->name;
+				}
+
 				$post_type_object = get_post_type_object( $allowed_post_type );
-				$graphql_name     = isset( $post_type_object->graphql_single_name ) ? $post_type_object->graphql_single_name : null;
+				$graphql_name     = $post_type_object->graphql_single_name ?? null;
 				if ( ! empty( $graphql_name ) ) {
 					$this->set_graphql_type( $field_group_name, $graphql_name );
 				}
@@ -746,8 +785,10 @@ class LocationRules {
 	 * @param string $param            The parameter of the rule
 	 * @param string $operator         The operator of the rule
 	 * @param string $value            The value of the rule
+	 *
+	 * @return void
 	 */
-	public function determine_taxonomy_rules( string $field_group_name, string $param, string $operator, string $value ) {
+	public function determine_taxonomy_rules( string $field_group_name, string $param, string $operator, string $value ): void {
 
 		$allowed_taxonomies = get_taxonomies( [ 'show_in_graphql' => true ] );
 
@@ -764,20 +805,20 @@ class LocationRules {
 				foreach ( $allowed_taxonomies as $allowed_taxonomy ) {
 
 					$tax_object   = get_taxonomy( $allowed_taxonomy );
-					$graphql_name = isset( $tax_object->graphql_single_name ) ? $tax_object->graphql_single_name : null;
-					if ( ! empty( $graphql_name ) ) {
-						$this->set_graphql_type( $field_group_name, $graphql_name );
-					}
-				}           
-			} else {
-				if ( in_array( $value, $allowed_taxonomies, true ) ) {
-					$tax_object   = get_taxonomy( $value );
-					$graphql_name = isset( $tax_object->graphql_single_name ) ? $tax_object->graphql_single_name : null;
+					$graphql_name = $tax_object->graphql_single_name ?? null;
 					if ( ! empty( $graphql_name ) ) {
 						$this->set_graphql_type( $field_group_name, $graphql_name );
 					}
 				}
-			}       
+			} else {
+				if ( in_array( $value, $allowed_taxonomies, true ) ) {
+					$tax_object   = get_taxonomy( $value );
+					$graphql_name = $tax_object->graphql_single_name ?? null;
+					if ( ! empty( $graphql_name ) ) {
+						$this->set_graphql_type( $field_group_name, $graphql_name );
+					}
+				}
+			}
 		}
 
 		if ( '!=' === $operator ) {
@@ -788,17 +829,17 @@ class LocationRules {
 				foreach ( $allowed_taxonomies as $allowed_taxonomy ) {
 
 					$tax_object   = get_taxonomy( $allowed_taxonomy );
-					$graphql_name = isset( $tax_object->graphql_single_name ) ? $tax_object->graphql_single_name : null;
+					$graphql_name = $tax_object->graphql_single_name ?? null;
 					if ( ! empty( $graphql_name ) ) {
 						$this->set_graphql_type( $field_group_name, $graphql_name );
 					}
 				}
 
 				$tax_object   = get_taxonomy( $value );
-				$graphql_name = isset( $tax_object->graphql_single_name ) ? $tax_object->graphql_single_name : null;
+				$graphql_name = $tax_object->graphql_single_name ?? null;
 				if ( ! empty( $graphql_name ) ) {
 					$this->unset_graphql_type( $field_group_name, $graphql_name );
-				}           
+				}
 			}
 		}
 
@@ -811,8 +852,10 @@ class LocationRules {
 	 * @param string $param            The parameter of the rule
 	 * @param string $operator         The operator of the rule
 	 * @param string $value            The value of the rule
+	 *
+	 * @return void
 	 */
-	public function determine_attachment_rules( string $field_group_name, string $param, string $operator, string $value ) {
+	public function determine_attachment_rules( string $field_group_name, string $param, string $operator, string $value ): void {
 
 		if ( '==' === $operator ) {
 			$this->set_graphql_type( $field_group_name, 'MediaItem' );
@@ -831,8 +874,10 @@ class LocationRules {
 	 * @param string $param            The parameter of the rule
 	 * @param string $operator         The operator of the rule
 	 * @param string $value            The value of the rule
+	 *
+	 * @return void
 	 */
-	public function determine_comment_rules( string $field_group_name, string $param, string $operator, string $value ) {
+	public function determine_comment_rules( string $field_group_name, string $param, string $operator, string $value ): void {
 
 		if ( '==' === $operator ) {
 			$this->set_graphql_type( $field_group_name, 'Comment' );
@@ -848,7 +893,7 @@ class LocationRules {
 				// show the field group on the Comment Type
 			} else {
 				$this->set_graphql_type( $field_group_name, 'Comment' );
-			}       
+			}
 		}
 
 	}
@@ -860,8 +905,10 @@ class LocationRules {
 	 * @param string $param            The parameter of the rule
 	 * @param string $operator         The operator of the rule
 	 * @param string $value            The value of the rule
+	 *
+	 * @return void
 	 */
-	public function determine_nav_menu_rules( string $field_group_name, string $param, string $operator, string $value ) {
+	public function determine_nav_menu_rules( string $field_group_name, string $param, string $operator, string $value ): void {
 
 		if ( '==' === $operator ) {
 			$this->set_graphql_type( $field_group_name, 'Menu' );
@@ -877,7 +924,7 @@ class LocationRules {
 				// show the field group on all Menus
 			} else {
 				$this->set_graphql_type( $field_group_name, 'Menu' );
-			}       
+			}
 		}
 
 	}
@@ -889,8 +936,10 @@ class LocationRules {
 	 * @param string $param            The parameter of the rule
 	 * @param string $operator         The operator of the rule
 	 * @param string $value            The value of the rule
+	 *
+	 * @return void
 	 */
-	public function determine_nav_menu_item_item_rules( string $field_group_name, string $param, string $operator, string $value ) {
+	public function determine_nav_menu_item_item_rules( string $field_group_name, string $param, string $operator, string $value ): void {
 
 		if ( '==' === $operator ) {
 			$this->set_graphql_type( $field_group_name, 'MenuItem' );
@@ -906,7 +955,7 @@ class LocationRules {
 				// show the field group on all MenuItems
 			} else {
 				$this->set_graphql_type( $field_group_name, 'MenuItem' );
-			}       
+			}
 		}
 
 	}
@@ -918,8 +967,10 @@ class LocationRules {
 	 * @param string $param            The parameter of the rule
 	 * @param string $operator         The operator of the rule
 	 * @param string $value            The value of the rule
+	 *
+	 * @return void
 	 */
-	public function determine_block_rules( string $field_group_name, string $param, string $operator, string $value ) {
+	public function determine_block_rules( string $field_group_name, string $param, string $operator, string $value ): void {
 		// @todo: ACF Blocks are not formally supported by WPGraphQL / WPGraphQL for ACF. More to come in the future!
 	}
 
@@ -930,10 +981,17 @@ class LocationRules {
 	 * @param string $param            The parameter of the rule
 	 * @param string $operator         The operator of the rule
 	 * @param string $value            The value of the rule
+	 *
+	 * @return void
 	 */
-	public function determine_options_rules( string $field_group_name, string $param, string $operator, string $value ) {
+	public function determine_options_rules( string $field_group_name, string $param, string $operator, string $value ): void {
+
+		if ( ! function_exists( 'acf_get_options_page' ) ) {
+			return;
+		}
 
 		if ( '==' === $operator ) {
+
 			$options_page = acf_get_options_page( $value );
 
 			if ( ! isset( $options_page['show_in_graphql'] ) || false === (bool) $options_page['show_in_graphql'] ) {
@@ -945,6 +1003,7 @@ class LocationRules {
 
 		if ( '!=' === $operator ) {
 
+			// @phpstan-ignore-next-line
 			$options_pages = acf_get_options_pages();
 
 			if ( empty( $options_pages ) || ! is_array( $options_pages ) ) {
