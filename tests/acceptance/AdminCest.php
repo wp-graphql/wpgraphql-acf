@@ -6,24 +6,16 @@ class AdminCest
     {
     }
 
-	public function saveCacheTllExpirationTest( AcceptanceTester $I ) {
+	public function seeFieldTypeHeaderTest( AcceptanceTester $I ) {
 		$I->loginAsAdmin();
-		$I->amOnPage('/wp-admin/admin.php?page=graphql-settings#graphql_cache_section');
+		$I->amOnPage('/wp-admin/edit.php?post_type=acf-field-group');
 
-		// Save and see the selection after form submit
-		$I->fillField("//input[@type='number' and @name='graphql_cache_section[global_ttl]']", 30);
-		$I->click('Save Changes');
-		$I->seeInField("//input[@type='number' and @name='graphql_cache_section[global_ttl]']", 30);
+        $r = $I->grabTextFrom( "//thead/tr/th[@id='acf-wpgraphql-type']" );
+        codecept_debug( $r );
+		$I->see('WPGraphql Type', "//thead/tr/th[@id='acf-wpgraphql-type']");
+		$I->see('WPGraphql Interface(s)', "//thead/tr/th[@id='acf-wpgraphql-interfaces']");
+		$I->see('WPGraphql Location(s)', "//thead/tr/th[@id='acf-wpgraphql-locations']");
 
-		// Invalid value, negative, doesn't save.
-		$I->fillField("//input[@type='number' and @name='graphql_cache_section[global_ttl]']", -1);
-		$I->click('Save Changes');
-		$I->seeInField("//input[@type='number' and @name='graphql_cache_section[global_ttl]']", '');
-
-		// Invalid value, negative, doesn't save.
-		$I->fillField("//input[@type='number' and @name='graphql_cache_section[global_ttl]']", 0);
-		$I->click('Save Changes');
-		$I->seeInField("//input[@type='number' and @name='graphql_cache_section[global_ttl]']", 0);
 	}
 
 }

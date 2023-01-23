@@ -301,7 +301,7 @@ class Settings {
 			if ( 'acf-location' == $name ) {
 				$columns['acf-wpgraphql-type'] = 'WPGraphQL Type';
 				$columns['acf-wpgraphql-interfaces'] = 'WPGraphQL Interface(s)';
-				$columns['acf-wpgraphql-locations'] = 'WPGraphQL Locations';
+				$columns['acf-wpgraphql-locations'] = 'WPGraphQL Location(s)';
 				$is_added = true;
 			}
 		}
@@ -309,7 +309,7 @@ class Settings {
 		if ( ! $is_added ) {
 			$columns['acf-wpgraphql-type'] = 'WPGraphQL Type';
 			$columns['acf-wpgraphql-interfaces'] = 'WPGraphQL Interface(s)';
-			$columns['acf-wpgraphql-locations'] = 'WPGraphQL Locations';
+			$columns['acf-wpgraphql-locations'] = 'WPGraphQL Location(s)';
 		}
 
 		return $columns;
