@@ -41,10 +41,24 @@
 	<exclude-pattern>*/node_modules/*</exclude-pattern>
 	<exclude-pattern>*/vendor/*</exclude-pattern>
 
+	<rule ref="WordPress.Security.EscapeOutput">
+		<properties>
+			<property type="array" name="customAutoEscapedFunctions">
+				<element value="acf_esc_attr"/>
+				<element value="acf_esc_attr_e"/>
+				<element value="acf_esc_attrs"/>
+				<element value="acf_esc_atts"/>
+				<element value="acf_esc_atts_e"/>
+				<element value="acf_esc_html"/>
+				<element value="acf_punctify"/>
+			</property>
+		</properties>
+	</rule>
+
 	<rule ref="WordPress.WP.I18n">
 		<properties>
 			<property name="text_domain" type="array">
-				<element value="wp-graphql" />
+				<element value="wp-graphql-acf" />
 			</property>
 		</properties>
 	</rule>

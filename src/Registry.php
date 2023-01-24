@@ -138,14 +138,16 @@ class Registry {
 	public function get_fields_for_field_group( array $acf_field_group ): array {
 
 		// Set the default field for each field group
-		$graphql_fields['fieldGroupName'] = [
-			'type'              => 'String',
-			'description'       => __( 'The name of the field group', 'wp-graphql-acf' ),
+		$graphql_fields = [
+			'fieldGroupName' => [
+				'type'              => 'String',
+				'description'       => __( 'The name of the field group', 'wp-graphql-acf' ),
 
-			// this field is required to be registered to ensure the field group doesn't have
-			// no fields at all, but is marked deprecated as it is not an actual field
-			// of the field group as defined by the ACF Field Group
-			'deprecationReason' => __( 'Use __typename instead', 'wp-graphql-acf' ),
+				// this field is required to be registered to ensure the field group doesn't have
+				// no fields at all, but is marked deprecated as it is not an actual field
+				// of the field group as defined by the ACF Field Group
+				'deprecationReason' => __( 'Use __typename instead', 'wp-graphql-acf' ),
+			],
 		];
 
 		// @phpstan-ignore-next-line

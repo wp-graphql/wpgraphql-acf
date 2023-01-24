@@ -4,6 +4,7 @@
  * Description: Re-imagining the WPGraphQL for ACF plugin
  * Author: WPGraphQL
  * Author URI: https://www.wpgraphql.com
+ * Text Domain: wp-graphql-acf
  */
 
 // Exit if accessed directly.

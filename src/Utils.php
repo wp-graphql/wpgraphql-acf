@@ -1,6 +1,7 @@
 <?php
 namespace WPGraphQLAcf;
 
+use Exception;
 use WPGraphQL\Model\Comment;
 use WPGraphQL\Model\Menu;
 use WPGraphQL\Model\MenuItem;
@@ -97,7 +98,7 @@ class Utils {
 		];
 
 		/**
-		 * filter the supported fields
+		 * Filter the supported fields
 		 *
 		 * @param array $supported_fields
 		 */
@@ -108,6 +109,7 @@ class Utils {
 	 * Returns all available GraphQL Types
 	 *
 	 * @return array
+	 * @throws Exception
 	 */
 	public static function get_all_graphql_types(): array {
 		$graphql_types = [];

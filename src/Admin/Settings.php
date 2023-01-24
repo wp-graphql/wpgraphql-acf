@@ -7,6 +7,7 @@
 
 namespace WPGraphQLAcf\Admin;
 
+use GraphQL\Error\Error;
 use WPGraphQLAcf\LocationRules;
 use WPGraphQLAcf\Utils;
 use WPGraphQLAcf\Registry;
@@ -66,7 +67,7 @@ class Settings {
 		/**
 		 * Register an AJAX action and callback for converting ACF Location rules to GraphQL Types
 		 */
-		add_action( 'wp_ajax_get_acf_field_group_graphql_types', [ $this, 'ajax_callback' ] );
+		add_action( 'wp_ajax_get_acf_field_group_graphql_types', [ $this, 'graphql_types_ajax_callback' ] );
 
 		add_filter( 'manage_acf-field-group_posts_columns', [ $this, 'wpgraphql_admin_table_column_headers' ], 11, 1 );
 
@@ -78,35 +79,42 @@ class Settings {
 	 *
 	 * @return void
 	 */
-	public function ajax_callback() {
+	public function graphql_types_ajax_callback(): void {
 
-		if ( isset( $_POST['data'] ) ) {
-
-			$form_data = [];
-
-			parse_str( $_POST['data'], $form_data );
-
-			if ( empty( $form_data ) || ! isset( $form_data['acf_field_group'] ) ) {
-				wp_send_json( __( 'No form data.', 'wp-graphql-acf' ) );
-			}
-
-			$field_group = $form_data['acf_field_group'];
-			$rules       = new LocationRules( [ $field_group ] );
-			$rules->determine_location_rules();
-
-			$group_title = isset( $field_group['title'] ) ? $field_group['title'] : '';
-			$group_name  = isset( $field_group['graphql_field_name'] ) ? $field_group['graphql_field_name'] : $group_title;
-			$group_name  = $rules->format_field_name( $group_name );
-
-			$all_rules = $rules->get_rules();
-			if ( isset( $all_rules[ $group_name ] ) ) {
-				wp_send_json( [ 'graphql_types' => array_values( $all_rules[ $group_name ] ) ] );
-			}
-			wp_send_json( [ 'graphql_types' => null ] );
+		if ( ! isset( $_POST['data'] ) ) {
+			echo esc_html( __( 'No location rules were found', 'wp-graphql-acf' ) );
+			wp_die();
 		}
 
-		echo __( 'No location rules were found', 'wp-graphql-acf' );
-		wp_die();
+		$form_data           = [];
+		$sanitized_post_data = wp_strip_all_tags( $_POST['data'] );
+
+		parse_str( $sanitized_post_data, $form_data );
+
+		if ( empty( $form_data ) || ! isset( $form_data['acf_field_group'] ) ) {
+			wp_send_json( __( 'No form data.', 'wp-graphql-acf' ) );
+		}
+
+		if ( empty( $_POST['nonce'] ) || ! wp_verify_nonce( filter_input( INPUT_POST, 'nonce', FILTER_SANITIZE_STRING ), 'wp_graphql_acf' ) ) {
+			wp_send_json_error();
+		}
+
+		$field_group = $form_data['acf_field_group'];
+		$rules       = new LocationRules( [ $field_group ] );
+		$rules->determine_location_rules();
+
+		$group_title = $field_group['title'] ?? '';
+		$group_name  = $field_group['graphql_field_name'] ?? $group_title;
+		$group_name  = $rules->format_field_name( $group_name );
+
+		$all_rules = $rules->get_rules();
+		if ( isset( $all_rules[ $group_name ] ) ) {
+			wp_send_json( [
+				'graphql_types' => array_values( $all_rules[ $group_name ] ),
+			] );
+		}
+		wp_send_json( [ 'graphql_types' => null ] );
+
 	}
 
 	/**
@@ -127,7 +135,8 @@ class Settings {
 	 * @param mixed $field_group_post_object
 	 *
 	 * @return void
-	 * @throws \GraphQL\Error\Error
+	 * @throws Error
+	 * @throws \Exception
 	 */
 	public function display_metabox( $field_group_post_object ): void {
 
@@ -137,12 +146,12 @@ class Settings {
 		// @phpstan-ignore-next-line
 		acf_render_field_wrap(
 			[
-				'label'        => __( 'Show in GraphQL', 'acf' ),
-				'instructions' => __( 'If the field group is active, and this is set to show, the fields in this group will be available in the WPGraphQL Schema based on the respective Location rules.' ),
+				'label'        => __( 'Show in GraphQL', 'wp-graphql-acf' ),
+				'instructions' => __( 'If the field group is active, and this is set to show, the fields in this group will be available in the WPGraphQL Schema based on the respective Location rules.', 'wp-graphql-acf' ),
 				'type'         => 'true_false',
 				'name'         => 'show_in_graphql',
 				'prefix'       => 'acf_field_group',
-				'value'        => isset( $field_group['show_in_graphql'] ) ? (bool) $field_group['show_in_graphql'] : false,
+				'value'        => isset( $field_group['show_in_graphql'] ) && (bool) $field_group['show_in_graphql'],
 				'ui'           => 1,
 			],
 			'div',
@@ -154,12 +163,12 @@ class Settings {
 		// @phpstan-ignore-next-line
 		acf_render_field_wrap(
 			[
-				'label'        => __( 'GraphQL Field Name', 'acf' ),
+				'label'        => __( 'GraphQL Field Name', 'wp-graphql-acf' ),
 				'instructions' => __( 'The name of the field group in the GraphQL Schema. Names should not include spaces or special characters. Best practice is to use "camelCase".', 'wp-graphql-acf' ),
 				'type'         => 'text',
 				'prefix'       => 'acf_field_group',
 				'name'         => 'graphql_field_name',
-				'required'     => isset( $field_group['show_in_graphql'] ) ? (bool) $field_group['show_in_graphql'] : false,
+				'required'     => isset( $field_group['show_in_graphql'] ) && (bool) $field_group['show_in_graphql'],
 				'placeholder'  => ! empty( $field_group['graphql_field_name'] ) ? $field_group['graphql_field_name'] : null,
 				'value'        => ! empty( $field_group['graphql_field_name'] ) ? $field_group['graphql_field_name'] : null,
 			],
@@ -171,12 +180,12 @@ class Settings {
 		// @phpstan-ignore-next-line
 		acf_render_field_wrap(
 			[
-				'label'        => __( 'Manually Set GraphQL Types for Field Group', 'acf' ),
+				'label'        => __( 'Manually Set GraphQL Types for Field Group', 'wp-graphql-acf' ),
 				'instructions' => __( 'By default, ACF Field groups are added to the GraphQL Schema based on the field group\'s location rules. Checking this box will let you manually control the GraphQL Types the field group should be shown on in the GraphQL Schema using the checkboxes below, and the Location Rules will no longer effect the GraphQL Types.', 'wp-graphql-acf' ),
 				'type'         => 'true_false',
 				'name'         => 'map_graphql_types_from_location_rules',
 				'prefix'       => 'acf_field_group',
-				'value'        => isset( $field_group['map_graphql_types_from_location_rules'] ) ? (bool) $field_group['map_graphql_types_from_location_rules'] : false,
+				'value'        => isset( $field_group['map_graphql_types_from_location_rules'] ) && (bool) $field_group['map_graphql_types_from_location_rules'],
 				'ui'           => 1,
 			],
 			'div',
@@ -204,7 +213,7 @@ class Settings {
 		);
 
 		// Render a field in the Field Group settings to show interfaces for a Field Group to be shown in GraphQL.
-		$interfaces = $this->get_registry()->get_field_group_interfaces( $field_group );
+		$interfaces            = $this->get_registry()->get_field_group_interfaces( $field_group );
 		$field_group_type_name = $this->get_registry()->get_field_group_graphql_type_name( $field_group );
 
 
@@ -226,8 +235,11 @@ class Settings {
 
 		?>
 		<div class="acf-hidden">
-			<input type="hidden" name="acf_field_group[key]"
-				   value="<?php echo $field_group['key']; ?>"/>
+			<input
+				type="hidden"
+				name="acf_field_group[key]"
+				value="<?php echo esc_attr( $field_group['key'] ); ?>"
+			/>
 		</div>
 		<script type="text/javascript">
 			if (typeof acf !== 'undefined') {
@@ -302,12 +314,22 @@ class Settings {
 	public function enqueue_graphql_acf_scripts( string $screen ): void {
 		global $post;
 
-		if ( ( $screen === 'post-new.php' || $screen === 'post.php' ) && ( isset( $post->post_type ) && 'acf-field-group' === $post->post_type ) ) {
-			wp_enqueue_script( 'graphql-acf', plugins_url( '/assets/admin/js/main.js', __DIR__ ), [
-				'jquery',
-				'acf-input',
-				'acf-field-group',
-			] );
+		if ( ( 'post-new.php' === $screen || 'post.php' === $screen ) && ( isset( $post->post_type ) && 'acf-field-group' === $post->post_type ) ) {
+			wp_enqueue_script(
+				'graphql-acf',
+				plugins_url( '/assets/admin/js/main.js', __DIR__ ),
+				[
+					'jquery',
+					'acf-input',
+					'acf-field-group',
+				],
+				WPGRAPHQL_FOR_ACF_VERSION,
+				true
+			);
+
+			wp_localize_script( 'graphql-acf', 'wp_graphql_acf', [
+				'nonce' => wp_create_nonce( 'wp_graphql_acf' ),
+			]);
 		}
 	}
 
@@ -318,7 +340,7 @@ class Settings {
 	 *
 	 * @return array The column headers with the added wp-graphql columns
 	 */
-	public function wpgraphql_admin_table_column_headers( $_columns ) {
+	public function wpgraphql_admin_table_column_headers( array $_columns ): array {
 
 		$columns  = [];
 		$is_added = false;
@@ -326,7 +348,7 @@ class Settings {
 		foreach ( $_columns as $name => $value ) {
 			$columns[ $name ] = $value;
 			// After the location column, add the wpgraphql specific columns
-			if ( 'acf-location' == $name ) {
+			if ( 'acf-location' === $name ) {
 				$columns['acf-wpgraphql-type']       = __( 'GraphQL Type', 'wp-graphql-acf' );
 				$columns['acf-wpgraphql-interfaces'] = __( 'GraphQL Interfaces', 'wp-graphql-acf' );
 				$columns['acf-wpgraphql-locations']  = __( 'GraphQL Locations', 'wp-graphql-acf' );
@@ -350,6 +372,7 @@ class Settings {
 	 * @param int    $post_id     The field group id being processed
 	 *
 	 * @return void
+	 * @throws Error
 	 */
 	public function wpgraphql_admin_table_columns_html( string $column_name, int $post_id ): void {
 		global $field_group;

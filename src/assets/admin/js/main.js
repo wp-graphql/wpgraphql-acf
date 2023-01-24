@@ -272,7 +272,8 @@ $j(document).ready(function () {
 			// Make the request
 			$j.post(ajaxurl, {
 				action: 'get_acf_field_group_graphql_types',
-				data: serialized
+				data: serialized,
+				nonce: wp_graphql_acf.nonce
 			}, function (res) {
 				var types = res && res['graphql_types'] ? res['graphql_types'] : [];
 
