@@ -127,6 +127,7 @@ class Settings {
 	 * @param mixed $field_group_post_object
 	 *
 	 * @return void
+	 * @throws \GraphQL\Error\Error
 	 */
 	public function display_metabox( $field_group_post_object ): void {
 
@@ -204,16 +205,18 @@ class Settings {
 
 		// Render a field in the Field Group settings to show interfaces for a Field Group to be shown in GraphQL.
 		$interfaces = $this->get_registry()->get_field_group_interfaces( $field_group );
+		$field_group_type_name = $this->get_registry()->get_field_group_graphql_type_name( $field_group );
+
 
 		// @phpstan-ignore-next-line
 		acf_render_field_wrap(
 			[
-				'label'        => __( 'Interfaces', 'acf' ),
-				'instructions' => __( 'If the field group is active, and this is set to show, the fields in this group will be available in the WPGraphQL Schema based on the respective Location rules.' ),
+				'label'        => __( 'GraphQL Interfaces', 'wp-graphql-acf' ),
+				'instructions' => sprintf( __( "These are the GraphQL Interfaces implemented by the '%s' GraphQL Type", 'wp-graphql-acf' ), $field_group_type_name ),
 				'type'         => 'message',
 				'name'         => 'graphql_interfaces',
 				'prefix'       => 'acf_field_group',
-				'message'      => ! empty( $interfaces ) ? $i = '<ul><li>' . join( '</li><li>', $interfaces ) . '</li></ul>' : [],
+				'message'      => ! empty( $interfaces ) ? $i = '<ul><li>' . implode( '</li><li>', $interfaces ) . '</li></ul>' : [],
 				'readonly'     => true,
 			],
 			'div',
