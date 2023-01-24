@@ -16,6 +16,10 @@ class AdminCest
 		$I->see('WPGraphql Interface(s)', "//thead/tr/th[@id='acf-wpgraphql-interfaces']");
 		$I->see('WPGraphql Location(s)', "//thead/tr/th[@id='acf-wpgraphql-locations']");
 
+        // The field group admin page, value for specific type
+       $r = $I->grabTextFrom( "//tbody/tr/td/span[@class='acf-wpgraphql-type']" );
+        codecept_debug( $r );
+		$I->see('Tester', "//tbody/tr/td/span[@class='acf-wpgraphql-type']");
 	}
 
 }
