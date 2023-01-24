@@ -39,18 +39,18 @@ class WPGraphQLAcf {
 
 		// Register general types that should be available to the Schema regardless
 		// of the specific fields and field groups registered by ACF
-		Registry::register_initial_graphql_types();
+		$registry = new Registry();
+		$registry->register_initial_graphql_types();
 
 		// Get the field groups that should be mapped to the Schema
-		$acf_field_groups = Registry::get_acf_field_groups();
+		$acf_field_groups = $registry->get_acf_field_groups();
 
 		// If there are no acf field groups to show in GraphQL, do nothing
 		if ( empty( $acf_field_groups ) ) {
 			return;
 		}
 
-
-		Registry::register_acf_field_groups_to_graphql( $acf_field_groups );
+		$registry->register_acf_field_groups_to_graphql( $acf_field_groups );
 
 	}
 

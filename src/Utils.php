@@ -37,9 +37,10 @@ class Utils {
 				$id = 'user_' . absint( $node->userId );
 				break;
 			case $node instanceof Comment:
-				$id = "comment_" . absint( $node->databaseId );
+				// @phpstan-ignore-next-line
+				$id = 'comment_' . absint( $node->databaseId );
 				break;
-			case is_array( $node ) && isset ( $node['post_id'] ) && 'options' === $node['post_id']:
+			case is_array( $node ) && isset( $node['post_id'] ) && 'options' === $node['post_id']:
 				$id = $node['post_id'];
 				break;
 			default:
@@ -92,7 +93,7 @@ class Utils {
 			'color_picker',
 			'group',
 			'repeater',
-			'flexible_content'
+			'flexible_content',
 		];
 
 		/**
@@ -109,7 +110,7 @@ class Utils {
 	 * @return array
 	 */
 	public static function get_all_graphql_types(): array {
-		$graphql_types = array();
+		$graphql_types = [];
 
 		// Use GraphQL to get the Interface and the Types that implement them
 		$query = '
@@ -126,45 +127,44 @@ class Utils {
 		';
 
 		$interfaces = [
-			'ContentNode' => [
-				'label' => __( 'Post Type', 'wp-graphql-acf' ),
+			'ContentNode'     => [
+				'label'        => __( 'Post Type', 'wp-graphql-acf' ),
 				'plural_label' => __( 'All Post Types', 'wp-graphql-acf' ),
 			],
-			'TermNode' => [
-				'label' => __( 'Taxonomy', 'wp-graphql-acf' ),
+			'TermNode'        => [
+				'label'        => __( 'Taxonomy', 'wp-graphql-acf' ),
 				'plural_label' => __( 'All Taxonomies', 'wp-graphql-acf' ),
 			],
 			'ContentTemplate' => [
-				'label' => __( 'Page Template', 'wp-graphql-acf' ),
+				'label'        => __( 'Page Template', 'wp-graphql-acf' ),
 				'plural_label' => __( 'All Templates Assignable to Content', 'wp-graphql-acf' ),
-			]
+			],
 		];
 
 		foreach ( $interfaces as $interface_name => $config ) {
 
 			$interface_query = graphql([
-				'query' => $query,
+				'query'     => $query,
 				'variables' => [
-					'name' => $interface_name
-				]
+					'name' => $interface_name,
+				],
 			]);
 
-			$possible_types = $interface_query['data']['__type']['possibleTypes'];
+			$possible_types = is_array( $interface_query ) && isset( $interface_query['data']['__type']['possibleTypes'] ) ? $interface_query['data']['__type']['possibleTypes'] : [];
 			asort( $possible_types );
 
 			if ( ! empty( $possible_types ) && is_array( $possible_types ) ) {
 
 				// Intentionally not translating "ContentNode Interface" as this is part of the GraphQL Schema and should not be translated.
-				$graphql_types[ $interface_name ] = '<span data-interface="'. $interface_name .'">' . $interface_name . ' Interface (' . $config['plural_label'] . ')</span>';
-				$label = '<span data-implements="'. $interface_name .'"> (' . $config['label'] . ')</span>';
+				$graphql_types[ $interface_name ] = '<span data-interface="' . $interface_name . '">' . $interface_name . ' Interface (' . $config['plural_label'] . ')</span>';
+				$label                            = '<span data-implements="' . $interface_name . '"> (' . $config['label'] . ')</span>';
 				foreach ( $possible_types as $type ) {
 					$type_label = $type['name'] . '&nbsp;' . $label;
-					$type_key = $type['name'];
+					$type_key   = $type['name'];
 
 					$graphql_types[ $type_key ] = $type_label;
 				}
 			}
-
 		}
 
 		/**
@@ -192,10 +192,8 @@ class Utils {
 		 */
 		global $acf_options_page;
 
-		if ( isset( $acf_options_page ) ) {
-			/**
-			 * Get a list of post types that have been registered to show in graphql
-			 */
+		if ( isset( $acf_options_page ) && function_exists( 'acf_get_options_pages' ) ) {
+			// Get a list of post types that have been registered to show in graphql
 			$graphql_options_pages = acf_get_options_pages();
 
 			/**
@@ -221,7 +219,7 @@ class Utils {
 					 */
 					$page_title = $options_page['page_title'];
 					$type_label = $page_title . $label;
-					$type_name = isset( $options_page['graphql_field_name'] ) ? \WPGraphQL\Utils\Utils::format_type_name( $options_page['graphql_field_name'] ) : Utils::format_type_name( $options_page['menu_slug'] );
+					$type_name  = isset( $options_page['graphql_field_name'] ) ? \WPGraphQL\Utils\Utils::format_type_name( $options_page['graphql_field_name'] ) : \WPGraphQL\Utils\Utils::format_type_name( $options_page['menu_slug'] );
 
 					$graphql_types[ $type_name ] = $type_label;
 				}
@@ -234,16 +232,19 @@ class Utils {
 	/**
 	 * Returns string of the items in the array list. Limit allows string to be limited length.
 	 *
+	 * @param array $list
+	 * @param int $limit
+	 *
 	 * @return string
 	 */
-	public static function array_list_by_limit( $list, $limit=5 ) {
+	public static function array_list_by_limit( array $list, $limit = 5 ): string {
 		$flat_list = '';
-		$total = count( $list );
+		$total     = count( $list );
 
 		// Labels.
-		$labels = $list;
-		$labels = array_slice( $labels, 0, $limit );
-		$flat_list  .= implode( ', ', $labels );
+		$labels     = $list;
+		$labels     = array_slice( $labels, 0, $limit );
+		$flat_list .= implode( ', ', $labels );
 
 		// More.
 		if ( $total > $limit ) {
