@@ -16,9 +16,10 @@ class Registry {
 	protected $registered_fields = [];
 
 	/**
+	 * @todo should be protected with getter/setter?
 	 * @var array
 	 */
-	protected $registered_field_groups;
+	public $registered_field_groups;
 
 	/**
 	 * Whether the ACF Field Group should show in the GraphQL Schema
@@ -158,16 +159,16 @@ class Registry {
 
 		foreach ( $fields as $acf_field ) {
 
-			// if the field is explicitly set to not show in graphql, leave it out of the schema
-			if ( isset( $acf_field['show_in_graphql'] ) && false === $acf_field['show_in_graphql'] ) {
-				continue;
-			}
-
-			// if the field is not a supported type, don't add it to the schema
-			if ( ! $this->is_supported_field_type( $acf_field ) ) {
-				continue;
-			}
-
+//			// if the field is explicitly set to not show in graphql, leave it out of the schema
+//			if ( isset( $acf_field['show_in_graphql'] ) && false === $acf_field['show_in_graphql'] ) {
+//				continue;
+//			}
+//
+//			// if the field is not a supported type, don't add it to the schema
+//			if ( ! $this->is_supported_field_type( $acf_field ) ) {
+//				continue;
+//			}
+//
 			$graphql_field_name = $this->get_graphql_field_name( $acf_field );
 
 			if ( isset( $acf_field['_clone'] ) ) {
@@ -175,7 +176,9 @@ class Registry {
 				continue;
 			}
 
-			$graphql_fields[ $graphql_field_name ] = $this->map_acf_field_to_graphql( $acf_field, $acf_field_group );
+			$field_config = $this->map_acf_field_to_graphql( $acf_field, $acf_field_group );
+
+			$graphql_fields[ $graphql_field_name ] = $field_config;
 		}
 
 		// If there are cloned fields, pass the cloned field key to the field config for use in resolution
@@ -193,171 +196,15 @@ class Registry {
 	}
 
 	/**
-	 * Determine whether an ACF Field is supported by GraphQL
-	 *
-	 * @param array $acf_field The ACF Field Config
-	 *
-	 * @return bool
-	 */
-	public function is_supported_field_type( array $acf_field ): bool {
-
-		$supported_types = apply_filters( 'graphql_acf_supported_fields', [
-			'text',
-			'textarea',
-			'number',
-			'range',
-			'email',
-			'url',
-			'password',
-			'image',
-			'file',
-			'wysiwyg',
-			'oembed',
-			'gallery',
-			'select',
-			'checkbox',
-			'radio',
-			'button_group',
-			'true_false',
-			'link',
-			'post_object',
-			'page_link',
-			'relationship',
-			'taxonomy',
-			'user',
-			'google_map',
-			'date_picker',
-			'date_time_picker',
-			'time_picker',
-			'color_picker',
-			'group',
-			'repeater',
-			'flexible_content',
-		] );
-
-		return isset( $acf_field['type'] ) && in_array( $acf_field['type'], $supported_types, true );
-
-	}
-
-	/**
 	 * @param array $acf_field
 	 * @param array $acf_field_group
 	 *
-	 * @return array
+	 * @return array|null
 	 * @throws Error
 	 * @throws Exception
 	 */
-	public function map_acf_field_to_graphql( array $acf_field, array $acf_field_group ): array {
-
-		$field_config = [
-			'type'            => 'String',
-			'name'            => $this->get_graphql_field_name( $acf_field ),
-			'description'     => sprintf( __( 'Field added by WPGraphQL for ACF Redux %s', 'wp-graphql-acf' ), self::get_field_group_graphql_type_name( $acf_field_group ) ),
-			'acf_field'       => $acf_field,
-			'acf_field_group' => $acf_field_group,
-			'resolve'         => function ( $root, $args, AppContext $context, ResolveInfo $info ) {
-				return $this->resolve_field( $root, $args, $context, $info );
-			},
-		];
-
-		if ( ! empty( $acf_field['type'] ) ) {
-
-			switch ( $acf_field['type'] ) {
-				case 'group':
-					$parent_type     = $this->get_field_group_graphql_type_name( $acf_field_group );
-					$field_name      = $this->get_graphql_field_name( $acf_field );
-					$sub_field_group = $acf_field;
-					$type_name       = Utils::format_field_name( $parent_type . ' ' . $field_name );
-
-					$sub_field_group['graphql_field_name'] = $type_name;
-
-					$this->register_acf_field_groups_to_graphql( [
-						$sub_field_group,
-					] );
-
-					$field_config['type'] = $type_name;
-					break;
-
-				case 'flexible_content':
-					$parent_type             = $this->get_field_group_graphql_type_name( $acf_field_group );
-					$field_name              = $this->get_graphql_field_name( $acf_field );
-					$layout_interface_prefix = Utils::format_type_name( $parent_type . ' ' . $field_name );
-					$layout_interface_name   = $layout_interface_prefix . '_Layout';
-
-					if ( empty( $this->registered_field_groups[ $layout_interface_name ] ) ) {
-
-						register_graphql_interface_type( $layout_interface_name, [
-							'eagerlyLoadType' => true,
-							'description'     => sprintf( __( 'Layout of the "%1$s" Field of the "%2$s" Field Group Field', 'wp-graphql-acf' ), $field_name, $parent_type ),
-							'fields'          => [
-								'fieldGroupName' => [
-									'type'              => 'String',
-									'description'       => __( 'The name of the ACF Flex Field Layout', 'wp-graphql-acf' ),
-									'deprecationReason' => __( 'Use __typename instead', 'wp-graphql-acf' ),
-								],
-							],
-							'resolveType'     => function ( $object ) use ( $layout_interface_prefix ) {
-								$layout = $object['acf_fc_layout'] ?? null;
-								return Utils::format_type_name( $layout_interface_prefix . ' ' . $layout );
-							},
-						] );
-
-						$this->registered_field_groups[ $layout_interface_name ] = $layout_interface_name;
-
-					}
-
-					$layouts = [];
-					foreach ( $acf_field['layouts'] as $layout ) {
-
-						// Format the name of the group using the layout prefix + the layout name
-						$layout_name = Utils::format_type_name( $layout_interface_prefix . ' ' . $this->get_field_group_graphql_type_name( $layout ) );
-
-						// set the graphql_field_name using the $layout_name
-						$layout['graphql_field_name'] = $layout_name;
-
-						// Pass that the layout is a flexLayout (compared to a standard field group)
-						$layout['isFlexLayout'] = true;
-
-						// Get interfaces, including cloned field groups, for the layout
-						$interfaces = $this->get_field_group_interfaces( $layout );
-
-						// Add the layout interface name as an interface. This is the type that is returned as a list of for accessing all layouts of the flex field
-						$interfaces[]                 = $layout_interface_name;
-						$layout['eagerlyLoadType']    = true;
-						$layout['graphql_field_name'] = $layout_name;
-						$layout['fields']             = $this->get_fields_for_field_group( $layout );
-						$layout['interfaces']         = $interfaces;
-						$layouts[ $layout_name ]      = $layout;
-					}
-
-					if ( ! empty( $layouts ) ) {
-						$this->register_acf_field_groups_to_graphql( $layouts );
-					}
-
-
-					$field_config['type'] = [ 'list_of' => $layout_interface_name ];
-					break;
-
-				case 'repeater':
-					$parent_type     = $this->get_field_group_graphql_type_name( $acf_field_group );
-					$field_name      = $this->get_graphql_field_name( $acf_field );
-					$sub_field_group = $acf_field;
-					$type_name       = Utils::format_type_name( $parent_type . ' ' . $field_name );
-
-					$sub_field_group['graphql_field_name'] = $type_name;
-
-					$this->register_acf_field_groups_to_graphql( [
-						$sub_field_group,
-					] );
-
-					$field_config['type'] = [ 'list_of' => $type_name ];
-					break;
-				default:
-					break;
-			}
-		}
-
-		return $field_config;
+	public function map_acf_field_to_graphql( array $acf_field, array $acf_field_group ): ?array {
+		return ( new FieldConfig( $acf_field, $acf_field_group, $this ) )->get_graphql_field_config();
 	}
 
 	/**
@@ -535,10 +382,13 @@ class Registry {
 	public function get_graphql_field_name( array $acf_field ): string {
 		$name = $this->get_field_group_name( $acf_field );
 
+		if ( empty( $name ) ) {
+			return $name;
+		}
+
 		$replaced = preg_replace( '/[\W_]+/u', ' ', $name );
 
 		if ( empty( $replaced ) ) {
-
 			throw new Error( sprintf( __( 'The graphql field name %s is not a valid name and cannot be added to the GraphQL Schema', 'wp-graphql-acf' ), $name ) );
 		}
 
