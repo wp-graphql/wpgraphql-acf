@@ -13,9 +13,6 @@ vendor
 # We _do_ want to version our tests!
 !/tests
 
-# Test suite config files. Used to overried the *.suite.dist.yml configs
-/tests/*.suite.yml
-
 # PHPCS cached files.
 /tests/_output/*.json
 
