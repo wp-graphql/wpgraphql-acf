@@ -5,6 +5,9 @@
 . /usr/local/bin/original-app-setup.sh
 
 PLUGINS_DIR=${PLUGINS_DIR-.}
+ACF_LICENSE_KEY=${ACF_LICENSE_KEY-.}
+ACF_VERSION=${ACF_VERSION-.}
+
 echo "Plugins dir ($PLUGINS_DIR)"
 
 if [ ! -f "${PLUGINS_DIR}/wp-graphql/wp-graphql.php" ]; then
@@ -20,12 +23,13 @@ if [ ! -f "${PLUGINS_DIR}/wp-graphql/wp-graphql.php" ]; then
 fi
 
 # Activate the plugin
-wp plugin install advanced-custom-fields --activate --allow-root
+# wp plugin install advanced-custom-fields --activate --allow-root
 wp plugin activate wp-graphql-acf-redux --allow-root
 
 # Some version of acf-pro that let's tests pass.
 if [ ! -d ${PLUGINS_DIR}/advanced-custom-fields-pro ]; then
-    wp plugin install https://github.com/wp-premium/advanced-custom-fields-pro/archive/refs/heads/master.zip --activate --allow-root
+	echo "Installing ACF Pro from AdvancedCustomFields.com"
+	wp plugin install "https://connect.advancedcustomfields.com/v2/plugins/download?p=pro&k=${ACF_LICENSE_KEY}" --activate --allow-root
 else
     echo "Warning: Advanced Custom Fields Pro plugin already installed"
 fi

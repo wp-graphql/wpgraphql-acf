@@ -54,6 +54,7 @@ c3.php
 
 # Used for setting local environment variables when testing
 .env
+.env.testing
 
 # output from e2e tests
 artifacts

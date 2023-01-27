@@ -134,8 +134,7 @@ class FieldConfig {
 					$layout_interface_prefix = \WPGraphQL\Utils\Utils::format_type_name( $parent_type . ' ' . $field_name );
 					$layout_interface_name   = $layout_interface_prefix . '_Layout';
 
-					if ( empty( $this->registered_field_groups[ $layout_interface_name ] ) ) {
-
+					if ( ! $this->registry->has_registered_field_group( $layout_interface_name ) ) {
 						register_graphql_interface_type( $layout_interface_name, [
 							'eagerlyLoadType' => true,
 							'description'     => sprintf( __( 'Layout of the "%1$s" Field of the "%2$s" Field Group Field', 'wp-graphql-acf' ), $field_name, $parent_type ),
@@ -152,7 +151,7 @@ class FieldConfig {
 							},
 						] );
 
-						$this->registered_field_groups[ $layout_interface_name ] = $layout_interface_name;
+						$this->registry->register_field_group( $layout_interface_name, $layout_interface_name );
 
 					}
 

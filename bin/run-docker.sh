@@ -2,6 +2,22 @@
 
 set -eu
 
+if [ ! -f .env ]; then
+  echo "No .env file was detected. .env.dist has been copied to .env"
+  echo "Open the .env file and enter values to match your local environment"
+  cp ./.env.dist ./.env
+  export $(cat .env | xargs)
+fi
+
+if [ ! -f .env.testing ]; then
+  echo "No .env.testing file was detected. .env.testing.dist has been copied to .env.testing"
+  echo "Open the .env.testing file and enter values to match your local testing environment"
+  cp ./.env.testing.dist ./.env.testing
+  export $(cat .env | xargs)
+fi
+
+source .env
+
 ##
 # Use this script through Composer scripts in the package.json.
 # To quickly build and run the docker-compose scripts for an app or automated testing
@@ -46,7 +62,7 @@ case "$subcommand" in
                 a )
                     echo "Build app"
                     docker build $BUILD_NO_CACHE -f docker/Dockerfile \
-                        -t wp-graphql-acf:${TAG}-wp${WP_VERSION}-php${PHP_VERSION} \
+                        -t wp-graphql-acf-redux:${TAG}-wp${WP_VERSION}-php${PHP_VERSION} \
                         --build-arg WP_VERSION=${WP_VERSION} \
                         --build-arg PHP_VERSION=${PHP_VERSION} \
                         --build-arg DOCKER_REGISTRY=${DOCKER_REGISTRY} \
@@ -55,14 +71,14 @@ case "$subcommand" in
                 t )
                     echo "Build app"
                     docker build $BUILD_NO_CACHE -f docker/Dockerfile \
-                        -t wp-graphql-acf:${TAG}-wp${WP_VERSION}-php${PHP_VERSION} \
+                        -t wp-graphql-acf-redux:${TAG}-wp${WP_VERSION}-php${PHP_VERSION} \
                         --build-arg WP_VERSION=${WP_VERSION} \
                         --build-arg PHP_VERSION=${PHP_VERSION} \
                         --build-arg DOCKER_REGISTRY=${DOCKER_REGISTRY} \
                         .
                     echo "Build testing"
                     docker build $BUILD_NO_CACHE -f docker/Dockerfile.testing \
-                        -t wp-graphql-acf-testing:${TAG}-wp${WP_VERSION}-php${PHP_VERSION} \
+                        -t wp-graphql-acf-redux-testing:${TAG}-wp${WP_VERSION}-php${PHP_VERSION} \
                         --build-arg WP_VERSION=${WP_VERSION} \
                         --build-arg PHP_VERSION=${PHP_VERSION} \
                         --build-arg DOCKER_REGISTRY=${DOCKER_REGISTRY} \
