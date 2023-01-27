@@ -155,11 +155,9 @@ configure_wordpress() {
 
 install_acf_pro() {
 	if [ ! -d $WP_CORE_DIR/wp-content/plugins/advanced-custom-fields-pro ]; then
-		echo "Cloning ACF PRO"
-		git clone https://github.com/wp-premium/advanced-custom-fields-pro.git $WP_CORE_DIR/wp-content/plugins/advanced-custom-fields-pro
+		echo "Installing ACF Pro from AdvancedCustomFields.com"
+		wp plugin install https://connect.advancedcustomfields.com/v2/plugins/download?p=pro&k=$ACF_LICENSE_KEY --activate
 	fi
-	echo "Cloning ACF PRO"
-	wp plugin activate advanced-custom-fields-pro
 }
 
 setup_plugin() {
