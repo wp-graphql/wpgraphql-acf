@@ -158,8 +158,6 @@ install_acf_pro() {
 		echo "Installing ACF Pro from AdvancedCustomFields.com"
 		wp plugin install https://connect.advancedcustomfields.com/v2/plugins/download?p=pro&k=$ACF_LICENSE_KEY --activate
 	fi
-	echo "Cloning ACF PRO"
-	wp plugin activate advanced-custom-fields-pro
 }
 
 setup_plugin() {

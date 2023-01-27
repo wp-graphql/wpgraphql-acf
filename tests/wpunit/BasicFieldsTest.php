@@ -33,51 +33,53 @@ class BasicFieldsTest extends \Codeception\TestCase\WPTestCase {
 			throw new Exception( sprintf( 'The path "%s" is not valid', $path ) );
 		}
 
-		$field_group_contents = json_decode( file_get_contents( $path ), true );
+		$import = json_decode( file_get_contents( $path ), true );
+		if ( isset( $import['key'] ) ) {
+			$import = array( $import );
+		}
 
+		foreach ( $import as $field_group ) {
+			// Search database for existing field group.
+			$post = acf_get_field_group_post( $field_group['key'] );
+			if ( $post ) {
+				$field_group['ID'] = $post->ID;
+			}
 
+			// Import field group.
+			acf_import_field_group( $field_group );
+		}
 
-		$before = acf_get_field_groups();
-		acf_import_field_group( (array) $field_group_contents );
-		$after = acf_get_field_groups();
-		wp_send_json([
-			'contents' => $field_group_contents,
-			'before' => $before,
-			'after' => $after,
-		]);
 		WPGraphQL::clear_schema();
 	}
 
+	/**
+	 * @throws Exception
+	 */
 	public function testImportFields() {
 
-		$this->assertTrue( true );
+		$query = '
+		{
+		  posts {
+		    nodes {
+		      id
+		      title
+		      ...on WithAcfBasicFields {
+		        basicFields {
+		          basicText
+		        }
+		      }
+		    }
+		  }
+		}
+		';
 
-//		$query = '
-//		{
-//		  posts {
-//		    nodes {
-//		      id
-//		      title
-//		      basicFields {
-//		        basicText
-//		      }
-//		    }
-//		  }
-//		}
-//		';
-//
-//		$actual = graphql([
-//			'query' => $query,
-//		]);
-//
-//		codecept_debug( $actual );
-//
-////		wp_send_json( [
-////			'acfFieldGroups' => acf_get_field_groups(),
-////			'actual' => $actual,
-////		]);
-//
-//		$this->assertArrayNotHasKey( 'errors', $actual );
+		$actual = graphql([
+			'query' => $query,
+		]);
+
+		codecept_debug( $actual );
+
+		$this->assertArrayNotHasKey( 'errors', $actual );
 
 	}
 

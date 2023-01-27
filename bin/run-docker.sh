@@ -2,6 +2,8 @@
 
 set -eu
 
+# This allows us to commit default settings to .env.dist, but lets users
+# override those values in their .gitignored .env file
 if [ ! -f .env ]; then
   echo "No .env file was detected. .env.dist has been copied to .env"
   echo "Open the .env file and enter values to match your local environment"
@@ -9,6 +11,8 @@ if [ ! -f .env ]; then
   export $(cat .env | xargs)
 fi
 
+# This allows us to commit default settings to .env.dist, but lets users
+# override those values in their .gitignored .env file (i.e. ACF PRO License Key)
 if [ ! -f .env.testing ]; then
   echo "No .env.testing file was detected. .env.testing.dist has been copied to .env.testing"
   echo "Open the .env.testing file and enter values to match your local testing environment"
