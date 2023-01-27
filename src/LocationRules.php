@@ -147,7 +147,7 @@ class LocationRules {
 
 			// Loop over the types to unset, find the key of the type in the array, then unset it
 			foreach ( $types as $type ) {
-				if ( ( $key = array_search( $type, $this->mapped_field_groups[ $field_group ] ) ) !== false ) {
+				if ( ( $key = array_search( $type, $this->mapped_field_groups[ $field_group ], true ) ) !== false ) {
 					unset( $this->mapped_field_groups[ $field_group ][ $key ] );
 				}
 			}
@@ -179,7 +179,7 @@ class LocationRules {
 		}
 
 		$has_conflict = false;
-		$keys         = array_keys( $and_params, $param );
+		$keys         = array_keys( $and_params, $param, true );
 
 		if ( isset( $keys[0] ) ) {
 			unset( $and_params[ $keys[0] ] );
@@ -389,7 +389,7 @@ class LocationRules {
 	 *
 	 * @return void
 	 */
-	public function determine_location_rules() {
+	public function determine_location_rules(): void {
 
 		if ( ! empty( $this->acf_field_groups ) ) {
 			foreach ( $this->acf_field_groups as $field_group ) {
@@ -435,11 +435,13 @@ class LocationRules {
 	 *
 	 * @return array
 	 */
-	public function get_graphql_post_template_types() {
+	public function get_graphql_post_template_types(): array {
+
+		$page_templates = [
+			'default' => 'DefaultTemplate',
+		];
 
 		$registered_page_templates = wp_get_theme()->get_post_templates();
-
-		$page_templates['default'] = 'DefaultTemplate';
 
 		if ( ! empty( $registered_page_templates ) && is_array( $registered_page_templates ) ) {
 
