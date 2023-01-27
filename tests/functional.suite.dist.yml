@@ -11,6 +11,7 @@ modules:
     - WPBrowser
     - WPDb
     - WPLoader
+    - Helper\Utils
   config:
     WPDb:
       cleanup: false
