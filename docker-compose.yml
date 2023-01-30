@@ -12,7 +12,7 @@ services:
       - '.:/var/www/html/wp-content/plugins/wp-graphql-acf-redux'
       - './.log/app:/var/log/apache2'
     env_file:
-      - .env.dist
+      - .env
     environment:
       USING_XDEBUG: ${USING_XDEBUG:-}
     ports:
@@ -23,7 +23,7 @@ services:
   app_db:
     image: mariadb:10.2
     env_file:
-      - .env.dist
+      - .env
     ports:
       - '3306'
     networks:
@@ -35,7 +35,7 @@ services:
     build:
       context: .
       dockerfile: docker/Dockerfile.testing
-    image: wp-graphql-acf-redux-testing:latest-wp${WP_VERSION}-php${PHP_VERSION}
+    image: wp-graphql-acf-testing:latest-wp${WP_VERSION}-php${PHP_VERSION}
     volumes:
       - '.:/var/www/html/wp-content/plugins/wp-graphql-acf-redux'
       - './.log/testing:/var/log/apache2'
