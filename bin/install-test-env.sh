@@ -156,7 +156,7 @@ configure_wordpress() {
 install_acf_pro() {
 	if [ ! -d $WP_CORE_DIR/wp-content/plugins/advanced-custom-fields-pro ]; then
 		echo "Installing ACF Pro from AdvancedCustomFields.com"
-		wp plugin install https://connect.advancedcustomfields.com/v2/plugins/download?p=pro&k=$ACF_LICENSE_KEY --activate
+		wp plugin install "https://connect.advancedcustomfields.com/v2/plugins/download?p=pro&k=${ACF_LICENSE_KEY}" --activate
 	fi
 }
 
