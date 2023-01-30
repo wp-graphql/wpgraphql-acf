@@ -16,7 +16,6 @@ if [[ -n ${ACF_VERSION} && "${ACF_VERSION}" != "latest" ]]; then
 fi
 
 echo "Plugins dir ($PLUGINS_DIR)"
-echo "ACF_LICENSE_KEY ($ACF_LICENSE_KEY)"
 echo "ACF_VERSION ($ACF_VERSION)"
 echo "ACF_DOWNLOAD_VERSION ($ACF_DOWNLOAD_VERSION)"
 
