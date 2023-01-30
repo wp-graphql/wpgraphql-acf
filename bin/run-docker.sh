@@ -67,6 +67,7 @@ case "$subcommand" in
                 t )
                     echo "Build app"
                     echo "WP: ${WP_VERSION} PHP: ${PHP_VERSION}"
+                    echo "Docker Registry: ${DOCKER_REGISTRY}"
                     docker build $BUILD_NO_CACHE -f docker/Dockerfile \
                         -t wp-graphql-acf:${TAG}-wp${WP_VERSION}-php${PHP_VERSION} \
                         --build-arg WP_VERSION=${WP_VERSION} \
