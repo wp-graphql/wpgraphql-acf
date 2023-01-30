@@ -2,6 +2,26 @@
 
 set -eu
 
+# This allows us to commit default settings to .env.dist, but lets users
+# override those values in their .gitignored .env file
+if [ ! -f .env ]; then
+  echo "No .env file was detected. .env.dist has been copied to .env"
+  echo "Open the .env file and enter values to match your local environment"
+  cp ./.env.dist ./.env
+  export $(cat .env | xargs)
+fi
+
+# This allows us to commit default settings to .env.dist, but lets users
+# override those values in their .gitignored .env file (i.e. ACF PRO License Key)
+if [ ! -f .env.testing ]; then
+  echo "No .env.testing file was detected. .env.testing.dist has been copied to .env.testing"
+  echo "Open the .env.testing file and enter values to match your local testing environment"
+  cp ./.env.testing.dist ./.env.testing
+  export $(cat .env | xargs)
+fi
+
+source .env
+
 ##
 # Use this script through Composer scripts in the package.json.
 # To quickly build and run the docker-compose scripts for an app or automated testing
@@ -27,12 +47,6 @@ PHP_VERSION=${PHP_VERSION-8.0}
 DOCKER_REGISTRY=${DOCKER_REGISTRY-ghcr.io/wp-graphql/}
 
 BUILD_NO_CACHE=${BUILD_NO_CACHE-}
-
-if [[ ! -f ".env" ]]; then
-  echo "No .env file was detected. .env.dist has been copied to .env"
-  echo "Open the .env file and enter values to match your local environment"
-  cp .env.dist .env
-fi
 
 subcommand=$1; shift
 case "$subcommand" in
