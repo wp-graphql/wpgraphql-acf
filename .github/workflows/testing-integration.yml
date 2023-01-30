@@ -20,6 +20,7 @@ jobs:
       matrix:
         php: [ '8.0', '7.4' ]
         wordpress: [ '6.1', '6.0', '5.9', '5.8', '5.7.2', '5.6' ]
+        acf_pro: [ true, false ]
         include:
           - php: '8.1'
             wordpress: '6.1'
@@ -74,6 +75,7 @@ jobs:
           USING_XDEBUG: ${{ matrix.coverage }}
           DEBUG: ${{ matrix.debug }}
           SKIP_TESTS_CLEANUP: ${{ matrix.coverage }}
+          ACF_PRO: ${{matrix.acf_pro }}
         run: composer run-test
 
       - name: Push Codecoverage to Coveralls.io

@@ -7,6 +7,8 @@
 PLUGINS_DIR=${PLUGINS_DIR-.}
 ACF_LICENSE_KEY=${ACF_LICENSE_KEY-.}
 ACF_VERSION=${ACF_VERSION-"latest"}
+ACF_SLUG="advanced-custom-fields/acf.php"
+ACF_PRO=${ACF_PRO-0}
 
 # If an ACF_VERSION is passed, use it, else the latest version will be downloaded
 ACF_DOWNLOAD_VERSION=""
@@ -19,6 +21,7 @@ fi
 echo "Plugins dir ($PLUGINS_DIR)"
 echo "ACF_VERSION ($ACF_VERSION)"
 echo "ACF_DOWNLOAD_VERSION ($ACF_DOWNLOAD_VERSION)"
+echo "ACF_PRO ($ACF_PRO)"
 
 if [ ! -f "${PLUGINS_DIR}/wp-graphql/wp-graphql.php" ]; then
     # WPGRAPHQL_VERSION in format like v1.2.3 or latest
@@ -28,7 +31,7 @@ if [ ! -f "${PLUGINS_DIR}/wp-graphql/wp-graphql.php" ]; then
         wp plugin install wp-graphql --activate --allow-root
     else
     	echo "Installing WPGraphQL from Github"
-        wp plugin install "https://downloads.wordpress.org/plugin/wp-graphql.${WPGRAPHQL_VERSION-1.4.3}.zip" --allow-root
+        wp plugin install "https://downloads.wordpress.org/plugin/wp-graphql.${WPGRAPHQL_VERSION-1.4.3}.zip" --allow-root --activate
     fi
 fi
 
@@ -37,7 +40,7 @@ wp plugin activate wp-graphql-acf-redux --allow-root
 
 # If a license key is provided
 # use ACF Pro for the tests
-if [[ -n ${ACF_LICENSE_KEY} && '.' == ${ACF_LICENSE_KEY} || 'Your License Key' == ${ACF_LICENSE_KEY} ]]; then
+if [[ true != ${ACF_PRO} || ( -n ${ACF_LICENSE_KEY} && '.' == ${ACF_LICENSE_KEY} || 'Your License Key' == ${ACF_LICENSE_KEY} ) ]]; then
 	echo "ACF version: ${ACF_VERSION}"
 	if [[ -z ${ACF_VERSION} || "${ACF_VERSION}" == "latest" ]]; then
 		echo "Installing ACF FREE (latest) from wordpress.org"
@@ -51,7 +54,10 @@ else
 		echo "Installing ACF Pro from AdvancedCustomFields.com"
 		## NOTE we can add &t=${ACF_VERSION}
 		wp plugin install "https://connect.advancedcustomfields.com/v2/plugins/download?p=pro&k=${ACF_LICENSE_KEY}${ACF_DOWNLOAD_VERSION}" --activate --allow-root
+		ACF_SLUG="advanced-custom-fields-pro/acf.php"
 	else
 		echo "Warning: Advanced Custom Fields Pro plugin already installed"
 	fi
 fi
+
+wp plugin list --allow-root

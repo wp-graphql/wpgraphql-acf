@@ -10,6 +10,8 @@ if [ ! -f .env ]; then
   cp .env.dist .env
 fi
 
+source .env
+
 # This allows us to commit default settings to .env.dist, but lets users
 # override those values in their .gitignored .env file (i.e. ACF PRO License Key)
 if [ ! -f .env.testing ]; then
@@ -41,6 +43,18 @@ TAG=${TAG-latest}
 WP_VERSION=${WP_VERSION-5.9}
 PHP_VERSION=${PHP_VERSION-8.0}
 DOCKER_REGISTRY=${DOCKER_REGISTRY-ghcr.io/wp-graphql/}
+ACF_PLUGIN_SLUG=${ACF_PLUGIN_SLUG-'advanced-custom-fields/acf.php'}
+ACF_PRO=${ACF_PRO-0}
+ACF_LICENSE_KEY=${ACF_LICENSE_KEY-.}
+
+if [[ false == ${ACF_PRO} || ( -n ${ACF_LICENSE_KEY} && '.' == ${ACF_LICENSE_KEY} || 'Your License Key' == ${ACF_LICENSE_KEY} ) ]]; then
+	ACF_PLUGIN_SLUG="advanced-custom-fields/acf.php"
+else
+	ACF_PLUGIN_SLUG="advanced-custom-fields-pro/acf.php"
+fi
+
+echo "ACF_PRO: ${ACF_PRO}"
+echo "ACF PLUGIN SLUG: ${ACF_PLUGIN_SLUG}"
 
 BUILD_NO_CACHE=${BUILD_NO_CACHE-}
 
@@ -60,6 +74,9 @@ case "$subcommand" in
                         --build-arg WP_VERSION=${WP_VERSION} \
                         --build-arg PHP_VERSION=${PHP_VERSION} \
                         --build-arg DOCKER_REGISTRY=${DOCKER_REGISTRY} \
+                        --build-arg ACF_PRO=${ACF_PRO} \
+                        --build-arg ACF_LICENSE_KEY=${ACF_LICENSE_KEY} \
+                        --build-arg ACF_PLUGIN_SLUG=${ACF_PLUGIN_SLUG} \
                         .
                     ;;
                 t )
@@ -71,6 +88,9 @@ case "$subcommand" in
                         --build-arg WP_VERSION=${WP_VERSION} \
                         --build-arg PHP_VERSION=${PHP_VERSION} \
                         --build-arg DOCKER_REGISTRY=${DOCKER_REGISTRY} \
+                        --build-arg ACF_PRO=${ACF_PRO} \
+						--build-arg ACF_LICENSE_KEY=${ACF_LICENSE_KEY} \
+						--build-arg ACF_PLUGIN_SLUG=${ACF_PLUGIN_SLUG} \
                         .
                     echo "Build testing"
                     docker build $BUILD_NO_CACHE -f docker/Dockerfile.testing \
@@ -78,6 +98,9 @@ case "$subcommand" in
                         --build-arg WP_VERSION=${WP_VERSION} \
                         --build-arg PHP_VERSION=${PHP_VERSION} \
                         --build-arg DOCKER_REGISTRY=${DOCKER_REGISTRY} \
+                        --build-arg ACF_PRO=${ACF_PRO} \
+						--build-arg ACF_LICENSE_KEY=${ACF_LICENSE_KEY} \
+						--build-arg ACF_PLUGIN_SLUG=${ACF_PLUGIN_SLUG} \
                         .
                     ;;
                 \? ) print_usage_instructions;;
@@ -99,7 +122,9 @@ case "$subcommand" in
                         -e DEBUG=${DEBUG-} \
                         -e WP_VERSION=${WP_VERSION} \
                         -e PHP_VERSION=${PHP_VERSION} \
-                        -e DOCKER_REGISTRY=${DOCKER_REGISTRY} \
+                        -e ACF_PLUGIN_SLUG=${ACF_PLUGIN_SLUG} \
+                        -e ACF_LICENSE_KEY=${ACF_LICENSE_KEY} \
+                        -e ACF_PRO=${ACF_PRO} \
                         testing --scale app=0
                     ;;
                 \? ) print_usage_instructions;;
