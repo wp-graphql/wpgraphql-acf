@@ -8,7 +8,6 @@ if [ ! -f .env.testing ]; then
   echo "No .env.testing file was detected. .env.testing.dist has been copied to .env.testing"
   echo "Open the .env.testing file and enter values to match your local testing environment"
   cp ./.env.testing.dist ./.env.testing
-  export $(cat .env.testing | xargs)
 fi
 
 source .env
