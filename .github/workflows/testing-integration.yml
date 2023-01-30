@@ -65,6 +65,7 @@ jobs:
         env:
           PHP_VERSION: ${{ matrix.php }}
           WP_VERSION: ${{ matrix.wordpress }}
+          ACF_PRO: ${{matrix.acf_pro }}
         run: composer build-test
 
       - name: Run Tests w/ Docker.
