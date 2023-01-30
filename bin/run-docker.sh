@@ -18,6 +18,8 @@ if [ ! -f .env.testing ]; then
   cp .env.testing.dist .env.testing
 fi
 
+source .env
+
 ##
 # Use this script through Composer scripts in the package.json.
 # To quickly build and run the docker-compose scripts for an app or automated testing
@@ -43,8 +45,6 @@ PHP_VERSION=${PHP_VERSION-8.0}
 DOCKER_REGISTRY=${DOCKER_REGISTRY-ghcr.io/wp-graphql/}
 
 BUILD_NO_CACHE=${BUILD_NO_CACHE-}
-
-
 
 subcommand=$1; shift
 case "$subcommand" in
