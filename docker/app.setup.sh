@@ -7,6 +7,7 @@
 PLUGINS_DIR=${PLUGINS_DIR-.}
 ACF_LICENSE_KEY=${ACF_LICENSE_KEY-.}
 ACF_VERSION=${ACF_VERSION-"latest"}
+DOCKER_REGISTRY=${DOCKER_REGISTRY-ghcr.io/wp-graphql/}
 
 # If an ACF_VERSION is passed, use it, else the latest version will be downloaded
 ACF_DOWNLOAD_VERSION=""
