@@ -37,28 +37,22 @@ wp plugin activate wp-graphql-acf-redux --allow-root
 # If a license key is provided
 # use ACF Pro for the tests
 if [[ -n ${ACF_LICENSE_KEY} && '.' == ${ACF_LICENSE_KEY} || 'Your License Key' == ${ACF_LICENSE_KEY} ]]; then
-
-		echo "ACF version: ${ACF_VERSION}"
-
-		if [[ -z ${ACF_VERSION} || "${ACF_VERSION}" == "latest" ]]; then
-			echo "Installing ACF FREE (latest) from wordpress.org"
-			wp plugin install advanced-custom-fields --allow-root --activate
-		else
-           	echo "Installing ACF FREE (v${ACF_VERSION}) from wordpress.org"
-			wp plugin install advanced-custom-fields --version=$ACF_VERSION --allow-root --activate
-		fi
-
+	echo "ACF version: ${ACF_VERSION}"
+	if [[ -z ${ACF_VERSION} || "${ACF_VERSION}" == "latest" ]]; then
+		echo "Installing ACF FREE (latest) from wordpress.org"
+		wp plugin install advanced-custom-fields --allow-root --activate
 	else
-
-		if [ ! -d ${PLUGINS_DIR}/advanced-custom-fields-pro ]; then
-			echo "Installing ACF Pro from AdvancedCustomFields.com"
-			## NOTE we can add &t=${ACF_VERSION}
-			wp plugin install "https://connect.advancedcustomfields.com/v2/plugins/download?p=pro&k=${ACF_LICENSE_KEY}${ACF_DOWNLOAD_VERSION}" --activate --allow-root
-
-		else
-			echo "Warning: Advanced Custom Fields Pro plugin already installed"
-		fi
-
+		echo "Installing ACF FREE (v${ACF_VERSION}) from wordpress.org"
+		wp plugin install advanced-custom-fields --version=$ACF_VERSION --allow-root --activate
+	fi
+else
+	if [ ! -d ${PLUGINS_DIR}/advanced-custom-fields-pro ]; then
+		echo "Installing ACF Pro from AdvancedCustomFields.com"
+		## NOTE we can add &t=${ACF_VERSION}
+		wp plugin install "https://connect.advancedcustomfields.com/v2/plugins/download?p=pro&k=${ACF_LICENSE_KEY}${ACF_DOWNLOAD_VERSION}" --activate --allow-root
+	else
+		echo "Warning: Advanced Custom Fields Pro plugin already installed"
+	fi
 fi
 
 
