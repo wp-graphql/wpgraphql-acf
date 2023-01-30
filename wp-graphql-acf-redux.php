@@ -7,6 +7,8 @@
  * Text Domain: wp-graphql-acf
  */
 
+// do not merge this change
+
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
