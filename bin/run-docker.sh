@@ -98,7 +98,6 @@ case "$subcommand" in
                         -e DEBUG=${DEBUG-} \
                         -e WP_VERSION=${WP_VERSION} \
                         -e PHP_VERSION=${PHP_VERSION} \
-                        -e DOCKER_REGISTRY=${DOCKER_REGISTRY} \
                         testing --scale app=0
                     ;;
                 \? ) print_usage_instructions;;
