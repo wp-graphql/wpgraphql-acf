@@ -92,7 +92,7 @@ case "$subcommand" in
                     ;;
                 t )
                     echo "(${WP_VERSION}) (${PHP_VERSION}) (${DOCKER_REGISTRY})"
-                    docker-compose run --rm \
+                    echo docker-compose run --rm \
                         -e COVERAGE=${COVERAGE-} \
                         -e USING_XDEBUG=${USING_XDEBUG-} \
                         -e DEBUG=${DEBUG-} \
