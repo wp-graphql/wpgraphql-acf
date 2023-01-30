@@ -10,8 +10,6 @@ if [ ! -f .env ]; then
   cp .env.dist .env
 fi
 
-source .env
-
 # This allows us to commit default settings to .env.dist, but lets users
 # override those values in their .gitignored .env file (i.e. ACF PRO License Key)
 if [ ! -f .env.testing ]; then
