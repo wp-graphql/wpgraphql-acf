@@ -3,6 +3,14 @@
 set -eu
 
 # This allows us to commit default settings to .env.dist, but lets users
+# override those values in their .gitignored .env file
+if [ ! -f .env ]; then
+  echo "No .env file was detected. .env.dist has been copied to .env"
+  echo "Open the .env file and enter values to match your local environment"
+  cp .env.dist .env
+fi
+
+# This allows us to commit default settings to .env.dist, but lets users
 # override those values in their .gitignored .env file (i.e. ACF PRO License Key)
 if [ ! -f .env.testing ]; then
   echo "No .env.testing file was detected. .env.testing.dist has been copied to .env.testing"
@@ -10,7 +18,7 @@ if [ ! -f .env.testing ]; then
   cp .env.testing.dist .env.testing
 fi
 
-source .env.testing
+source .env
 
 ##
 # Use this script through Composer scripts in the package.json.
@@ -38,13 +46,7 @@ DOCKER_REGISTRY=${DOCKER_REGISTRY-ghcr.io/wp-graphql/}
 
 BUILD_NO_CACHE=${BUILD_NO_CACHE-}
 
-# This allows us to commit default settings to .env.dist, but lets users
-# override those values in their .gitignored .env file
-if [ ! -f .env ]; then
-  echo "No .env file was detected. .env.dist has been copied to .env"
-  echo "Open the .env file and enter values to match your local environment"
-  cp .env.dist .env
-fi
+
 
 subcommand=$1; shift
 case "$subcommand" in
@@ -66,6 +68,7 @@ case "$subcommand" in
                     ;;
                 t )
                     echo "Build app"
+                    echo "WP: ${WP_VERSION} PHP: ${PHP_VERSION}"
                     docker build $BUILD_NO_CACHE -f docker/Dockerfile \
                         -t wp-graphql-acf:${TAG}-wp${WP_VERSION}-php${PHP_VERSION} \
                         --build-arg WP_VERSION=${WP_VERSION} \
