@@ -3,21 +3,12 @@
 set -eu
 
 # This allows us to commit default settings to .env.dist, but lets users
-# override those values in their .gitignored .env file
-if [ ! -f .env ]; then
-  echo "No .env file was detected. .env.dist has been copied to .env"
-  echo "Open the .env file and enter values to match your local environment"
-  cp ./.env.dist ./.env
-  export $(cat .env | xargs)
-fi
-
-# This allows us to commit default settings to .env.dist, but lets users
 # override those values in their .gitignored .env file (i.e. ACF PRO License Key)
 if [ ! -f .env.testing ]; then
   echo "No .env.testing file was detected. .env.testing.dist has been copied to .env.testing"
   echo "Open the .env.testing file and enter values to match your local testing environment"
   cp ./.env.testing.dist ./.env.testing
-  export $(cat .env | xargs)
+  export $(cat .env.testing | xargs)
 fi
 
 source .env
@@ -48,6 +39,12 @@ DOCKER_REGISTRY=${DOCKER_REGISTRY-ghcr.io/wp-graphql/}
 
 BUILD_NO_CACHE=${BUILD_NO_CACHE-}
 
+if [[ ! -f ".env" ]]; then
+  echo "No .env file was detected. .env.dist has been copied to .env"
+  echo "Open the .env file and enter values to match your local environment"
+  cp .env.dist .env
+fi
+
 subcommand=$1; shift
 case "$subcommand" in
     "build" )
@@ -60,7 +57,7 @@ case "$subcommand" in
                 a )
                     echo "Build app"
                     docker build $BUILD_NO_CACHE -f docker/Dockerfile \
-                        -t wp-graphql-acf-redux:${TAG}-wp${WP_VERSION}-php${PHP_VERSION} \
+                        -t wp-graphql-acf:${TAG}-wp${WP_VERSION}-php${PHP_VERSION} \
                         --build-arg WP_VERSION=${WP_VERSION} \
                         --build-arg PHP_VERSION=${PHP_VERSION} \
                         --build-arg DOCKER_REGISTRY=${DOCKER_REGISTRY} \
@@ -69,14 +66,14 @@ case "$subcommand" in
                 t )
                     echo "Build app"
                     docker build $BUILD_NO_CACHE -f docker/Dockerfile \
-                        -t wp-graphql-acf-redux:${TAG}-wp${WP_VERSION}-php${PHP_VERSION} \
+                        -t wp-graphql-acf:${TAG}-wp${WP_VERSION}-php${PHP_VERSION} \
                         --build-arg WP_VERSION=${WP_VERSION} \
                         --build-arg PHP_VERSION=${PHP_VERSION} \
                         --build-arg DOCKER_REGISTRY=${DOCKER_REGISTRY} \
                         .
                     echo "Build testing"
                     docker build $BUILD_NO_CACHE -f docker/Dockerfile.testing \
-                        -t wp-graphql-acf-redux-testing:${TAG}-wp${WP_VERSION}-php${PHP_VERSION} \
+                        -t wp-graphql-acf-testing:${TAG}-wp${WP_VERSION}-php${PHP_VERSION} \
                         --build-arg WP_VERSION=${WP_VERSION} \
                         --build-arg PHP_VERSION=${PHP_VERSION} \
                         --build-arg DOCKER_REGISTRY=${DOCKER_REGISTRY} \

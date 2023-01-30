@@ -9,7 +9,7 @@ ACF_LICENSE_KEY=${ACF_LICENSE_KEY-.}
 ACF_VERSION=${ACF_VERSION-"latest"}
 
 # If an ACF_VERSION is passed, use it, else the latest version will be downloaded
-ACF_DOWNLOAD_VERSION=''
+ACF_DOWNLOAD_VERSION=""
 
 if [[ -n ${ACF_VERSION} && "${ACF_VERSION}" != "latest" ]]; then
 	ACF_DOWNLOAD_VERSION="&t=${ACF_VERSION}"
