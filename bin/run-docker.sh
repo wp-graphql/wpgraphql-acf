@@ -7,8 +7,7 @@ set -eu
 if [ ! -f .env ]; then
   echo "No .env file was detected. .env.dist has been copied to .env"
   echo "Open the .env file and enter values to match your local environment"
-  cp ./.env.dist ./.env
-  export $(cat .env.dist | xargs)
+  cp .env.dist .env
 fi
 
 # This allows us to commit default settings to .env.dist, but lets users
@@ -18,6 +17,8 @@ if [ ! -f .env.testing ]; then
   echo "Open the .env.testing file and enter values to match your local testing environment"
   cp .env.testing.dist .env.testing
 fi
+
+source .env
 
 ##
 # Use this script through Composer scripts in the package.json.
@@ -43,9 +44,16 @@ WP_VERSION=${WP_VERSION-5.9}
 PHP_VERSION=${PHP_VERSION-8.0}
 DOCKER_REGISTRY=${DOCKER_REGISTRY-"ghcr.io/wp-graphql/"}
 BUILD_NO_CACHE=${BUILD_NO_CACHE-}
+ACF_LICENSE_KEY=${ACF_LICENSE_KEY-.}
+ACF_VERSION=${ACF_VERSION-"latest"}
+ACF_PRO=${ACF_PRO-false}
 
 echo "PHP VERSION ${PHP_VERSION}"
 echo "WP VERSION ${WP_VERSION}"
+echo "DOCKER_REGISTRY ${DOCKER_REGISTRY}"
+echo "BUILD_NO_CACHE ${BUILD_NO_CACHE}"
+echo "ACF PRO ${ACF_PRO}"
+echo "ACF_VERSION ${ACF_VERSION}"
 
 subcommand=$1; shift
 case "$subcommand" in
@@ -63,6 +71,9 @@ case "$subcommand" in
                         --build-arg WP_VERSION=${WP_VERSION} \
                         --build-arg PHP_VERSION=${PHP_VERSION} \
                         --build-arg DOCKER_REGISTRY=${DOCKER_REGISTRY} \
+                        --build-arg ACF_PRO=${ACF_PRO} \
+						--build-arg ACF_LICENSE_KEY=${ACF_LICENSE_KEY} \
+						--build-arg ACF_VERSION=${ACF_VERSION} \
                         .
                     ;;
                 t )
@@ -74,6 +85,9 @@ case "$subcommand" in
                         --build-arg WP_VERSION=${WP_VERSION} \
                         --build-arg PHP_VERSION=${PHP_VERSION} \
                         --build-arg DOCKER_REGISTRY=${DOCKER_REGISTRY} \
+                        --build-arg ACF_PRO=${ACF_PRO} \
+                        --build-arg ACF_LICENSE_KEY=${ACF_LICENSE_KEY} \
+                        --build-arg ACF_VERSION=${ACF_VERSION} \
                         .
                     echo "Build testing"
                     docker build $BUILD_NO_CACHE -f docker/Dockerfile.testing \
@@ -81,6 +95,9 @@ case "$subcommand" in
                         --build-arg WP_VERSION=${WP_VERSION} \
                         --build-arg PHP_VERSION=${PHP_VERSION} \
                         --build-arg DOCKER_REGISTRY=${DOCKER_REGISTRY} \
+                        --build-arg ACF_PRO=${ACF_PRO} \
+						--build-arg ACF_LICENSE_KEY=${ACF_LICENSE_KEY} \
+						--build-arg ACF_VERSION=${ACF_VERSION} \
                         .
                     ;;
                 \? ) print_usage_instructions;;
@@ -103,6 +120,9 @@ case "$subcommand" in
                         -e WP_VERSION=${WP_VERSION} \
                         -e PHP_VERSION=${PHP_VERSION} \
                         -e DOCKER_REGISTRY=${DOCKER_REGISTRY} \
+                        -e ACF_PRO=${ACF_PRO} \
+						-e ACF_LICENSE_KEY=${ACF_LICENSE_KEY} \
+						-e ACF_VERSION=${ACF_VERSION} \
                         testing --scale app=0
                     ;;
                 \? ) print_usage_instructions;;
