@@ -50,13 +50,13 @@ ACF_PRO=${ACF_PRO-false}
 ACF_LICENSE_KEY=${ACF_LICENSE_KEY-.}
 
 if [[ true != ${ACF_PRO} || '.' == ${ACF_LICENSE_KEY} || 'Your License Key' == ${ACF_LICENSE_KEY} ]]; then
-	echo "ACF FREE"
-	echo "ACF LICENSE KEY: ${ACF_LICENSE_KEY}"
-	echo "ACF PLUGIN SLUG: ${ACF_PLUGIN_SLUG}"
 	ACF_PLUGIN_SLUG="advanced-custom-fields/acf.php"
+	echo "ACF FREE"
+	echo "ACF PLUGIN SLUG: ${ACF_PLUGIN_SLUG}"
 else
-	echo "ACF PRO"
 	ACF_PLUGIN_SLUG="advanced-custom-fields-pro/acf.php"
+	echo "ACF PRO"
+	echo "ACF PLUGIN SLUG: ${ACF_PLUGIN_SLUG}"
 fi
 
 echo "ACF_PRO: ${ACF_PRO}"
