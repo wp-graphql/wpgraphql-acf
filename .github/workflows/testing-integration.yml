@@ -66,6 +66,7 @@ jobs:
           PHP_VERSION: ${{ matrix.php }}
           WP_VERSION: ${{ matrix.wordpress }}
           ACF_PRO: ${{matrix.acf_pro }}
+          ACF_LICENSE_KEY: ${{secrets.ACF_LICENSE_KEY}}
         run: composer build-test
 
       - name: Run Tests w/ Docker.
@@ -77,6 +78,7 @@ jobs:
           DEBUG: ${{ matrix.debug }}
           SKIP_TESTS_CLEANUP: ${{ matrix.coverage }}
           ACF_PRO: ${{matrix.acf_pro }}
+          ACF_LICENSE_KEY: ${{secrets.ACF_LICENSE_KEY}}
         run: composer run-test
 
       - name: Push Codecoverage to Coveralls.io
