@@ -8,6 +8,7 @@ if [ ! -f .env ]; then
   echo "No .env file was detected. .env.dist has been copied to .env"
   echo "Open the .env file and enter values to match your local environment"
   cp .env.dist .env
+  export $(cat .env | xargs)
 fi
 
 # This allows us to commit default settings to .env.dist, but lets users
@@ -16,7 +17,10 @@ if [ ! -f .env.testing ]; then
   echo "No .env.testing file was detected. .env.testing.dist has been copied to .env.testing"
   echo "Open the .env.testing file and enter values to match your local testing environment"
   cp .env.testing.dist .env.testing
+  export $(cat .env.testing | xargs)
 fi
+
+source .env
 
 ##
 # Use this script through Composer scripts in the package.json.
@@ -42,12 +46,16 @@ WP_VERSION=${WP_VERSION-5.9}
 PHP_VERSION=${PHP_VERSION-8.0}
 DOCKER_REGISTRY=${DOCKER_REGISTRY-ghcr.io/wp-graphql/}
 ACF_PLUGIN_SLUG=${ACF_PLUGIN_SLUG-'advanced-custom-fields/acf.php'}
-ACF_PRO=${ACF_PRO-0}
+ACF_PRO=${ACF_PRO-false}
 ACF_LICENSE_KEY=${ACF_LICENSE_KEY-.}
 
-if [[ false == ${ACF_PRO} || ( -n ${ACF_LICENSE_KEY} && '.' == ${ACF_LICENSE_KEY} || 'Your License Key' == ${ACF_LICENSE_KEY} ) ]]; then
+if [[ true != ${ACF_PRO} || '.' == ${ACF_LICENSE_KEY} || 'Your License Key' == ${ACF_LICENSE_KEY} ]]; then
+	echo "ACF FREE"
+	echo "ACF LICENSE KEY: ${ACF_LICENSE_KEY}"
+	echo "ACF PLUGIN SLUG: ${ACF_PLUGIN_SLUG}"
 	ACF_PLUGIN_SLUG="advanced-custom-fields/acf.php"
 else
+	echo "ACF PRO"
 	ACF_PLUGIN_SLUG="advanced-custom-fields-pro/acf.php"
 fi
 

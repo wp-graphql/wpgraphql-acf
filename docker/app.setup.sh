@@ -7,7 +7,6 @@
 PLUGINS_DIR=${PLUGINS_DIR-.}
 ACF_LICENSE_KEY=${ACF_LICENSE_KEY-.}
 ACF_VERSION=${ACF_VERSION-"latest"}
-ACF_SLUG="advanced-custom-fields/acf.php"
 ACF_PRO=${ACF_PRO-0}
 
 # If an ACF_VERSION is passed, use it, else the latest version will be downloaded
@@ -54,7 +53,6 @@ else
 		echo "Installing ACF Pro from AdvancedCustomFields.com"
 		## NOTE we can add &t=${ACF_VERSION}
 		wp plugin install "https://connect.advancedcustomfields.com/v2/plugins/download?p=pro&k=${ACF_LICENSE_KEY}${ACF_DOWNLOAD_VERSION}" --activate --allow-root
-		ACF_SLUG="advanced-custom-fields-pro/acf.php"
 	else
 		echo "Warning: Advanced Custom Fields Pro plugin already installed"
 	fi
