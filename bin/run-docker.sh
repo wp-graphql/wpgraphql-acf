@@ -43,8 +43,10 @@ TAG=${TAG-latest}
 WP_VERSION=${WP_VERSION-5.9}
 PHP_VERSION=${PHP_VERSION-8.0}
 DOCKER_REGISTRY=${DOCKER_REGISTRY-"ghcr.io/wp-graphql/"}
-
 BUILD_NO_CACHE=${BUILD_NO_CACHE-}
+
+echo "PHP VERSION ${PHP_VERSION}"
+echo "WP VERSION ${WP_VERSION}"
 
 subcommand=$1; shift
 case "$subcommand" in
