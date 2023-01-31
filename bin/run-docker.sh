@@ -20,8 +20,6 @@ if [ ! -f .env.testing ]; then
   export $(cat .env.testing | xargs)
 fi
 
-source .env
-
 ##
 # Use this script through Composer scripts in the package.json.
 # To quickly build and run the docker-compose scripts for an app or automated testing
