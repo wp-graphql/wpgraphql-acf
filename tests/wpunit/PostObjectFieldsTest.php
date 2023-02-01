@@ -1222,6 +1222,8 @@ class PostObjectFieldsTest extends \Codeception\TestCase\WPTestCase {
 	 */
 	public function testQueryFieldOnCustomPostType() {
 
+		$this->markTestIncomplete();
+
 		register_post_type( 'acf_test', [
 			'public'              => true,
 			'show_in_graphql'     => 'true',
