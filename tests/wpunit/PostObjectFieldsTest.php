@@ -1263,7 +1263,7 @@ class PostObjectFieldsTest extends \Codeception\TestCase\WPTestCase {
 
 		$query = '
 		{
-		  __type( name: "AcfTest_Acftestfields" ) {
+		  __type( name: "AcfTestFields" ) {
 		    name
 		    description
 		    fields {

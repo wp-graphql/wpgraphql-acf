@@ -12,6 +12,53 @@ use WPGraphQL\Model\User;
 class Utils {
 
 	/**
+	 * Determine the supported types that should be mapped to the WPGraphQL Schema
+	 *
+	 * @return array
+	 */
+	public static function get_supported_field_types(): array {
+
+		$supported_types = [
+			'text',
+			'textarea',
+			'number',
+			'range',
+			'email',
+			'url',
+			'password',
+			'image',
+			'file',
+			'wysiwyg',
+			'oembed',
+			'gallery',
+			'select',
+			'checkbox',
+			'radio',
+			'button_group',
+			'true_false',
+			'link',
+			'post_object',
+			'page_link',
+			'relationship',
+			'taxonomy',
+			'user',
+			'google_map',
+			'date_picker',
+			'date_time_picker',
+			'time_picker',
+			'color_picker',
+			'group',
+			'repeater',
+			'flexible_content',
+		];
+
+		$filtered_types = apply_filters( 'graphql_acf_supported_fields', $supported_types );
+
+		return is_array( $filtered_types ) ? $filtered_types : $supported_types;
+
+	}
+
+	/**
 	 * @param mixed $node
 	 *
 	 * @return int|mixed|string
