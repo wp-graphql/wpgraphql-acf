@@ -13,27 +13,27 @@ class FieldConfig {
 	/**
 	 * @var array
 	 */
-	protected array $acf_field;
+	protected $acf_field;
 
 	/**
 	 * @var array
 	 */
-	protected array $acf_field_group;
+	protected $acf_field_group;
 
 	/**
 	 * @var string|null
 	 */
-	protected string $graphql_field_group_type_name;
+	protected $graphql_field_group_type_name;
 
 	/**
 	 * @var string
 	 */
-	protected string $graphql_field_name;
+	protected $graphql_field_name;
 
 	/**
 	 * @var Registry
 	 */
-	protected Registry $registry;
+	protected $registry;
 
 	/**
 	 * @throws Error

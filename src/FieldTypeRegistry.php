@@ -7,7 +7,7 @@ class FieldTypeRegistry {
 	/**
 	 * @var array
 	 */
-	protected array $registered_field_types;
+	protected $registered_field_types;
 
 	/**
 	 * @return mixed|void
