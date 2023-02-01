@@ -18,8 +18,6 @@ if [ ! -f .env.testing ]; then
   cp .env.testing.dist .env.testing
 fi
 
-source .env
-
 ##
 # Use this script through Composer scripts in the package.json.
 # To quickly build and run the docker-compose scripts for an app or automated testing
