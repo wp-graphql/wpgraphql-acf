@@ -25,8 +25,13 @@ class Registry {
 	 */
 	protected TypeRegistry $type_registry;
 
-	public function __construct( TypeRegistry $type_registry ) {
-		$this->type_registry = $type_registry;
+	/**
+	 * @param TypeRegistry|null $type_registry
+	 *
+	 * @throws Exception
+	 */
+	public function __construct( TypeRegistry $type_registry = null ) {
+		$this->type_registry = $type_registry instanceof TypeRegistry ? $type_registry : \WPGraphQL::get_type_registry();
 	}
 
 	/**
