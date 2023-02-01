@@ -12,18 +12,18 @@ class Registry {
 	/**
 	 * @var array
 	 */
-	protected array $registered_fields = [];
+	protected $registered_fields = [];
 
 	/**
 	 * @todo should be protected with getter/setter?
 	 * @var array
 	 */
-	public array $registered_field_groups;
+	public $registered_field_groups;
 
 	/**
 	 * @var TypeRegistry The WPGraphQL TypeRegistry
 	 */
-	protected TypeRegistry $type_registry;
+	protected $type_registry;
 
 	/**
 	 * @param TypeRegistry|null $type_registry
