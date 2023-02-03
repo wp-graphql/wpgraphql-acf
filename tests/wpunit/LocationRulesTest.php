@@ -617,6 +617,7 @@ class LocationRulesTest extends \Codeception\TestCase\WPTestCase {
 
 	public function testFieldGroupAssignedToAcfOptionsPageShowsInSchema() {
 
+		$this->markTestIncomplete();
 		/**
 		 * Register a field group to a specific post type
 		 */

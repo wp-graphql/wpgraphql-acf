@@ -4,7 +4,11 @@
  * Description: Re-imagining the WPGraphQL for ACF plugin
  * Author: WPGraphQL
  * Author URI: https://www.wpgraphql.com
- * Text Domain: wp-graphql-acf
+ * Text Domain: wpgraphql-acf
+ * Requires PHP: 7.3
+ * Tested up to: 6.1
+ * License: GPL-3
+ * License URI: https://www.gnu.org/licenses/gpl-3.0.html
  */
 
 // Exit if accessed directly.
