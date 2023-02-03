@@ -50,5 +50,3 @@ if ( ! function_exists( 'graphql_acf_init' ) ) {
 	}
 }
 graphql_acf_init();
-
-// temp debug ci/cd
