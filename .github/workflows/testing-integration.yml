@@ -56,30 +56,29 @@ jobs:
       - name: Install dependencies
         run: composer install
 
-      - name: Build "testing" Docker Image
+      - name: Copy environemt files
+        run: |
+          cp .env.dist .env
+          cp .env.testing.dist .env.testing
+
+      - name: Build and run tests
         env:
           PHP_VERSION: ${{ matrix.php }}
           WP_VERSION: ${{ matrix.wordpress }}
         run: |
-          cp .env.dist .env
-          cp .env.testing.dist .env.testing
           docker-compose build \
             --build-arg WP_VERSION=${{ matrix.wordpress }} \
             --build-arg PHP_VERSION=${{ matrix.php }} \
             --build-arg DOCKER_REGISTRY=ghcr.io/wp-graphql/
-
-      - name: Run Tests w/ Docker.
-        run: |
-          cp .env.dist.testing .env.testing
           docker-compose run \
-            -e PHP_VERSION: ${{ matrix.php }} \
-            -e WP_VERSION: ${{ matrix.wordpress }} \
-            -e COVERAGE: ${{ matrix.coverage }} \
-            -e USING_XDEBUG: ${{ matrix.coverage }} \
-            -e DEBUG: ${{ matrix.debug }} \
-            -e SKIP_TESTS_CLEANUP: ${{ matrix.coverage }} \
-            -e ACF_PRO: ${{matrix.acf_pro }} \
-            -e ACF_LICENSE_KEY: ${{secrets.ACF_LICENSE_KEY}} \
+            -e PHP_VERSION=${{ matrix.php }} \
+            -e WP_VERSION=${{ matrix.wordpress }} \
+            -e COVERAGE=${{ matrix.coverage }} \
+            -e USING_XDEBUG=${{ matrix.coverage }} \
+            -e DEBUG=${{ matrix.debug }} \
+            -e SKIP_TESTS_CLEANUP=${{ matrix.coverage }} \
+            -e ACF_PRO=${{matrix.acf_pro }} \
+            -e ACF_LICENSE_KEY=${{secrets.ACF_LICENSE_KEY}} \
             testing
 
       - name: Push Codecoverage to Coveralls.io
