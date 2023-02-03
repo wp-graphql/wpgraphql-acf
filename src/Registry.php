@@ -31,7 +31,14 @@ class Registry {
 	 * @throws Exception
 	 */
 	public function __construct( TypeRegistry $type_registry = null ) {
-		$this->type_registry = $type_registry instanceof TypeRegistry ? $type_registry : \WPGraphQL::get_type_registry();
+
+		if ( $type_registry instanceof TypeRegistry ) {
+			$this->type_registry = $type_registry;
+		} else {
+			// @phpstan-ignore-next-line
+			$this->type_registry = \WPGraphQL::get_type_registry();
+		}
+
 	}
 
 	/**
@@ -117,9 +124,9 @@ class Registry {
 					'type'              => 'String',
 					'description'       => __( 'The name of the field group', 'wp-graphql-acf' ),
 					'deprecationReason' => __( 'Use __typename instead', 'wp-graphql-acf' ),
-					'resolve' => function( $root, $args, $context, $info ) {
+					'resolve'           => function ( $root, $args, $context, $info ) {
 						return isset( $info->fieldDefinition->config['acf_field_group'] ) ? $this->get_field_group_graphql_type_name( $info->fieldDefinition->config['acf_field_group'] ) : null;
-					}
+					},
 				],
 			],
 		] );
@@ -136,99 +143,99 @@ class Registry {
 
 		register_graphql_object_type( 'AcfGoogleMap', [
 			'description' => __( 'A group of fields representing a Google Map', 'wp-graphql-acf' ),
-			'fields' => [
+			'fields'      => [
 				'streetAddress' => [
 					'type'        => 'String',
 					'description' => __( 'The street address associated with the map', 'wp-graphql-acf' ),
-					'resolve'     => function( $root ) {
+					'resolve'     => function ( $root ) {
 						return $root['address'] ?? null;
 					},
 				],
 				'latitude'      => [
 					'type'        => 'Float',
 					'description' => __( 'The latitude associated with the map', 'wp-graphql-acf' ),
-					'resolve'     => function( $root ) {
+					'resolve'     => function ( $root ) {
 						return $root['lat'] ?? null;
 					},
 				],
 				'longitude'     => [
 					'type'        => 'Float',
 					'description' => __( 'The longitude associated with the map', 'wp-graphql-acf' ),
-					'resolve'     => function( $root ) {
+					'resolve'     => function ( $root ) {
 						return $root['lng'] ?? null;
 					},
 				],
-				'streetName' => [
+				'streetName'    => [
 					'type'        => 'String',
 					'description' => __( 'The street name associated with the map', 'wp-graphql-acf' ),
-					'resolve'     => function( $root ) {
+					'resolve'     => function ( $root ) {
 						return $root['street_name'] ?? null;
 					},
 				],
-				'streetNumber' => [
+				'streetNumber'  => [
 					'type'        => 'String',
 					'description' => __( 'The street number associated with the map', 'wp-graphql-acf' ),
-					'resolve'     => function( $root ) {
+					'resolve'     => function ( $root ) {
 						return $root['street_number'] ?? null;
 					},
 				],
-				'city' => [
+				'city'          => [
 					'type'        => 'String',
 					'description' => __( 'The city associated with the map', 'wp-graphql-acf' ),
-					'resolve'     => function( $root ) {
+					'resolve'     => function ( $root ) {
 						return $root['city'] ?? null;
 					},
 				],
-				'state' => [
+				'state'         => [
 					'type'        => 'String',
 					'description' => __( 'The state associated with the map', 'wp-graphql-acf' ),
-					'resolve'     => function( $root ) {
+					'resolve'     => function ( $root ) {
 						return $root['state'] ?? null;
 					},
 				],
-				'stateShort' => [
+				'stateShort'    => [
 					'type'        => 'String',
 					'description' => __( 'The state abbreviation associated with the map', 'wp-graphql-acf' ),
-					'resolve'     => function( $root ) {
+					'resolve'     => function ( $root ) {
 						return $root['state_short'] ?? null;
 					},
 				],
-				'postCode' => [
+				'postCode'      => [
 					'type'        => 'String',
 					'description' => __( 'The post code associated with the map', 'wp-graphql-acf' ),
-					'resolve'     => function( $root ) {
+					'resolve'     => function ( $root ) {
 						return $root['post_code'] ?? null;
 					},
 				],
-				'country' => [
+				'country'       => [
 					'type'        => 'String',
 					'description' => __( 'The country associated with the map', 'wp-graphql-acf' ),
-					'resolve'     => function( $root ) {
+					'resolve'     => function ( $root ) {
 						return $root['country'] ?? null;
 					},
 				],
-				'countryShort' => [
+				'countryShort'  => [
 					'type'        => 'String',
 					'description' => __( 'The country abbreviation associated with the map', 'wp-graphql-acf' ),
-					'resolve'     => function( $root ) {
+					'resolve'     => function ( $root ) {
 						return $root['country_short'] ?? null;
 					},
 				],
-				'placeId' => [
+				'placeId'       => [
 					'type'        => 'String',
 					'description' => __( 'The country associated with the map', 'wp-graphql-acf' ),
-					'resolve'     => function( $root ) {
+					'resolve'     => function ( $root ) {
 						return $root['place_id'] ?? null;
 					},
 				],
-				'zoom' => [
+				'zoom'          => [
 					'type'        => 'String',
 					'description' => __( 'The zoom defined with the map', 'wp-graphql-acf' ),
-					'resolve'     => function( $root ) {
+					'resolve'     => function ( $root ) {
 						return $root['zoom'] ?? null;
 					},
 				],
-			]
+			],
 		] );
 
 		register_graphql_object_type( 'AcfLink', [
@@ -315,16 +322,6 @@ class Registry {
 
 		foreach ( $fields as $acf_field ) {
 
-//			// if the field is explicitly set to not show in graphql, leave it out of the schema
-//			if ( isset( $acf_field['show_in_graphql'] ) && false === $acf_field['show_in_graphql'] ) {
-//				continue;
-//			}
-//
-//			// if the field is not a supported type, don't add it to the schema
-//			if ( ! $this->is_supported_field_type( $acf_field ) ) {
-//				continue;
-//			}
-//
 			$graphql_field_name = $this->get_graphql_field_name( $acf_field );
 
 			if ( isset( $acf_field['_clone'] ) ) {
@@ -417,7 +414,7 @@ class Registry {
 	 * @return string|null
 	 */
 	public function get_field_group_graphql_type_name( array $field_group ): ?string {
-		$name     = $this->get_field_group_name( $field_group );
+		$name = $this->get_field_group_name( $field_group );
 
 		if ( empty( $name ) ) {
 			graphql_debug( sprintf( __( 'The graphql field name "%s" is not a valid name and cannot be added to the GraphQL Schema', 'wp-graphql-acf' ), $name ), [

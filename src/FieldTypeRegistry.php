@@ -27,8 +27,8 @@ class FieldTypeRegistry {
 		if ( isset( $this->registered_field_types[ $acf_field_type ] ) ) {
 
 			graphql_debug( __( 'The "%s" is already registered and cannot be registered multiple times', 'wp-graphql-acf' ), [
-				'acf_field_type' => $acf_field_type,
-				'acf_field_config' => $config
+				'acf_field_type'   => $acf_field_type,
+				'acf_field_config' => $config,
 			] );
 
 			return $this->registered_field_types[ $acf_field_type ];

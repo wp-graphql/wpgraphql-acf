@@ -40,11 +40,11 @@ class FieldConfig {
 	 */
 	public function __construct( array $acf_field, array $acf_field_group, Registry $registry ) {
 
-		$this->acf_field = $acf_field;
-		$this->acf_field_group = $acf_field_group;
-		$this->registry = $registry;
+		$this->acf_field                     = $acf_field;
+		$this->acf_field_group               = $acf_field_group;
+		$this->registry                      = $registry;
 		$this->graphql_field_group_type_name = $this->registry->get_field_group_graphql_type_name( $this->acf_field_group );
-		$this->graphql_field_name = $this->registry->get_graphql_field_name( $this->acf_field );
+		$this->graphql_field_name            = $this->registry->get_graphql_field_name( $this->acf_field );
 
 	}
 
@@ -76,13 +76,13 @@ class FieldConfig {
 			return null;
 		}
 
-		if ( empty( $field_name = $this->registry->get_graphql_field_name( $this->acf_field ) ) ) {
+		if ( empty( $this->graphql_field_group_type_name ) || empty( $this->graphql_field_name ) ) {
 			return null;
 		}
 
 		$field_config = [
 			'type'            => 'String',
-			'name'            => $field_name,
+			'name'            => $this->graphql_field_name,
 			'description'     => sprintf( __( 'Field added by WPGraphQL for ACF Redux %s', 'wp-graphql-acf' ), $this->registry->get_field_group_graphql_type_name( $this->acf_field_group ) ),
 			'acf_field'       => $this->acf_field,
 			'acf_field_group' => $this->acf_field_group,
@@ -111,10 +111,10 @@ class FieldConfig {
 					break;
 				case 'checkbox':
 				case 'select':
-					$field_config['type'] = [ 'list_of' => 'String' ];
-					$field_config['resolve'] = function( $node, array $args, AppContext $context, ResolveInfo $info ) {
+					$field_config['type']    = [ 'list_of' => 'String' ];
+					$field_config['resolve'] = function ( $node, array $args, AppContext $context, ResolveInfo $info ) {
 						$value = $this->resolve_field( $node, $args, $context, $info );
-						if ( empty( $value ) && ! is_array( $value ) )  {
+						if ( empty( $value ) && ! is_array( $value ) ) {
 							return null;
 						}
 
@@ -125,19 +125,19 @@ class FieldConfig {
 				case 'image':
 					$field_config = null;
 
-					$type_name = $this->graphql_field_group_type_name;
-					$to_type = 'MediaItem';
+					$type_name       = $this->graphql_field_group_type_name;
+					$to_type         = 'MediaItem';
 					$connection_name = $this->get_connection_name( $type_name, $to_type, $this->graphql_field_name );
 
 					register_graphql_connection( [
-						'acf_field'       => $this->acf_field,
-						'acf_field_group' => $this->acf_field_group,
-						'fromType' => $type_name,
-						'toType' => $to_type,
-						'fromFieldName' => $this->graphql_field_name,
+						'acf_field'          => $this->acf_field,
+						'acf_field_group'    => $this->acf_field_group,
+						'fromType'           => $type_name,
+						'toType'             => $to_type,
+						'fromFieldName'      => $this->graphql_field_name,
 						'connectionTypeName' => $connection_name,
-						'oneToOne' => true,
-						'resolve' => function( $root, $args, AppContext $context, $info ) {
+						'oneToOne'           => true,
+						'resolve'            => function ( $root, $args, AppContext $context, $info ) {
 
 							$value = $this->resolve_field( $root, $args, $context, $info );
 
@@ -150,26 +150,26 @@ class FieldConfig {
 								->one_to_one()
 								->set_query_arg( 'p', absint( $value ) )
 								->get_connection();
-						}
+						},
 					]);
 
 					break;
 				case 'gallery':
 					$field_config = null;
 
-					$type_name = $this->graphql_field_group_type_name;
-					$to_type = 'MediaItem';
+					$type_name       = $this->graphql_field_group_type_name;
+					$to_type         = 'MediaItem';
 					$connection_name = $this->get_connection_name( $type_name, $to_type, $this->graphql_field_name );
 
 					register_graphql_connection( [
-						'acf_field'       => $this->acf_field,
-						'acf_field_group' => $this->acf_field_group,
-						'fromType' => $type_name,
-						'toType' => $to_type,
-						'fromFieldName' => $this->graphql_field_name,
+						'acf_field'          => $this->acf_field,
+						'acf_field_group'    => $this->acf_field_group,
+						'fromType'           => $type_name,
+						'toType'             => $to_type,
+						'fromFieldName'      => $this->graphql_field_name,
 						'connectionTypeName' => $connection_name,
-						'oneToOne' => false,
-						'resolve' => function( $root, $args, AppContext $context, $info ) {
+						'oneToOne'           => false,
+						'resolve'            => function ( $root, $args, AppContext $context, $info ) {
 
 							$value = $this->resolve_field( $root, $args, $context, $info );
 
@@ -177,7 +177,7 @@ class FieldConfig {
 								return null;
 							}
 
-							$value = array_map( static function( $id ) {
+							$value = array_map( static function ( $id ) {
 								return absint( $id );
 							}, $value );
 
@@ -186,13 +186,13 @@ class FieldConfig {
 								->set_query_arg( 'post__in', $value )
 								->set_query_arg( 'orderby', 'post__in' )
 								->get_connection();
-						}
+						},
 					]);
 
 					break;
 				case 'group':
-					$parent_type     = $this->registry->get_field_group_graphql_type_name( $this->acf_field_group );
-					$field_name      = $this->registry->get_graphql_field_name( $this->acf_field );
+					$parent_type     = $this->graphql_field_group_type_name;
+					$field_name      = $this->graphql_field_name;
 					$sub_field_group = $this->acf_field;
 					$type_name       = \WPGraphQL\Utils\Utils::format_field_name( $parent_type . ' ' . $field_name );
 
@@ -206,8 +206,8 @@ class FieldConfig {
 					break;
 
 				case 'flexible_content':
-					$parent_type             = $this->registry->get_field_group_graphql_type_name( $this->acf_field_group );
-					$field_name              = $this->registry->get_graphql_field_name( $this->acf_field );
+					$parent_type             = $this->graphql_field_group_type_name;
+					$field_name              = $this->graphql_field_name;
 					$layout_interface_prefix = \WPGraphQL\Utils\Utils::format_type_name( $parent_type . ' ' . $field_name );
 					$layout_interface_name   = $layout_interface_prefix . '_Layout';
 
@@ -266,28 +266,27 @@ class FieldConfig {
 
 				case 'post_object':
 				case 'page_link':
-
 					$field_config = null;
 
-					$type_name = $this->graphql_field_group_type_name;
-					$to_type = 'ContentNode';
+					$type_name       = $this->graphql_field_group_type_name;
+					$to_type         = 'ContentNode';
 					$connection_name = $this->get_connection_name( $type_name, $to_type, $this->graphql_field_name );
 
 					$connection_config = [
-						'acf_field'       => $this->acf_field,
-						'acf_field_group' => $this->acf_field_group,
-						'fromType' => $type_name,
-						'toType' => $to_type,
+						'acf_field'          => $this->acf_field,
+						'acf_field_group'    => $this->acf_field_group,
+						'fromType'           => $type_name,
+						'toType'             => $to_type,
 						'connectionTypeName' => $connection_name,
-						'fromFieldName' => $this->graphql_field_name,
-						'resolve' => function( $root, $args, AppContext $context, $info ) {
+						'fromFieldName'      => $this->graphql_field_name,
+						'resolve'            => function ( $root, $args, AppContext $context, $info ) {
 							$value = $this->resolve_field( $root, $args, $context, $info );
 
 							if ( empty( $value ) || ! is_array( $value ) ) {
 								return null;
 							}
 
-							$value = array_map(static function( $id ) {
+							$value = array_map(static function ( $id ) {
 								return absint( $id );
 							}, $value );
 
@@ -300,16 +299,16 @@ class FieldConfig {
 								->set_query_arg( 'post__in', $value )
 								->set_query_arg( 'orderby', 'post__in' )
 								->get_connection();
-						}
+						},
 					];
 
 					if ( ! isset( $this->acf_field['multiple'] ) || true !== (bool) $this->acf_field['multiple'] ) {
-						$connection_name =  \WPGraphQL\Utils\Utils::format_type_name( $type_name ) . \WPGraphQL\Utils\Utils::format_type_name( $this->graphql_field_name ) . 'ToSingleContentNodeConnection';
+						$connection_name = \WPGraphQL\Utils\Utils::format_type_name( $type_name ) . \WPGraphQL\Utils\Utils::format_type_name( $this->graphql_field_name ) . 'ToSingleContentNodeConnection';
 
 
 						$connection_config['connectionTypeName'] = $connection_name;
-						$connection_config['oneToOne'] = true;
-						$connection_config['resolve'] = function( $root, $args, AppContext $context, $info ) {
+						$connection_config['oneToOne']           = true;
+						$connection_config['resolve']            = function ( $root, $args, AppContext $context, $info ) {
 							$value = $this->resolve_field( $root, $args, $context, $info );
 
 							if ( empty( $value ) || ! absint( $value ) ) {
@@ -328,29 +327,28 @@ class FieldConfig {
 
 					break;
 				case 'relationship':
-
 					$field_config = null;
 
-					$type_name = $this->graphql_field_group_type_name;
-					$to_type = 'ContentNode';
+					$type_name       = $this->graphql_field_group_type_name;
+					$to_type         = 'ContentNode';
 					$connection_name = $this->get_connection_name( $type_name, $to_type, $this->graphql_field_name );
 
 
 					register_graphql_connection([
-						'acf_field'       => $this->acf_field,
-						'acf_field_group' => $this->acf_field_group,
-						'fromType' => $type_name,
-						'toType' => $to_type,
+						'acf_field'          => $this->acf_field,
+						'acf_field_group'    => $this->acf_field_group,
+						'fromType'           => $type_name,
+						'toType'             => $to_type,
 						'connectionTypeName' => $connection_name,
-						'fromFieldName' => $this->graphql_field_name,
-						'resolve' => function( $root, $args, AppContext $context, $info ) {
+						'fromFieldName'      => $this->graphql_field_name,
+						'resolve'            => function ( $root, $args, AppContext $context, $info ) {
 							$value = $this->resolve_field( $root, $args, $context, $info );
 
 							if ( empty( $value ) || ! is_array( $value ) ) {
 								return null;
 							}
 
-							$value = array_map(static function( $id ) {
+							$value = array_map(static function ( $id ) {
 								return absint( $id );
 							}, $value );
 
@@ -363,13 +361,13 @@ class FieldConfig {
 								->set_query_arg( 'post__in', $value )
 								->set_query_arg( 'orderby', 'post__in' )
 								->get_connection();
-						}
+						},
 					]);
 
 					break;
 				case 'repeater':
-					$parent_type     = $this->registry->get_field_group_graphql_type_name( $this->acf_field_group );
-					$field_name      = $this->registry->get_graphql_field_name( $this->acf_field );
+					$parent_type     = $this->graphql_field_group_type_name;
+					$field_name      = $this->graphql_field_name;
 					$sub_field_group = $this->acf_field;
 					$type_name       = \WPGraphQL\Utils\Utils::format_type_name( $parent_type . ' ' . $field_name );
 
@@ -514,10 +512,10 @@ class FieldConfig {
 		}
 
 		if ( ! empty( $acf_field_config['type'] ) && in_array( $acf_field_config['type'], [
-				'date_picker',
-				'time_picker',
-				'date_time_picker',
-			], true ) ) {
+			'date_picker',
+			'time_picker',
+			'date_time_picker',
+		], true ) ) {
 
 			if ( ! empty( $value ) && ! empty( $acf_field_config['return_format'] ) ) {
 				$value = date( $acf_field_config['return_format'], strtotime( $value ) );
@@ -539,9 +537,9 @@ class FieldConfig {
 	 *
 	 * @return string
 	 */
-	public function get_connection_name( string $from_type, string $to_type, string $from_field_name  ) {
+	public function get_connection_name( string $from_type, string $to_type, string $from_field_name ) {
 		// Create connection name using $from_type + To + $to_type + Connection.
-		return  \WPGraphQL\Utils\Utils::format_type_name( ucfirst( $from_type ) . ucfirst( $from_field_name ) . 'To' . ucfirst( $to_type ) . 'Connection' );
+		return \WPGraphQL\Utils\Utils::format_type_name( ucfirst( $from_type ) . ucfirst( $from_field_name ) . 'To' . ucfirst( $to_type ) . 'Connection' );
 	}
 
 }
