@@ -61,6 +61,8 @@ jobs:
           PHP_VERSION: ${{ matrix.php }}
           WP_VERSION: ${{ matrix.wordpress }}
         run: |
+          cp .env.dist .env
+          cp .env.testing.dist .env.testing
           docker-compose build \
             --build-arg WP_VERSION=${{ matrix.wordpress }} \
             --build-arg PHP_VERSION=${{ matrix.php }} \
@@ -68,6 +70,7 @@ jobs:
 
       - name: Run Tests w/ Docker.
         run: |
+          cp .env.dist.testing .env.testing
           docker-compose run \
             -e PHP_VERSION: ${{ matrix.php }} \
             -e WP_VERSION: ${{ matrix.wordpress }} \
