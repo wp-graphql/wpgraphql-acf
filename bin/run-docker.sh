@@ -37,6 +37,9 @@ if [ -z "$1" ]; then
     print_usage_instructions
 fi
 
+set -a
+source .env
+
 TAG=${TAG-latest}
 WP_VERSION=${WP_VERSION-5.9}
 PHP_VERSION=${PHP_VERSION-8.0}
