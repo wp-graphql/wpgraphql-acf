@@ -35,7 +35,9 @@ body:
     attributes:
       label: PHP or JSON export of the ACF Field Group(s)
       description: >-
-        Paste or attach the PHP or Json export of the ACF Field Group(s) related to the problem. Attach as Github supported file type, ie .txt.
+        Paste or attach the PHP or JSON export of the ACF Field Group(s) related to the problem. 
+        
+        Attach as Github supported file type, ie .txt or .zip
   - type: textarea
     attributes:
       label: Additional context
