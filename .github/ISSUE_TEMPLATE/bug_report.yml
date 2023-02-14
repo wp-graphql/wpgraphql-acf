@@ -33,6 +33,11 @@ body:
       required: true
   - type: textarea
     attributes:
+      label: PHP or JSON export of the ACF Field Group(s)
+      description: >-
+        Paste or attach the PHP or Json export of the ACF Field Group(s) related to the problem. Attach as Github supported file type, ie .txt.
+  - type: textarea
+    attributes:
       label: Additional context
       description: >-
         Add any other context about the problem here, such as screenshots, error logs, etc.
