@@ -70,7 +70,7 @@ class TextFieldTest extends \Tests\WPGraphQLAcf\TestCase\AcfFieldTestCase {
 		query getPostById( $id: ID! ) {
 			post( id:$id idType:DATABASE_ID) {
 				id
-				postFields {
+				acfTestGroup {
 					__typename
 					fieldGroupName
 					textField
@@ -89,7 +89,7 @@ class TextFieldTest extends \Tests\WPGraphQLAcf\TestCase\AcfFieldTestCase {
 		codecept_debug( $actual );
 
 		self::assertQuerySuccessful( $actual, [
-			$this->expectedField( 'post.postFields.textField', $expected_text_1 ),
+			$this->expectedField( 'post.acfTestGroup.textField', $expected_text_1 ),
 		]);
 
 		$query = '
@@ -105,7 +105,7 @@ class TextFieldTest extends \Tests\WPGraphQLAcf\TestCase\AcfFieldTestCase {
 		$actual = $this->graphql( [
 			'query' => $query,
 			'variables' => [
-				'name' => 'PostFields',
+				'name' => 'AcfTestGroup',
 			]
 		]);
 
@@ -116,6 +116,9 @@ class TextFieldTest extends \Tests\WPGraphQLAcf\TestCase\AcfFieldTestCase {
 			// the instructions should be used for the description
 			$this->expectedNode( '__type.fields', [ 'name' => 'textField' ] )
 		] );
+
+		// cleanup the data
+		delete_field( $this->get_field_name(), $this->post_id );
 
 		// remove the local field
 		acf_remove_local_field( $field_key );
@@ -149,7 +152,7 @@ class TextFieldTest extends \Tests\WPGraphQLAcf\TestCase\AcfFieldTestCase {
 		$actual = $this->graphql( [
 			'query' => $query,
 			'variables' => [
-				'name' => 'PostFields',
+				'name' => 'AcfTestGroup',
 			]
 		]);
 
@@ -179,7 +182,7 @@ class TextFieldTest extends \Tests\WPGraphQLAcf\TestCase\AcfFieldTestCase {
 		query GetPost($id:ID!){
 		  post( id: $id idType: DATABASE_ID ) {
 		    databaseId
-		    postFields {
+		    acfTestGroup {
 		      textField
 		    }
 		  }
@@ -196,7 +199,7 @@ class TextFieldTest extends \Tests\WPGraphQLAcf\TestCase\AcfFieldTestCase {
 
 		self::assertQuerySuccessful( $actual, [
 			$this->expectedField( 'post.databaseId', $this->post_id ),
-			$this->expectedField( 'post.postFields.textField', $default_value ),
+			$this->expectedField( 'post.acfTestGroup.textField', $default_value ),
 		]);
 
 		acf_remove_local_field( $field_key );

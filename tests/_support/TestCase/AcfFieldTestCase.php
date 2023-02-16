@@ -77,7 +77,7 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 		// merge the defaults with the passed in options
 		$config = array_merge( [
 			'key'                   => $this->acf_field_group_key,
-			'title'                 => 'Post Object Fields',
+			'title'                 => 'ACF Test Group',
 			'fields'                => [],
 			'location'              => [
 				[
@@ -97,7 +97,7 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 			'active'                => true,
 			'description'           => '',
 			'show_in_graphql'       => 1,
-			'graphql_field_name'    => 'postFields',
+			'graphql_field_name'    => 'acfTestGroup',
 			'graphql_types'		    => ['Post']
 		], $acf_field_group );
 
@@ -171,7 +171,7 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 		$actual = $this->graphql( [
 			'query' => $query,
 			'variables' => [
-				'name' => 'PostFields',
+				'name' => 'AcfTestGroup',
 			]
 		]);
 
@@ -185,8 +185,6 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 				'description' => $instructions
 			]),
 		] );
-
-
 
 		// remove the local field
 		acf_remove_local_field( $field_key );

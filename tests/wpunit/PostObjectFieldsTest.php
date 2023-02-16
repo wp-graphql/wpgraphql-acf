@@ -14,7 +14,7 @@ class PostObjectFieldsTest extends \Codeception\TestCase\WPTestCase {
 		WPGraphQL::clear_schema();
 		$this->register_acf_field_group();
 
-		$this->post_id = $this->factory()->post->create([
+		$this->post_id = self::factory()->post->create([
 			'post_type' => 'post',
 			'post_status' => 'publish',
 			'post_title' => 'Test',
@@ -42,7 +42,7 @@ class PostObjectFieldsTest extends \Codeception\TestCase\WPTestCase {
 
 		$defaults = [
 			'key'                   => $this->group_key,
-			'title'                 => 'Post Object Fields',
+			'title'                 => 'Test Post Object Fields',
 			'fields'                => [],
 			'location'              => [
 				[
@@ -74,7 +74,7 @@ class PostObjectFieldsTest extends \Codeception\TestCase\WPTestCase {
 
 		$defaults = [
 			'parent'            => $this->group_key,
-			'key'               => 'field_5d7812fd000a4',
+			'key'               => uniqid( 'acf_field', true ),
 			'label'             => 'Text',
 			'name'              => 'text',
 			'type'              => 'text',
@@ -106,45 +106,45 @@ class PostObjectFieldsTest extends \Codeception\TestCase\WPTestCase {
 		$this->assertArrayNotHasKey( 'errors', $actual );
 	}
 
-//	/**
-//	 * @throws Exception
-//	 */
-//	public function testAcfTextField() {
-//
-//		$this->register_acf_field([
-//			'name'              => 'text_field',
-//			'type'              => 'text',
-//		]);
-//
-//		$expected_text_1 = 'Some Text';
-//
-//		update_field( 'text_field', $expected_text_1, $this->post_id );
-//
-//		$query = '
-//		query getPostById( $postId: Int ) {
-//			postBy( postId: $postId ) {
-//				id
-//				postFields {
-//					fieldGroupName
-//					textField
-//				}
-//			}
-//		}
-//		';
-//
-//		$actual = graphql([
-//			'query' => $query,
-//			'variables' => [
-//				'postId' => $this->post_id,
-//			],
-//		]);
-//
-//		codecept_debug( $actual );
-//
-//		$this->assertArrayNotHasKey( 'errors', $actual );
-//		$this->assertSame( $expected_text_1, $actual['data']['postBy']['postFields']['textField'] );
-//
-//	}
+	/**
+	 * @throws Exception
+	 */
+	public function testAcfTextField() {
+
+		$this->register_acf_field([
+			'name'              => 'text_field',
+			'type'              => 'text',
+		]);
+
+		$expected_text_1 = 'Some Text';
+
+		update_field( 'text_field', $expected_text_1, $this->post_id );
+
+		$query = '
+		query getPostById( $postId: Int ) {
+			postBy( postId: $postId ) {
+				id
+				postFields {
+					fieldGroupName
+					textField
+				}
+			}
+		}
+		';
+
+		$actual = graphql([
+			'query' => $query,
+			'variables' => [
+				'postId' => $this->post_id,
+			],
+		]);
+
+		codecept_debug( $actual );
+
+		$this->assertArrayNotHasKey( 'errors', $actual );
+		$this->assertSame( $expected_text_1, $actual['data']['postBy']['postFields']['textField'] );
+
+	}
 
 	/**
 	 * @throws Exception
@@ -195,11 +195,11 @@ class PostObjectFieldsTest extends \Codeception\TestCase\WPTestCase {
 
 		$this->register_acf_field([
 			'type' => 'number',
-			'name' => 'number_field'
+			'name' => 'test_number_field'
 		]);
 
 		$expected = absint(55 );
-		update_field( 'number_field', $expected, $this->post_id );
+		update_field( 'test_number_field', $expected, $this->post_id );
 
 		$query = '
 		query GET_POST_WITH_ACF_FIELD( $postId: Int! ) {
@@ -207,7 +207,7 @@ class PostObjectFieldsTest extends \Codeception\TestCase\WPTestCase {
 		    id
 		    title
 		    postFields {
-		      numberField
+		      testNumberField
 		    }
 		  }
 		}';
@@ -222,7 +222,7 @@ class PostObjectFieldsTest extends \Codeception\TestCase\WPTestCase {
 		codecept_debug( $actual );
 
 		$this->assertArrayNotHasKey( 'errors', $actual );
-		$this->assertSame( (float) $expected, $actual['data']['postBy']['postFields']['numberField'] );
+		$this->assertSame( (float) $expected, $actual['data']['postBy']['postFields']['testNumberField'] );
 
 	}
 
