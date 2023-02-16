@@ -615,102 +615,102 @@ class LocationRulesTest extends \Codeception\TestCase\WPTestCase {
 
 	}
 
-	public function testFieldGroupAssignedToAcfOptionsPageShowsInSchema() {
-
-		$this->markTestIncomplete();
-		/**
-		 * Register a field group to a specific post type
-		 */
-		$this->register_acf_field_group([
-			'key' => 'settingsFieldsTest',
-			'location'              => [
-				[
-					[
-						'param'    => 'options_page',
-						'operator' => '==',
-						'value'    => 'theme-general-settings',
-					],
-				],
-				[
-					[
-						'param'    => 'options_page',
-						'operator' => '==',
-						'value'    => 'theme-footer-settings',
-					],
-				],
-			],
-			'show_in_graphql'       => 1,
-			'graphql_field_name'    => 'settingsFieldsTest',
-		]);
-
-		$this->register_acf_field([
-			'parent' => 'settingsFieldsTest',
-			'name' => 'text',
-			'key' => 'settingsFieldTextField'
-		]);
-
-		$expected = 'this is a test value for the settings field';
-
-		update_field( 'settingsFieldTextField', $expected, 'option' );
-
-		acf_add_options_page(array(
-			'page_title' 	=> 'Theme General Settings',
-			'menu_title'	=> 'Theme Settings',
-			'menu_slug' 	=> 'theme-general-settings',
-			'capability'	=> 'edit_posts',
-			'redirect'		=> false,
-			'show_in_graphql' => true,
-			'graphql_field_name' => 'ThemeGeneralSettings',
-		));
-
-		acf_add_options_sub_page(array(
-			'page_title' 	=> 'Theme Header Settings',
-			'menu_title'	=> 'Header',
-			'parent_slug'	=> 'theme-general-settings',
-			'menu_slug' 	=> 'theme-header-settings',
-			'show_in_graphql' => true,
-			'graphql_field_name' => 'ThemeHeaderSettings',
-		));
-
-		acf_add_options_sub_page(array(
-			'page_title' 	=> 'Theme Footer Settings',
-			'menu_title'	=> 'Footer',
-			'parent_slug'	=> 'theme-general-settings',
-			'menu_slug' 	=> 'theme-footer-settings',
-			'show_in_graphql' => true,
-			'graphql_field_name' => 'ThemeFooterSettings',
-		));
-
-
-		$query = '
-		{
-		  themeGeneralSettings {
-		    settingsFieldsTest {
-		      __typename
-		      text
-		    }
-		  }
-		  themeFooterSettings {
-		    settingsFieldsTest {
-		      __typename
-		      text
-		    }
-		  }
-		}
-		';
-
-		$actual = graphql([
-			'query' => $query
-		]);
-
-		codecept_debug( $actual );
-
-		$this->assertArrayNotHasKey( 'errors', $actual );
-		$this->assertSame( $expected, $actual['data']['themeGeneralSettings']['settingsFieldsTest']['text'] );
-
-		acf_remove_local_field_group( 'settingsFieldsTest' );
-
-	}
+//	public function testFieldGroupAssignedToAcfOptionsPageShowsInSchema() {
+//
+//		$this->markTestIncomplete();
+//		/**
+//		 * Register a field group to a specific post type
+//		 */
+//		$this->register_acf_field_group([
+//			'key' => 'settingsFieldsTest',
+//			'location'              => [
+//				[
+//					[
+//						'param'    => 'options_page',
+//						'operator' => '==',
+//						'value'    => 'theme-general-settings',
+//					],
+//				],
+//				[
+//					[
+//						'param'    => 'options_page',
+//						'operator' => '==',
+//						'value'    => 'theme-footer-settings',
+//					],
+//				],
+//			],
+//			'show_in_graphql'       => 1,
+//			'graphql_field_name'    => 'settingsFieldsTest',
+//		]);
+//
+//		$this->register_acf_field([
+//			'parent' => 'settingsFieldsTest',
+//			'name' => 'text',
+//			'key' => 'settingsFieldTextField'
+//		]);
+//
+//		$expected = 'this is a test value for the settings field';
+//
+//		update_field( 'settingsFieldTextField', $expected, 'option' );
+//
+//		acf_add_options_page(array(
+//			'page_title' 	=> 'Theme General Settings',
+//			'menu_title'	=> 'Theme Settings',
+//			'menu_slug' 	=> 'theme-general-settings',
+//			'capability'	=> 'edit_posts',
+//			'redirect'		=> false,
+//			'show_in_graphql' => true,
+//			'graphql_field_name' => 'ThemeGeneralSettings',
+//		));
+//
+//		acf_add_options_sub_page(array(
+//			'page_title' 	=> 'Theme Header Settings',
+//			'menu_title'	=> 'Header',
+//			'parent_slug'	=> 'theme-general-settings',
+//			'menu_slug' 	=> 'theme-header-settings',
+//			'show_in_graphql' => true,
+//			'graphql_field_name' => 'ThemeHeaderSettings',
+//		));
+//
+//		acf_add_options_sub_page(array(
+//			'page_title' 	=> 'Theme Footer Settings',
+//			'menu_title'	=> 'Footer',
+//			'parent_slug'	=> 'theme-general-settings',
+//			'menu_slug' 	=> 'theme-footer-settings',
+//			'show_in_graphql' => true,
+//			'graphql_field_name' => 'ThemeFooterSettings',
+//		));
+//
+//
+//		$query = '
+//		{
+//		  themeGeneralSettings {
+//		    settingsFieldsTest {
+//		      __typename
+//		      text
+//		    }
+//		  }
+//		  themeFooterSettings {
+//		    settingsFieldsTest {
+//		      __typename
+//		      text
+//		    }
+//		  }
+//		}
+//		';
+//
+//		$actual = graphql([
+//			'query' => $query
+//		]);
+//
+//		codecept_debug( $actual );
+//
+//		$this->assertArrayNotHasKey( 'errors', $actual );
+//		$this->assertSame( $expected, $actual['data']['themeGeneralSettings']['settingsFieldsTest']['text'] );
+//
+//		acf_remove_local_field_group( 'settingsFieldsTest' );
+//
+//	}
 
 	/**
 	 * @see: https://github.com/wp-graphql/wp-graphql-acf/issues/251

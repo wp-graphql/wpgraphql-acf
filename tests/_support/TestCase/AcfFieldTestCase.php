@@ -2,13 +2,15 @@
 
 namespace Tests\WPGraphQLAcf\TestCase;
 
+use WPGraphQL\Utils\Utils;
+
 /**
  * Test Case for ACF Fields, for testing how they map to the GraphQL Schema
  * and how they resolve
  *
  * @package Tests\WPGraphQL\Acf\TestCase
  */
-class AcfFieldTestCase extends WPGraphQLAcfTestCase {
+abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 
 	/**
 	 * @var string
@@ -36,11 +38,23 @@ class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 	}
 
 	/**
+	 * Return the acf "field_type". ex. "text", "textarea", "flexible_content", etc
+	 * @return string
+	 */
+	abstract function get_field_type();
+
+	/**
+	 * Return the acf "field_name". This is the name that's used to store data in meta.
+	 * @return string
+	 */
+	abstract function get_field_name();
+
+	/**
 	 * @return void
 	 */
 	public function remove_acf_field_groups(): void {
 
-		// @phpstan-o
+		// @phpstan-ignore-next-line
 		$field_groups = acf_get_local_field_groups();
 		if ( ! empty( $field_groups ) ) {
 			foreach ( $field_groups as $field_group ) {
@@ -108,8 +122,8 @@ class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 			'parent'            => $this->acf_field_group_key,
 			'key'               => $key,
 			'label'             => 'Text',
-			'name'              => 'text',
-			'type'              => 'text',
+			'name'              => $this->get_field_name(),
+			'type'              => $this->get_field_type(),
 			'instructions'      => '',
 			'required'          => 0,
 			'conditional_logic' => 0,
@@ -131,5 +145,53 @@ class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 		return $key;
 
 	}
+
+	/**
+	 * @throws Exception
+	 */
+	public function testFieldDescriptionUsesInstructionsIfGraphqlDescriptionNotProvided(): void {
+
+		$instructions = 'these are the instructions';
+
+		$field_key = $this->register_acf_field([
+			'instructions'      => $instructions
+		]);
+
+		$query = '
+		query GetType( $name: String! ) {
+		  __type( name: $name ) {
+		    fields {
+		      name
+		      description
+		    }
+		  }
+		}
+		';
+
+		$actual = $this->graphql( [
+			'query' => $query,
+			'variables' => [
+				'name' => 'PostFields',
+			]
+		]);
+
+		codecept_debug( $actual );
+
+		// the query should succeed
+		self::assertQuerySuccessful( $actual, [
+			// the instructions should be used for the description
+			$this->expectedNode( '__type.fields', [
+				'name' => Utils::format_field_name( $this->get_field_name() ),
+				'description' => $instructions
+			]),
+		] );
+
+
+
+		// remove the local field
+		acf_remove_local_field( $field_key );
+
+	}
+
 
 }

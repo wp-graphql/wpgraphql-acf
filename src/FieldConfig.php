@@ -59,6 +59,28 @@ class FieldConfig {
 	}
 
 	/**
+	 * Get the description of the field for the GraphQL Schema
+	 *
+	 * @return string
+	 */
+	public function get_field_description(): string {
+
+		// Use the explicit graphql_description, if set
+		if ( ! empty( $this->acf_field['graphql_description'] ) ) {
+			$description = $this->acf_field['graphql_description'];
+
+			// else use the instructions, if set
+		} elseif ( ! empty( $this->acf_field['instructions'] ) ) {
+			$description = $this->acf_field['instructions'];
+		} else {
+			// Fallback description
+			$description = sprintf( __( 'Field added to the schema as part of the "%s" Field Group', 'wp-graphql-acf' ), $this->registry->get_field_group_graphql_type_name( $this->acf_field_group ) );
+		}
+
+		return $description;
+	}
+
+	/**
 	 * @return array|null
 	 * @throws Error
 	 * @throws Exception
@@ -83,7 +105,7 @@ class FieldConfig {
 		$field_config = [
 			'type'            => 'String',
 			'name'            => $this->graphql_field_name,
-			'description'     => sprintf( __( 'Field added by WPGraphQL for ACF Redux %s', 'wp-graphql-acf' ), $this->registry->get_field_group_graphql_type_name( $this->acf_field_group ) ),
+			'description'     => $this->get_field_description(),
 			'acf_field'       => $this->acf_field,
 			'acf_field_group' => $this->acf_field_group,
 			'resolve'         => function ( $root, $args, AppContext $context, ResolveInfo $info ) {

@@ -333,12 +333,36 @@ class Settings {
 			$field,
 			[
 				'label'         => __( 'GraphQL Field Name', 'wp-graphql-acf' ),
-				'instructions'  => __( 'The name the field should use in the GraphQL Schema', 'wp-graphql-acf' ),
+				'instructions'  => __( 'The name of the field in the GraphQL Schema. Should only contain numbers and letters. Must start with a letter. Recommended format is "snakeCase".', 'wp-graphql-acf' ),
 				'name'          => 'graphql_field_name',
 				'type'          => 'text',
 				'ui'            => true,
 				'default_value' => null,
 				'value'         => $field['graphql_field_name'] ?? null,
+			],
+			true
+		);
+
+		// If there's a description provided, use it.
+		if ( ! empty( $field['graphql_description'] ) ) {
+			$description = $field['graphql_description'];
+
+		// fallback to the fields instructions
+		} elseif ( ! empty( $field['instructions'] ) ) {
+			$description = $field['instructions'];
+		}
+
+		// @phpstan-ignore-next-line
+		acf_render_field_setting(
+			$field,
+			[
+				'label'         => __( 'GraphQL Description', 'wp-graphql-acf' ),
+				'instructions'  => __( 'The description of the field, shown in the GraphQL Schema. Should not include any special characters.', 'wp-graphql-acf' ),
+				'name'          => 'graphql_description',
+				'type'          => 'text',
+				'ui'            => true,
+				'default_value' => null,
+				'value'         => ! empty( $description ) ? $description : null,
 			],
 			true
 		);

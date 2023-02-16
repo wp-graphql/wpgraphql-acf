@@ -7466,16 +7466,16 @@
         },
         {
             "name": "wp-graphql/wp-graphql",
-            "version": "v1.13.8",
+            "version": "v1.13.9",
             "source": {
                 "type": "git",
                 "url": "https://github.com/wp-graphql/wp-graphql.git",
-                "reference": "99f1f8e45244826329b9a32a5362eb5a819f3729"
+                "reference": "24e4ced11a3ea5478baabd0f2db146e60422ab68"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/wp-graphql/wp-graphql/zipball/99f1f8e45244826329b9a32a5362eb5a819f3729",
-                "reference": "99f1f8e45244826329b9a32a5362eb5a819f3729",
+                "url": "https://api.github.com/repos/wp-graphql/wp-graphql/zipball/24e4ced11a3ea5478baabd0f2db146e60422ab68",
+                "reference": "24e4ced11a3ea5478baabd0f2db146e60422ab68",
                 "shasum": ""
             },
             "require": {
@@ -7539,9 +7539,9 @@
             "description": "GraphQL API for WordPress",
             "support": {
                 "issues": "https://github.com/wp-graphql/wp-graphql/issues",
-                "source": "https://github.com/wp-graphql/wp-graphql/tree/v1.13.8"
+                "source": "https://github.com/wp-graphql/wp-graphql/tree/v1.13.9"
             },
-            "time": "2023-02-06T21:19:34+00:00"
+            "time": "2023-02-15T23:48:12+00:00"
         },
         {
             "name": "wp-graphql/wp-graphql-testcase",
