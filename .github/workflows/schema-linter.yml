@@ -1,0 +1,85 @@
+name: Schema Linter
+
+on:
+  push:
+    branches:
+      - develop
+  pull_request:
+    branches:
+      - develop
+      - master
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    name: Lint WPGraphQL Schema
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 16
+
+      - name: Copy environment files
+        run: |
+          cp .env.dist .env
+          cp .env.testing.dist .env.testing
+
+      - name: Setup WordPress
+        env:
+          PHP_VERSION: 8.1
+          WP_VERSION: 6.1
+          ACF_PRO: true
+          ACF_LICENSE_KEY: ${{secrets.ACF_LICENSE_KEY}}
+        run: |
+          docker-compose build \
+            --build-arg WP_VERSION=6.1 \
+            --build-arg PHP_VERSION=8.1 \
+            --build-arg DOCKER_REGISTRY=ghcr.io/wp-graphql/
+          docker-compose start app
+
+      - name: Install WP CLI for ACF
+        run: |
+          docker-compose exec app wp --allow-root plugin install https://github.com/hoppinger/advanced-custom-fields-wpcli/archive/refs/heads/master.zip --activate
+
+      - name: Import test Field Group
+        run: |
+          docker-compose exec app wp --allow-root acf import --json_file="${GITHUB_WORKSPACE}/tests/_data/acf-basic-fields.json"
+
+      - name: Generate the Static Schema
+        run: |
+          # Output: /tmp/schema.graphql
+          docker-compose exec app wp --allow-root graphql generate-static-schema
+
+      - name: Install GraphQL Schema Linter
+        run: npm install -g graphql-schema-linter@^3.0 graphql@^16
+
+      - name: Lint the Static Schema
+        run: |
+          graphql-schema-linter /tmp/schema.graphql
+
+      - name: Display ignored linting errors
+        run: |
+          graphql-schema-linter /tmp/schema.graphql || true
+
+      - name: Get Latest tag
+        uses: actions-ecosystem/action-get-latest-tag@v1
+        id: get-latest-tag
+
+      - name: Test Schema for breaking changes
+        run: |
+          echo "Previous tagged schema ${{ steps.get-latest-tag.outputs.tag }}"
+
+      - name: Get Previous Released Schema
+        run: curl 'https://github.com/wp-graphql/wp-graphql-acf-2/releases/download/${{ steps.get-latest-tag.outputs.tag }}/schema.graphql' -L  --output /tmp/${{ steps.get-latest-tag.outputs.tag }}.graphql
+
+      # https://github.com/marketplace/actions/graphql-inspector
+      - name: Install Schema Inspector
+        run: |
+          npm install @graphql-inspector/config @graphql-inspector/cli graphql
+
+      - name: Run Schema Inspector
+        run: |
+          # This schema and previous release schema
+          node_modules/.bin/graphql-inspector diff /tmp/${{ steps.get-latest-tag.outputs.tag }}.graphql /tmp/schema.graphql
