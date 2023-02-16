@@ -54,6 +54,47 @@ class Settings {
 		 */
 		add_action( 'acf/render_field_settings', [ $this, 'add_field_settings' ], 10, 1 );
 
+		// NOTE: when we add support for showing fields in tabs,
+		// and support for different fields based on field type, we're going to
+		// need to refactor this a bit.
+		// we will need some conditions in place for ACF version
+		// since ACF 6.1 will have tab support
+		// And we'll need to have different callbacks per type, like:
+		// acf/render_field_settings/type=$field_type.
+		//
+		// If we have one callback like we do now ("add_field_settings") with a switch statement
+		// inside, things don't work as expected, so we actually need
+		// to have different callbacks per field type, from my testing.
+		// something like the following (pseudo):
+
+
+		//     Get the supported field types
+		//
+		//     $supported_field_types = Utils::get_supported_field_types();
+		//
+		//	   if ( $this->is_acf6_or_higher ) {
+		//          foreach ( $supported_field_types as $supported_field_type ) {
+		//
+		//				// if there's a valid callback, call it
+		//				if ( is_callable( [ __CLASS__, 'add_' . $supported_field_type . '_settings' ] ) ) {
+		//
+		//					// @phpstan-ignore-next-line
+		//					add_action( 'acf/render_field_general_settings/type=' . $supported_field_type, [
+		//						__CLASS__,
+		//						'add_' . $supported_field_type . '_settings'
+		//					], 10, 1 );
+		//				}
+		//			}
+		//
+		//		} else {
+		//			// fallback for v5 and older
+		//          foreach ( $supported_field_types as $supported_field_type ) {
+		//            if ( is_callable( [ __CLASS__, 'add_' . $supported_field_type . '_settings' ] ) ) {
+		//			    add_action( 'acf/render_field_settings/type=' . $supported_field_type, [ __CLASS__, 'add_' . $supported_field_type . '_settings' ], 10, 1 );
+		//            }
+		//          }
+		//		}
+
 		/**
 		 * Enqueue scripts to enhance the UI of the ACF Field Group Settings
 		 */
