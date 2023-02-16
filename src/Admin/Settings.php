@@ -78,7 +78,6 @@ class Settings {
 		//				// if there's a valid callback, call it
 		//				if ( is_callable( [ __CLASS__, 'add_' . $supported_field_type . '_settings' ] ) ) {
 		//
-		//					// @phpstan-ignore-next-line
 		//					add_action( 'acf/render_field_general_settings/type=' . $supported_field_type, [
 		//						__CLASS__,
 		//						'add_' . $supported_field_type . '_settings'
@@ -347,7 +346,7 @@ class Settings {
 		if ( ! empty( $field['graphql_description'] ) ) {
 			$description = $field['graphql_description'];
 
-		// fallback to the fields instructions
+			// fallback to the fields instructions
 		} elseif ( ! empty( $field['instructions'] ) ) {
 			$description = $field['instructions'];
 		}
