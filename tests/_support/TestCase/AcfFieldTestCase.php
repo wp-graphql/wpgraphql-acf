@@ -41,14 +41,23 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 	 * Return the acf "field_type". ex. "text", "textarea", "flexible_content", etc
 	 * @return string
 	 */
-	abstract function get_field_type();
+	abstract public function get_field_type(): string;
 
 	/**
 	 * Return the acf "field_name". This is the name that's used to store data in meta.
 	 * @return string
 	 */
-	function get_field_name() {
+	public function get_field_name(): string {
 		return 'test_' . $this->get_field_type();
+	}
+
+	/**
+	 * Returns a GraphQL formatted version of the field name
+	 *
+	 * @return string
+	 */
+	public function get_formatted_field_name(): string {
+		return Utils::format_field_name( $this->get_field_name() );
 	}
 
 	/**

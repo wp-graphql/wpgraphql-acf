@@ -66,7 +66,7 @@ class TextFieldTest extends \Tests\WPGraphQLAcf\TestCase\AcfFieldTestCase {
 				acfTestGroup {
 					__typename
 					fieldGroupName
-					text
+					' . $this->get_formatted_field_name(). '
 				}
 			}
 		}
@@ -82,7 +82,7 @@ class TextFieldTest extends \Tests\WPGraphQLAcf\TestCase\AcfFieldTestCase {
 		codecept_debug( $actual );
 
 		self::assertQuerySuccessful( $actual, [
-			$this->expectedField( 'post.acfTestGroup.text', $expected_text_1 ),
+			$this->expectedField( 'post.acfTestGroup.' . $this->get_formatted_field_name(), $expected_text_1 ),
 		]);
 
 		$query = '
@@ -107,7 +107,7 @@ class TextFieldTest extends \Tests\WPGraphQLAcf\TestCase\AcfFieldTestCase {
 		// the query should succeed
 		self::assertQuerySuccessful( $actual, [
 			// the instructions should be used for the description
-			$this->expectedNode( '__type.fields', [ 'name' => 'text' ] )
+			$this->expectedNode( '__type.fields', [ 'name' => $this->get_formatted_field_name() ] )
 		] );
 
 		// cleanup the data
@@ -153,7 +153,7 @@ class TextFieldTest extends \Tests\WPGraphQLAcf\TestCase\AcfFieldTestCase {
 
 		self::assertQuerySuccessful( $actual, [
 			$this->expectedNode( '__type.fields', [
-				'name' => 'text',
+				'name' => $this->get_formatted_field_name(),
 				'description' => $graphql_description
 			]),
 		] );
@@ -176,7 +176,7 @@ class TextFieldTest extends \Tests\WPGraphQLAcf\TestCase\AcfFieldTestCase {
 		  post( id: $id idType: DATABASE_ID ) {
 		    databaseId
 		    acfTestGroup {
-		      text
+		      ' . $this->get_formatted_field_name() . '
 		    }
 		  }
 		}
@@ -192,7 +192,7 @@ class TextFieldTest extends \Tests\WPGraphQLAcf\TestCase\AcfFieldTestCase {
 
 		self::assertQuerySuccessful( $actual, [
 			$this->expectedField( 'post.databaseId', $this->post_id ),
-			$this->expectedField( 'post.acfTestGroup.text', $default_value ),
+			$this->expectedField( 'post.acfTestGroup.' . $this->get_formatted_field_name() , $default_value ),
 		]);
 
 		acf_remove_local_field( $field_key );
