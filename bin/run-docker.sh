@@ -25,30 +25,33 @@ fi
 # flag for what you need.
 ##
 print_usage_instructions() {
-    echo "Usage: $0 [build|run] [-c|-a|-t]";
+	echo "Usage: $0 [build|run] [-c|-a|-t]";
     echo "    Build or run app or testing images."
     echo "       -c  Specify as first option with [build] command to build images without cache."
-    echo "       -a  Spin up a WordPress installation.";
-    echo "       -t  Run the automated tests.";
-    exit 1
+	echo "       -a  Spin up a WordPress installation.";
+	echo "       -t  Run the automated tests.";
+	exit 1
 }
 
 if [ -z "$1" ]; then
-    print_usage_instructions
+	print_usage_instructions
 fi
-
-set -a
-source .env
 
 TAG=${TAG-latest}
 WP_VERSION=${WP_VERSION-5.9}
 PHP_VERSION=${PHP_VERSION-8.0}
 DOCKER_REGISTRY=${DOCKER_REGISTRY-"ghcr.io/wp-graphql/"}
 BUILD_NO_CACHE=${BUILD_NO_CACHE-}
+ACF_LICENSE_KEY=${ACF_LICENSE_KEY-.}
+ACF_VERSION=${ACF_VERSION-"latest"}
+ACF_PRO=${ACF_PRO-false}
 
-echo "Values from .env"
-echo "WP: ${WP_VERSION} PHP: ${PHP_VERSION}"
-echo "Docker Registry: ${DOCKER_REGISTRY}"
+echo "PHP VERSION ${PHP_VERSION}"
+echo "WP VERSION ${WP_VERSION}"
+echo "DOCKER_REGISTRY ${DOCKER_REGISTRY}"
+echo "BUILD_NO_CACHE ${BUILD_NO_CACHE}"
+echo "ACF PRO ${ACF_PRO}"
+echo "ACF_VERSION ${ACF_VERSION}"
 
 subcommand=$1; shift
 case "$subcommand" in
@@ -66,23 +69,33 @@ case "$subcommand" in
                         --build-arg WP_VERSION=${WP_VERSION} \
                         --build-arg PHP_VERSION=${PHP_VERSION} \
                         --build-arg DOCKER_REGISTRY=${DOCKER_REGISTRY} \
+                        --build-arg ACF_PRO=${ACF_PRO} \
+						--build-arg ACF_LICENSE_KEY=${ACF_LICENSE_KEY} \
+						--build-arg ACF_VERSION=${ACF_VERSION} \
                         .
                     ;;
                 t )
                     echo "Build app"
+                    echo "WP: ${WP_VERSION} PHP: ${PHP_VERSION}"
+                    echo "Docker Registry: ${DOCKER_REGISTRY}"
                     docker build $BUILD_NO_CACHE -f docker/Dockerfile \
                         -t wp-graphql-acf:${TAG}-wp${WP_VERSION}-php${PHP_VERSION} \
                         --build-arg WP_VERSION=${WP_VERSION} \
                         --build-arg PHP_VERSION=${PHP_VERSION} \
                         --build-arg DOCKER_REGISTRY=${DOCKER_REGISTRY} \
+                        --build-arg ACF_PRO=${ACF_PRO} \
+                        --build-arg ACF_LICENSE_KEY=${ACF_LICENSE_KEY} \
+                        --build-arg ACF_VERSION=${ACF_VERSION} \
                         .
                     echo "Build testing"
-                    source .env.testing
                     docker build $BUILD_NO_CACHE -f docker/Dockerfile.testing \
                         -t wp-graphql-acf-testing:${TAG}-wp${WP_VERSION}-php${PHP_VERSION} \
                         --build-arg WP_VERSION=${WP_VERSION} \
                         --build-arg PHP_VERSION=${PHP_VERSION} \
                         --build-arg DOCKER_REGISTRY=${DOCKER_REGISTRY} \
+                        --build-arg ACF_PRO=${ACF_PRO} \
+						--build-arg ACF_LICENSE_KEY=${ACF_LICENSE_KEY} \
+						--build-arg ACF_VERSION=${ACF_VERSION} \
                         .
                     ;;
                 \? ) print_usage_instructions;;
@@ -95,11 +108,20 @@ case "$subcommand" in
         while getopts ":at" opt; do
             case ${opt} in
                 a )
-                    docker compose up app
+                    WP_VERSION=${WP_VERSION} PHP_VERSION=${PHP_VERSION} docker compose up app
                     ;;
                 t )
-                    source .env.testing
-                    docker-compose run --rm testing
+                    docker-compose run --rm \
+                        -e COVERAGE=${COVERAGE-} \
+                        -e USING_XDEBUG=${USING_XDEBUG-} \
+                        -e DEBUG=${DEBUG-} \
+                        -e WP_VERSION=${WP_VERSION} \
+                        -e PHP_VERSION=${PHP_VERSION} \
+                        -e DOCKER_REGISTRY=${DOCKER_REGISTRY} \
+                        -e ACF_PRO=${ACF_PRO} \
+						-e ACF_LICENSE_KEY=${ACF_LICENSE_KEY} \
+						-e ACF_VERSION=${ACF_VERSION} \
+                        testing --scale app=0
                     ;;
                 \? ) print_usage_instructions;;
                 * ) print_usage_instructions;;
