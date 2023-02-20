@@ -30,6 +30,12 @@ class WPGraphQLAcfTestCase extends \Tests\WPGraphQL\TestCase\WPGraphQLTestCase {
 
 		parent::setUp();
 
+		codecept_debug( getenv( 'ACF_PRO' ) );
+		codecept_debug( [
+			'plugins' => wp_get_active_and_valid_plugins()
+		]);
+
+
 		// create users for use within tests
 		$this->admin = self::factory()->user->create_and_get( [ 'role' => 'administrator' ] );
 		$this->editor = self::factory()->user->create_and_get( [ 'role' => 'editor' ] );
