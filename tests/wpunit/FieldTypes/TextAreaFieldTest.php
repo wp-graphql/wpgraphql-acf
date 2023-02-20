@@ -15,10 +15,6 @@ class TextAreaTestFieldTest extends \Tests\WPGraphQLAcf\TestCase\AcfFieldTestCas
 		parent::tearDown();
 	}
 
-	public function get_field_name():string {
-		return "text_area";
-	}
-
 	public function get_field_type():string {
 		return "textarea";
 	}

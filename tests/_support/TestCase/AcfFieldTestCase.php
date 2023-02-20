@@ -47,7 +47,9 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 	 * Return the acf "field_name". This is the name that's used to store data in meta.
 	 * @return string
 	 */
-	abstract function get_field_name();
+	function get_field_name() {
+		return 'test_' . $this->get_field_type();
+	}
 
 	/**
 	 * @return void

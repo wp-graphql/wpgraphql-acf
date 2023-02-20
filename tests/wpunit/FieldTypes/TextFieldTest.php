@@ -46,13 +46,6 @@ class TextFieldTest extends \Tests\WPGraphQLAcf\TestCase\AcfFieldTestCase {
 	}
 
 	/**
-	 * @return string
-	 */
-	public function get_field_name():string {
-		return 'text_field';
-	}
-
-	/**
 	 * Register a text field
 	 * update value for the text field
 	 * query for the
