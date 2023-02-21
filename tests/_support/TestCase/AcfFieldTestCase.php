@@ -13,15 +13,9 @@ use WPGraphQL\Utils\Utils;
 abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 
 	/**
-	 * @var string
-	 */
-	public $acf_field_group_key;
-
-	/**
 	 * @return void
 	 */
 	public function setUp(): void {
-		$this->acf_field_group_key = __CLASS__;
 		$this->clearSchema();
 		parent::setUp();
 	}
@@ -30,10 +24,6 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 	 * @return void
 	 */
 	public function tearDown(): void {
-
-		// remove all field groups added during testing
-		$this->remove_acf_field_groups();
-		$this->clearSchema();
 		parent::tearDown();
 	}
 
@@ -52,6 +42,27 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 	}
 
 	/**
+	 * @param array $acf_field
+	 * @param array $acf_field_group
+	 *
+	 * @return string
+	 */
+	public function register_acf_field( array $acf_field = [], array $acf_field_group = [] ): string {
+
+		// set defaults on the acf field
+		// using helper methods from this class.
+		// this allows test cases extending this class
+		// to more easily make use of repeatedly registering
+		// fields of the same type and testing them
+		$acf_field = array_merge( [
+			'name' => $this->get_field_name(),
+			'type' => $this->get_field_type()
+		], $acf_field );
+
+		return parent::register_acf_field( $acf_field, $acf_field_group );
+	}
+
+	/**
 	 * Returns a GraphQL formatted version of the field name
 	 *
 	 * @return string
@@ -61,104 +72,7 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 	}
 
 	/**
-	 * @return void
-	 */
-	public function remove_acf_field_groups(): void {
-
-		// @phpstan-ignore-next-line
-		$field_groups = acf_get_local_field_groups();
-		if ( ! empty( $field_groups ) ) {
-			foreach ( $field_groups as $field_group ) {
-
-				if ( empty( $field_group['key'] ) ) {
-					continue;
-				}
-				acf_remove_local_field_group( $field_group['key'] );
-			}
-		}
-	}
-
-	/**
-	 * @param $acf_field_group
-	 *
-	 * @return mixed|string|null
-	 */
-	public function register_acf_field_group( $acf_field_group = [] ) {
-
-		// merge the defaults with the passed in options
-		$config = array_merge( [
-			'key'                   => $this->acf_field_group_key,
-			'title'                 => 'ACF Test Group',
-			'fields'                => [],
-			'location'              => [
-				[
-					[
-						'param'    => 'post_type',
-						'operator' => '==',
-						'value'    => 'post',
-					],
-				],
-			],
-			'menu_order'            => 0,
-			'position'              => 'normal',
-			'style'                 => 'default',
-			'label_placement'       => 'top',
-			'instruction_placement' => 'label',
-			'hide_on_screen'        => '',
-			'active'                => true,
-			'description'           => '',
-			'show_in_graphql'       => 1,
-			'graphql_field_name'    => 'acfTestGroup',
-			'graphql_types'		    => ['Post']
-		], $acf_field_group );
-
-		acf_add_local_field_group( $config );
-
-		return ! empty( $config['key'] ) ? $config['key'] : null;
-
-	}
-
-	/**
-	 * @param array $acf_field Config array to override the defaults
-	 * @param array $acf_field_group Config array to override the defaults of the field group the field will be registered to
-	 *
-	 * @return string
-	 */
-	public function register_acf_field( array $acf_field = [], array $acf_field_group = [] ): string {
-
-		$this->register_acf_field_group( $acf_field_group );
-		$key = uniqid( 'acf_test',true );
-
-		$config = array_merge( [
-			'parent'            => $this->acf_field_group_key,
-			'key'               => $key,
-			'label'             => 'Text',
-			'name'              => $this->get_field_name(),
-			'type'              => $this->get_field_type(),
-			'instructions'      => '',
-			'required'          => 0,
-			'conditional_logic' => 0,
-			'wrapper'           => array(
-				'width' => '',
-				'class' => '',
-				'id'    => '',
-			),
-			'show_in_graphql'   => 1,
-			'default_value'     => '',
-			'placeholder'       => '',
-			'prepend'           => '',
-			'append'            => '',
-			'maxlength'         => '',
-		], $acf_field );
-
-		acf_add_local_field( $config );
-
-		return $key;
-
-	}
-
-	/**
-	 * @throws Exception
+	 * @throws \Exception
 	 */
 	public function testFieldDescriptionUsesInstructionsIfGraphqlDescriptionNotProvided(): void {
 
