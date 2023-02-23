@@ -365,7 +365,6 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 
 	public function testFieldShowsInSchemaWithGraphqlFieldNameHasUnderscores() {
 
-
 		/**
 		 * Currently, WPGraphQL core passes connection field names through `register_field` which passes
 		 * the name through \WPGraphQL\Utils::format_field_name() which
