@@ -18,7 +18,7 @@ class UrlFieldTest extends \Tests\WPGraphQLAcf\TestCase\AcfFieldTestCase {
 	}
 
 	public function get_field_type(): string {
-		return 'number';
+		return 'url';
 	}
 
 }

@@ -18,7 +18,7 @@ class CloneFieldTest extends \Tests\WPGraphQLAcf\TestCase\AcfFieldTestCase {
 	}
 
 	public function get_field_type(): string {
-		return 'number';
+		return 'clone';
 	}
 
 }

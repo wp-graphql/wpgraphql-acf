@@ -238,9 +238,11 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 	public function testFieldDescriptionUsesGraphqlDescriptionIfProvided(): void {
 
 		$instructions = 'these are the instructions';
+		$graphql_description = 'this is the graphql description';
 
 		$field_key = $this->register_acf_field([
-			'instructions'      => $instructions
+			'instructions'      => $instructions,
+			'graphql_description' => $graphql_description,
 		]);
 
 		$query = '
@@ -269,7 +271,7 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 			// if "graphql_description" is not provided
 			$this->expectedNode( '__type.fields', [
 				'name' => $this->get_formatted_field_name(),
-				'description' => $instructions
+				'description' => $graphql_description
 			]),
 		] );
 
@@ -363,7 +365,15 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 
 	public function testFieldShowsInSchemaWithGraphqlFieldNameHasUnderscores() {
 
-		$this->markTestIncomplete( 'WPGraphQL Core does not allow connection field names to have underscores' );
+
+		/**
+		 * Currently, WPGraphQL core passes connection field names through `register_field` which passes
+		 * the name through \WPGraphQL\Utils::format_field_name() which
+		 * removes underscores.
+		 *
+		 * I believe we can add a new argument
+		 */
+		$this->markTestIncomplete( 'WPGraphQL Core does not allow connection field names to have underscores, see: https://github.com/wp-graphql/wp-graphql/blob/develop/src/Type/WPConnectionType.php#L515, https://github.com/wp-graphql/wp-graphql/blob/develop/src/Registry/TypeRegistry.php#L1029' );
 
 		$graphql_field_name = 'custom_field_name';
 

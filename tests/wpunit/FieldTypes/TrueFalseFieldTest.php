@@ -18,7 +18,7 @@ class TrueFalseFieldTest extends \Tests\WPGraphQLAcf\TestCase\AcfFieldTestCase {
 	}
 
 	public function get_field_type(): string {
-		return 'number';
+		return 'true_false';
 	}
 
 }
