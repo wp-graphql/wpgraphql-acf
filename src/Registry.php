@@ -361,21 +361,23 @@ class Registry {
 	}
 
 
-
 	/**
-	 * Given a field group config, return the name of the field group to be used in the GraphQL Schema
+	 * Given a field group config, return the name of the field group to be used in the GraphQL
+	 * Schema
 	 *
 	 * @param array $field_group The field group config array
 	 *
 	 * @return string
+	 * @throws \GraphQL\Error\Error
 	 */
 	public function get_field_group_name( array $field_group ): string {
 
 		$field_group_name = '';
 
 		if ( ! empty( $field_group['graphql_field_name'] ) ) {
-			$field_group_name = $field_group['graphql_field_name'];
-		} elseif ( ! empty( $field_group['name'] ) ) {
+			return \WPGraphQLAcf\Utils::format_field_name( $field_group['graphql_field_name'] );
+		}
+		if ( ! empty( $field_group['name'] ) ) {
 			$field_group_name = $field_group['name'];
 		} elseif ( ! empty( $field_group['title'] ) ) {
 			$field_group_name = $field_group['title'];
@@ -383,7 +385,18 @@ class Registry {
 			$field_group_name = $field_group['label'];
 		}
 
-		return $field_group_name;
+		if ( empty( $field_group_name ) ) {
+			return $field_group_name;
+		}
+
+		$replaced = preg_replace( '/[\W_]+/u', ' ', $field_group_name );
+
+		if ( empty( $replaced ) ) {
+			throw new Error( sprintf( __( 'The graphql field name %s is not a valid name and cannot be added to the GraphQL Schema', 'wp-graphql-acf' ), $field_group_name ) );
+		}
+
+		return \WPGraphQLAcf\Utils::format_field_name( $replaced );
+
 	}
 
 	/**
@@ -393,19 +406,7 @@ class Registry {
 	 * @throws Error
 	 */
 	public function get_graphql_field_name( array $acf_field ): string {
-		$name = $this->get_field_group_name( $acf_field );
-
-		if ( empty( $name ) ) {
-			return $name;
-		}
-
-		$replaced = preg_replace( '/[\W_]+/u', ' ', $name );
-
-		if ( empty( $replaced ) ) {
-			throw new Error( sprintf( __( 'The graphql field name %s is not a valid name and cannot be added to the GraphQL Schema', 'wp-graphql-acf' ), $name ) );
-		}
-
-		return Utils::format_field_name( $replaced );
+		return $this->get_field_group_name( $acf_field );
 	}
 
 	/**

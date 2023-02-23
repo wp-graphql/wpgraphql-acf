@@ -54,6 +54,11 @@
       "WPGraphQLAcf\\": "src/"
     }
   },
+  "autoload-dev": {
+    "psr-4": {
+      "Tests\\WPGraphQLAcf\\": "tests/_support/"
+    }
+  },
   "scripts": {
     "install-test-env": "bash bin/install-test-env.sh",
     "docker-build": "bash bin/run-docker.sh build",

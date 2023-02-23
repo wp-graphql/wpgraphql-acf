@@ -59,6 +59,28 @@ class FieldConfig {
 	}
 
 	/**
+	 * Get the description of the field for the GraphQL Schema
+	 *
+	 * @return string
+	 */
+	public function get_field_description(): string {
+
+		// Use the explicit graphql_description, if set
+		if ( ! empty( $this->acf_field['graphql_description'] ) ) {
+			$description = $this->acf_field['graphql_description'];
+
+			// else use the instructions, if set
+		} elseif ( ! empty( $this->acf_field['instructions'] ) ) {
+			$description = $this->acf_field['instructions'];
+		} else {
+			// Fallback description
+			$description = sprintf( __( 'Field added to the schema as part of the "%s" Field Group', 'wp-graphql-acf' ), $this->registry->get_field_group_graphql_type_name( $this->acf_field_group ) );
+		}
+
+		return $description;
+	}
+
+	/**
 	 * @return array|null
 	 * @throws Error
 	 * @throws Exception
@@ -83,7 +105,7 @@ class FieldConfig {
 		$field_config = [
 			'type'            => 'String',
 			'name'            => $this->graphql_field_name,
-			'description'     => sprintf( __( 'Field added by WPGraphQL for ACF Redux %s', 'wp-graphql-acf' ), $this->registry->get_field_group_graphql_type_name( $this->acf_field_group ) ),
+			'description'     => $this->get_field_description(),
 			'acf_field'       => $this->acf_field,
 			'acf_field_group' => $this->acf_field_group,
 			'resolve'         => function ( $root, $args, AppContext $context, ResolveInfo $info ) {
@@ -130,6 +152,7 @@ class FieldConfig {
 					$connection_name = $this->get_connection_name( $type_name, $to_type, $this->graphql_field_name );
 
 					register_graphql_connection( [
+						'description'        => $this->get_field_description(),
 						'acf_field'          => $this->acf_field,
 						'acf_field_group'    => $this->acf_field_group,
 						'fromType'           => $type_name,
@@ -162,6 +185,7 @@ class FieldConfig {
 					$connection_name = $this->get_connection_name( $type_name, $to_type, $this->graphql_field_name );
 
 					register_graphql_connection( [
+						'description'        => $this->get_field_description(),
 						'acf_field'          => $this->acf_field,
 						'acf_field_group'    => $this->acf_field_group,
 						'fromType'           => $type_name,
@@ -233,27 +257,29 @@ class FieldConfig {
 					}
 
 					$layouts = [];
-					foreach ( $this->acf_field['layouts'] as $layout ) {
+					if ( ! empty( $this->acf_field['layouts'] ) ) {
+						foreach ( $this->acf_field['layouts'] as $layout ) {
 
-						// Format the name of the group using the layout prefix + the layout name
-						$layout_name = \WPGraphQL\Utils\Utils::format_type_name( $layout_interface_prefix . ' ' . $this->registry->get_field_group_graphql_type_name( $layout ) );
+							// Format the name of the group using the layout prefix + the layout name
+							$layout_name = \WPGraphQL\Utils\Utils::format_type_name( $layout_interface_prefix . ' ' . $this->registry->get_field_group_graphql_type_name( $layout ) );
 
-						// set the graphql_field_name using the $layout_name
-						$layout['graphql_field_name'] = $layout_name;
+							// set the graphql_field_name using the $layout_name
+							$layout['graphql_field_name'] = $layout_name;
 
-						// Pass that the layout is a flexLayout (compared to a standard field group)
-						$layout['isFlexLayout'] = true;
+							// Pass that the layout is a flexLayout (compared to a standard field group)
+							$layout['isFlexLayout'] = true;
 
-						// Get interfaces, including cloned field groups, for the layout
-						$interfaces = $this->registry->get_field_group_interfaces( $layout );
+							// Get interfaces, including cloned field groups, for the layout
+							$interfaces = $this->registry->get_field_group_interfaces( $layout );
 
-						// Add the layout interface name as an interface. This is the type that is returned as a list of for accessing all layouts of the flex field
-						$interfaces[]                 = $layout_interface_name;
-						$layout['eagerlyLoadType']    = true;
-						$layout['graphql_field_name'] = $layout_name;
-						$layout['fields']             = $this->registry->get_fields_for_field_group( $layout );
-						$layout['interfaces']         = $interfaces;
-						$layouts[ $layout_name ]      = $layout;
+							// Add the layout interface name as an interface. This is the type that is returned as a list of for accessing all layouts of the flex field
+							$interfaces[]                 = $layout_interface_name;
+							$layout['eagerlyLoadType']    = true;
+							$layout['graphql_field_name'] = $layout_name;
+							$layout['fields']             = $this->registry->get_fields_for_field_group( $layout );
+							$layout['interfaces']         = $interfaces;
+							$layouts[ $layout_name ]      = $layout;
+						}
 					}
 
 					if ( ! empty( $layouts ) ) {
@@ -273,6 +299,7 @@ class FieldConfig {
 					$connection_name = $this->get_connection_name( $type_name, $to_type, $this->graphql_field_name );
 
 					$connection_config = [
+						'description'        => $this->get_field_description(),
 						'acf_field'          => $this->acf_field,
 						'acf_field_group'    => $this->acf_field_group,
 						'fromType'           => $type_name,
@@ -335,6 +362,7 @@ class FieldConfig {
 
 
 					register_graphql_connection([
+						'description'        => $this->get_field_description(),
 						'acf_field'          => $this->acf_field,
 						'acf_field_group'    => $this->acf_field_group,
 						'fromType'           => $type_name,
