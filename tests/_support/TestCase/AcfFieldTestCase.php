@@ -71,6 +71,121 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 		return Utils::format_field_name( $this->get_field_name() );
 	}
 
+	public function testFieldShowsInSchemaIfShowInGraphqlIsTrue() {
+
+		$field_key = $this->register_acf_field([
+			'show_in_graphql' => true
+		]);
+
+		$query = '
+		query GetType( $name: String! ) {
+		  __type( name: $name ) {
+		    fields {
+		      name
+		    }
+		  }
+		}
+		';
+
+		$actual = $this->graphql( [
+			'query' => $query,
+			'variables' => [
+				'name' => 'AcfTestGroup',
+			]
+		]);
+
+		codecept_debug( $actual );
+
+		// the query should succeed
+		self::assertQuerySuccessful( $actual, [
+			// the instructions should be used for the description
+			$this->expectedNode( '__type.fields', [
+				'name' => $this->get_formatted_field_name(),
+			]),
+		] );
+
+		// remove the local field
+		acf_remove_local_field( $field_key );
+
+	}
+
+	public function testFieldShowsInSchemaIfShowInGraphqlIsNull() {
+
+		$field_key = $this->register_acf_field([
+			'show_in_graphql' => null
+		]);
+
+		$query = '
+		query GetType( $name: String! ) {
+		  __type( name: $name ) {
+		    fields {
+		      name
+		    }
+		  }
+		}
+		';
+
+		$actual = $this->graphql( [
+			'query' => $query,
+			'variables' => [
+				'name' => 'AcfTestGroup',
+			]
+		]);
+
+		codecept_debug( $actual );
+
+		// the query should succeed
+		self::assertQuerySuccessful( $actual, [
+			// the instructions should be used for the description
+			$this->expectedNode( '__type.fields', [
+				'name' => $this->get_formatted_field_name(),
+			]),
+		] );
+
+		// remove the local field
+		acf_remove_local_field( $field_key );
+
+	}
+
+	public function testFieldDoesNotShowInSchemaIfShowInGraphqlIsFalse() {
+
+		$field_key = $this->register_acf_field([
+			'show_in_graphql' => false
+		]);
+
+		$query = '
+		query GetType( $name: String! ) {
+		  __type( name: $name ) {
+		    name
+		    fields {
+		      name
+		    }
+		  }
+		}
+		';
+
+		$actual = $this->graphql( [
+			'query' => $query,
+			'variables' => [
+				'name' => 'AcfTestGroup',
+			]
+		]);
+
+		codecept_debug( $actual );
+
+		// the query should succeed
+		self::assertQuerySuccessful( $actual, [
+			// the instructions should be used for the description
+			$this->not()->expectedNode( '__type.fields', [
+				'name' => $this->get_formatted_field_name(),
+			]),
+		] );
+
+		// remove the local field
+		acf_remove_local_field( $field_key );
+
+	}
+
 	/**
 	 * @throws \Exception
 	 */
@@ -105,9 +220,179 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 		// the query should succeed
 		self::assertQuerySuccessful( $actual, [
 			// the instructions should be used for the description
+			// if "graphql_description" is not provided
 			$this->expectedNode( '__type.fields', [
-				'name' => Utils::format_field_name( $this->get_field_name() ),
+				'name' => $this->get_formatted_field_name(),
 				'description' => $instructions
+			]),
+		] );
+
+		// remove the local field
+		acf_remove_local_field( $field_key );
+
+	}
+
+	/**
+	 * @throws \Exception
+	 */
+	public function testFieldDescriptionUsesGraphqlDescriptionIfProvided(): void {
+
+		$instructions = 'these are the instructions';
+
+		$field_key = $this->register_acf_field([
+			'instructions'      => $instructions
+		]);
+
+		$query = '
+		query GetType( $name: String! ) {
+		  __type( name: $name ) {
+		    fields {
+		      name
+		      description
+		    }
+		  }
+		}
+		';
+
+		$actual = $this->graphql( [
+			'query' => $query,
+			'variables' => [
+				'name' => 'AcfTestGroup',
+			]
+		]);
+
+		codecept_debug( $actual );
+
+		// the query should succeed
+		self::assertQuerySuccessful( $actual, [
+			// the instructions should be used for the description
+			// if "graphql_description" is not provided
+			$this->expectedNode( '__type.fields', [
+				'name' => $this->get_formatted_field_name(),
+				'description' => $instructions
+			]),
+		] );
+
+		// remove the local field
+		acf_remove_local_field( $field_key );
+
+	}
+
+	public function testFallbackDescriptionIsUsedIfGraphqlDescriptionAndInstructionsAreBothEmpty() {
+
+		$field_key = $this->register_acf_field([
+			'instructions'      => '', // left empty intentionally
+			'graphql_description' => '', // left empty intentionally
+		]);
+
+		$query = '
+		query GetType( $name: String! ) {
+		  __type( name: $name ) {
+		    fields {
+		      name
+		      description
+		    }
+		  }
+		}
+		';
+
+		$actual = $this->graphql( [
+			'query' => $query,
+			'variables' => [
+				'name' => 'AcfTestGroup',
+			]
+		]);
+
+		codecept_debug( $actual );
+
+		// the query should succeed
+		self::assertQuerySuccessful( $actual, [
+
+			$this->expectedNode( '__type.fields', [
+				// the description field should NOT be an empty string
+				// there should be a fallback description if both "graphql_description"
+				// and "instructions" are not provided
+				$this->not()->expectedField( 'description',  self::IS_FALSY ),
+			]),
+		] );
+
+		// remove the local field
+		acf_remove_local_field( $field_key );
+
+	}
+
+	public function testFieldShowsInSchemaWithGraphqlFieldNameIfPresent() {
+
+		$graphql_field_name = 'customFieldName';
+
+		$field_key = $this->register_acf_field([
+			'graphql_field_name' => $graphql_field_name
+		]);
+
+		$query = '
+		query GetType( $name: String! ) {
+		  __type( name: $name ) {
+		    fields {
+		      name
+		    }
+		  }
+		}
+		';
+
+		$actual = $this->graphql( [
+			'query' => $query,
+			'variables' => [
+				'name' => 'AcfTestGroup',
+			]
+		]);
+
+		codecept_debug( $actual );
+
+		// the query should succeed
+		self::assertQuerySuccessful( $actual, [
+			// the instructions should be used for the description
+			$this->expectedNode( '__type.fields', [
+				$this->expectedField( 'name', $graphql_field_name ),
+			]),
+		] );
+
+		// remove the local field
+		acf_remove_local_field( $field_key );
+
+	}
+
+	public function testFieldShowsInSchemaWithGraphqlFieldNameHasUnderscores() {
+
+		$this->markTestIncomplete( 'WPGraphQL Core does not allow connection field names to have underscores' );
+
+		$graphql_field_name = 'custom_field_name';
+
+		$field_key = $this->register_acf_field([
+			'graphql_field_name' => $graphql_field_name
+		]);
+
+		$query = '
+		query GetType( $name: String! ) {
+		  __type( name: $name ) {
+		    fields {
+		      name
+		    }
+		  }
+		}
+		';
+
+		$actual = $this->graphql( [
+			'query' => $query,
+			'variables' => [
+				'name' => 'AcfTestGroup',
+			]
+		]);
+
+		// the query should succeed
+		self::assertQuerySuccessful( $actual, [
+			// the instructions should be used for the description
+			$this->expectedNode( '__type.fields', [
+				$this->expectedField( 'name', $graphql_field_name ),
 			]),
 		] );
 

@@ -199,19 +199,6 @@ class TextFieldTest extends \Tests\WPGraphQLAcf\TestCase\AcfFieldTestCase {
 
 	}
 
-
-//	// leave graphql_description empty
-//	// put a string of text in the "instructions" field
-//	// assert that the instructions field is used as the description for the field in the schema
-//	public function testInstructionsAreUsedAsDescriptionIfGraphqlDescriptionIsEmpty() {
-//
-//	}
-//
-//	// add a description to the graphql_description field on the acf_field
-//	// assert that that is the description passed to the schema
-//	public function testGraphqlDescription() {
-//
-//	}
 //
 //	// leave graphql_description and instructions fields empty
 //	// assert that a fallback description is output as the description in the schema
