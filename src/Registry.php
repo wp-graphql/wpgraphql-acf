@@ -375,7 +375,7 @@ class Registry {
 		$field_group_name = '';
 
 		if ( ! empty( $field_group['graphql_field_name'] ) ) {
-			return  \WPGraphQLAcf\Utils::format_field_name( $field_group['graphql_field_name'] );
+			return \WPGraphQLAcf\Utils::format_field_name( $field_group['graphql_field_name'] );
 		}
 		if ( ! empty( $field_group['name'] ) ) {
 			$field_group_name = $field_group['name'];
