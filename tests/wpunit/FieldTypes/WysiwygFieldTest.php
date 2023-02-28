@@ -21,4 +21,8 @@ class WysiwygFieldTest extends \Tests\WPGraphQLAcf\TestCase\AcfFieldTestCase {
 		return 'wysiwyg';
 	}
 
+	public function get_expected_field_resolve_type(): ?string {
+		return 'String';
+	}
+
 }

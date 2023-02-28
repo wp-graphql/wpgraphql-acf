@@ -21,4 +21,5 @@ class CheckboxFieldTest extends \Tests\WPGraphQLAcf\TestCase\AcfFieldTestCase {
 		return 'checkbox';
 	}
 
+
 }

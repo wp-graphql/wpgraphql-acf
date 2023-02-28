@@ -21,4 +21,8 @@ class TrueFalseFieldTest extends \Tests\WPGraphQLAcf\TestCase\AcfFieldTestCase {
 		return 'true_false';
 	}
 
+	public function get_expected_field_resolve_type(): ?string {
+		return 'Boolean';
+	}
+
 }

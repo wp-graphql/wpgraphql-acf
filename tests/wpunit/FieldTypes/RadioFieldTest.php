@@ -21,4 +21,8 @@ class RadioFieldTest extends \Tests\WPGraphQLAcf\TestCase\AcfFieldTestCase {
 		return 'radio';
 	}
 
+	public function get_expected_field_resolve_type(): ?string {
+		return 'String';
+	}
+
 }

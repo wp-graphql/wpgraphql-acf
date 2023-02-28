@@ -19,8 +19,8 @@ class TextAreaTestFieldTest extends \Tests\WPGraphQLAcf\TestCase\AcfFieldTestCas
 		return "textarea";
 	}
 
-	public function testSomeUniqueBehaviorAboutTextAreaFields() {
-
+	public function get_expected_field_resolve_type(): ?string {
+		return 'String';
 	}
 
 }

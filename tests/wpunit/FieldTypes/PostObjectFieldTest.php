@@ -21,4 +21,8 @@ class PostObjectFieldTest extends \Tests\WPGraphQLAcf\TestCase\AcfFieldTestCase 
 		return 'post_object';
 	}
 
+	public function get_expected_field_resolve_type(): ?string {
+		return 'ContentNodeConnection';
+	}
+
 }

@@ -21,4 +21,8 @@ class RangeFieldTest extends \Tests\WPGraphQLAcf\TestCase\AcfFieldTestCase {
 		return 'range';
 	}
 
+	public function get_expected_field_resolve_type(): ?string {
+		return 'Int';
+	}
+
 }

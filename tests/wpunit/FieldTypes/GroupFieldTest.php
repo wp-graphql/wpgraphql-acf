@@ -21,4 +21,5 @@ class GroupFieldTest extends \Tests\WPGraphQLAcf\TestCase\AcfFieldTestCase {
 		return 'group';
 	}
 
+
 }

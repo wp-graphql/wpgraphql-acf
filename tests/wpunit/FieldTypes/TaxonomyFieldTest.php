@@ -21,4 +21,8 @@ class TaxonomyFieldTest extends \Tests\WPGraphQLAcf\TestCase\AcfFieldTestCase {
 		return 'taxonomy';
 	}
 
+	public function get_expected_field_resolve_type(): ?string {
+		return 'String';
+	}
+
 }

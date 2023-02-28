@@ -187,7 +187,7 @@ class Settings {
 		acf_render_field_wrap(
 			[
 				'label'        => __( 'Show in GraphQL', 'wp-graphql-acf' ),
-				'instructions' => __( 'If the field group is active, and this is set to show, the fields in this group will be available in the WPGraphQL Schema based on the respective Location rules.', 'wp-graphql-acf' ),
+				'instructions' => __( 'If the field group is active, and this is set to show, the fields in this group will be available in the WPGraphQL Schema based on the respective Location rules. NOTE: Changing a field "show_in_graphql" to "false" could create breaking changes for client applications already querying for this field group.', 'wp-graphql-acf' ),
 				'type'         => 'true_false',
 				'name'         => 'show_in_graphql',
 				'prefix'       => 'acf_field_group',
@@ -203,13 +203,13 @@ class Settings {
 		// @phpstan-ignore-next-line
 		acf_render_field_wrap(
 			[
-				'label'        => __( 'GraphQL Field Name', 'wp-graphql-acf' ),
-				'instructions' => __( 'The name of the field group in the GraphQL Schema. Names should not include spaces or special characters. Best practice is to use "camelCase".', 'wp-graphql-acf' ),
+				'label'        => __( 'GraphQL Type Name', 'wp-graphql-acf' ),
+				'instructions' => __( 'The GraphQL Type name representing the field group in the GraphQL Schema. Must start with a letter. Can only contain Letters, Numbers and underscores. Best practice is to use "PascalCase" for GraphQL Types.', 'wp-graphql-acf' ),
 				'type'         => 'text',
 				'prefix'       => 'acf_field_group',
 				'name'         => 'graphql_field_name',
 				'required'     => isset( $field_group['show_in_graphql'] ) && (bool) $field_group['show_in_graphql'],
-				'placeholder'  => ! empty( $field_group['graphql_field_name'] ) ? $field_group['graphql_field_name'] : null,
+				'placeholder'  => __( 'FieldGroupTypeName', 'wp-graphql' ),
 				'value'        => ! empty( $field_group['graphql_field_name'] ) ? $field_group['graphql_field_name'] : null,
 			],
 			'div',
@@ -307,7 +307,7 @@ class Settings {
 		/**
 		 * If there are no supported fields, or the field is not supported, don't add a setting field.
 		 */
-		if ( empty( $supported_field_types ) || ! is_array( $supported_field_types ) || ! in_array( $field['type'], $supported_field_types, true ) ) {
+		if ( empty( $supported_field_types ) || ! in_array( $field['type'], $supported_field_types, true ) ) {
 			return;
 		}
 
@@ -317,7 +317,7 @@ class Settings {
 			$field,
 			[
 				'label'         => __( 'Show in GraphQL', 'wp-graphql-acf' ),
-				'instructions'  => __( 'Whether the field should be queryable via GraphQL', 'wp-graphql-acf' ),
+				'instructions'  => __( 'Whether the field should be queryable via GraphQL. NOTE: Changing this to false for existing field can cause a breaking change to the GraphQL Schema. Proceed with caution.', 'wp-graphql-acf' ),
 				'name'          => 'show_in_graphql',
 				'type'          => 'true_false',
 				'ui'            => 1,
@@ -336,8 +336,9 @@ class Settings {
 				'name'          => 'graphql_field_name',
 				'type'          => 'text',
 				'ui'            => true,
-				'default_value' => null,
-				'value'         => $field['graphql_field_name'] ?? null,
+				'placeholder'   => ! empty( $field['name'] ) ? \WPGraphQL\Utils\Utils::format_field_name( $field['name'] ) : '',
+				'default_value' => ! empty( $field['name'] ) ? \WPGraphQL\Utils\Utils::format_field_name( $field['name'] ) : '',
+				'value'         => ! empty( $field['graphql_field_name'] ) ? Utils::format_field_name( $field['graphql_field_name'] ) : null,
 			],
 			true
 		);

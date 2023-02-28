@@ -46,6 +46,15 @@ class TextFieldTest extends \Tests\WPGraphQLAcf\TestCase\AcfFieldTestCase {
 	}
 
 	/**
+	 * The "text" field is expected to be a "String" in the Schema
+	 *
+	 * @return string|null
+	 */
+	public function get_expected_field_resolve_type(): ?string {
+		return 'String';
+	}
+
+	/**
 	 * Register a text field
 	 * update value for the text field
 	 * query for the
@@ -198,6 +207,8 @@ class TextFieldTest extends \Tests\WPGraphQLAcf\TestCase\AcfFieldTestCase {
 		acf_remove_local_field( $field_key );
 
 	}
+
+
 
 //
 //	// leave graphql_description and instructions fields empty

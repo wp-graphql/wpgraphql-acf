@@ -21,4 +21,8 @@ class EmailFieldTest extends \Tests\WPGraphQLAcf\TestCase\AcfFieldTestCase {
 		return 'email';
 	}
 
+	public function get_expected_field_resolve_type(): ?string {
+		return 'String';
+	}
+
 }
