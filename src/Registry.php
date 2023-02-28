@@ -347,7 +347,7 @@ class Registry {
 			foreach ( $cloned_fields as $cloned_field ) {
 				$graphql_field_name = $this->get_graphql_field_name( $cloned_field );
 				if ( ! empty( $graphql_field_name ) ) {
-					$original_key                                                       = $graphql_fields[ $graphql_field_name ]['acf_field']['key'] ?? null;
+					$original_key = $graphql_fields[ $graphql_field_name ]['acf_field']['key'] ?? null;
 					$graphql_fields[ $graphql_field_name ]['acf_field']['key_original'] = $original_key;
 					$graphql_fields[ $graphql_field_name ]['acf_field']['cloned_key']   = $cloned_field['key'];
 				}
@@ -386,7 +386,7 @@ class Registry {
 
 		if ( ! empty( $field_group['graphql_field_name'] ) ) {
 			$field_group_name = \WPGraphQLAcf\Utils::format_field_name( $field_group['graphql_field_name'] );
-		} else if ( ! empty( $field_group['name'] ) ) {
+		} elseif ( ! empty( $field_group['name'] ) ) {
 			$field_group_name = $field_group['name'];
 		} elseif ( ! empty( $field_group['title'] ) ) {
 			$field_group_name = $field_group['title'];
@@ -401,7 +401,7 @@ class Registry {
 		$starts_with_string = is_numeric( substr( $field_group_name, 0, 1 ) );
 
 		if ( $starts_with_string ) {
-			graphql_debug( __( 'The ACF Field or Field Group could not be added to the schema. GraphQL Field and Type names cannot start with a number', 'wp-graphql' ), [
+			graphql_debug( __( 'The ACF Field or Field Group could not be added to the schema. GraphQL Field and Type names cannot start with a number', 'wp-graphql-acf' ), [
 				'invalid' => $field_group,
 			] );
 			return '';
