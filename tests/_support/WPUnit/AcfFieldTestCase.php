@@ -79,54 +79,6 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 		return Utils::format_field_name( $this->get_field_name() );
 	}
 
-	/**
-	 * If the graphql_field_name starts with a number, the field should not be added to the Schema
-	 * and a debug message should be output
-	 *
-	 * @return void
-	 */
-	public function testFieldDoesNotShowInSchemaIfGraphqlFieldNameStartsWithANumber() {
-
-		$invalid_field_name = '123FieldName';
-
-		$field_key = $this->register_acf_field([
-			'graphql_field_name' => $invalid_field_name
-		]);
-
-
-		$query = '
-		query GetType( $name: String! ) {
-		  __type( name: $name ) {
-		    fields {
-		      name
-		    }
-		  }
-		}
-		';
-
-		$actual = $this->graphql( [
-			'query' => $query,
-			'variables' => [
-				'name' => 'AcfTestGroup',
-			]
-		]);
-
-		codecept_debug( $actual );
-
-		// the query should succeed
-		self::assertQuerySuccessful( $actual, [
-			// the instructions should be used for the description
-			$this->not()->expectedNode( '__type.fields', [
-				'name' => $invalid_field_name,
-			]),
-		] );
-
-		// remove the local field
-		acf_remove_local_field( $field_key );
-
-
-
-	}
 
 	public function testFieldShowsInSchemaIfShowInGraphqlIsTrue() {
 
@@ -429,6 +381,44 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 
 	}
 
+	// Test that a field with no explicitly defined "graphql_field_name" will
+	// show in the schema with a formatted version of the field's name/label
+	public function testFieldShowsInSchemaWithFormattedFieldNameIfGraphqlFieldNameIsNotPresent() {
+
+		$field_key = $this->register_acf_field();
+
+		$query = '
+		query GetType( $name: String! ) {
+		  __type( name: $name ) {
+		    fields {
+		      name
+		    }
+		  }
+		}
+		';
+
+		$actual = $this->graphql( [
+			'query' => $query,
+			'variables' => [
+				'name' => 'AcfTestGroup',
+			]
+		]);
+
+		codecept_debug( $actual );
+
+		// the query should succeed
+		self::assertQuerySuccessful( $actual, [
+			// the instructions should be used for the description
+			$this->expectedNode( '__type.fields', [
+				$this->expectedField( 'name', $this->get_formatted_field_name() ),
+			]),
+		] );
+
+		// remove the local field
+		acf_remove_local_field( $field_key );
+
+	}
+
 	public function testFieldShowsInSchemaWithGraphqlFieldNameIfPresent() {
 
 		$graphql_field_name = 'customFieldName';
@@ -521,5 +511,56 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 
 	}
 
+	/**
+	 * @return void
+	 */
+	public function testFieldDoesNotShowInSchemaIfGraphqlFieldNameStartsWithANumber():void {
+
+		$graphql_field_name = '123fieldName';
+
+		$field_key = $this->register_acf_field([
+			'graphql_field_name' => $graphql_field_name
+		]);
+
+		$query = '
+		query GetType( $name: String! ) {
+		  __type( name: $name ) {
+		    fields {
+		      name
+		    }
+		  }
+		}
+		';
+
+		$actual = $this->graphql( [
+			'query' => $query,
+			'variables' => [
+				'name' => 'AcfTestGroup',
+			]
+		]);
+
+		// the query should succeed
+		self::assertQuerySuccessful( $actual, [
+			// the instructions should be used for the description
+			$this->not()->expectedNode( '__type.fields', [
+				$this->expectedField( 'name', $graphql_field_name ),
+			]),
+		] );
+
+		// remove the local field
+		acf_remove_local_field( $field_key );
+
+	}
+
+	/**
+	 * @todo: implement the below tests
+	 */
+//	abstract public function testQueryFieldOnPostReturnsExpectedValue();
+//	abstract public function testQueryFieldOnPageReturnsExpectedValue();
+//	abstract public function testQueryFieldOnCommentReturnsExpectedValue();
+//	abstract public function testQueryFieldOnTagReturnsExpectedValue();
+//	abstract public function testQueryFieldOnCategoryReturnsExpectedValue();
+//	abstract public function testQueryFieldOnUserReturnsExpectedValue();
+//	abstract public function testQueryFieldOnMenuItemReturnsExpectedValue();
 
 }
