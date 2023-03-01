@@ -1,6 +1,6 @@
 <?php
 
-class WysiwygFieldTest extends \Tests\WPGraphQLAcf\TestCase\AcfFieldTestCase {
+class WysiwygFieldTest extends \Tests\WPGraphQLAcf\WPUnit\AcfFieldTestCase {
 
 	/**
 	 * @return void

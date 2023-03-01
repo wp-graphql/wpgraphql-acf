@@ -1,6 +1,6 @@
 <?php
 
-class RadioFieldTest extends \Tests\WPGraphQLAcf\TestCase\AcfFieldTestCase {
+class RadioFieldTest extends \Tests\WPGraphQLAcf\WPUnit\AcfFieldTestCase {
 
 	/**
 	 * @return void

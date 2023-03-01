@@ -2,9 +2,24 @@
 
 class TermLocationTest extends \Codeception\TestCase\WPTestCase {
 
+	/**
+	 * @var string
+	 */
 	public $group_key;
+
+	/**
+	 * @var int
+	 */
 	public $post_id;
+
+	/**
+	 * @var string
+	 */
 	public $test_image;
+
+	/**
+	 * @var int
+	 */
 	public $tag_id;
 
 	public function setUp(): void {

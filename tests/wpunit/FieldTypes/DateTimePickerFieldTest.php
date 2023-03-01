@@ -1,6 +1,6 @@
 <?php
 
-class DateTimePickerFieldTest extends \Tests\WPGraphQLAcf\TestCase\AcfFieldTestCase {
+class DateTimePickerFieldTest extends \Tests\WPGraphQLAcf\WPUnit\AcfFieldTestCase {
 
 	/**
 	 * @return void

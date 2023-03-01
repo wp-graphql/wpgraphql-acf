@@ -1,6 +1,6 @@
 <?php
 
-class LinkFieldTest extends \Tests\WPGraphQLAcf\TestCase\AcfFieldTestCase {
+class LinkFieldTest extends \Tests\WPGraphQLAcf\WPUnit\AcfFieldTestCase {
 
 	/**
 	 * @return void

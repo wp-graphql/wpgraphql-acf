@@ -1,6 +1,6 @@
 <?php
 
-class RepeaterFieldTest extends \Tests\WPGraphQLAcf\TestCase\AcfFieldTestCase {
+class RepeaterFieldTest extends \Tests\WPGraphQLAcf\WPUnit\AcfFieldTestCase {
 
 	/**
 	 * @return void

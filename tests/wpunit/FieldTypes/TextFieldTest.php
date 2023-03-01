@@ -5,7 +5,7 @@
  *
  * Tests the behavior of text field mapping to the WPGraphQL Schema
  */
-class TextFieldTest extends \Tests\WPGraphQLAcf\TestCase\AcfFieldTestCase {
+class TextFieldTest extends \Tests\WPGraphQLAcf\WPUnit\AcfFieldTestCase {
 
 	/**
 	 * @var int

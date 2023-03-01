@@ -1,6 +1,6 @@
 <?php
 
-class TaxonomyFieldTest extends \Tests\WPGraphQLAcf\TestCase\AcfFieldTestCase {
+class TaxonomyFieldTest extends \Tests\WPGraphQLAcf\WPUnit\AcfFieldTestCase {
 
 	/**
 	 * @return void

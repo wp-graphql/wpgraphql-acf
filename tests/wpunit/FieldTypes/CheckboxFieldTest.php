@@ -1,6 +1,6 @@
 <?php
 
-class CheckboxFieldTest extends \Tests\WPGraphQLAcf\TestCase\AcfFieldTestCase {
+class CheckboxFieldTest extends \Tests\WPGraphQLAcf\WPUnit\AcfFieldTestCase {
 
 	/**
 	 * @return void
