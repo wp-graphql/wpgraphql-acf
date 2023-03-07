@@ -41,7 +41,7 @@ class TextFieldCest extends \Tests\WPGraphQLAcf\Functional\AcfFieldCest {
 
 		// The placeholder for the field should be the formatted
 		// version of the field's label (Foo Label)
-		$placeholder = $I->grabAttributeFrom( '//div[@data-name="graphql_field_name"]//input[@type="text"]', 'placeholder');
+		$placeholder = $I->grabAttributeFrom( '//div[@data-key="' . $this->_getTestFieldKey() . '"]//*[@data-name="graphql_field_name"]//input[@type="text"]', 'placeholder' );
 		$I->assertSame( $placeholder, 'fooLabel' );
 
 		// Add a field label
@@ -49,10 +49,10 @@ class TextFieldCest extends \Tests\WPGraphQLAcf\Functional\AcfFieldCest {
 		$I->fillField( 'Field Name', 'text_field' );
 
 		// fill in GraphQL Field Name
-		$I->fillField( 'GraphQL Field Name', 'textField' );
+		$I->fillField( '//div[@data-key="' . $this->_getTestFieldKey() . '"]//*[@data-name="graphql_field_name"]//input[@type="text"]', 'textField' );
 
 		// submit the form
-		$I->click('#submitpost button.acf-publish' );
+		$this->_submitForm( $I );
 
 		// make sure there's no errors
 		$I->dontSeeElement( '#message.notice-error' );
@@ -60,7 +60,7 @@ class TextFieldCest extends \Tests\WPGraphQLAcf\Functional\AcfFieldCest {
 		// Make sure the save succeeded
 		$I->seeElement( '#message.notice-success' );
 		$I->see( 'Field group updated.' );
-		$I->seeInField('GraphQL Field Name', 'textField');
+		$I->seeInField('//div[@data-key="' . $this->_getTestFieldKey() . '"]//*[@data-name="graphql_field_name"]//input[@type="text"]', 'textField');
 
 	}
 
@@ -94,7 +94,7 @@ class TextFieldCest extends \Tests\WPGraphQLAcf\Functional\AcfFieldCest {
 		$I->fillField( 'GraphQL Description', 'test description' );
 
 		// submit the form
-		$I->click('#submitpost button.acf-publish' );
+		$this->_submitForm( $I );
 
 		// make sure there's no errors
 		$I->dontSeeElement( '#message.notice-error' );

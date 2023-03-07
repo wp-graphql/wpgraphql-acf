@@ -54,7 +54,7 @@ class WPGraphQLAcf {
 		add_filter( 'acf/taxonomy_args', function ( array $args, array $taxonomy ) {
 
 			// respect the show_in_graphql value. If not set, use the value of $args['public'] to determine if the post type should be shown in graphql
-			$args['show_in_graphql']     = isset( $args['show_in_graphql'] ) ? (bool) $args['show_in_graphql'] : true === $args['public'];
+			$args['show_in_graphql'] = isset( $args['show_in_graphql'] ) ? (bool) $args['show_in_graphql'] : true === $args['public'];
 
 			$graphql_single_name = '';
 
