@@ -80,6 +80,7 @@ jobs:
             -e SKIP_TESTS_CLEANUP=${{ matrix.coverage }} \
             -e ACF_PRO=${{matrix.acf_pro }} \
             -e ACF_LICENSE_KEY=${{secrets.ACF_LICENSE_KEY}} \
+            -e ACF_VERSION=${{matrix.ACF_VERSION}} \
             testing
 
       - name: Push Codecoverage to Coveralls.io
