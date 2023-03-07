@@ -29,14 +29,14 @@ class CustomPostTypeRegistrationCest {
 
 		$this->acf_plugin_version = $this->_getPluginVersion( $I );
 
-	}
-
-	public function testPostTypeCanBeRegisteredToShowInGraphql( FunctionalTester $I ) {
-
 		// if the plugin version is before 6.1, we're not testing this functionality
 		if ( version_compare( $this->acf_plugin_version, '6.1', 'lt' ) ) {
 			$I->markTestSkipped( sprintf( 'Version "%s" does not include the ability to register custom post types, so we do not need to test the extensions of the feature', $this->acf_plugin_version ) );
 		}
+
+	}
+
+	public function testPostTypeCanBeRegisteredToShowInGraphql( FunctionalTester $I ) {
 
 		$I->amOnPage( '/wp-admin/edit.php?post_type=acf-post-type' );
 		$I->see( 'Post Types' );

@@ -19,11 +19,6 @@ class CustomTaxonomyRegistrationCest {
 
 	public function _before( FunctionalTester $I, \Codeception\Scenario $scenario ) {
 
-		// if the plugin version is before 6.1, we're not testing this functionality
-		if ( version_compare( $this->acf_plugin_version, '6.1', 'lt' ) ) {
-			$I->markTestSkipped( sprintf( 'Version "%s" does not include the ability to register custom post types, so we do not need to test the extensions of the feature', $this->acf_plugin_version ) );
-		}
-
 		if ( isset( $_ENV['ACF_PRO'] ) && true === (bool) $_ENV['ACF_PRO'] ) {
 			$this->acf_plugin_slug = 'advanced-custom-fields-pro';
 		} else {
@@ -31,6 +26,12 @@ class CustomTaxonomyRegistrationCest {
 		}
 
 		$this->acf_plugin_version = $this->_getPluginVersion( $I );
+
+		// if the plugin version is before 6.1, we're not testing this functionality
+		if ( version_compare( $this->acf_plugin_version, '6.1', 'lt' ) ) {
+			$I->markTestSkipped( sprintf( 'Version "%s" does not include the ability to register custom post types, so we do not need to test the extensions of the feature', $this->acf_plugin_version ) );
+		}
+
 
 	}
 
