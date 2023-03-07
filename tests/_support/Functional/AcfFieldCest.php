@@ -51,6 +51,9 @@ abstract class AcfFieldCest {
 		// Verify that we see the "Field Type" settings field
 		$I->see( 'Field Type' );
 
+		// Click edit on the field
+		$I->click( '//div[@data-key="' . $this->_getTestFieldKey() . '"]//a[@title="Edit field"]' );
+
 		// Select the "Field Type" that we want to test against
 		// This xpath finds the "Field Type" select for the field we're testing against to keep things constant
 		$I->selectOption( '//div[@data-key="' . $this->_getTestFieldKey() . '"]//select[contains(concat(" ", @class, " "), " field-type ")]', $this->_getAcfFieldType() );
@@ -77,7 +80,8 @@ abstract class AcfFieldCest {
 	 */
 	public function _submitForm( FunctionalTester $I ) {
 		// submit the form
-		$I->click('#submitpost button.acf-publish' );
+		// set the xpath tp play nice with multiple versions of ACF since the UI changed in 6.0
+		$I->click('//div[@id="submitpost"]//input[@id="save"] | //div[@id="submitpost"]//button[@type="submit"]' );
 
 		// make sure there's no errors
 		$I->dontSeeElement( '#message.notice-error' );
@@ -112,7 +116,7 @@ abstract class AcfFieldCest {
 	public function seeShowInGraphqlField( FunctionalTester $I ): void {
 		// Verify that we see the "Show in GraphQL" field.
 		// we specify this xpath because we don't want false positives of the "Graphql Field Name" being seen anywhere in the DOM (i.e. on the Field Group or another field)
-		$I->see( 'Show in GraphQL', '//div[@data-key="' . $this->_getTestFieldKey() . '"]//div[@data-name="show_in_graphql"]//label' );
+		$I->see( 'Show in GraphQL', '//div[@data-key="' . $this->_getTestFieldKey() . '"]//*[@data-name="show_in_graphql"]//label' );
 	}
 
 	/**
@@ -124,7 +128,7 @@ abstract class AcfFieldCest {
 		// ensure the description makes note about the possibility of breaking changes. The text might change, so we're not
 		// testing exact message, just that the "show_in_graphql" description notes the possibility
 		// of breaking changes
-		$I->see( 'breaking change', '//div[@data-key="' . $this->_getTestFieldKey() . '"]//div[@data-name="show_in_graphql"]//p[@class="description"]' );
+		$I->see( 'breaking change', '//div[@data-key="' . $this->_getTestFieldKey() . '"]//*[@data-name="show_in_graphql"]//p[@class="description"]' );
 
 	}
 
@@ -138,7 +142,7 @@ abstract class AcfFieldCest {
 		// Here we want to test that saving the "show_in_graphql" field
 		// properly sets the value as unchecked and checked again
 
-		$show_in_graphql_checkbox_selector = '//div[@data-key="' . $this->_getTestFieldKey() . '"]//div[@data-name="show_in_graphql"]//input[@type="checkbox"]';
+		$show_in_graphql_checkbox_selector = '//div[@data-key="' . $this->_getTestFieldKey() . '"]//*[@data-name="show_in_graphql"]//input[@type="checkbox"]';
 
 		// default value is checked
 		$I->canSeeCheckboxIsChecked( $show_in_graphql_checkbox_selector );
@@ -147,7 +151,7 @@ abstract class AcfFieldCest {
 		$I->uncheckOption( $show_in_graphql_checkbox_selector );
 
 		// submit the form
-		$I->click('#submitpost button.acf-publish' );
+		$this->_submitForm( $I );
 
 		// make sure there's no errors
 		$I->dontSeeElement( '#message.notice-error' );
@@ -176,7 +180,7 @@ abstract class AcfFieldCest {
 	public function seeGraphqlDescriptionField( FunctionalTester  $I ): void {
 
 		// we specify this xpath because we don't want false positives of the "Graphql Description" being seen anywhere in the DOM (i.e. on the Field Group or another field)
-		$I->see( 'GraphQL Description', '//div[@data-key="' . $this->_getTestFieldKey() . '"]//div[@data-name="graphql_description"]//label' );
+		$I->see( 'GraphQL Description', '//div[@data-key="' . $this->_getTestFieldKey() . '"]//*[@data-name="graphql_description"]//label' );
 	}
 
 	/**
@@ -189,7 +193,7 @@ abstract class AcfFieldCest {
 		// Here we want to test that saving the "show_in_graphql" field
 		// properly sets the value as unchecked and checked again
 
-		$graphql_description_input_selector = '//div[@data-key="' . $this->_getTestFieldKey() . '"]//div[@data-name="graphql_description"]//input[@type="text"]';
+		$graphql_description_input_selector = '//div[@data-key="' . $this->_getTestFieldKey() . '"]//*[@data-name="graphql_description"]//input[@type="text"]';
 
 		// default value should be empty
 		$graphql_description_value  = $I->grabAttributeFrom( $graphql_description_input_selector, 'value' );
@@ -216,7 +220,7 @@ abstract class AcfFieldCest {
 	public function seeGraphqlFieldNameField( FunctionalTester  $I ): void {
 
 		// we specify this xpath because we don't want false positives of the "Graphql Field Name" being seen anywhere in the DOM (i.e. on the Field Group or another field)
-		$I->see( 'GraphQL Field Name', '//div[@data-key="' . $this->_getTestFieldKey() . '"]//div[@data-name="graphql_field_name"]//label' );
+		$I->see( 'GraphQL Field Name', '//div[@data-key="' . $this->_getTestFieldKey() . '"]//*[@data-name="graphql_field_name"]//label' );
 
 	}
 
@@ -230,7 +234,7 @@ abstract class AcfFieldCest {
 		// Here we want to test that saving the "show_in_graphql" field
 		// properly sets the value as unchecked and checked again
 
-		$graphql_field_name_input_selector = '//div[@data-key="' . $this->_getTestFieldKey() . '"]//div[@data-name="graphql_field_name"]//input[@type="text"]';
+		$graphql_field_name_input_selector = '//div[@data-key="' . $this->_getTestFieldKey() . '"]//*[@data-name="graphql_field_name"]//input[@type="text"]';
 
 		// default value should be the formatted value of the label
 		$graphql_description_placeholder  = $I->grabAttributeFrom( $graphql_field_name_input_selector, 'placeholder' );
