@@ -2,36 +2,14 @@
 
 class CustomTaxonomyRegistrationCest {
 
-	public $acf_plugin_slug;
 	public $acf_plugin_version;
-
-	public function _getPluginVersion( FunctionalTester $I ) {
-		$I->loginAsAdmin();
-		$I->amOnPage( '/wp-admin/plugins.php' );
-
-		$description = $I->grabTextFrom( '//tr[contains(concat(" ", @class, " "), "active") and @data-slug="' . $this->acf_plugin_slug . '"]//div[contains(concat(" ", @class, " "), "plugin-version-author-uri")]' );
-
-		$re = '/Version|(.*?)\|.*$/m';
-		preg_match_all($re, $description, $matches, PREG_SET_ORDER, 0);
-
-		return ! empty( $matches[1][1] ) ? trim( $matches[1][1] ) : 'latest';
-	}
 
 	public function _before( FunctionalTester $I, \Codeception\Scenario $scenario ) {
 
-		if ( isset( $_ENV['ACF_PRO'] ) && true === (bool) $_ENV['ACF_PRO'] ) {
-			$this->acf_plugin_slug = 'advanced-custom-fields-pro';
-		} else {
-			$this->acf_plugin_slug = 'advanced-custom-fields';
-		}
-
-		$this->acf_plugin_version = $this->_getPluginVersion( $I );
+		$this->acf_plugin_version = $_ENV['ACF_VERSION'] ? (bool) $_ENV['ACF_VERSION'] : 'latest';
 
 		// if the plugin version is before 6.1, we're not testing this functionality
-		if (
-			! isset( $_ENV['ACF_PRO'] ) || true !== (bool) $_ENV['ACF_PRO'] ||
-			! isset( $_ENV['ACF_VERSION'] ) || version_compare( $_ENV['ACF_VERSION'], '6.1', 'lt' )
-		) {
+		if ( ! isset( $_ENV['ACF_PRO'] ) || true !== (bool) $_ENV['ACF_PRO'] || version_compare( $this->acf_plugin_version, '6.1', 'lt' ) ) {
 			$I->markTestSkipped( sprintf( 'Version "%s" does not include the ability to register custom post types, so we do not need to test the extensions of the feature', $this->acf_plugin_version ) );
 		}
 
