@@ -31,7 +31,7 @@ class CustomPostTypeRegistrationCest {
 
 		// if the plugin version is before 6.1, we're not testing this functionality
 		if (
-			empty( (bool) $_ENV['ACF_PRO'] ) ||
+			( ! isset( $_ENV['ACF_PRO'] ) || false === (bool) $_ENV['ACF_PRO'] ) ||
 			( ! isset( $_ENV['ACF_VERSION'] ) || version_compare( $_ENV['ACF_VERSION'], '6.1', 'lt' ) )
 		) {
 			$I->markTestSkipped( sprintf( 'Version "%s" does not include the ability to register custom post types, so we do not need to test the extensions of the feature', $this->acf_plugin_version ) );
