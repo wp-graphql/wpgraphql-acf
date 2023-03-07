@@ -21,8 +21,8 @@ class GalleryFieldTest extends \Tests\WPGraphQLAcf\WPUnit\AcfFieldTestCase {
 		return 'gallery';
 	}
 
-	public function get_expected_field_resolve_type(): ?string {
-		return 'ContentNodeConnection';
-	}
+//	public function get_expected_field_resolve_type(): ?string {
+//		return 'ContentNodeConnection';
+//	}
 
 }
