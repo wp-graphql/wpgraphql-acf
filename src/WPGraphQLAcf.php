@@ -18,16 +18,17 @@ class WPGraphQLAcf {
 
 		add_action( 'admin_init', [ $this, 'init_admin_settings' ] );
 		add_action( 'graphql_register_types', [ $this, 'init_registry' ] );
-		add_filter( 'acf/post_type_args', function( array $args, array $post_type ) {
+		add_filter( 'acf/post_type_args', function ( array $args, array $post_type ) {
 
 			// respect the show_in_graphql value. If not set, use the value of $args['public'] to determine if the post type should be shown in graphql
-			$args['show_in_graphql']     = isset( $args['show_in_graphql'] ) ? (bool) $args['show_in_graphql'] : true === $args['public'];
+			$args['show_in_graphql'] = isset( $args['show_in_graphql'] ) ? (bool) $args['show_in_graphql'] : true === $args['public'];
 
 			$graphql_single_name = '';
 
 			if ( isset( $args['graphql_single_name'] ) ) {
 				$graphql_single_name = $args['graphql_single_name'];
-			} else if ( isset( $args['labels']['singular_name'] ) ) {
+			} elseif ( isset( $args['labels']['singular_name'] ) ) {
+				// @phpstan-ignore-next-line
 				$graphql_single_name = \WPGraphQL\Utils\Utils::format_field_name( $args['labels']['singular_name'], true );
 			}
 
@@ -38,7 +39,8 @@ class WPGraphQLAcf {
 
 			if ( isset( $args['graphql_plural_name'] ) ) {
 				$graphql_plural_name = $args['graphql_plural_name'];
-			} else if ( isset( $args['labels']['name'] ) ) {
+			} elseif ( isset( $args['labels']['name'] ) ) {
+				// @phpstan-ignore-next-line
 				$graphql_plural_name = \WPGraphQL\Utils\Utils::format_field_name( $args['labels']['name'], true );
 			}
 
@@ -49,7 +51,7 @@ class WPGraphQLAcf {
 
 		}, 10, 2);
 
-		add_filter( 'acf/taxonomy_args', function( array $args, array $taxonomy ) {
+		add_filter( 'acf/taxonomy_args', function ( array $args, array $taxonomy ) {
 
 			// respect the show_in_graphql value. If not set, use the value of $args['public'] to determine if the post type should be shown in graphql
 			$args['show_in_graphql']     = isset( $args['show_in_graphql'] ) ? (bool) $args['show_in_graphql'] : true === $args['public'];
@@ -58,7 +60,8 @@ class WPGraphQLAcf {
 
 			if ( isset( $args['graphql_single_name'] ) ) {
 				$graphql_single_name = $args['graphql_single_name'];
-			} else if ( isset( $args['labels']['singular_name'] ) ) {
+			} elseif ( isset( $args['labels']['singular_name'] ) ) {
+				// @phpstan-ignore-next-line
 				$graphql_single_name = \WPGraphQL\Utils\Utils::format_field_name( $args['labels']['singular_name'], true );
 			}
 
@@ -69,7 +72,8 @@ class WPGraphQLAcf {
 
 			if ( isset( $args['graphql_plural_name'] ) ) {
 				$graphql_plural_name = $args['graphql_plural_name'];
-			} else if ( isset( $args['labels']['name'] ) ) {
+			} elseif ( isset( $args['labels']['name'] ) ) {
+				// @phpstan-ignore-next-line
 				$graphql_plural_name = \WPGraphQL\Utils\Utils::format_field_name( $args['labels']['name'], true );
 			}
 
@@ -80,20 +84,21 @@ class WPGraphQLAcf {
 
 		}, 10, 2);
 
-		add_filter( 'acf/post_type/additional_settings_tabs', function( $tabs ) {
+		add_filter( 'acf/post_type/additional_settings_tabs', function ( $tabs ) {
 			$tabs['graphql'] = __( 'GraphQL', 'wp-graphql-acf' );
 			return $tabs;
 		});
 
-		add_filter( 'acf/taxonomy/additional_settings_tabs', function( $tabs ) {
+		add_filter( 'acf/taxonomy/additional_settings_tabs', function ( $tabs ) {
 			$tabs['graphql'] = __( 'GraphQL', 'wp-graphql-acf' );
 			return $tabs;
 		});
 
-		add_action( 'acf/post_type/render_settings_tab/graphql', function( $acf_post_type ) {
+		add_action( 'acf/post_type/render_settings_tab/graphql', function ( $acf_post_type ) {
 
+			// @phpstan-ignore-next-line
 			acf_render_field_wrap(
-				array(
+				[
 					'type'         => 'true_false',
 					'name'         => 'show_in_graphql',
 					'key'          => 'show_in_graphql',
@@ -103,7 +108,7 @@ class WPGraphQLAcf {
 					'label'        => __( 'Show in GraphQL', 'wp-graphql-acf' ),
 					'instructions' => __( 'Whether to show the Post Type in the WPGraphQL Schema.', 'wp-graphql-acf' ),
 					'default'      => false,
-				),
+				]
 			);
 
 			$graphql_single_name = $acf_post_type['graphql_single_name'] ?? '';
@@ -112,10 +117,12 @@ class WPGraphQLAcf {
 				$graphql_single_name = ! empty( $acf_post_type['labels']['singular_name'] ) ? \WPGraphQLAcf\Utils::format_field_name( $acf_post_type['labels']['singular_name'] ) : '';
 			}
 
+			// @phpstan-ignore-next-line
 			$graphql_single_name = \WPGraphQL\Utils\Utils::format_field_name( $graphql_single_name, true );
 
+			// @phpstan-ignore-next-line
 			acf_render_field_wrap(
-				array(
+				[
 					'type'         => 'text',
 					'name'         => 'graphql_single_name',
 					'key'          => 'graphql_single_name',
@@ -125,12 +132,12 @@ class WPGraphQLAcf {
 					'instructions' => __( 'How the type should be referenced in the GraphQL Schema.', 'wp-graphql-acf' ),
 					'default'      => $graphql_single_name,
 					'required'     => 1,
-					'conditions'   => array(
+					'conditions'   => [
 						'field'    => 'show_in_graphql',
 						'operator' => '==',
 						'value'    => '1',
-					),
-				),
+					],
+				],
 				'div',
 				'field'
 			);
@@ -143,10 +150,12 @@ class WPGraphQLAcf {
 				$graphql_plural_name = ! empty( $acf_post_type['labels']['name'] ) ? \WPGraphQLAcf\Utils::format_field_name( $acf_post_type['labels']['name'] ) : '';
 			}
 
+			// @phpstan-ignore-next-line
 			$graphql_plural_name = \WPGraphQL\Utils\Utils::format_field_name( $graphql_plural_name, true );
 
+			// @phpstan-ignore-next-line
 			acf_render_field_wrap(
-				array(
+				[
 					'type'         => 'text',
 					'name'         => 'graphql_plural_name',
 					'key'          => 'graphql_plural_name',
@@ -156,22 +165,23 @@ class WPGraphQLAcf {
 					'instructions' => __( 'How the type should be referenced in the GraphQL Schema.', 'wp-graphql-acf' ),
 					'default'      => $graphql_plural_name,
 					'required'     => 1,
-					'conditions'   => array(
+					'conditions'   => [
 						'field'    => 'show_in_graphql',
 						'operator' => '==',
 						'value'    => '1',
-					),
-				),
+					],
+				],
 				'div',
 				'field'
 			);
 
 		} );
 
-		add_action( 'acf/taxonomy/render_settings_tab/graphql', function( $acf_taxonomy ) {
+		add_action( 'acf/taxonomy/render_settings_tab/graphql', function ( $acf_taxonomy ) {
 
+			// @phpstan-ignore-next-line
 			acf_render_field_wrap(
-				array(
+				[
 					'type'         => 'true_false',
 					'name'         => 'show_in_graphql',
 					'key'          => 'show_in_graphql',
@@ -181,7 +191,7 @@ class WPGraphQLAcf {
 					'label'        => __( 'Show in GraphQL', 'wp-graphql-acf' ),
 					'instructions' => __( 'Whether to show the Taxonomy in the WPGraphQL Schema.', 'wp-graphql-acf' ),
 					'default'      => false,
-				),
+				]
 			);
 
 			$graphql_single_name = $acf_taxonomy['graphql_single_name'] ?? '';
@@ -190,10 +200,12 @@ class WPGraphQLAcf {
 				$graphql_single_name = ! empty( $acf_taxonomy['labels']['singular_name'] ) ? \WPGraphQLAcf\Utils::format_field_name( $acf_taxonomy['labels']['singular_name'] ) : '';
 			}
 
+			// @phpstan-ignore-next-line
 			$graphql_single_name = \WPGraphQL\Utils\Utils::format_field_name( $graphql_single_name, true );
 
+			// @phpstan-ignore-next-line
 			acf_render_field_wrap(
-				array(
+				[
 					'type'         => 'text',
 					'name'         => 'graphql_single_name',
 					'key'          => 'graphql_single_name',
@@ -202,12 +214,12 @@ class WPGraphQLAcf {
 					'label'        => __( 'GraphQL Single Name', 'wp-graphql-acf' ),
 					'instructions' => __( 'How the type should be referenced in the GraphQL Schema.', 'wp-graphql-acf' ),
 					'default'      => $graphql_single_name,
-					'conditions'   => array(
+					'conditions'   => [
 						'field'    => 'show_in_graphql',
 						'operator' => '==',
 						'value'    => '1',
-					),
-				),
+					],
+				],
 				'div',
 				'field'
 			);
@@ -218,10 +230,12 @@ class WPGraphQLAcf {
 				$graphql_plural_name = ! empty( $acf_taxonomy['labels']['name'] ) ? \WPGraphQLAcf\Utils::format_field_name( $acf_taxonomy['labels']['name'] ) : '';
 			}
 
+			// @phpstan-ignore-next-line
 			$graphql_plural_name = \WPGraphQL\Utils\Utils::format_field_name( $graphql_plural_name, true );
 
+			// @phpstan-ignore-next-line
 			acf_render_field_wrap(
-				array(
+				[
 					'type'         => 'text',
 					'name'         => 'graphql_plural_name',
 					'key'          => 'graphql_plural_name',
@@ -230,12 +244,12 @@ class WPGraphQLAcf {
 					'label'        => __( 'GraphQL Plural Name', 'wp-graphql-acf' ),
 					'instructions' => __( 'How the type should be referenced in the GraphQL Schema.', 'wp-graphql-acf' ),
 					'default'      => $graphql_plural_name,
-					'conditions'   => array(
+					'conditions'   => [
 						'field'    => 'show_in_graphql',
 						'operator' => '==',
 						'value'    => '1',
-					),
-				),
+					],
+				],
 				'div',
 				'field'
 			);
