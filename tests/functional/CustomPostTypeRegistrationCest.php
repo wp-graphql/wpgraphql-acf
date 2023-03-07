@@ -6,7 +6,7 @@ class CustomPostTypeRegistrationCest {
 
 	public function _before( FunctionalTester $I, \Codeception\Scenario $scenario ) {
 
-		$this->acf_plugin_version = $_ENV['ACF_VERSION'] ? (bool) $_ENV['ACF_VERSION'] : 'latest';
+		$this->acf_plugin_version = $_ENV['ACF_VERSION'] ?? 'latest';
 
 		// if the plugin version is before 6.1, we're not testing this functionality
 		if ( ! isset( $_ENV['ACF_PRO'] ) || true !== (bool) $_ENV['ACF_PRO'] || version_compare( $this->acf_plugin_version, '6.1', 'lt' ) ) {
