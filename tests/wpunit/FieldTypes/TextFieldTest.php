@@ -5,7 +5,7 @@
  *
  * Tests the behavior of text field mapping to the WPGraphQL Schema
  */
-class TextFieldTest extends \Tests\WPGraphQLAcf\TestCase\AcfFieldTestCase {
+class TextFieldTest extends \Tests\WPGraphQLAcf\WPUnit\AcfFieldTestCase {
 
 	/**
 	 * @var int
@@ -43,6 +43,15 @@ class TextFieldTest extends \Tests\WPGraphQLAcf\TestCase\AcfFieldTestCase {
 	 */
 	public function get_field_type():string {
 		return 'text';
+	}
+
+	/**
+	 * The "text" field is expected to be a "String" in the Schema
+	 *
+	 * @return string|null
+	 */
+	public function get_expected_field_resolve_type(): ?string {
+		return 'String';
 	}
 
 	/**
@@ -198,6 +207,8 @@ class TextFieldTest extends \Tests\WPGraphQLAcf\TestCase\AcfFieldTestCase {
 		acf_remove_local_field( $field_key );
 
 	}
+
+
 
 //
 //	// leave graphql_description and instructions fields empty

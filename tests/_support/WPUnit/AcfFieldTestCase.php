@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\WPGraphQLAcf\TestCase;
+namespace Tests\WPGraphQLAcf\WPUnit;
 
 use WPGraphQL\Utils\Utils;
 
@@ -42,6 +42,14 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 	}
 
 	/**
+	 * Return the expected GraphQL resolve type for the field in the schema. i.e. 'String' for text field or 'Int' for number field.
+	 * @return string|null
+	 */
+	public function get_expected_field_resolve_type(): ?string {
+		return null;
+	}
+
+	/**
 	 * @param array $acf_field
 	 * @param array $acf_field_group
 	 *
@@ -70,6 +78,7 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 	public function get_formatted_field_name(): string {
 		return Utils::format_field_name( $this->get_field_name() );
 	}
+
 
 	public function testFieldShowsInSchemaIfShowInGraphqlIsTrue() {
 
@@ -102,6 +111,55 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 			$this->expectedNode( '__type.fields', [
 				'name' => $this->get_formatted_field_name(),
 			]),
+		] );
+
+		// remove the local field
+		acf_remove_local_field( $field_key );
+
+	}
+
+	public function testFieldShowsInSchemaWithExpectedResolveType() {
+
+		if ( empty( $this->get_expected_field_resolve_type() ) ) {
+			$this->markTestIncomplete( sprintf( "The '%s' test needs to define an expected resolve type by defining the 'get_expected_field_resolve_type' function with a return value", __CLASS__ ) );
+		}
+
+		$field_key = $this->register_acf_field([
+			'show_in_graphql' => true
+		]);
+
+		$query = '
+		query GetType( $name: String! ) {
+		  __type( name: $name ) {
+		    fields {
+		      name
+		      type {
+		        kind
+		        name
+		      }
+		    }
+		  }
+		}
+		';
+
+		$actual = $this->graphql( [
+			'query' => $query,
+			'variables' => [
+				'name' => 'AcfTestGroup',
+			]
+		]);
+
+		codecept_debug( $actual );
+
+		// the query should succeed
+		self::assertQuerySuccessful( $actual, [
+			$this->expectedObject( '__type.fields', [
+				'name' => $this->get_formatted_field_name(),
+				'type' => [
+					'kind' => 'SCALAR',
+					'name' => $this->get_expected_field_resolve_type(),
+				],
+			])
 		] );
 
 		// remove the local field
@@ -323,6 +381,44 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 
 	}
 
+	// Test that a field with no explicitly defined "graphql_field_name" will
+	// show in the schema with a formatted version of the field's name/label
+	public function testFieldShowsInSchemaWithFormattedFieldNameIfGraphqlFieldNameIsNotPresent() {
+
+		$field_key = $this->register_acf_field();
+
+		$query = '
+		query GetType( $name: String! ) {
+		  __type( name: $name ) {
+		    fields {
+		      name
+		    }
+		  }
+		}
+		';
+
+		$actual = $this->graphql( [
+			'query' => $query,
+			'variables' => [
+				'name' => 'AcfTestGroup',
+			]
+		]);
+
+		codecept_debug( $actual );
+
+		// the query should succeed
+		self::assertQuerySuccessful( $actual, [
+			// the instructions should be used for the description
+			$this->expectedNode( '__type.fields', [
+				$this->expectedField( 'name', $this->get_formatted_field_name() ),
+			]),
+		] );
+
+		// remove the local field
+		acf_remove_local_field( $field_key );
+
+	}
+
 	public function testFieldShowsInSchemaWithGraphqlFieldNameIfPresent() {
 
 		$graphql_field_name = 'customFieldName';
@@ -363,6 +459,11 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 
 	}
 
+	/**
+	 * @skip WPGraphQL Core does not allow connection field names to have underscores, see: https://github.com/wp-graphql/wp-graphql/blob/develop/src/Type/WPConnectionType.php#L515, https://github.com/wp-graphql/wp-graphql/blob/develop/src/Registry/TypeRegistry.php#L1029
+	 *
+	 * @return void
+	 */
 	public function testFieldShowsInSchemaWithGraphqlFieldNameHasUnderscores() {
 
 		/**
@@ -410,5 +511,56 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 
 	}
 
+	/**
+	 * @return void
+	 */
+	public function testFieldDoesNotShowInSchemaIfGraphqlFieldNameStartsWithANumber():void {
+
+		$graphql_field_name = '123fieldName';
+
+		$field_key = $this->register_acf_field([
+			'graphql_field_name' => $graphql_field_name
+		]);
+
+		$query = '
+		query GetType( $name: String! ) {
+		  __type( name: $name ) {
+		    fields {
+		      name
+		    }
+		  }
+		}
+		';
+
+		$actual = $this->graphql( [
+			'query' => $query,
+			'variables' => [
+				'name' => 'AcfTestGroup',
+			]
+		]);
+
+		// the query should succeed
+		self::assertQuerySuccessful( $actual, [
+			// the instructions should be used for the description
+			$this->not()->expectedNode( '__type.fields', [
+				$this->expectedField( 'name', $graphql_field_name ),
+			]),
+		] );
+
+		// remove the local field
+		acf_remove_local_field( $field_key );
+
+	}
+
+	/**
+	 * @todo: implement the below tests
+	 */
+//	abstract public function testQueryFieldOnPostReturnsExpectedValue();
+//	abstract public function testQueryFieldOnPageReturnsExpectedValue();
+//	abstract public function testQueryFieldOnCommentReturnsExpectedValue();
+//	abstract public function testQueryFieldOnTagReturnsExpectedValue();
+//	abstract public function testQueryFieldOnCategoryReturnsExpectedValue();
+//	abstract public function testQueryFieldOnUserReturnsExpectedValue();
+//	abstract public function testQueryFieldOnMenuItemReturnsExpectedValue();
 
 }

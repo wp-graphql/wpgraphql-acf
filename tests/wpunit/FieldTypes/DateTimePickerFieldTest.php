@@ -1,6 +1,6 @@
 <?php
 
-class DateTimePickerFieldTest extends \Tests\WPGraphQLAcf\TestCase\AcfFieldTestCase {
+class DateTimePickerFieldTest extends \Tests\WPGraphQLAcf\WPUnit\AcfFieldTestCase {
 
 	/**
 	 * @return void
@@ -19,6 +19,10 @@ class DateTimePickerFieldTest extends \Tests\WPGraphQLAcf\TestCase\AcfFieldTestC
 
 	public function get_field_type(): string {
 		return 'date_time_picker';
+	}
+
+	public function get_expected_field_resolve_type(): ?string {
+		return 'String';
 	}
 
 }

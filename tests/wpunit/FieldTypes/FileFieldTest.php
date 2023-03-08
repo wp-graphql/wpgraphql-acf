@@ -1,6 +1,6 @@
 <?php
 
-class FileFieldTest extends \Tests\WPGraphQLAcf\TestCase\AcfFieldTestCase {
+class FileFieldTest extends \Tests\WPGraphQLAcf\WPUnit\AcfFieldTestCase {
 
 	/**
 	 * @return void
@@ -20,5 +20,9 @@ class FileFieldTest extends \Tests\WPGraphQLAcf\TestCase\AcfFieldTestCase {
 	public function get_field_type(): string {
 		return 'file';
 	}
+
+//	public function get_expected_field_resolve_type(): ?string {
+//		return 'MediaItemConnectionEdge';
+//	}
 
 }

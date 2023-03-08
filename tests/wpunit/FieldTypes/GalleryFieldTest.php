@@ -1,6 +1,6 @@
 <?php
 
-class GalleryFieldTest extends \Tests\WPGraphQLAcf\TestCase\AcfFieldTestCase {
+class GalleryFieldTest extends \Tests\WPGraphQLAcf\WPUnit\AcfFieldTestCase {
 
 	/**
 	 * @return void
@@ -20,5 +20,9 @@ class GalleryFieldTest extends \Tests\WPGraphQLAcf\TestCase\AcfFieldTestCase {
 	public function get_field_type(): string {
 		return 'gallery';
 	}
+
+//	public function get_expected_field_resolve_type(): ?string {
+//		return 'ContentNodeConnection';
+//	}
 
 }

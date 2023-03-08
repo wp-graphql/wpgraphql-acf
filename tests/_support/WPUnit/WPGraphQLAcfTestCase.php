@@ -1,5 +1,5 @@
 <?php
-namespace Tests\WPGraphQLAcf\TestCase;
+namespace Tests\WPGraphQLAcf\WPUnit;
 
 /**
  * Test Case for testing WPGraphQL for ACF Functionality

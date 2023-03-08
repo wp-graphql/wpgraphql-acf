@@ -1,9 +1,6 @@
 <?php
 
-
-
-
-class ButtonGroupFieldTest extends \Tests\WPGraphQLAcf\TestCase\AcfFieldTestCase {
+class ButtonGroupFieldTest extends \Tests\WPGraphQLAcf\WPUnit\AcfFieldTestCase {
 
 	/**
 	 * @return void

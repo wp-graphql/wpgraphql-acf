@@ -6,7 +6,7 @@
  * These tests are intended to test ACF Field groups that are assigned locations
  * but not explicitly assigned "graphql_types"
  */
-class LocationRulesTest extends \Tests\WPGraphQLAcf\TestCase\WPGraphQLAcfTestCase {
+class LocationRulesTest extends \Tests\WPGraphQLAcf\WPUnit\WPGraphQLAcfTestCase {
 
 	public function setUp(): void {
 		$this->clearSchema();

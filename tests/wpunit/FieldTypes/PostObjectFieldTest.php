@@ -1,6 +1,6 @@
 <?php
 
-class PostObjectFieldTest extends \Tests\WPGraphQLAcf\TestCase\AcfFieldTestCase {
+class PostObjectFieldTest extends \Tests\WPGraphQLAcf\WPUnit\AcfFieldTestCase {
 
 	/**
 	 * @return void
@@ -20,5 +20,9 @@ class PostObjectFieldTest extends \Tests\WPGraphQLAcf\TestCase\AcfFieldTestCase 
 	public function get_field_type(): string {
 		return 'post_object';
 	}
+
+//	public function get_expected_field_resolve_type(): ?string {
+//		return 'ContentNodeConnection';
+//	}
 
 }

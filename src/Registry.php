@@ -78,6 +78,10 @@ class Registry {
 
 		$should = true;
 
+		if ( isset( $acf_field_group['active'] ) && false === $acf_field_group['active'] ) {
+			$should = false;
+		}
+
 		if ( isset( $acf_field_group['show_in_graphql'] ) && false === $acf_field_group['show_in_graphql'] ) {
 			$should = false;
 		}
@@ -324,6 +328,10 @@ class Registry {
 
 			$graphql_field_name = $this->get_graphql_field_name( $acf_field );
 
+			if ( empty( $graphql_field_name ) ) {
+				continue;
+			}
+
 			if ( isset( $acf_field['_clone'] ) ) {
 				$cloned_fields[ $graphql_field_name ] = $acf_field;
 				continue;
@@ -338,9 +346,11 @@ class Registry {
 		if ( ! empty( $cloned_fields ) ) {
 			foreach ( $cloned_fields as $cloned_field ) {
 				$graphql_field_name = $this->get_graphql_field_name( $cloned_field );
-				$original_key       = $graphql_fields[ $graphql_field_name ]['acf_field']['key'] ?? null;
-				$graphql_fields[ $graphql_field_name ]['acf_field']['key_original'] = $original_key;
-				$graphql_fields[ $graphql_field_name ]['acf_field']['cloned_key']   = $cloned_field['key'];
+				if ( ! empty( $graphql_field_name ) ) {
+					$original_key = $graphql_fields[ $graphql_field_name ]['acf_field']['key'] ?? null;
+					$graphql_fields[ $graphql_field_name ]['acf_field']['key_original'] = $original_key;
+					$graphql_fields[ $graphql_field_name ]['acf_field']['cloned_key']   = $cloned_field['key'];
+				}
 			}
 		}
 
@@ -375,9 +385,8 @@ class Registry {
 		$field_group_name = '';
 
 		if ( ! empty( $field_group['graphql_field_name'] ) ) {
-			return \WPGraphQLAcf\Utils::format_field_name( $field_group['graphql_field_name'] );
-		}
-		if ( ! empty( $field_group['name'] ) ) {
+			$field_group_name = \WPGraphQLAcf\Utils::format_field_name( $field_group['graphql_field_name'] );
+		} elseif ( ! empty( $field_group['name'] ) ) {
 			$field_group_name = $field_group['name'];
 		} elseif ( ! empty( $field_group['title'] ) ) {
 			$field_group_name = $field_group['title'];
@@ -387,6 +396,15 @@ class Registry {
 
 		if ( empty( $field_group_name ) ) {
 			return $field_group_name;
+		}
+
+		$starts_with_string = is_numeric( substr( $field_group_name, 0, 1 ) );
+
+		if ( $starts_with_string ) {
+			graphql_debug( __( 'The ACF Field or Field Group could not be added to the schema. GraphQL Field and Type names cannot start with a number', 'wp-graphql-acf' ), [
+				'invalid' => $field_group,
+			] );
+			return '';
 		}
 
 		$replaced = preg_replace( '/[\W_]+/u', ' ', $field_group_name );

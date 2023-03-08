@@ -1,6 +1,6 @@
 <?php
 
-class EmailFieldTest extends \Tests\WPGraphQLAcf\TestCase\AcfFieldTestCase {
+class EmailFieldTest extends \Tests\WPGraphQLAcf\WPUnit\AcfFieldTestCase {
 
 	/**
 	 * @return void
@@ -19,6 +19,10 @@ class EmailFieldTest extends \Tests\WPGraphQLAcf\TestCase\AcfFieldTestCase {
 
 	public function get_field_type(): string {
 		return 'email';
+	}
+
+	public function get_expected_field_resolve_type(): ?string {
+		return 'String';
 	}
 
 }

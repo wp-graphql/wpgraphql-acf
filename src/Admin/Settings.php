@@ -48,6 +48,7 @@ class Settings {
 
 		$this->is_acf6_or_higher = defined( 'ACF_MAJOR_VERSION' ) && version_compare( ACF_MAJOR_VERSION, '6', '>=' );
 
+
 		/**
 		 * Add settings to individual fields to allow each field granular control
 		 * over how it's shown in the GraphQL Schema
@@ -187,7 +188,7 @@ class Settings {
 		acf_render_field_wrap(
 			[
 				'label'        => __( 'Show in GraphQL', 'wp-graphql-acf' ),
-				'instructions' => __( 'If the field group is active, and this is set to show, the fields in this group will be available in the WPGraphQL Schema based on the respective Location rules.', 'wp-graphql-acf' ),
+				'instructions' => __( 'If the field group is active, and this is set to show, the fields in this group will be available in the WPGraphQL Schema based on the respective Location rules. NOTE: Changing a field "show_in_graphql" to "false" could create breaking changes for client applications already querying for this field group.', 'wp-graphql-acf' ),
 				'type'         => 'true_false',
 				'name'         => 'show_in_graphql',
 				'prefix'       => 'acf_field_group',
@@ -203,13 +204,13 @@ class Settings {
 		// @phpstan-ignore-next-line
 		acf_render_field_wrap(
 			[
-				'label'        => __( 'GraphQL Field Name', 'wp-graphql-acf' ),
-				'instructions' => __( 'The name of the field group in the GraphQL Schema. Names should not include spaces or special characters. Best practice is to use "camelCase".', 'wp-graphql-acf' ),
+				'label'        => __( 'GraphQL Type Name', 'wp-graphql-acf' ),
+				'instructions' => __( 'The GraphQL Type name representing the field group in the GraphQL Schema. Must start with a letter. Can only contain Letters, Numbers and underscores. Best practice is to use "PascalCase" for GraphQL Types.', 'wp-graphql-acf' ),
 				'type'         => 'text',
 				'prefix'       => 'acf_field_group',
 				'name'         => 'graphql_field_name',
 				'required'     => isset( $field_group['show_in_graphql'] ) && (bool) $field_group['show_in_graphql'],
-				'placeholder'  => ! empty( $field_group['graphql_field_name'] ) ? $field_group['graphql_field_name'] : null,
+				'placeholder'  => __( 'FieldGroupTypeName', 'wp-graphql-acf' ),
 				'value'        => ! empty( $field_group['graphql_field_name'] ) ? $field_group['graphql_field_name'] : null,
 			],
 			'div',
@@ -307,7 +308,7 @@ class Settings {
 		/**
 		 * If there are no supported fields, or the field is not supported, don't add a setting field.
 		 */
-		if ( empty( $supported_field_types ) || ! is_array( $supported_field_types ) || ! in_array( $field['type'], $supported_field_types, true ) ) {
+		if ( empty( $supported_field_types ) || ! in_array( $field['type'], $supported_field_types, true ) ) {
 			return;
 		}
 
@@ -317,7 +318,7 @@ class Settings {
 			$field,
 			[
 				'label'         => __( 'Show in GraphQL', 'wp-graphql-acf' ),
-				'instructions'  => __( 'Whether the field should be queryable via GraphQL', 'wp-graphql-acf' ),
+				'instructions'  => __( 'Whether the field should be queryable via GraphQL. NOTE: Changing this to false for existing field can cause a breaking change to the GraphQL Schema. Proceed with caution.', 'wp-graphql-acf' ),
 				'name'          => 'show_in_graphql',
 				'type'          => 'true_false',
 				'ui'            => 1,
@@ -336,8 +337,9 @@ class Settings {
 				'name'          => 'graphql_field_name',
 				'type'          => 'text',
 				'ui'            => true,
-				'default_value' => null,
-				'value'         => $field['graphql_field_name'] ?? null,
+				'placeholder'   => ! empty( $field['name'] ) ? \WPGraphQL\Utils\Utils::format_field_name( $field['name'] ) : '',
+				'default_value' => ! empty( $field['name'] ) ? \WPGraphQL\Utils\Utils::format_field_name( $field['name'] ) : '',
+				'value'         => ! empty( $field['graphql_field_name'] ) ? Utils::format_field_name( $field['graphql_field_name'] ) : null,
 			],
 			true
 		);
@@ -378,22 +380,37 @@ class Settings {
 	public function enqueue_graphql_acf_scripts( string $screen ): void {
 		global $post;
 
-		if ( ( 'post-new.php' === $screen || 'post.php' === $screen ) && ( isset( $post->post_type ) && 'acf-field-group' === $post->post_type ) ) {
-			wp_enqueue_script(
-				'graphql-acf',
-				plugins_url( '/assets/admin/js/main.js', __DIR__ ),
-				[
-					'jquery',
-					'acf-input',
-					'acf-field-group',
-				],
-				WPGRAPHQL_FOR_ACF_VERSION,
-				true
-			);
+		if ( ( 'post-new.php' === $screen || 'post.php' === $screen ) && isset( $post->post_type ) ) {
+			switch ( $post->post_type ) {
+				case 'acf-field-group':
+					wp_enqueue_script(
+						'graphql-acf',
+						plugins_url( '/assets/admin/js/main.js', __DIR__ ),
+						[
+							'jquery',
+							'acf-input',
+							'acf-field-group',
+						],
+						WPGRAPHQL_FOR_ACF_VERSION,
+						true
+					);
 
-			wp_localize_script( 'graphql-acf', 'wp_graphql_acf', [
-				'nonce' => wp_create_nonce( 'wp_graphql_acf' ),
-			]);
+					wp_localize_script( 'graphql-acf', 'wp_graphql_acf', [
+						'nonce' => wp_create_nonce( 'wp_graphql_acf' ),
+					]);
+					break;
+				case 'acf-taxonomy':
+				case 'acf-post-type':
+					wp_enqueue_script( 'graphql-acf-post-type',
+						plugins_url( '/assets/admin/js/post-type-settings.js', __DIR__ ),
+						[
+							'acf-internal-post-type',
+						],
+						WPGRAPHQL_FOR_ACF_VERSION,
+						true
+					);
+					break;
+			}
 		}
 	}
 

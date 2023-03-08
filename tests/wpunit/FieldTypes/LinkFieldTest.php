@@ -1,6 +1,6 @@
 <?php
 
-class LinkFieldTest extends \Tests\WPGraphQLAcf\TestCase\AcfFieldTestCase {
+class LinkFieldTest extends \Tests\WPGraphQLAcf\WPUnit\AcfFieldTestCase {
 
 	/**
 	 * @return void
@@ -20,5 +20,9 @@ class LinkFieldTest extends \Tests\WPGraphQLAcf\TestCase\AcfFieldTestCase {
 	public function get_field_type(): string {
 		return 'link';
 	}
+
+//	public function get_expected_field_resolve_type(): ?string {
+//		return 'AcfLink';
+//	}
 
 }

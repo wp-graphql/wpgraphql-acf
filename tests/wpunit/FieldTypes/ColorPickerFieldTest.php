@@ -1,6 +1,6 @@
 <?php
 
-class ColorPickerFieldTest extends \Tests\WPGraphQLAcf\TestCase\AcfFieldTestCase {
+class ColorPickerFieldTest extends \Tests\WPGraphQLAcf\WPUnit\AcfFieldTestCase {
 
 	/**
 	 * @return void
@@ -19,6 +19,10 @@ class ColorPickerFieldTest extends \Tests\WPGraphQLAcf\TestCase\AcfFieldTestCase
 
 	public function get_field_type(): string {
 		return 'color_picker';
+	}
+
+	public function get_expected_field_resolve_type(): ?string {
+		return 'String';
 	}
 
 }
