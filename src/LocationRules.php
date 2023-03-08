@@ -55,40 +55,6 @@ class LocationRules {
 	}
 
 	/**
-	 * Given a field name, formats it for GraphQL
-	 *
-	 * @param string $field_name The field name to format
-	 *
-	 * @return string
-	 */
-	public function format_field_name( string $field_name ) {
-
-		$replaced = preg_replace( '[^a-zA-Z0-9 -]', '_', $field_name );
-
-		// If any values were replaced, use the replaced string as the new field name
-		if ( ! empty( $replaced ) ) {
-			$field_name = $replaced;
-		}
-
-		$field_name = lcfirst( $field_name );
-		$field_name = lcfirst( str_replace( '-', ' ', ucwords( $field_name, '_' ) ) );
-		$field_name = lcfirst( str_replace( ' ', '', ucwords( $field_name, ' ' ) ) );
-
-		return $field_name;
-	}
-
-	/**
-	 * Given a type name, formats it for GraphQL
-	 *
-	 * @param string $type_name The type name to format
-	 *
-	 * @return string
-	 */
-	public function format_type_name( string $type_name ) {
-		return ucfirst( $this->format_field_name( $type_name ) );
-	}
-
-	/**
 	 * Given the name of a GraphqL Field Group and the name of a GraphQL Type, this sets the
 	 * field group to show in that Type
 	 *
@@ -98,7 +64,7 @@ class LocationRules {
 	 * @return void
 	 */
 	public function set_graphql_type( string $field_group_name, string $graphql_type_name ): void {
-		$this->mapped_field_groups[ Utils::format_field_name( $field_group_name ) ][] = $this->format_type_name( $graphql_type_name );
+		$this->mapped_field_groups[ Utils::format_field_name( $field_group_name, true ) ][] = Utils::format_type_name( $graphql_type_name, true );
 	}
 
 	/**
@@ -111,7 +77,7 @@ class LocationRules {
 	 * @return void
 	 */
 	public function unset_graphql_type( string $field_group_name, string $graphql_type_name ): void {
-		$this->unset_types[ $this->format_field_name( $field_group_name ) ][] = $this->format_type_name( $graphql_type_name );
+		$this->unset_types[ Utils::format_field_name( $field_group_name, true ) ][] = Utils::format_type_name( $graphql_type_name, true );
 	}
 
 	/**

@@ -174,6 +174,7 @@ class FieldConfig {
 								->set_query_arg( 'p', absint( $value ) )
 								->get_connection();
 						},
+						'allowFieldUnderscores' => true,
 					]);
 
 					break;
@@ -211,6 +212,7 @@ class FieldConfig {
 								->set_query_arg( 'orderby', 'post__in' )
 								->get_connection();
 						},
+						'allowFieldUnderscores' => true,
 					]);
 
 					break;
@@ -218,7 +220,7 @@ class FieldConfig {
 					$parent_type     = $this->graphql_field_group_type_name;
 					$field_name      = $this->graphql_field_name;
 					$sub_field_group = $this->acf_field;
-					$type_name       = \WPGraphQL\Utils\Utils::format_field_name( $parent_type . ' ' . $field_name );
+					$type_name       = \WPGraphQL\Utils\Utils::format_type_name( $parent_type . ' ' . $field_name );
 
 					$sub_field_group['graphql_field_name'] = $type_name;
 
@@ -327,6 +329,7 @@ class FieldConfig {
 								->set_query_arg( 'orderby', 'post__in' )
 								->get_connection();
 						},
+						'allowFieldUnderscores' => true,
 					];
 
 					if ( ! isset( $this->acf_field['multiple'] ) || true !== (bool) $this->acf_field['multiple'] ) {
@@ -390,6 +393,7 @@ class FieldConfig {
 								->set_query_arg( 'orderby', 'post__in' )
 								->get_connection();
 						},
+						'allowFieldUnderscores' => true,
 					]);
 
 					break;

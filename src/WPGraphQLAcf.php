@@ -1,6 +1,7 @@
 <?php
 
 use WPGraphQL\Registry\TypeRegistry;
+use WPGraphQL\Utils\Utils;
 use WPGraphQLAcf\Admin\Settings;
 use WPGraphQLAcf\Registry;
 
@@ -29,7 +30,7 @@ class WPGraphQLAcf {
 				$graphql_single_name = $args['graphql_single_name'];
 			} elseif ( isset( $args['labels']['singular_name'] ) ) {
 				// @phpstan-ignore-next-line
-				$graphql_single_name = \WPGraphQL\Utils\Utils::format_field_name( $args['labels']['singular_name'], true );
+				$graphql_single_name = Utils::format_field_name( $args['labels']['singular_name'], true );
 			}
 
 			// if a graphql_single_name exists, use it, otherwise use the formatted version of the singular_name label
@@ -41,7 +42,7 @@ class WPGraphQLAcf {
 				$graphql_plural_name = $args['graphql_plural_name'];
 			} elseif ( isset( $args['labels']['name'] ) ) {
 				// @phpstan-ignore-next-line
-				$graphql_plural_name = \WPGraphQL\Utils\Utils::format_field_name( $args['labels']['name'], true );
+				$graphql_plural_name = Utils::format_field_name( $args['labels']['name'], true );
 			}
 
 			// if the plural name exists, use it. Otherwie use the formatted version of the name.
@@ -62,7 +63,7 @@ class WPGraphQLAcf {
 				$graphql_single_name = $args['graphql_single_name'];
 			} elseif ( isset( $args['labels']['singular_name'] ) ) {
 				// @phpstan-ignore-next-line
-				$graphql_single_name = \WPGraphQL\Utils\Utils::format_field_name( $args['labels']['singular_name'], true );
+				$graphql_single_name = Utils::format_field_name( $args['labels']['singular_name'], true );
 			}
 
 			// if a graphql_single_name exists, use it, otherwise use the formatted version of the singular_name label
@@ -74,7 +75,7 @@ class WPGraphQLAcf {
 				$graphql_plural_name = $args['graphql_plural_name'];
 			} elseif ( isset( $args['labels']['name'] ) ) {
 				// @phpstan-ignore-next-line
-				$graphql_plural_name = \WPGraphQL\Utils\Utils::format_field_name( $args['labels']['name'], true );
+				$graphql_plural_name = Utils::format_field_name( $args['labels']['name'], true );
 			}
 
 			// if the plural name exists, use it. Otherwise use the formatted version of the name.
@@ -114,11 +115,10 @@ class WPGraphQLAcf {
 			$graphql_single_name = $acf_post_type['graphql_single_name'] ?? '';
 
 			if ( empty( $graphql_single_name ) ) {
-				$graphql_single_name = ! empty( $acf_post_type['labels']['singular_name'] ) ? \WPGraphQLAcf\Utils::format_field_name( $acf_post_type['labels']['singular_name'] ) : '';
+				$graphql_single_name = ! empty( $acf_post_type['labels']['singular_name'] ) ? Utils::format_field_name( $acf_post_type['labels']['singular_name'], true ) : '';
 			}
 
-			// @phpstan-ignore-next-line
-			$graphql_single_name = \WPGraphQL\Utils\Utils::format_field_name( $graphql_single_name, true );
+			$graphql_single_name = Utils::format_field_name( $graphql_single_name, true );
 
 			// @phpstan-ignore-next-line
 			acf_render_field_wrap(
@@ -147,11 +147,10 @@ class WPGraphQLAcf {
 			$graphql_plural_name = $acf_post_type['graphql_plural_name'] ?? '';
 
 			if ( empty( $graphql_plural_name ) ) {
-				$graphql_plural_name = ! empty( $acf_post_type['labels']['name'] ) ? \WPGraphQLAcf\Utils::format_field_name( $acf_post_type['labels']['name'] ) : '';
+				$graphql_plural_name = ! empty( $acf_post_type['labels']['name'] ) ? Utils::format_field_name( $acf_post_type['labels']['name'], true ) : '';
 			}
 
-			// @phpstan-ignore-next-line
-			$graphql_plural_name = \WPGraphQL\Utils\Utils::format_field_name( $graphql_plural_name, true );
+			$graphql_plural_name = Utils::format_field_name( $graphql_plural_name, true );
 
 			// @phpstan-ignore-next-line
 			acf_render_field_wrap(
@@ -197,11 +196,10 @@ class WPGraphQLAcf {
 			$graphql_single_name = $acf_taxonomy['graphql_single_name'] ?? '';
 
 			if ( empty( $graphql_single_name ) ) {
-				$graphql_single_name = ! empty( $acf_taxonomy['labels']['singular_name'] ) ? \WPGraphQLAcf\Utils::format_field_name( $acf_taxonomy['labels']['singular_name'] ) : '';
+				$graphql_single_name = ! empty( $acf_taxonomy['labels']['singular_name'] ) ? Utils::format_field_name( $acf_taxonomy['labels']['singular_name'], true ) : '';
 			}
 
-			// @phpstan-ignore-next-line
-			$graphql_single_name = \WPGraphQL\Utils\Utils::format_field_name( $graphql_single_name, true );
+			$graphql_single_name = Utils::format_field_name( $graphql_single_name, true );
 
 			// @phpstan-ignore-next-line
 			acf_render_field_wrap(
@@ -227,11 +225,10 @@ class WPGraphQLAcf {
 			$graphql_plural_name = $acf_taxonomy['graphql_plural_name'] ?? '';
 
 			if ( empty( $graphql_plural_name ) ) {
-				$graphql_plural_name = ! empty( $acf_taxonomy['labels']['name'] ) ? \WPGraphQLAcf\Utils::format_field_name( $acf_taxonomy['labels']['name'] ) : '';
+				$graphql_plural_name = ! empty( $acf_taxonomy['labels']['name'] ) ? Utils::format_field_name( $acf_taxonomy['labels']['name'], true ) : '';
 			}
 
-			// @phpstan-ignore-next-line
-			$graphql_plural_name = \WPGraphQL\Utils\Utils::format_field_name( $graphql_plural_name, true );
+			$graphql_plural_name = Utils::format_field_name( $graphql_plural_name, true );
 
 			// @phpstan-ignore-next-line
 			acf_render_field_wrap(
