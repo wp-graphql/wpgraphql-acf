@@ -146,7 +146,7 @@ class Settings {
 
 		$group_title = $field_group['title'] ?? '';
 		$group_name  = $field_group['graphql_field_name'] ?? $group_title;
-		$group_name  = $rules->format_field_name( $group_name );
+		$group_name  = \WPGraphQL\Utils\Utils::format_field_name( $group_name, true );
 
 		$all_rules = $rules->get_rules();
 		if ( isset( $all_rules[ $group_name ] ) ) {
@@ -337,9 +337,11 @@ class Settings {
 				'name'          => 'graphql_field_name',
 				'type'          => 'text',
 				'ui'            => true,
-				'placeholder'   => ! empty( $field['name'] ) ? \WPGraphQL\Utils\Utils::format_field_name( $field['name'] ) : '',
-				'default_value' => ! empty( $field['name'] ) ? \WPGraphQL\Utils\Utils::format_field_name( $field['name'] ) : '',
-				'value'         => ! empty( $field['graphql_field_name'] ) ? Utils::format_field_name( $field['graphql_field_name'] ) : null,
+				// we don't allow underscores if the value is auto formatted
+				'placeholder'   => ! empty( $field['name'] ) ? \WPGraphQL\Utils\Utils::format_field_name( $field['name'], false ) : '',
+				'default_value' => ! empty( $field['name'] ) ? \WPGraphQL\Utils\Utils::format_field_name( $field['name'], false ) : '',
+				// allow underscores if the user enters the value with underscores
+				'value'         => ! empty( $field['graphql_field_name'] ) ? \WPGraphQL\Utils\Utils::format_field_name( $field['graphql_field_name'], true ) : null,
 			],
 			true
 		);
@@ -400,6 +402,15 @@ class Settings {
 					]);
 					break;
 				case 'acf-taxonomy':
+					wp_enqueue_script( 'graphql-acf-post-type',
+						plugins_url( '/assets/admin/js/taxonomy-settings.js', __DIR__ ),
+						[
+							'acf-internal-post-type',
+						],
+						WPGRAPHQL_FOR_ACF_VERSION,
+						true
+					);
+					break;
 				case 'acf-post-type':
 					wp_enqueue_script( 'graphql-acf-post-type',
 						plugins_url( '/assets/admin/js/post-type-settings.js', __DIR__ ),

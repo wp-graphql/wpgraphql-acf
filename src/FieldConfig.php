@@ -152,15 +152,15 @@ class FieldConfig {
 					$connection_name = $this->get_connection_name( $type_name, $to_type, $this->graphql_field_name );
 
 					register_graphql_connection( [
-						'description'        => $this->get_field_description(),
-						'acf_field'          => $this->acf_field,
-						'acf_field_group'    => $this->acf_field_group,
-						'fromType'           => $type_name,
-						'toType'             => $to_type,
-						'fromFieldName'      => $this->graphql_field_name,
-						'connectionTypeName' => $connection_name,
-						'oneToOne'           => true,
-						'resolve'            => function ( $root, $args, AppContext $context, $info ) {
+						'description'           => $this->get_field_description(),
+						'acf_field'             => $this->acf_field,
+						'acf_field_group'       => $this->acf_field_group,
+						'fromType'              => $type_name,
+						'toType'                => $to_type,
+						'fromFieldName'         => $this->graphql_field_name,
+						'connectionTypeName'    => $connection_name,
+						'oneToOne'              => true,
+						'resolve'               => function ( $root, $args, AppContext $context, $info ) {
 
 							$value = $this->resolve_field( $root, $args, $context, $info );
 
@@ -174,6 +174,7 @@ class FieldConfig {
 								->set_query_arg( 'p', absint( $value ) )
 								->get_connection();
 						},
+						'allowFieldUnderscores' => true,
 					]);
 
 					break;
@@ -185,15 +186,16 @@ class FieldConfig {
 					$connection_name = $this->get_connection_name( $type_name, $to_type, $this->graphql_field_name );
 
 					register_graphql_connection( [
-						'description'        => $this->get_field_description(),
-						'acf_field'          => $this->acf_field,
-						'acf_field_group'    => $this->acf_field_group,
-						'fromType'           => $type_name,
-						'toType'             => $to_type,
-						'fromFieldName'      => $this->graphql_field_name,
-						'connectionTypeName' => $connection_name,
-						'oneToOne'           => false,
-						'resolve'            => function ( $root, $args, AppContext $context, $info ) {
+						'description'           => $this->get_field_description(),
+						'acf_field'             => $this->acf_field,
+						'acf_field_group'       => $this->acf_field_group,
+						'fromType'              => $type_name,
+						'toType'                => $to_type,
+						'fromFieldName'         => $this->graphql_field_name,
+						'connectionTypeName'    => $connection_name,
+						'oneToOne'              => false,
+						'allowFieldUnderscores' => true,
+						'resolve'               => function ( $root, $args, AppContext $context, $info ) {
 
 							$value = $this->resolve_field( $root, $args, $context, $info );
 
@@ -218,7 +220,7 @@ class FieldConfig {
 					$parent_type     = $this->graphql_field_group_type_name;
 					$field_name      = $this->graphql_field_name;
 					$sub_field_group = $this->acf_field;
-					$type_name       = \WPGraphQL\Utils\Utils::format_field_name( $parent_type . ' ' . $field_name );
+					$type_name       = \WPGraphQL\Utils\Utils::format_type_name( $parent_type . ' ' . $field_name );
 
 					$sub_field_group['graphql_field_name'] = $type_name;
 
@@ -299,14 +301,15 @@ class FieldConfig {
 					$connection_name = $this->get_connection_name( $type_name, $to_type, $this->graphql_field_name );
 
 					$connection_config = [
-						'description'        => $this->get_field_description(),
-						'acf_field'          => $this->acf_field,
-						'acf_field_group'    => $this->acf_field_group,
-						'fromType'           => $type_name,
-						'toType'             => $to_type,
-						'connectionTypeName' => $connection_name,
-						'fromFieldName'      => $this->graphql_field_name,
-						'resolve'            => function ( $root, $args, AppContext $context, $info ) {
+						'description'           => $this->get_field_description(),
+						'acf_field'             => $this->acf_field,
+						'acf_field_group'       => $this->acf_field_group,
+						'fromType'              => $type_name,
+						'toType'                => $to_type,
+						'connectionTypeName'    => $connection_name,
+						'fromFieldName'         => $this->graphql_field_name,
+						'allowFieldUnderscores' => true,
+						'resolve'               => function ( $root, $args, AppContext $context, $info ) {
 							$value = $this->resolve_field( $root, $args, $context, $info );
 
 							if ( empty( $value ) || ! is_array( $value ) ) {
@@ -362,14 +365,15 @@ class FieldConfig {
 
 
 					register_graphql_connection([
-						'description'        => $this->get_field_description(),
-						'acf_field'          => $this->acf_field,
-						'acf_field_group'    => $this->acf_field_group,
-						'fromType'           => $type_name,
-						'toType'             => $to_type,
-						'connectionTypeName' => $connection_name,
-						'fromFieldName'      => $this->graphql_field_name,
-						'resolve'            => function ( $root, $args, AppContext $context, $info ) {
+						'description'           => $this->get_field_description(),
+						'acf_field'             => $this->acf_field,
+						'acf_field_group'       => $this->acf_field_group,
+						'fromType'              => $type_name,
+						'toType'                => $to_type,
+						'connectionTypeName'    => $connection_name,
+						'fromFieldName'         => $this->graphql_field_name,
+						'allowFieldUnderscores' => true,
+						'resolve'               => function ( $root, $args, AppContext $context, $info ) {
 							$value = $this->resolve_field( $root, $args, $context, $info );
 
 							if ( empty( $value ) || ! is_array( $value ) ) {

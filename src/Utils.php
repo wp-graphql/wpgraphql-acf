@@ -279,35 +279,6 @@ class Utils {
 	}
 
 	/**
-	 * Given a field name, formats it for GraphQL
-	 *
-	 * @param string $field_name The field name to format
-	 * @param bool   $allow_underscores Whether underscores should be allowed
-	 *
-	 * @return string
-	 */
-	public static function format_field_name( string $field_name, $allow_underscores = true ) {
-
-		$replaced = preg_replace( '[^a-zA-Z0-9 -]', '_', $field_name );
-
-		// If any values were replaced, use the replaced string as the new field name
-		if ( ! empty( $replaced ) ) {
-			$field_name = $replaced;
-		}
-
-		$field_name = lcfirst( $field_name );
-
-		if ( false === $allow_underscores ) {
-			$field_name = lcfirst( str_replace( '_', ' ', ucwords( $field_name, '_' ) ) );
-		}
-
-		$field_name = lcfirst( str_replace( '-', ' ', ucwords( $field_name, ' ' ) ) );
-		$field_name = lcfirst( str_replace( ' ', '', ucwords( $field_name, ' ' ) ) );
-
-		return $field_name;
-	}
-
-	/**
 	 * Returns string of the items in the array list. Limit allows string to be limited length.
 	 *
 	 * @param array $list

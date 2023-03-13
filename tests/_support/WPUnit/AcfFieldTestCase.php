@@ -73,10 +73,12 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 	/**
 	 * Returns a GraphQL formatted version of the field name
 	 *
+	 * @param bool $allow_underscores Whether to allow underscores
+	 *
 	 * @return string
 	 */
-	public function get_formatted_field_name(): string {
-		return Utils::format_field_name( $this->get_field_name() );
+	public function get_formatted_field_name( bool $allow_underscores = false ): string {
+		return \WPGraphQL\Utils\Utils::format_field_name( $this->get_field_name(), $allow_underscores );
 	}
 
 
@@ -109,7 +111,7 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 		self::assertQuerySuccessful( $actual, [
 			// the instructions should be used for the description
 			$this->expectedNode( '__type.fields', [
-				'name' => $this->get_formatted_field_name(),
+				'name' => $this->get_formatted_field_name( ),
 			]),
 		] );
 
@@ -460,8 +462,6 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 	}
 
 	/**
-	 * @skip WPGraphQL Core does not allow connection field names to have underscores, see: https://github.com/wp-graphql/wp-graphql/blob/develop/src/Type/WPConnectionType.php#L515, https://github.com/wp-graphql/wp-graphql/blob/develop/src/Registry/TypeRegistry.php#L1029
-	 *
 	 * @return void
 	 */
 	public function testFieldShowsInSchemaWithGraphqlFieldNameHasUnderscores() {
@@ -473,7 +473,7 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 		 *
 		 * I believe we can add a new argument
 		 */
-		$this->markTestIncomplete( 'WPGraphQL Core does not allow connection field names to have underscores, see: https://github.com/wp-graphql/wp-graphql/blob/develop/src/Type/WPConnectionType.php#L515, https://github.com/wp-graphql/wp-graphql/blob/develop/src/Registry/TypeRegistry.php#L1029' );
+		// $this->markTestIncomplete( 'WPGraphQL Core does not allow connection field names to have underscores, see: https://github.com/wp-graphql/wp-graphql/blob/develop/src/Type/WPConnectionType.php#L515, https://github.com/wp-graphql/wp-graphql/blob/develop/src/Registry/TypeRegistry.php#L1029' );
 
 		$graphql_field_name = 'custom_field_name';
 
@@ -550,6 +550,44 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 		// remove the local field
 		acf_remove_local_field( $field_key );
 
+	}
+
+	public function testFieldWithNoGraphqlFieldNameAndNameThatStartsWithNumberDoesNotShowInSchema() {
+
+		$name = '123_test';
+
+		$field_key = $this->register_acf_field([
+			'name' => $name
+		]);
+
+
+		$query = '
+		query GetType( $name: String! ) {
+		  __type( name: $name ) {
+		    fields {
+		      name
+		    }
+		  }
+		}
+		';
+
+		$actual = $this->graphql( [
+			'query' => $query,
+			'variables' => [
+				'name' => 'AcfTestGroup',
+			]
+		]);
+
+		// the query should succeed
+		self::assertQuerySuccessful( $actual, [
+			// the instructions should be used for the description
+			$this->not()->expectedNode( '__type.fields', [
+				$this->expectedField( 'name', $name ),
+			]),
+		] );
+
+		// remove the local field
+		acf_remove_local_field( $field_key );
 	}
 
 	/**

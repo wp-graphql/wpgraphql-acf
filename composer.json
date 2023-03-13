@@ -28,7 +28,7 @@
     "szepeviktor/phpstan-wordpress": "1.1.3",
     "codeception/module-rest": "^1.2",
     "wp-graphql/wp-graphql-testcase": "~2.3",
-    "wp-graphql/wp-graphql": "^1.12",
+    "wp-graphql/wp-graphql": "^1.14",
     "phpunit/phpunit": "^9.5",
     "simpod/php-coveralls-mirror": "^3.0",
     "phpstan/extension-installer": "^1.1"

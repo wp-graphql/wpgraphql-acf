@@ -385,13 +385,17 @@ class Registry {
 		$field_group_name = '';
 
 		if ( ! empty( $field_group['graphql_field_name'] ) ) {
-			$field_group_name = \WPGraphQLAcf\Utils::format_field_name( $field_group['graphql_field_name'] );
-		} elseif ( ! empty( $field_group['name'] ) ) {
-			$field_group_name = $field_group['name'];
-		} elseif ( ! empty( $field_group['title'] ) ) {
-			$field_group_name = $field_group['title'];
-		} elseif ( ! empty( $field_group['label'] ) ) {
-			$field_group_name = $field_group['label'];
+			$field_group_name = $field_group['graphql_field_name'];
+		} else {
+			if ( ! empty( $field_group['name'] ) ) {
+				$field_group_name = $field_group['name'];
+			} elseif ( ! empty( $field_group['title'] ) ) {
+				$field_group_name = $field_group['title'];
+			} elseif ( ! empty( $field_group['label'] ) ) {
+				$field_group_name = $field_group['label'];
+			}
+			// if the graphql_field_name isn't explicitly defined, we'll format it without underscores
+			$field_group_name = Utils::format_field_name( $field_group_name, false );
 		}
 
 		if ( empty( $field_group_name ) ) {
@@ -407,13 +411,7 @@ class Registry {
 			return '';
 		}
 
-		$replaced = preg_replace( '/[\W_]+/u', ' ', $field_group_name );
-
-		if ( empty( $replaced ) ) {
-			throw new Error( sprintf( __( 'The graphql field name %s is not a valid name and cannot be added to the GraphQL Schema', 'wp-graphql-acf' ), $field_group_name ) );
-		}
-
-		return \WPGraphQLAcf\Utils::format_field_name( $replaced );
+		return $field_group_name;
 
 	}
 
@@ -424,13 +422,14 @@ class Registry {
 	 * @throws Error
 	 */
 	public function get_graphql_field_name( array $acf_field ): string {
-		return $this->get_field_group_name( $acf_field );
+		return Utils::format_field_name( $this->get_field_group_name( $acf_field ), true );
 	}
 
 	/**
 	 * @param array $field_group
 	 *
 	 * @return string|null
+	 * @throws \GraphQL\Error\Error
 	 */
 	public function get_field_group_graphql_type_name( array $field_group ): ?string {
 		$name = $this->get_field_group_name( $field_group );
@@ -497,7 +496,7 @@ class Registry {
 		$graphql_types = $field_group['graphql_types'] ?? [];
 
 		$field_group_name = $field_group['graphql_field_name'] ?? $field_group['title'];
-		$field_group_name = Utils::format_field_name( $field_group_name );
+		$field_group_name = Utils::format_field_name( $field_group_name, true );
 
 		$manually_set_graphql_types = isset( $field_group['map_graphql_types_from_location_rules'] ) && (bool) $field_group['map_graphql_types_from_location_rules'];
 
@@ -546,7 +545,7 @@ class Registry {
 			if ( ! empty( $locations ) ) {
 				$with_field_group_interface_name = 'WithAcf' . $type_name;
 
-				$field_name = Utils::format_field_name( $type_name );
+				$field_name = Utils::format_field_name( $type_name, true );
 
 				if ( ! $this->has_registered_field_group( $with_field_group_interface_name ) ) {
 
