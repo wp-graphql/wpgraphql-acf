@@ -382,47 +382,30 @@ class Settings {
 	public function enqueue_graphql_acf_scripts( string $screen ): void {
 		global $post;
 
-		if ( ( 'post-new.php' === $screen || 'post.php' === $screen ) && isset( $post->post_type ) ) {
-			switch ( $post->post_type ) {
-				case 'acf-field-group':
-					wp_enqueue_script(
-						'graphql-acf',
-						plugins_url( '/assets/admin/js/main.js', __DIR__ ),
-						[
-							'jquery',
-							'acf-input',
-							'acf-field-group',
-						],
-						WPGRAPHQL_FOR_ACF_VERSION,
-						true
-					);
-
-					wp_localize_script( 'graphql-acf', 'wp_graphql_acf', [
-						'nonce' => wp_create_nonce( 'wp_graphql_acf' ),
-					]);
-					break;
-				case 'acf-taxonomy':
-					wp_enqueue_script( 'graphql-acf-post-type',
-						plugins_url( '/assets/admin/js/taxonomy-settings.js', __DIR__ ),
-						[
-							'acf-internal-post-type',
-						],
-						WPGRAPHQL_FOR_ACF_VERSION,
-						true
-					);
-					break;
-				case 'acf-post-type':
-					wp_enqueue_script( 'graphql-acf-post-type',
-						plugins_url( '/assets/admin/js/post-type-settings.js', __DIR__ ),
-						[
-							'acf-internal-post-type',
-						],
-						WPGRAPHQL_FOR_ACF_VERSION,
-						true
-					);
-					break;
-			}
+		if ( ! ( 'post-new.php' === $screen || 'post.php' === $screen ) ) {
+			return;
 		}
+
+		if ( ! isset( $post->post_type ) || 'acf-field-group' !==  $post->post_type ) {
+			return;
+		}
+
+		wp_enqueue_script(
+			'graphql-acf',
+			plugins_url( '/assets/admin/js/main.js', __DIR__ ),
+			[
+				'jquery',
+				'acf-input',
+				'acf-field-group',
+			],
+			WPGRAPHQL_FOR_ACF_VERSION,
+			true
+		);
+
+		wp_localize_script( 'graphql-acf', 'wp_graphql_acf', [
+			'nonce' => wp_create_nonce( 'wp_graphql_acf' ),
+		]);
+
 	}
 
 	/**
