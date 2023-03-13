@@ -552,6 +552,44 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 
 	}
 
+	public function testFieldWithNoGraphqlFieldNameAndNameThatStartsWithNumberDoesNotShowInSchema() {
+
+		$name = '123_test';
+
+		$field_key = $this->register_acf_field([
+			'name' => $name
+		]);
+
+
+		$query = '
+		query GetType( $name: String! ) {
+		  __type( name: $name ) {
+		    fields {
+		      name
+		    }
+		  }
+		}
+		';
+
+		$actual = $this->graphql( [
+			'query' => $query,
+			'variables' => [
+				'name' => 'AcfTestGroup',
+			]
+		]);
+
+		// the query should succeed
+		self::assertQuerySuccessful( $actual, [
+			// the instructions should be used for the description
+			$this->not()->expectedNode( '__type.fields', [
+				$this->expectedField( 'name', $name ),
+			]),
+		] );
+
+		// remove the local field
+		acf_remove_local_field( $field_key );
+	}
+
 	/**
 	 * @todo: implement the below tests
 	 */

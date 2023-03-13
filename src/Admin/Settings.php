@@ -402,6 +402,15 @@ class Settings {
 					]);
 					break;
 				case 'acf-taxonomy':
+					wp_enqueue_script( 'graphql-acf-post-type',
+						plugins_url( '/assets/admin/js/taxonomy-settings.js', __DIR__ ),
+						[
+							'acf-internal-post-type',
+						],
+						WPGRAPHQL_FOR_ACF_VERSION,
+						true
+					);
+					break;
 				case 'acf-post-type':
 					wp_enqueue_script( 'graphql-acf-post-type',
 						plugins_url( '/assets/admin/js/post-type-settings.js', __DIR__ ),
