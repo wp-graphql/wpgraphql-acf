@@ -29,7 +29,6 @@ class WPGraphQLAcf {
 			if ( isset( $args['graphql_single_name'] ) ) {
 				$graphql_single_name = $args['graphql_single_name'];
 			} elseif ( isset( $args['labels']['singular_name'] ) ) {
-				// @phpstan-ignore-next-line
 				$graphql_single_name = Utils::format_field_name( $args['labels']['singular_name'], true );
 			}
 
@@ -41,7 +40,6 @@ class WPGraphQLAcf {
 			if ( isset( $args['graphql_plural_name'] ) ) {
 				$graphql_plural_name = $args['graphql_plural_name'];
 			} elseif ( isset( $args['labels']['name'] ) ) {
-				// @phpstan-ignore-next-line
 				$graphql_plural_name = Utils::format_field_name( $args['labels']['name'], true );
 			}
 
@@ -62,7 +60,6 @@ class WPGraphQLAcf {
 			if ( isset( $args['graphql_single_name'] ) ) {
 				$graphql_single_name = $args['graphql_single_name'];
 			} elseif ( isset( $args['labels']['singular_name'] ) ) {
-				// @phpstan-ignore-next-line
 				$graphql_single_name = Utils::format_field_name( $args['labels']['singular_name'], true );
 			}
 
@@ -74,7 +71,6 @@ class WPGraphQLAcf {
 			if ( isset( $args['graphql_plural_name'] ) ) {
 				$graphql_plural_name = $args['graphql_plural_name'];
 			} elseif ( isset( $args['labels']['name'] ) ) {
-				// @phpstan-ignore-next-line
 				$graphql_plural_name = Utils::format_field_name( $args['labels']['name'], true );
 			}
 

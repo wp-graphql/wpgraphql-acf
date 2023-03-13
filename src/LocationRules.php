@@ -64,7 +64,7 @@ class LocationRules {
 	 * @return void
 	 */
 	public function set_graphql_type( string $field_group_name, string $graphql_type_name ): void {
-		$this->mapped_field_groups[ Utils::format_field_name( $field_group_name, true ) ][] = Utils::format_type_name( $graphql_type_name, true );
+		$this->mapped_field_groups[ Utils::format_field_name( $field_group_name, true ) ][] = Utils::format_type_name( $graphql_type_name );
 	}
 
 	/**
@@ -77,7 +77,7 @@ class LocationRules {
 	 * @return void
 	 */
 	public function unset_graphql_type( string $field_group_name, string $graphql_type_name ): void {
-		$this->unset_types[ Utils::format_field_name( $field_group_name, true ) ][] = Utils::format_type_name( $graphql_type_name, true );
+		$this->unset_types[ Utils::format_field_name( $field_group_name, true ) ][] = Utils::format_type_name( $graphql_type_name );
 	}
 
 	/**
