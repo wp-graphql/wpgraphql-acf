@@ -343,7 +343,7 @@ class Settings {
 				'default_value' => '',
 				// allow underscores if the user enters the value with underscores
 				'value'         => ! empty( $field['graphql_field_name'] ) ? \WPGraphQL\Utils\Utils::format_field_name( $field['graphql_field_name'], true ) : '',
-				'conditions'   => [
+				'conditions'    => [
 					'field'    => 'show_in_graphql',
 					'operator' => '==',
 					'value'    => '1',
@@ -373,7 +373,7 @@ class Settings {
 				'default_value' => null,
 				'placeholder'   => __( 'Explanation of how this field should be used in the GraphQL Schema', 'wp-graphql-acf' ),
 				'value'         => ! empty( $description ) ? $description : null,
-				'conditions'   => [
+				'conditions'    => [
 					'field'    => 'show_in_graphql',
 					'operator' => '==',
 					'value'    => '1',
