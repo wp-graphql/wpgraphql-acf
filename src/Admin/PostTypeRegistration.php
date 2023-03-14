@@ -169,7 +169,7 @@ class PostTypeRegistration {
 		}
 
 		// if the global post is not set, or the post type is not "acf-post-type", do nothing
-		if ( ! isset( $post->post_type ) || 'acf-post-type' !==  $post->post_type ) {
+		if ( ! isset( $post->post_type ) || 'acf-post-type' !== $post->post_type ) {
 			return;
 		}
 

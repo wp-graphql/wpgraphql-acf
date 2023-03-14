@@ -168,7 +168,7 @@ class TaxonomyRegistration {
 		}
 
 		// if the global post is not set, or the post type is not "acf-taxonomy", do nothing
-		if ( ! isset( $post->post_type ) || 'acf-taxonomy' !==  $post->post_type ) {
+		if ( ! isset( $post->post_type ) || 'acf-taxonomy' !== $post->post_type ) {
 			return;
 		}
 

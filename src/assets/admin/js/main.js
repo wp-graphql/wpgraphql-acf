@@ -43,7 +43,7 @@ $j(document).ready(function () {
 		onClickAddRule: function (e, $el) {
 			this.getGraphqlTypes();
 		},
-		
+
 		onClickRemoveRule: function (e, $el) {
 			this.getGraphqlTypes();
 		},

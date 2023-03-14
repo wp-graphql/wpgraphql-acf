@@ -398,7 +398,7 @@ class Settings {
 			return;
 		}
 
-		if ( ! isset( $post->post_type ) || 'acf-field-group' !==  $post->post_type ) {
+		if ( ! isset( $post->post_type ) || 'acf-field-group' !== $post->post_type ) {
 			return;
 		}
 
