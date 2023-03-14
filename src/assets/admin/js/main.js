@@ -2,6 +2,26 @@ $j = jQuery.noConflict();
 
 $j(document).ready(function () {
 
+	// Update the "graphql_field_name" when
+	// the "name" field is updated.
+	var graphqlFieldSettings = new acf.Model({
+		actions: {
+			'change_field_name': 'updateGraphqlFieldName',
+		},
+		updateGraphqlFieldName: function( $el ) {
+
+			var field = acf.getInstance($el);
+			var $name = field.$setting('name');
+			var name = acf.getInstance( $name ).getValue();
+			var $graphqlFieldName = field.$setting('graphql_field_name');
+			var graphqlFieldName = acf.getInstance($graphqlFieldName).getValue();
+
+			if ( graphqlFieldName === '' ) {
+				var sanitizedGraphqlFieldName = acf.strCamelCase( acf.strSanitize(name) );
+				field.prop( 'graphql_field_name', sanitizedGraphqlFieldName );
+			}
+		}
+	})
 
 	var GraphqlLocationManager = new acf.Model({
 		id: 'graphqlLocationManager',
