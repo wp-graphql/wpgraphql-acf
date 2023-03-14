@@ -211,7 +211,7 @@ class Settings {
 				'name'         => 'graphql_field_name',
 				'required'     => isset( $field_group['show_in_graphql'] ) && (bool) $field_group['show_in_graphql'],
 				'placeholder'  => __( 'FieldGroupTypeName', 'wp-graphql-acf' ),
-				'value'        => ! empty( $field_group['graphql_field_name'] ) ? $field_group['graphql_field_name'] : null,
+				'value'        => ! empty( $field_group['graphql_field_name'] ) ? $field_group['graphql_field_name'] : '',
 			],
 			'div',
 			'label',
@@ -337,11 +337,17 @@ class Settings {
 				'name'          => 'graphql_field_name',
 				'type'          => 'text',
 				'ui'            => true,
+				'required'      => true,
 				// we don't allow underscores if the value is auto formatted
-				'placeholder'   => ! empty( $field['name'] ) ? \WPGraphQL\Utils\Utils::format_field_name( $field['name'], false ) : '',
-				'default_value' => ! empty( $field['name'] ) ? \WPGraphQL\Utils\Utils::format_field_name( $field['name'], false ) : '',
+				'placeholder'   => __( 'newFieldName', 'wp-graphql-acf' ),
+				'default_value' => '',
 				// allow underscores if the user enters the value with underscores
-				'value'         => ! empty( $field['graphql_field_name'] ) ? \WPGraphQL\Utils\Utils::format_field_name( $field['graphql_field_name'], true ) : null,
+				'value'         => ! empty( $field['graphql_field_name'] ) ? \WPGraphQL\Utils\Utils::format_field_name( $field['graphql_field_name'], true ) : '',
+				'conditions'   => [
+					'field'    => 'show_in_graphql',
+					'operator' => '==',
+					'value'    => '1',
+				],
 			],
 			true
 		);
@@ -365,7 +371,13 @@ class Settings {
 				'type'          => 'text',
 				'ui'            => true,
 				'default_value' => null,
+				'placeholder'   => __( 'Explanation of how this field should be used in the GraphQL Schema', 'wp-graphql-acf' ),
 				'value'         => ! empty( $description ) ? $description : null,
+				'conditions'   => [
+					'field'    => 'show_in_graphql',
+					'operator' => '==',
+					'value'    => '1',
+				],
 			],
 			true
 		);
