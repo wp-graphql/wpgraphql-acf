@@ -237,8 +237,8 @@ abstract class AcfFieldCest {
 		$graphql_field_name_input_selector = '//div[@data-key="' . $this->_getTestFieldKey() . '"]//*[@data-name="graphql_field_name"]//input[@type="text"]';
 
 		// default value should be the formatted value of the label
-		$graphql_description_placeholder  = $I->grabAttributeFrom( $graphql_field_name_input_selector, 'placeholder' );
-		$I->assertSame( 'fooLabel', $graphql_description_placeholder );
+		$graphql_field_name_placeholder  = $I->grabAttributeFrom( $graphql_field_name_input_selector, 'placeholder' );
+		$I->assertSame( 'newFieldName', $graphql_field_name_placeholder );
 
 		$graphql_description_value  = $I->grabAttributeFrom( $graphql_field_name_input_selector, 'value' );
 		$I->assertEmpty( $graphql_description_value );

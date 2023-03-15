@@ -7,6 +7,7 @@
 
 namespace WPGraphQLAcf\Admin;
 
+use Exception;
 use GraphQL\Error\Error;
 use WPGraphQLAcf\LocationRules;
 use WPGraphQLAcf\Utils;
@@ -53,7 +54,16 @@ class Settings {
 		 * Add settings to individual fields to allow each field granular control
 		 * over how it's shown in the GraphQL Schema
 		 */
-		add_action( 'acf/render_field_settings', [ $this, 'add_field_settings' ], 10, 1 );
+		add_filter( 'acf/field_group/additional_field_settings_tabs', static function( $tabs ) {
+			$tabs['graphql'] = __( 'GraphQL', 'wp-graphql-acf' );
+			return $tabs;
+		});
+
+		if ( ! defined( 'ACF_VERSION' ) || version_compare( ACF_VERSION, '6.1', '<' ) ) {
+			add_action( 'acf/render_field_settings',  [ $this, 'add_field_settings' ] );
+		} else {
+			add_action( 'acf/field_group/render_field_settings_tab/graphql',  [ $this, 'add_field_settings' ] );
+		}
 
 		// NOTE: when we add support for showing fields in tabs,
 		// and support for different fields based on field type, we're going to
@@ -103,7 +113,18 @@ class Settings {
 		/**
 		 * Register meta boxes for the ACF Field Group Settings
 		 */
-		add_action( 'add_meta_boxes', [ $this, 'register_meta_boxes' ] );
+		if ( ! defined( 'ACF_VERSION' ) || version_compare( ACF_VERSION, '6.1', '<' )  ) {
+			add_action( 'add_meta_boxes', [ $this, 'register_meta_boxes' ] );
+		} else {
+			add_action( 'acf/field_group/render_group_settings_tab/graphql', [ $this, 'display_graphql_field_group_fields' ] );
+			add_filter( 'acf/field_group/additional_group_settings_tabs', static function( $tabs ) {
+				$tabs['graphql'] = __( 'GraphQL', 'wp-graphql-acf' );
+
+				return $tabs;
+			} );
+		}
+
+
 
 		/**
 		 * Register an AJAX action and callback for converting ACF Location rules to GraphQL Types
@@ -166,22 +187,20 @@ class Settings {
 	public function register_meta_boxes() {
 		add_meta_box( 'wpgraphql-acf-meta-box', __( 'GraphQL', 'wp-graphql-acf' ), [
 			$this,
-			'display_metabox',
+			'display_graphql_field_group_fields',
 		], [ 'acf-field-group' ] );
 	}
 
+
 	/**
-	 * Display the GraphQL Settings Metabox on the Field Group admin page
+	 * Display the GraphQL Settings fields on the ACF Field Group add/edit admin page
 	 *
-	 * @param mixed $field_group_post_object
+	 * @param array $field_group The Field Group being edited
 	 *
 	 * @return void
 	 * @throws Error
-	 * @throws \Exception
 	 */
-	public function display_metabox( $field_group_post_object ): void {
-
-		global $field_group;
+	public function display_graphql_field_group_fields( array $field_group ): void {
 
 		// Render a field in the Field Group settings to allow for a Field Group to be shown in GraphQL.
 		// @phpstan-ignore-next-line
