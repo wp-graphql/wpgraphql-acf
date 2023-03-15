@@ -151,7 +151,7 @@ class FieldConfig {
 					$to_type         = 'MediaItem';
 					$connection_name = $this->get_connection_name( $type_name, $to_type, $this->graphql_field_name );
 
-					register_graphql_connection( [
+					$this->register_graphql_connections( [
 						'description'           => $this->get_field_description(),
 						'acf_field'             => $this->acf_field,
 						'acf_field_group'       => $this->acf_field_group,
@@ -185,7 +185,7 @@ class FieldConfig {
 					$to_type         = 'MediaItem';
 					$connection_name = $this->get_connection_name( $type_name, $to_type, $this->graphql_field_name );
 
-					register_graphql_connection( [
+					$this->register_graphql_connections( [
 						'description'           => $this->get_field_description(),
 						'acf_field'             => $this->acf_field,
 						'acf_field_group'       => $this->acf_field_group,
@@ -294,22 +294,10 @@ class FieldConfig {
 
 				case 'post_object':
 				case 'page_link':
-					$field_config = null;
-
-					$type_name       = $this->graphql_field_group_type_name;
-					$to_type         = 'ContentNode';
-					$connection_name = $this->get_connection_name( $type_name, $to_type, $this->graphql_field_name );
 
 					$connection_config = [
-						'description'           => $this->get_field_description(),
-						'acf_field'             => $this->acf_field,
-						'acf_field_group'       => $this->acf_field_group,
-						'fromType'              => $type_name,
-						'toType'                => $to_type,
-						'connectionTypeName'    => $connection_name,
-						'fromFieldName'         => $this->graphql_field_name,
-						'allowFieldUnderscores' => true,
-						'resolve'               => function ( $root, $args, AppContext $context, $info ) {
+						'toType'             => 'ContentNode',
+						'resolve'            => function ( $root, $args, AppContext $context, $info ) {
 							$value = $this->resolve_field( $root, $args, $context, $info );
 
 							if ( empty( $value ) || ! is_array( $value ) ) {
@@ -333,8 +321,7 @@ class FieldConfig {
 					];
 
 					if ( ! isset( $this->acf_field['multiple'] ) || true !== (bool) $this->acf_field['multiple'] ) {
-						$connection_name = \WPGraphQL\Utils\Utils::format_type_name( $type_name ) . \WPGraphQL\Utils\Utils::format_type_name( $this->graphql_field_name ) . 'ToSingleContentNodeConnection';
-
+						$connection_name = \WPGraphQL\Utils\Utils::format_type_name( $this->graphql_field_group_type_name ) . \WPGraphQL\Utils\Utils::format_type_name( $this->graphql_field_name ) . 'ToSingleContentNodeConnection';
 
 						$connection_config['connectionTypeName'] = $connection_name;
 						$connection_config['oneToOne']           = true;
@@ -353,27 +340,15 @@ class FieldConfig {
 						};
 					}
 
-					register_graphql_connection( $connection_config );
+//					register_graphql_connection( $connection_config );
 
+					$this->register_graphql_connections( $connection_config );
+					$field_config = null;
 					break;
 				case 'relationship':
-					$field_config = null;
-
-					$type_name       = $this->graphql_field_group_type_name;
-					$to_type         = 'ContentNode';
-					$connection_name = $this->get_connection_name( $type_name, $to_type, $this->graphql_field_name );
-
-
-					register_graphql_connection([
-						'description'           => $this->get_field_description(),
-						'acf_field'             => $this->acf_field,
-						'acf_field_group'       => $this->acf_field_group,
-						'fromType'              => $type_name,
-						'toType'                => $to_type,
-						'connectionTypeName'    => $connection_name,
-						'fromFieldName'         => $this->graphql_field_name,
-						'allowFieldUnderscores' => true,
-						'resolve'               => function ( $root, $args, AppContext $context, $info ) {
+					$this->register_graphql_connections( [
+						'toType'  => 'ContentNode',
+						'resolve' => function ( $root, $args, AppContext $context, $info ) {
 							$value = $this->resolve_field( $root, $args, $context, $info );
 
 							if ( empty( $value ) || ! is_array( $value ) ) {
@@ -384,7 +359,6 @@ class FieldConfig {
 								return absint( $id );
 							}, $value );
 
-
 							$resolver = new PostObjectConnectionResolver( $root, $args, $context, $info, 'any' );
 							return $resolver
 								// the relationship field doesn't require related things to be published
@@ -394,8 +368,8 @@ class FieldConfig {
 								->set_query_arg( 'orderby', 'post__in' )
 								->get_connection();
 						},
-					]);
-
+					] );
+					$field_config = null;
 					break;
 				case 'repeater':
 					$parent_type     = $this->graphql_field_group_type_name;
@@ -572,6 +546,42 @@ class FieldConfig {
 	public function get_connection_name( string $from_type, string $to_type, string $from_field_name ) {
 		// Create connection name using $from_type + To + $to_type + Connection.
 		return \WPGraphQL\Utils\Utils::format_type_name( ucfirst( $from_type ) . ucfirst( $from_field_name ) . 'To' . ucfirst( $to_type ) . 'Connection' );
+	}
+
+	/**
+	 * @param array $config The Connection Config to use
+	 *
+	 * @return void
+	 * @throws Exception
+	 */
+	protected function register_graphql_connections( array $config ): void {
+
+		$type_name       = $this->graphql_field_group_type_name;
+		$to_type         = $config['toType'] ?? null;
+
+		// If there's no to_type or type_name, we can't proceed
+		if ( empty( $to_type ) || empty( $type_name ) ) {
+			return;
+		}
+
+		$connection_name = $this->get_connection_name( $type_name, $to_type, $this->graphql_field_name );
+
+		$connection_config = array_merge( [
+			'description'           => $this->get_field_description(),
+			'acf_field'             => $this->acf_field,
+			'acf_field_group'       => $this->acf_field_group,
+			'fromType'              => $type_name,
+			'toType'                => $to_type,
+			'connectionTypeName'    => $connection_name,
+			'fromFieldName'         => $this->graphql_field_name,
+			'allowFieldUnderscores' => true,
+		], $config );
+
+		// Register the connection to the Field Group Type
+		register_graphql_connection( $connection_config );
+
+		// Register the connection to the Field Group Fields Interface
+		register_graphql_connection( array_merge( $connection_config, [ 'fromType' => $type_name . '_Fields' ] ) );
 	}
 
 }
