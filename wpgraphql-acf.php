@@ -4,7 +4,7 @@
  * Description: Re-imagining the WPGraphQL for ACF plugin
  * Author: WPGraphQL
  * Author URI: https://www.wpgraphql.com
- * Version: 0.2.0-beta
+ * Version: 0.2.1-beta
  * Text Domain: wpgraphql-acf
  * Requires PHP: 7.3
  * Requires at least: 5.9
