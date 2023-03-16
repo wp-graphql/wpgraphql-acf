@@ -1,14 +1,17 @@
 <?php
 /**
- * Plugin Name: WPGraphQL for ACF - Redux
+ * Plugin Name: WPGraphQL for ACF (BETA)
  * Description: Re-imagining the WPGraphQL for ACF plugin
  * Author: WPGraphQL
  * Author URI: https://www.wpgraphql.com
+ * Version: 0.2.0-beta
  * Text Domain: wpgraphql-acf
  * Requires PHP: 7.3
+ * Requires at least: 5.9
  * Tested up to: 6.1
  * License: GPL-3
  * License URI: https://www.gnu.org/licenses/gpl-3.0.html
+ *
  */
 
 // Exit if accessed directly.
@@ -27,11 +30,11 @@ if ( file_exists( __DIR__ . '/vendor/autoload.php' ) ) {
 }
 
 if ( ! defined( 'WPGRAPHQL_FOR_ACF_VERSION' ) ) {
-	define( 'WPGRAPHQL_FOR_ACF_VERSION', '0.0.1' );
+	define( 'WPGRAPHQL_FOR_ACF_VERSION', '0.2.0-beta' );
 }
 
 if ( ! defined( 'WPGRAPHQL_FOR_ACF_VERSION_WPGRAPHQL_REQUIRED_MIN_VERSION' ) ) {
-	define( 'WPGRAPHQL_FOR_ACF_VERSION_WPGRAPHQL_REQUIRED_MIN_VERSION', '1.12.0' );
+	define( 'WPGRAPHQL_FOR_ACF_VERSION_WPGRAPHQL_REQUIRED_MIN_VERSION', '1.14.0' );
 }
 
 if ( ! defined( 'WPGRAPHQL_FOR_ACF_VERSION_PLUGIN_DIR' ) ) {
