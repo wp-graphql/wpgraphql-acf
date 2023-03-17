@@ -62,6 +62,7 @@ class FieldConfig {
 	 * Get the description of the field for the GraphQL Schema
 	 *
 	 * @return string
+	 * @throws Error
 	 */
 	public function get_field_description(): string {
 
@@ -294,10 +295,9 @@ class FieldConfig {
 
 				case 'post_object':
 				case 'page_link':
-
 					$connection_config = [
-						'toType'             => 'ContentNode',
-						'resolve'            => function ( $root, $args, AppContext $context, $info ) {
+						'toType'  => 'ContentNode',
+						'resolve' => function ( $root, $args, AppContext $context, $info ) {
 							$value = $this->resolve_field( $root, $args, $context, $info );
 
 							if ( empty( $value ) || ! is_array( $value ) ) {
@@ -339,8 +339,6 @@ class FieldConfig {
 								->get_connection();
 						};
 					}
-
-//					register_graphql_connection( $connection_config );
 
 					$this->register_graphql_connections( $connection_config );
 					$field_config = null;
@@ -556,8 +554,8 @@ class FieldConfig {
 	 */
 	protected function register_graphql_connections( array $config ): void {
 
-		$type_name       = $this->graphql_field_group_type_name;
-		$to_type         = $config['toType'] ?? null;
+		$type_name = $this->graphql_field_group_type_name;
+		$to_type   = $config['toType'] ?? null;
 
 		// If there's no to_type or type_name, we can't proceed
 		if ( empty( $to_type ) || empty( $type_name ) ) {

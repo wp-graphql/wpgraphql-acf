@@ -54,15 +54,15 @@ class Settings {
 		 * Add settings to individual fields to allow each field granular control
 		 * over how it's shown in the GraphQL Schema
 		 */
-		add_filter( 'acf/field_group/additional_field_settings_tabs', static function( $tabs ) {
+		add_filter( 'acf/field_group/additional_field_settings_tabs', static function ( $tabs ) {
 			$tabs['graphql'] = __( 'GraphQL', 'wp-graphql-acf' );
 			return $tabs;
 		});
 
 		if ( ! defined( 'ACF_VERSION' ) || version_compare( ACF_VERSION, '6.1', '<' ) ) {
-			add_action( 'acf/render_field_settings',  [ $this, 'add_field_settings' ] );
+			add_action( 'acf/render_field_settings', [ $this, 'add_field_settings' ] );
 		} else {
-			add_action( 'acf/field_group/render_field_settings_tab/graphql',  [ $this, 'add_field_settings' ] );
+			add_action( 'acf/field_group/render_field_settings_tab/graphql', [ $this, 'add_field_settings' ] );
 		}
 
 		// NOTE: when we add support for showing fields in tabs,
@@ -113,11 +113,11 @@ class Settings {
 		/**
 		 * Register meta boxes for the ACF Field Group Settings
 		 */
-		if ( ! defined( 'ACF_VERSION' ) || version_compare( ACF_VERSION, '6.1', '<' )  ) {
+		if ( ! defined( 'ACF_VERSION' ) || version_compare( ACF_VERSION, '6.1', '<' ) ) {
 			add_action( 'add_meta_boxes', [ $this, 'register_meta_boxes' ] );
 		} else {
 			add_action( 'acf/field_group/render_group_settings_tab/graphql', [ $this, 'display_graphql_field_group_fields' ] );
-			add_filter( 'acf/field_group/additional_group_settings_tabs', static function( $tabs ) {
+			add_filter( 'acf/field_group/additional_group_settings_tabs', static function ( $tabs ) {
 				$tabs['graphql'] = __( 'GraphQL', 'wp-graphql-acf' );
 
 				return $tabs;

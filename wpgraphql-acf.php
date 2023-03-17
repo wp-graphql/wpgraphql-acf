@@ -11,7 +11,6 @@
  * Tested up to: 6.1
  * License: GPL-3
  * License URI: https://www.gnu.org/licenses/gpl-3.0.html
- *
  */
 
 // Exit if accessed directly.
