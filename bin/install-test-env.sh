@@ -162,8 +162,8 @@ install_acf_pro() {
 
 setup_plugin() {
 	# Add this repo as a plugin to the repo
-	if [ ! -d $WP_CORE_DIR/wp-content/plugins/wp-graphql-acf-redux ]; then
-		ln -s $PLUGIN_DIR $WP_CORE_DIR/wp-content/plugins/wp-graphql-acf-redux
+	if [ ! -d $WP_CORE_DIR/wp-content/plugins/wpgraphql-acf ]; then
+		ln -s $PLUGIN_DIR $WP_CORE_DIR/wp-content/plugins/wpgraphql-acf
 		cd $WP_CORE_DIR/wp-content/plugins
 		pwd
 		ls
@@ -180,7 +180,7 @@ setup_plugin() {
     wp plugin activate wp-graphql
 
 	# activate the plugin
-	wp plugin activate wp-graphql-acf-redux
+	wp plugin activate wpgraphql-acf
 
 	# List the active plugins
 	wp plugin list
