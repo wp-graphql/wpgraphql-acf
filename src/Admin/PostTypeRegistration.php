@@ -4,6 +4,9 @@ namespace WPGraphQLAcf\Admin;
 
 use WPGraphQL\Utils\Utils;
 
+/**
+ * Extend functionality of the ACF Custom Post Type registration
+ */
 class PostTypeRegistration {
 
 	/**

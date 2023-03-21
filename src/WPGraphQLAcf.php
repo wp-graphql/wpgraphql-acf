@@ -35,7 +35,13 @@ class WPGraphQLAcf {
 
 	}
 
-	public function cpt_tax_registration() {
+	/**
+	 * Add functionality to the Custom Post Type and Custom Taxonomy registration screens
+	 * and underlying functionality (like exports, php code generation)
+	 *
+	 * @return void
+	 */
+	public function cpt_tax_registration(): void {
 		$taxonomy_registration_screen = new TaxonomyRegistration();
 		$taxonomy_registration_screen->init();
 
