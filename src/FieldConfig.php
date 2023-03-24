@@ -54,7 +54,7 @@ class FieldConfig {
 	 * @return bool
 	 */
 	protected function is_supported_field_type(): bool {
-		$supported_types = Utils::get_supported_field_types();
+		$supported_types = Utils::get_supported_acf_fields_types();
 		return ! empty( $this->acf_field['type'] ) && in_array( $this->acf_field['type'], $supported_types, true );
 	}
 

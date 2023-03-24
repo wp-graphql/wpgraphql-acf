@@ -601,4 +601,10 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 //	abstract public function testQueryFieldOnUserReturnsExpectedValue();
 //	abstract public function testQueryFieldOnMenuItemReturnsExpectedValue();
 
+
+// clone field tests
+
+// - test cloning the field and querying for it
+// - test cloning all fields of a field group and querying for them
+
 }

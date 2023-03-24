@@ -52,3 +52,96 @@ if ( ! function_exists( 'graphql_acf_init' ) ) {
 	}
 }
 graphql_acf_init();
+
+add_action( 'graphql_acf_init', function () {
+
+	// Registers the field type to show in the GraphQL Schema
+	register_graphql_acf_field_type( 'text' );
+	register_graphql_acf_field_type( 'textarea' );
+	register_graphql_acf_field_type( 'number' );
+	register_graphql_acf_field_type( 'range' );
+	register_graphql_acf_field_type( 'email' );
+	register_graphql_acf_field_type( 'url' );
+	register_graphql_acf_field_type( 'password' );
+	register_graphql_acf_field_type( 'image' );
+	register_graphql_acf_field_type( 'file' );
+	register_graphql_acf_field_type( 'wysiwyg' );
+	register_graphql_acf_field_type( 'oembed' );
+	register_graphql_acf_field_type( 'gallery' );
+	register_graphql_acf_field_type( 'checkbox' );
+	register_graphql_acf_field_type( 'radio' );
+	register_graphql_acf_field_type( 'button_group' );
+	register_graphql_acf_field_type( 'true_false' );
+	register_graphql_acf_field_type( 'link' );
+	register_graphql_acf_field_type( 'post_object' );
+	register_graphql_acf_field_type( 'page_link' );
+	register_graphql_acf_field_type( 'relationship' );
+	register_graphql_acf_field_type( 'taxonomy' );
+	register_graphql_acf_field_type( 'user' );
+	register_graphql_acf_field_type( 'google_map' );
+	register_graphql_acf_field_type( 'date_picker' );
+	register_graphql_acf_field_type( 'date_time_picker' );
+	register_graphql_acf_field_type( 'time_picker' );
+	register_graphql_acf_field_type( 'color_picker' );
+	register_graphql_acf_field_type( 'group' );
+	register_graphql_acf_field_type( 'repeater' );
+	register_graphql_acf_field_type( 'flexible_content' );
+	register_graphql_acf_field_type( 'clone', [
+		'exclude_admin_fields' => [ 'show_in_graphql', 'graphql_field_name', 'graphql_description' ],
+		'admin_fields' => function( $field, $config, \WPGraphQLAcf\Admin\Settings $settings ) {
+			return [
+				'graphql_clone' => [
+					'admin_field' => [
+						'type'         => 'message',
+						'label'        => __( 'GraphQL Settings for Clone Fields', 'wp-graphql-acf' ),
+						'instructions' => __( 'Clone Fields will inherit their GraphQL settings from the field(s) being cloned. If all Fields from a Field Group are cloned, an Interface representing the cloned field Group will be applied to this field group.', 'wp-graphql-acf' ),
+						'conditions'   => [],
+					],
+				]
+			];
+		}
+	] );
+
+	// This field type is added support some legacy features of ACF versions lower than v6.1
+	if ( ! defined( 'ACF_MAJOR_VERSION' ) || version_compare( ACF_MAJOR_VERSION, '6.1', '<=' ) ) {
+		register_graphql_acf_field_type( '<6.1' );
+	}
+
+	register_graphql_acf_field_type( 'select', static function ( $acf_field_registry ) {
+		return [
+//			'show_in_graphql_default'              => true,
+//			'graphql_field_name_default'           => function( $acf_field, $registry ) {
+//				return $registry->graphql_field_name( $acf_field );
+//			},
+//			'graphql_resolve_type'         => 'String',
+//			'graphql_description'          => '',
+//			'graphql_before_resolve'       => function() {
+//
+//			},
+//			'graphql_after_resolve' => function() {
+//
+//			},
+			'admin_fields' => function( $field, $config, \WPGraphQLAcf\Admin\Settings $settings ) {
+
+				// @phpstan-ignore-next-line
+				return [
+					'graphql_resolve_type' => [
+						'admin_field' => $settings->get_graphql_resolve_type_field_config(),
+						'before_resolve' => function() {},
+						'after_resolve' => function() {},
+					],
+					'graphql_non_null' => [
+						'admin_field' => $settings->get_graphql_non_null_field_config(),
+						'before_resolve' => function() {},
+						'after_resolve' => function() {},
+					],
+				];
+
+			},
+			'resolve' => static function ( $acf_field, $registry ) {
+				//
+			},
+		];
+	} );
+
+});

@@ -39,6 +39,8 @@ class Registry {
 			$this->type_registry = \WPGraphQL::get_type_registry();
 		}
 
+//		$this->register_acf_field_types();
+
 	}
 
 	/**

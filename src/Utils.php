@@ -12,51 +12,9 @@ use WPGraphQL\Model\User;
 class Utils {
 
 	/**
-	 * Determine the supported types that should be mapped to the WPGraphQL Schema
-	 *
-	 * @return array
+	 * @var null|FieldTypeRegistry
 	 */
-	public static function get_supported_field_types(): array {
-
-		$supported_types = [
-			'text',
-			'textarea',
-			'number',
-			'range',
-			'email',
-			'url',
-			'password',
-			'image',
-			'file',
-			'wysiwyg',
-			'oembed',
-			'gallery',
-			'select',
-			'checkbox',
-			'radio',
-			'button_group',
-			'true_false',
-			'link',
-			'post_object',
-			'page_link',
-			'relationship',
-			'taxonomy',
-			'user',
-			'google_map',
-			'date_picker',
-			'date_time_picker',
-			'time_picker',
-			'color_picker',
-			'group',
-			'repeater',
-			'flexible_content',
-		];
-
-		$filtered_types = apply_filters( 'graphql_acf_supported_fields', $supported_types );
-
-		return is_array( $filtered_types ) ? $filtered_types : $supported_types;
-
-	}
+	protected static $type_registry;
 
 	/**
 	 * @param mixed $node
@@ -100,6 +58,35 @@ class Utils {
 	}
 
 	/**
+	 * Return the Field Type Registry instance
+	 *
+	 * @return FieldTypeRegistry
+	 */
+	public static function get_type_registry(): FieldTypeRegistry {
+
+		if ( self::$type_registry instanceof FieldTypeRegistry ) {
+			return self::$type_registry;
+		}
+
+		self::$type_registry = new FieldTypeRegistry();
+		return self::$type_registry;
+
+	}
+
+	/**
+	 * Given the name of an ACF Field Type (text, textarea, etc) return the AcfGraphQLFieldType definition
+	 *
+	 * @param string $acf_field_type The name of the ACF Field Type (text, textarea, etc)
+	 *
+	 * @return AcfGraphQLFieldType|null
+	 */
+	public static function get_graphql_field_type( string $acf_field_type ): ?AcfGraphQLFieldType {
+
+		return self::get_type_registry()->get_field_type( $acf_field_type );
+
+	}
+
+	/**
 	 * Get a list of supported fields that WPGraphQL for ACF supports.
 	 *
 	 * This is helpful for determining whether UI should be output for the field, and whether
@@ -110,46 +97,17 @@ class Utils {
 	 * @return array
 	 */
 	public static function get_supported_acf_fields_types(): array {
-		$supported_field_types = [
-			'text',
-			'textarea',
-			'number',
-			'range',
-			'email',
-			'url',
-			'password',
-			'image',
-			'file',
-			'wysiwyg',
-			'oembed',
-			'gallery',
-			'select',
-			'checkbox',
-			'radio',
-			'button_group',
-			'true_false',
-			'link',
-			'post_object',
-			'page_link',
-			'relationship',
-			'taxonomy',
-			'user',
-			'google_map',
-			'date_picker',
-			'date_time_picker',
-			'time_picker',
-			'color_picker',
-			'group',
-			'repeater',
-			'flexible_content',
-		];
+
+		$registry               = self::get_type_registry();
+		$registered_fields      = $registry->get_registered_field_types();
+		$registered_field_names = array_keys( $registered_fields );
 
 		/**
 		 * Filter the supported fields
 		 *
 		 * @param array $supported_fields
 		 */
-		return apply_filters( 'wpgraphql_acf_supported_field_types', $supported_field_types );
+		return apply_filters( 'wpgraphql_acf_supported_field_types', $registered_field_names );
 	}
 
 	/**

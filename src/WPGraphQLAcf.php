@@ -23,6 +23,8 @@ class WPGraphQLAcf {
 		add_action( 'after_setup_theme', [ $this, 'cpt_tax_registration' ] );
 		add_action( 'graphql_register_types', [ $this, 'init_registry' ] );
 
+		do_action( 'graphql_acf_init' );
+
 	}
 
 	/**
