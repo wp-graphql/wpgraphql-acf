@@ -23,7 +23,7 @@ class PostTypeRegistration {
 		add_action( 'manage_acf-post-type_posts_custom_column', [ $this, 'render_graphql_columns' ], 10, 2 );
 
 		// Add registration fields to the ACF Post Type output for exporting / saving as PHP
-		add_filter( 'acf/post_type_args', [ $this, 'add_cpt_registration_fields' ], 10, 2 );
+		add_filter( 'acf/post_type/registration_args', [ $this, 'add_cpt_registration_fields' ], 10, 2 );
 
 		// Add tha GraphQL Tab to the ACF Post Type registration screen
 		add_filter( 'acf/post_type/additional_settings_tabs', [ $this, 'add_tabs' ] );

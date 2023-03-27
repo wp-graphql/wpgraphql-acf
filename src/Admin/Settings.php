@@ -324,21 +324,21 @@ class Settings {
 			$field_type = '<6.1';
 		}
 
-//		$supported_field_types = Utils::get_supported_acf_fields_types();
-//
-//		/**
-//		 * If there are no supported fields, or the field is not supported, don't add a setting field.
-//		 */
-//		if ( empty( $supported_field_types ) || empty( $field_type ) || ! in_array( $field_type, $supported_field_types, true ) ) {
-//
-//			$message = sprintf( __( 'The "%s" field type is not set up to map to the GraphQL Schema.', 'wp-graphql-acf' ), $field_type ) . ' <a href="https://acf.wpgraphql.com/guides/supporting-additional-field-types" target="_blank" rel="nofollow">Learn More</a>';
-//
-//			acf_render_field_setting( $field, [
-//				'type'         => 'message',
-//				'instructions' => acf_esc_html( $message ),
-//			] );
-//			return;
-//		}
+		$supported_field_types = Utils::get_supported_acf_fields_types();
+
+		/**
+		 * If there are no supported fields, or the field is not supported, don't add a setting field.
+		 */
+		if ( empty( $supported_field_types ) || empty( $field_type ) || ! in_array( $field_type, $supported_field_types, true ) ) {
+
+			$message = sprintf( __( 'The "%s" field type is not set up to map to the GraphQL Schema.', 'wp-graphql-acf' ), $field_type ) . ' <a href="https://acf.wpgraphql.com/guides/supporting-additional-field-types" target="_blank" rel="nofollow">Learn More</a>';
+
+			acf_render_field_setting( $field, [
+				'type'         => 'message',
+				'instructions' => acf_esc_html( $message ),
+			] );
+			return;
+		}
 //
 //		if ( 'clone' === $field_type ) {
 //
