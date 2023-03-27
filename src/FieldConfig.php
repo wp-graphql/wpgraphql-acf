@@ -49,6 +49,20 @@ class FieldConfig {
 	}
 
 	/**
+	 * @return string|null
+	 */
+	public function get_graphql_field_group_type_name(): string {
+		return $this->graphql_field_group_type_name;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function get_graphql_field_name(): string {
+		return $this->graphql_field_name;
+	}
+
+	/**
 	 * Determine whether an ACF Field is supported by GraphQL
 	 *
 	 * @return bool
@@ -79,6 +93,20 @@ class FieldConfig {
 		}
 
 		return $description;
+	}
+
+	/**
+	 * @return array
+	 */
+	public function get_acf_field(): array {
+		return $this->acf_field;
+	}
+
+	/**
+	 * @return array
+	 */
+	public function get_acf_field_group(): array {
+		return $this->acf_field_group;
 	}
 
 	/**
@@ -117,20 +145,41 @@ class FieldConfig {
 
 		if ( ! empty( $this->acf_field['type'] ) ) {
 
+			$_field_type = Utils::get_graphql_field_type( $this->acf_field['type'] );
+
+
+
+			$field_type = 'String';
+			if ( $_field_type ) {
+				$field_type = $_field_type->get_resolve_type( $this );
+			}
+
+//			if ( 'true_false' === $this->acf_field['type'] ) {
+//				wp_send_json( [
+//					'goo' => 'gaa',
+//					'$field_type' => $field_type,
+//					'$_field_type' => $_field_type,
+//				]);
+//			}
+
 
 			switch ( $this->acf_field['type'] ) {
 				case 'number':
 				case 'range':
-					$field_config['type'] = 'Float';
+					$field_config['type'] = $field_type;
 					break;
 				case 'true_false':
-					$field_config['type'] = 'Boolean';
+					$field_config['type'] = $field_type;
+					$field_config['resolve'] = function ( $node, array $args, AppContext $context, ResolveInfo $info ) {
+						$value = $this->resolve_field( $node, $args, $context, $info );
+						return (bool) $value;
+					};
 					break;
 				case 'google_map':
-					$field_config['type'] = 'AcfGoogleMap';
+					$field_config['type'] = $field_type;
 					break;
 				case 'link':
-					$field_config['type'] = 'AcfLink';
+					$field_config['type'] = $field_type;
 					break;
 				case 'checkbox':
 				case 'select':
@@ -146,38 +195,7 @@ class FieldConfig {
 					break;
 				case 'file':
 				case 'image':
-					$field_config = null;
-
-					$type_name       = $this->graphql_field_group_type_name;
-					$to_type         = 'MediaItem';
-					$connection_name = $this->get_connection_name( $type_name, $to_type, $this->graphql_field_name );
-
-					$this->register_graphql_connections( [
-						'description'           => $this->get_field_description(),
-						'acf_field'             => $this->acf_field,
-						'acf_field_group'       => $this->acf_field_group,
-						'fromType'              => $type_name,
-						'toType'                => $to_type,
-						'fromFieldName'         => $this->graphql_field_name,
-						'connectionTypeName'    => $connection_name,
-						'oneToOne'              => true,
-						'resolve'               => function ( $root, $args, AppContext $context, $info ) {
-
-							$value = $this->resolve_field( $root, $args, $context, $info );
-
-							if ( empty( $value ) || ! absint( $value ) ) {
-								return null;
-							}
-
-							$resolver = new PostObjectConnectionResolver( $root, $args, $context, $info, 'attachment' );
-							return $resolver
-								->one_to_one()
-								->set_query_arg( 'p', absint( $value ) )
-								->get_connection();
-						},
-						'allowFieldUnderscores' => true,
-					]);
-
+					$field_config = $field_type;
 					break;
 				case 'gallery':
 					$field_config = null;
@@ -552,9 +570,9 @@ class FieldConfig {
 	 * @return void
 	 * @throws Exception
 	 */
-	protected function register_graphql_connections( array $config ): void {
+	public function register_graphql_connections( array $config ): void {
 
-		$type_name = $this->graphql_field_group_type_name;
+		$type_name = $this->get_graphql_field_group_type_name();
 		$to_type   = $config['toType'] ?? null;
 
 		// If there's no to_type or type_name, we can't proceed
@@ -562,16 +580,16 @@ class FieldConfig {
 			return;
 		}
 
-		$connection_name = $this->get_connection_name( $type_name, $to_type, $this->graphql_field_name );
+		$connection_name = $this->get_connection_name( $type_name, $to_type, $this->get_graphql_field_name() );
 
 		$connection_config = array_merge( [
 			'description'           => $this->get_field_description(),
-			'acf_field'             => $this->acf_field,
-			'acf_field_group'       => $this->acf_field_group,
+			'acf_field'             => $this->get_acf_field(),
+			'acf_field_group'       => $this->get_acf_field_group(),
 			'fromType'              => $type_name,
 			'toType'                => $to_type,
 			'connectionTypeName'    => $connection_name,
-			'fromFieldName'         => $this->graphql_field_name,
+			'fromFieldName'         => $this->get_graphql_field_name(),
 			'allowFieldUnderscores' => true,
 		], $config );
 

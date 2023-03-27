@@ -71,7 +71,7 @@ add_action( 'graphql_acf_init', function () {
 	register_graphql_acf_field_type( 'checkbox' );
 	register_graphql_acf_field_type( 'radio' );
 	register_graphql_acf_field_type( 'button_group' );
-	register_graphql_acf_field_type( 'true_false' );
+//	register_graphql_acf_field_type( 'true_false' );
 	register_graphql_acf_field_type( 'link' );
 	register_graphql_acf_field_type( 'post_object' );
 	register_graphql_acf_field_type( 'page_link' );

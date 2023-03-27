@@ -25,6 +25,10 @@ class TaxonomyRegistration {
 		// Add registration fields to the ACF Taxonomy output for exporting / saving as PHP
 		add_filter( 'acf/taxonomy/registration_args', [ $this, 'add_taxonomy_registration_fields' ], 10, 2 );
 
+		// @todo: DELETE ME. This filter existed for one of the versions of beta but was renamed above.
+		// this is a polyfill for tests to pass
+		add_filter( 'acf/taxonomy_args', [ $this, 'add_taxonomy_registration_fields' ], 10, 2 );
+
 		// Add tha GraphQL Tab to the ACF Taxonomy registration screen
 		add_filter( 'acf/taxonomy/additional_settings_tabs', [ $this, 'add_tabs' ] );
 

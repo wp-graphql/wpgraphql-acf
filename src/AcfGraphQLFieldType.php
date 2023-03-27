@@ -19,7 +19,7 @@ class AcfGraphQLFieldType {
 	private $acf_field_type;
 
 	/**
-	 * @var array
+	 * @var array|callable
 	 */
 	protected $config;
 
@@ -59,17 +59,18 @@ class AcfGraphQLFieldType {
 	public function set_config( $config = [] ): void {
 
 		if ( is_array( $config ) ) {
+
+			wp_send_json( [
+				'goo' => $config,
+			]);
+
 			$this->config = $config;
-		}
-
-		if ( is_callable( $config ) ) {
-
-			$_config = $config( $this->get_acf_field_type(), $this->config );
+		} else if ( is_callable( $config ) ) {
+			$_config = $config( $this->get_acf_field_type(), $this );
 			if ( is_array( $_config ) ) {
 				$this->config = $_config;
 			}
 		}
-
 	}
 
 	/**
@@ -80,7 +81,8 @@ class AcfGraphQLFieldType {
 	 * @return mixed
 	 */
 	public function get_config( ?string $setting_name = null ) {
-		if ( empty( $setting_name ) ) {
+
+		if ( empty( $setting_name ) || ! is_array( $this->config ) ) {
 			return $this->config;
 		}
 
@@ -146,7 +148,7 @@ class AcfGraphQLFieldType {
 			'placeholder'   => __( 'newFieldName', 'wp-graphql-acf' ),
 			'default_value' => '',
 			// allow underscores if the user enters the value with underscores
-			'value'         => ! empty( $field['graphql_field_name'] ) ? \WPGraphQL\Utils\Utils::format_field_name( $field['graphql_field_name'], true ) : '',
+			'value'         => ! empty( $field['graphql_field_name'] ) ? \WPGraphQL\Utils\Utils::format_field_name( $field['graphql_field_name'], true ) : \WPGraphQL\Utils\Utils::format_field_name( $field['name'], false ),
 			'conditions'    => [
 				'field'    => 'show_in_graphql',
 				'operator' => '==',
@@ -155,7 +157,8 @@ class AcfGraphQLFieldType {
 		];
 
 		// Get the admin fields for the field type
-		$admin_fields = $this->get_admin_fields( $field, $this->config, $settings );
+		$admin_fields = $this->get_admin_fields( $field, $settings );
+
 
 		// Add additional fields to the defaults
 		if ( ! empty( $admin_fields ) ) {
@@ -179,12 +182,11 @@ class AcfGraphQLFieldType {
 
 	/**
 	 * @param array $acf_field The ACF Field to get the settings for
-	 * @param array $config The AcfGraphqlFieldType Config
 	 * @param Settings $settings Instance of the Settings class
 	 *
 	 * @return array
 	 */
-	public function get_admin_fields( array $acf_field, array $config, Settings $settings ): array {
+	public function get_admin_fields( array $acf_field, Settings $settings ): array {
 
 		if ( ! empty( $this->admin_fields ) && is_array( $this->admin_fields ) ) {
 			return $this->admin_fields;
@@ -197,7 +199,7 @@ class AcfGraphQLFieldType {
 		}
 
 		if ( is_callable( $admin_fields ) ) {
-			$this->admin_fields = $admin_fields( $acf_field, $config, $settings );
+			$this->admin_fields = $admin_fields( $acf_field, $this->config, $settings );
 		}
 
 		return $this->admin_fields ?? [];
@@ -245,6 +247,39 @@ class AcfGraphQLFieldType {
 	 */
 	public function get_excluded_admin_field_settings(): array {
 		return apply_filters( 'graphql_acf_excluded_admin_field_settings', $this->excluded_admin_field_settings );
+	}
+
+	/**
+	 * @return array|string
+	 */
+	public function get_resolve_type( FieldConfig $field_config ) {
+
+		$acf_field = $field_config->get_acf_field();
+
+		$resolve_type = 'String';
+
+		if ( isset( $acf_field['graphql_resolve_type'] ) ) {
+			$resolve_type = $acf_field['graphql_resolve_type'];
+		} else if ( ! empty( $this->get_config('graphql_type' ) ) ) {
+
+			if ( is_callable( $this->get_config('graphql_type' ) ) ) {
+				$resolve_type = $this->get_config('graphql_type' )( $field_config, $this );
+			} else {
+				$resolve_type = $this->get_config('graphql_type' );
+			}
+
+		}
+
+		if ( 'true_false' === $this->acf_field_type ) {
+			wp_send_json( [
+				'$config' => $this->config,
+				'$resolve_type' => $resolve_type,
+				'$acf_field' => $acf_field,
+				'field_config' => $field_config->get_acf_field(),
+			]);
+		}
+
+		return $resolve_type;
 	}
 
 }
