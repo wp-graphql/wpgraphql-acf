@@ -135,7 +135,7 @@ class FieldConfig {
 			'type'            => 'String',
 			'name'            => $this->graphql_field_name,
 			'description'     => $this->get_field_description(),
-			'acf_field'       => $this->acf_field,
+			'acf_field'       => $this->get_acf_field(),
 			'acf_field_group' => $this->acf_field_group,
 			'resolve'         => function ( $root, $args, AppContext $context, ResolveInfo $info ) {
 				return $this->resolve_field( $root, $args, $context, $info );
@@ -157,6 +157,9 @@ class FieldConfig {
 
 
 			switch ( $this->acf_field['type'] ) {
+				case 'color_picker':
+					$field_config['type'] = 'String';
+					break;
 				case 'number':
 				case 'range':
 					$field_config['type'] = $field_type;
@@ -435,11 +438,18 @@ class FieldConfig {
 	 */
 	public function resolve_field( $root, array $args, AppContext $context, ResolveInfo $info ) {
 
+
 		// @todo: Handle options pages??
 		$field_config = $info->fieldDefinition->config['acf_field'] ?? $this->acf_field;
 		$node         = $root['node'] ?: null;
 		$node_id      = \WPGraphQLAcf\Utils::get_node_acf_id( $node ) ?: null;
 		$field_key    = $field_config['cloned_key'] ?? ( $field_config['key'] ?: null );
+
+		$is_cloned = isset( $field_config['cloned_key'] ) ?? false;
+
+		if ( $is_cloned ) {
+			$field_config = acf_get_field( $field_config['key'] );
+		}
 
 		$should_format_value = $this->should_format_field_value( $field_config['type'] ?? null );
 
