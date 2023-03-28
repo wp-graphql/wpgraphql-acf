@@ -188,6 +188,7 @@ class FieldConfig {
 					break;
 				case 'file':
 				case 'image':
+				case 'user':
 					$field_config = $field_type;
 					break;
 				case 'gallery':
@@ -229,6 +230,7 @@ class FieldConfig {
 
 					break;
 				case 'group':
+
 					$parent_type     = $this->graphql_field_group_type_name;
 					$field_name      = $this->graphql_field_name;
 					$sub_field_group = $this->acf_field;
@@ -516,13 +518,10 @@ class FieldConfig {
 
 		// @todo: This was ported over, but I'm not 💯 sure what this is solving and
 		// why it's only applied on options pages and not other pages 🤔
-		if ( is_array( $root ) && ! ( ! empty( $root['type'] ) && 'options_page' === $root['type'] ) ) {
-
-			if ( isset( $root[ $acf_field_config['key'] ] ) ) {
-				$value = $root[ $acf_field_config['key'] ];
-				if ( 'wysiwyg' === $acf_field_config['type'] ) {
-					$value = apply_filters( 'the_content', $value );
-				}
+		if ( is_array( $root ) && ! ( ! empty( $root['type'] ) && 'options_page' === $root['type'] ) && isset( $root[ $acf_field_config['key'] ] ) ) {
+			$value = $root[ $acf_field_config['key'] ];
+			if ( 'wysiwyg' === $acf_field_config['type'] ) {
+				$value = apply_filters( 'the_content', $value );
 			}
 		}
 
@@ -552,7 +551,7 @@ class FieldConfig {
 	 *
 	 * @return string
 	 */
-	public function get_connection_name( string $from_type, string $to_type, string $from_field_name ) {
+	public function get_connection_name( string $from_type, string $to_type, string $from_field_name ): string {
 		// Create connection name using $from_type + To + $to_type + Connection.
 		return \WPGraphQL\Utils\Utils::format_type_name( ucfirst( $from_type ) . ucfirst( $from_field_name ) . 'To' . ucfirst( $to_type ) . 'Connection' );
 	}
@@ -591,6 +590,7 @@ class FieldConfig {
 
 		// Register the connection to the Field Group Fields Interface
 		register_graphql_connection( array_merge( $connection_config, [ 'fromType' => $type_name . '_Fields' ] ) );
+
 	}
 
 }

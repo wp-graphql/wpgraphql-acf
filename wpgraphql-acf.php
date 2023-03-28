@@ -77,7 +77,7 @@ add_action( 'graphql_acf_init', function () {
 	register_graphql_acf_field_type( 'page_link' );
 	register_graphql_acf_field_type( 'relationship' );
 	register_graphql_acf_field_type( 'taxonomy' );
-	register_graphql_acf_field_type( 'user' );
+//	register_graphql_acf_field_type( 'user' );
 //	register_graphql_acf_field_type( 'google_map' );
 	register_graphql_acf_field_type( 'date_picker' );
 	register_graphql_acf_field_type( 'date_time_picker' );

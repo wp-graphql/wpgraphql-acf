@@ -21,8 +21,8 @@ class FileFieldTest extends \Tests\WPGraphQLAcf\WPUnit\AcfFieldTestCase {
 		return 'file';
 	}
 
-//	public function get_expected_field_resolve_type(): ?string {
-//		return 'MediaItemConnectionEdge';
-//	}
+	public function get_expected_field_resolve_type(): ?string {
+		return 'AcfTestGroupTestFileToMediaItemConnectionEdge';
+	}
 
 }

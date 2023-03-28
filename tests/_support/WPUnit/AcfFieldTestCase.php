@@ -136,7 +136,6 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 		    fields {
 		      name
 		      type {
-		        kind
 		        name
 		      }
 		    }
@@ -156,9 +155,10 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 		// the query should succeed
 		self::assertQuerySuccessful( $actual, [
 			$this->expectedObject( '__type.fields', [
+				// expect the fields to have the formatted field name
 				'name' => $this->get_formatted_field_name(),
 				'type' => [
-					'kind' => 'SCALAR',
+					// Ensure the fields return the expected resolve type
 					'name' => $this->get_expected_field_resolve_type(),
 				],
 			])

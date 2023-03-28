@@ -14,6 +14,7 @@ use WPGraphQLAcf\FieldType\Text;
 use WPGraphQLAcf\FieldType\Textarea;
 use WPGraphQLAcf\FieldType\TrueFalse;
 use WPGraphQLAcf\FieldType\Url;
+use WPGraphQLAcf\FieldType\User;
 
 class FieldTypeRegistry {
 
@@ -55,6 +56,7 @@ class FieldTypeRegistry {
 		GoogleMap::register_field_type();
 		Link::register_field_type();
 		TrueFalse::register_field_type();
+		User::register_field_type();
 
 	}
 
