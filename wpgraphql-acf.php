@@ -56,15 +56,15 @@ graphql_acf_init();
 add_action( 'graphql_acf_init', function () {
 
 	// Registers the field type to show in the GraphQL Schema
-	register_graphql_acf_field_type( 'text' );
-	register_graphql_acf_field_type( 'textarea' );
-	register_graphql_acf_field_type( 'number' );
-	register_graphql_acf_field_type( 'range' );
-	register_graphql_acf_field_type( 'email' );
-	register_graphql_acf_field_type( 'url' );
-	register_graphql_acf_field_type( 'password' );
-	register_graphql_acf_field_type( 'image' );
-	register_graphql_acf_field_type( 'file' );
+//	register_graphql_acf_field_type( 'text' );
+//	register_graphql_acf_field_type( 'textarea' );
+//	register_graphql_acf_field_type( 'number' );
+//	register_graphql_acf_field_type( 'range' );
+//	register_graphql_acf_field_type( 'email' );
+//	register_graphql_acf_field_type( 'url' );
+//	register_graphql_acf_field_type( 'password' );
+//	register_graphql_acf_field_type( 'image' );
+//	register_graphql_acf_field_type( 'file' );
 	register_graphql_acf_field_type( 'wysiwyg' );
 	register_graphql_acf_field_type( 'oembed' );
 	register_graphql_acf_field_type( 'gallery' );
@@ -72,13 +72,13 @@ add_action( 'graphql_acf_init', function () {
 	register_graphql_acf_field_type( 'radio' );
 	register_graphql_acf_field_type( 'button_group' );
 //	register_graphql_acf_field_type( 'true_false' );
-	register_graphql_acf_field_type( 'link' );
+//	register_graphql_acf_field_type( 'link' );
 	register_graphql_acf_field_type( 'post_object' );
 	register_graphql_acf_field_type( 'page_link' );
 	register_graphql_acf_field_type( 'relationship' );
 	register_graphql_acf_field_type( 'taxonomy' );
 	register_graphql_acf_field_type( 'user' );
-	register_graphql_acf_field_type( 'google_map' );
+//	register_graphql_acf_field_type( 'google_map' );
 	register_graphql_acf_field_type( 'date_picker' );
 	register_graphql_acf_field_type( 'date_time_picker' );
 	register_graphql_acf_field_type( 'time_picker' );

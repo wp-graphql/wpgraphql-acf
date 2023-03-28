@@ -59,11 +59,6 @@ class AcfGraphQLFieldType {
 	public function set_config( $config = [] ): void {
 
 		if ( is_array( $config ) ) {
-
-			wp_send_json( [
-				'goo' => $config,
-			]);
-
 			$this->config = $config;
 		} else if ( is_callable( $config ) ) {
 			$_config = $config( $this->get_acf_field_type(), $this );
@@ -268,15 +263,6 @@ class AcfGraphQLFieldType {
 				$resolve_type = $this->get_config('graphql_type' );
 			}
 
-		}
-
-		if ( 'true_false' === $this->acf_field_type ) {
-			wp_send_json( [
-				'$config' => $this->config,
-				'$resolve_type' => $resolve_type,
-				'$acf_field' => $acf_field,
-				'field_config' => $field_config->get_acf_field(),
-			]);
 		}
 
 		return $resolve_type;

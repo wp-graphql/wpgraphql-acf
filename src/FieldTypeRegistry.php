@@ -98,20 +98,7 @@ class FieldTypeRegistry {
 	 */
 	public function register_field_type( string $acf_field_type, $config = [] ): AcfGraphQLFieldType {
 
-		if ( 'true_false' === $acf_field_type ) {
-			wp_send_json( [
-				'$acf_field_type' => $acf_field_type,
-				'$config' => $config,
-			]);
-		}
-
 		if ( isset( $this->registered_field_types[ $acf_field_type ] ) ) {
-
-//			graphql_debug( __( 'The ACF Field Type "%s" is already registered as a supported field type and cannot be registered multiple times', 'wp-graphql-acf' ), [
-//				'acf_field_type'   => $acf_field_type,
-//				'acf_field_config' => $config,
-//			] );
-
 			return $this->registered_field_types[ $acf_field_type ];
 		}
 

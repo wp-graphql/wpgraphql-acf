@@ -154,13 +154,6 @@ class FieldConfig {
 				$field_type = $_field_type->get_resolve_type( $this );
 			}
 
-//			if ( 'true_false' === $this->acf_field['type'] ) {
-//				wp_send_json( [
-//					'goo' => 'gaa',
-//					'$field_type' => $field_type,
-//					'$_field_type' => $_field_type,
-//				]);
-//			}
 
 
 			switch ( $this->acf_field['type'] ) {
