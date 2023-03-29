@@ -31,6 +31,11 @@ class FieldConfig {
 	protected $graphql_field_name;
 
 	/**
+	 * @var AcfGraphQLFieldType|null
+	 */
+	protected $graphql_field_type;
+
+	/**
 	 * @var Registry
 	 */
 	protected $registry;
@@ -45,14 +50,28 @@ class FieldConfig {
 		$this->registry                      = $registry;
 		$this->graphql_field_group_type_name = $this->registry->get_field_group_graphql_type_name( $this->acf_field_group );
 		$this->graphql_field_name            = $this->registry->get_graphql_field_name( $this->acf_field );
+		$this->graphql_field_type            = Utils::get_graphql_field_type( $this->acf_field['type'] );
+	}
 
+	/**
+	 * @return Registry
+	 */
+	public function get_registry(): Registry {
+		return $this->registry;
 	}
 
 	/**
 	 * @return string|null
 	 */
-	public function get_graphql_field_group_type_name(): string {
+	public function get_graphql_field_group_type_name(): ?string {
 		return $this->graphql_field_group_type_name;
+	}
+
+	/**
+	 * @return AcfGraphQLFieldType|null
+	 */
+	public function get_graphql_field_type(): ?AcfGraphQLFieldType {
+		return $this->graphql_field_type;
 	}
 
 	/**
@@ -145,13 +164,11 @@ class FieldConfig {
 
 		if ( ! empty( $this->acf_field['type'] ) ) {
 
-			$_field_type = Utils::get_graphql_field_type( $this->acf_field['type'] );
-
-
+			$graphql_field_type = $this->get_graphql_field_type();
 
 			$field_type = 'String';
-			if ( $_field_type ) {
-				$field_type = $_field_type->get_resolve_type( $this );
+			if ( $graphql_field_type instanceof AcfGraphQLFieldType ) {
+				$field_type = $graphql_field_type->get_resolve_type( $this );
 			}
 
 
@@ -162,6 +179,10 @@ class FieldConfig {
 					break;
 				case 'number':
 				case 'range':
+				case 'group':
+				case 'wysiwyg':
+				case 'google_map':
+				case 'link':
 					$field_config['type'] = $field_type;
 					break;
 				case 'true_false':
@@ -170,12 +191,6 @@ class FieldConfig {
 						$value = $this->resolve_field( $node, $args, $context, $info );
 						return (bool) $value;
 					};
-					break;
-				case 'google_map':
-					$field_config['type'] = $field_type;
-					break;
-				case 'link':
-					$field_config['type'] = $field_type;
 					break;
 				case 'checkbox':
 				case 'select':
@@ -232,22 +247,6 @@ class FieldConfig {
 					]);
 
 					break;
-				case 'group':
-
-					$parent_type     = $this->graphql_field_group_type_name;
-					$field_name      = $this->graphql_field_name;
-					$sub_field_group = $this->acf_field;
-					$type_name       = \WPGraphQL\Utils\Utils::format_type_name( $parent_type . ' ' . $field_name );
-
-					$sub_field_group['graphql_field_name'] = $type_name;
-
-					$this->registry->register_acf_field_groups_to_graphql( [
-						$sub_field_group,
-					] );
-
-					$field_config['type'] = $type_name;
-					break;
-
 				case 'flexible_content':
 					$parent_type             = $this->graphql_field_group_type_name;
 					$field_name              = $this->graphql_field_name;

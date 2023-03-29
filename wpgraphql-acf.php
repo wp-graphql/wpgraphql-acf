@@ -65,7 +65,7 @@ add_action( 'graphql_acf_init', function () {
 //	register_graphql_acf_field_type( 'password' );
 //	register_graphql_acf_field_type( 'image' );
 //	register_graphql_acf_field_type( 'file' );
-	register_graphql_acf_field_type( 'wysiwyg' );
+//	register_graphql_acf_field_type( 'wysiwyg' );
 	register_graphql_acf_field_type( 'oembed' );
 	register_graphql_acf_field_type( 'gallery' );
 	register_graphql_acf_field_type( 'checkbox' );
@@ -83,7 +83,7 @@ add_action( 'graphql_acf_init', function () {
 	register_graphql_acf_field_type( 'date_time_picker' );
 	register_graphql_acf_field_type( 'time_picker' );
 	register_graphql_acf_field_type( 'color_picker' );
-	register_graphql_acf_field_type( 'group' );
+//	register_graphql_acf_field_type( 'group' );
 	register_graphql_acf_field_type( 'repeater' );
 	register_graphql_acf_field_type( 'flexible_content' );
 	register_graphql_acf_field_type( 'clone', [
