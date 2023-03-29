@@ -18,7 +18,7 @@ class Gallery {
 
 				$type_name       = $field_config->get_graphql_field_group_type_name();
 				$to_type         = 'MediaItem';
-				$connection_name = $this->get_connection_name( $type_name, $to_type, $field_config->get_graphql_field_name() );
+				$connection_name = $field_config->get_connection_name( $type_name, $to_type, $field_config->get_graphql_field_name() );
 
 				$field_config->register_graphql_connections( [
 					'description'           => $field_config->get_field_description(),
