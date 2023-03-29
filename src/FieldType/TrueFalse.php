@@ -1,6 +1,9 @@
 <?php
 namespace WPGraphQLAcf\FieldType;
 
+use WPGraphQLAcf\AcfGraphQLFieldType;
+use WPGraphQLAcf\FieldConfig;
+
 class TrueFalse {
 
 	/**
@@ -10,6 +13,11 @@ class TrueFalse {
 
 		register_graphql_acf_field_type( 'true_false', [
 			'graphql_type' => 'Boolean',
+			'graphql_resolver' => function( $root, $args, $context, $info, FieldConfig $field_config, AcfGraphQLFieldType $field_type ) {
+
+				$field_config->resolve_field( $root, $args, $context, $info );
+
+			}
 		] );
 
 	}
