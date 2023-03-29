@@ -9,7 +9,6 @@ class UserFieldTest extends \Tests\WPGraphQLAcf\WPUnit\AcfFieldTestCase {
 		parent::setUp();
 	}
 
-
 	/**
 	 * @return void
 	 */

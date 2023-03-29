@@ -171,12 +171,8 @@ class FieldConfig {
 				$field_type = $graphql_field_type->get_resolve_type( $this );
 			}
 
-
-
 			switch ( $this->acf_field['type'] ) {
 				case 'color_picker':
-					$field_config['type'] = 'String';
-					break;
 				case 'number':
 				case 'range':
 				case 'group':

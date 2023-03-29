@@ -2,6 +2,7 @@
 
 namespace WPGraphQLAcf;
 
+use WPGraphQLAcf\FieldType\ColorPicker;
 use WPGraphQLAcf\FieldType\Email;
 use WPGraphQLAcf\FieldType\File;
 use WPGraphQLAcf\FieldType\GoogleMap;
@@ -46,6 +47,7 @@ class FieldTypeRegistry {
 	 */
 	protected function register_acf_field_types(): void {
 
+		ColorPicker::register_field_type();
 		Text::register_field_type();
 		Textarea::register_field_type();
 		Number::register_field_type();
