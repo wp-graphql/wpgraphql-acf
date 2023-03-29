@@ -5,6 +5,7 @@ namespace WPGraphQLAcf;
 use WPGraphQLAcf\FieldType\ColorPicker;
 use WPGraphQLAcf\FieldType\Email;
 use WPGraphQLAcf\FieldType\File;
+use WPGraphQLAcf\FieldType\Gallery;
 use WPGraphQLAcf\FieldType\GoogleMap;
 use WPGraphQLAcf\FieldType\Group;
 use WPGraphQLAcf\FieldType\Image;
@@ -58,6 +59,7 @@ class FieldTypeRegistry {
 		Password::register_field_type();
 		Image::register_field_type();
 		File::register_field_type();
+		Gallery::register_field_type();
 		GoogleMap::register_field_type();
 		Group::register_field_type();
 		Link::register_field_type();

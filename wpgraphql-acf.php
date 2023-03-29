@@ -67,7 +67,7 @@ add_action( 'graphql_acf_init', function () {
 //	register_graphql_acf_field_type( 'file' );
 //	register_graphql_acf_field_type( 'wysiwyg' );
 //	register_graphql_acf_field_type( 'oembed' );
-	register_graphql_acf_field_type( 'gallery' );
+//	register_graphql_acf_field_type( 'gallery' );
 	register_graphql_acf_field_type( 'checkbox' );
 	register_graphql_acf_field_type( 'radio' );
 	register_graphql_acf_field_type( 'button_group' );

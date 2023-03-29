@@ -204,46 +204,10 @@ class FieldConfig {
 				case 'file':
 				case 'image':
 				case 'user':
+				case 'gallery':
 					$field_config = $field_type;
 					break;
-				case 'gallery':
-					$field_config = null;
 
-					$type_name       = $this->graphql_field_group_type_name;
-					$to_type         = 'MediaItem';
-					$connection_name = $this->get_connection_name( $type_name, $to_type, $this->graphql_field_name );
-
-					$this->register_graphql_connections( [
-						'description'           => $this->get_field_description(),
-						'acf_field'             => $this->acf_field,
-						'acf_field_group'       => $this->acf_field_group,
-						'fromType'              => $type_name,
-						'toType'                => $to_type,
-						'fromFieldName'         => $this->graphql_field_name,
-						'connectionTypeName'    => $connection_name,
-						'oneToOne'              => false,
-						'allowFieldUnderscores' => true,
-						'resolve'               => function ( $root, $args, AppContext $context, $info ) {
-
-							$value = $this->resolve_field( $root, $args, $context, $info );
-
-							if ( empty( $value ) || ! is_array( $value ) ) {
-								return null;
-							}
-
-							$value = array_map( static function ( $id ) {
-								return absint( $id );
-							}, $value );
-
-							$resolver = new PostObjectConnectionResolver( $root, $args, $context, $info, 'attachment' );
-							return $resolver
-								->set_query_arg( 'post__in', $value )
-								->set_query_arg( 'orderby', 'post__in' )
-								->get_connection();
-						},
-					]);
-
-					break;
 				case 'flexible_content':
 					$parent_type             = $this->graphql_field_group_type_name;
 					$field_name              = $this->graphql_field_name;
