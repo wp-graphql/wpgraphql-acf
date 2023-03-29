@@ -179,6 +179,7 @@ class FieldConfig {
 				case 'wysiwyg':
 				case 'google_map':
 				case 'link':
+				case 'oembed':
 					$field_config['type'] = $field_type;
 					break;
 				case 'true_false':
