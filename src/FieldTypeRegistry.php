@@ -5,7 +5,6 @@ namespace WPGraphQLAcf;
 use WPGraphQLAcf\FieldType\Email;
 use WPGraphQLAcf\FieldType\File;
 use WPGraphQLAcf\FieldType\GoogleMap;
-use WPGraphQLAcf\FieldType\Group;
 use WPGraphQLAcf\FieldType\Image;
 use WPGraphQLAcf\FieldType\Link;
 use WPGraphQLAcf\FieldType\Number;
@@ -55,7 +54,6 @@ class FieldTypeRegistry {
 		Image::register_field_type();
 		File::register_field_type();
 		GoogleMap::register_field_type();
-		Group::register_field_type();
 		Link::register_field_type();
 		TrueFalse::register_field_type();
 		User::register_field_type();

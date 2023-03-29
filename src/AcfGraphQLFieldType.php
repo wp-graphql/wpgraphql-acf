@@ -245,26 +245,6 @@ class AcfGraphQLFieldType {
 	}
 
 	/**
-	 * @param FieldConfig $field_config
-	 *
-	 * @return callable|null
-	 */
-	public function get_resolver( $source, $args, $context, $info, FieldConfig $field_config ): ?callable {
-
-		$acf_field = $field_config->get_acf_field();
-
-		$resolver = null;
-
-		if ( isset( $acf_field['graphql_resolver'] ) && is_callable( $acf_field['graphql_resolver'] ) ) {
-			$resolver = $acf_field['graphql_resolver'];
-		} else if ( ! empty( $this->get_config( 'graphql_resolver' ) && is_callable( $this->get_config( 'graphql_resolver' ) ) ) ) {
-			$resolver = $this->get_config( 'graphql_resolver' );
-		}
-
-		return is_callable( $resolver ) ? $resolver( $field_config, $this ) : null;
-	}
-
-	/**
 	 * @return array|string
 	 */
 	public function get_resolve_type( FieldConfig $field_config ) {
