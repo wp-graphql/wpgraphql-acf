@@ -25,5 +25,9 @@ class GoogleMapFieldTest extends \Tests\WPGraphQLAcf\WPUnit\AcfFieldTestCase {
 		return 'AcfGoogleMap';
 	}
 
+	public function get_expected_field_resolve_kind(): ?string {
+		return 'OBJECT';
+	}
+
 }
 

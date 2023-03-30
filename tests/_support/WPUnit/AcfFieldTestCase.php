@@ -46,6 +46,20 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 	 * @return string|null
 	 */
 	public function get_expected_field_resolve_type(): ?string {
+		return 'undefined';
+	}
+
+	/**
+	 * @return string|null
+	 */
+	public function get_expected_field_resolve_kind(): ?string {
+		return 'SCALAR';
+	}
+
+	/**
+	 * @return array|null
+	 */
+	public function get_expected_field_of_type(): ?array {
 		return null;
 	}
 
@@ -122,7 +136,7 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 
 	public function testFieldShowsInSchemaWithExpectedResolveType() {
 
-		if ( empty( $this->get_expected_field_resolve_type() ) ) {
+		if ( 'undefined' === $this->get_expected_field_resolve_type() ) {
 			$this->markTestIncomplete( sprintf( "The '%s' test needs to define an expected resolve type by defining the 'get_expected_field_resolve_type' function with a return value", __CLASS__ ) );
 		}
 
@@ -136,7 +150,11 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 		    fields {
 		      name
 		      type {
+		        kind
 		        name
+		        ofType {
+		          name
+		        }
 		      }
 		    }
 		  }
@@ -158,8 +176,10 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 				// expect the fields to have the formatted field name
 				'name' => $this->get_formatted_field_name(),
 				'type' => [
+					'kind' => $this->get_expected_field_resolve_kind(),
 					// Ensure the fields return the expected resolve type
 					'name' => $this->get_expected_field_resolve_type(),
+					'ofType' => $this->get_expected_field_of_type(),
 				],
 			])
 		] );

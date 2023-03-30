@@ -2,8 +2,11 @@
 
 namespace WPGraphQLAcf;
 
+use WPGraphQLAcf\FieldType\ButtonGroup;
 use WPGraphQLAcf\FieldType\Checkbox;
 use WPGraphQLAcf\FieldType\ColorPicker;
+use WPGraphQLAcf\FieldType\DatePicker;
+use WPGraphQLAcf\FieldType\DateTimePicker;
 use WPGraphQLAcf\FieldType\Email;
 use WPGraphQLAcf\FieldType\File;
 use WPGraphQLAcf\FieldType\Gallery;
@@ -52,8 +55,11 @@ class FieldTypeRegistry {
 	 */
 	protected function register_acf_field_types(): void {
 
+		ButtonGroup::register_field_type();
 		Checkbox::register_field_type();
 		ColorPicker::register_field_type();
+		DatePicker::register_field_type();
+		DateTimePicker::register_field_type();
 		Number::register_field_type();
 		Email::register_field_type();
 		File::register_field_type();

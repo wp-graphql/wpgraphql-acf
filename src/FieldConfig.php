@@ -172,12 +172,15 @@ class FieldConfig {
 			}
 
 			switch ( $this->acf_field['type'] ) {
-				// Connection field types
-				// should return null for the $field_config;
+
 				case 'file':
 				case 'image':
 				case 'user':
 				case 'gallery':
+				// Connection field types
+				// should return null for the $field_config;
+				// There should be a better way of identifying that the field type
+				// registers a connection
 					$field_config = $field_type;
 					break;
 				case 'color_picker':
@@ -189,6 +192,10 @@ class FieldConfig {
 				case 'link':
 				case 'oembed':
 				case 'radio':
+				case 'button_group':
+				case 'date_picker':
+				case 'date_time_picker':
+				case 'time_picker':
 					$field_config['type'] = $field_type;
 					break;
 				case 'true_false':

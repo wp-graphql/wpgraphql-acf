@@ -21,5 +21,19 @@ class CheckboxFieldTest extends \Tests\WPGraphQLAcf\WPUnit\AcfFieldTestCase {
 		return 'checkbox';
 	}
 
+	public function get_expected_field_resolve_kind(): ?string {
+		return 'LIST';
+	}
+
+	public function get_expected_field_of_type(): ?array {
+		return [
+			'name' => 'String',
+		];
+	}
+
+	public function get_expected_field_resolve_type(): ?string {
+		return null;
+	}
+
 
 }

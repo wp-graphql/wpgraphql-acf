@@ -21,4 +21,14 @@ class FlexibleContentFieldTest extends \Tests\WPGraphQLAcf\WPUnit\AcfFieldTestCa
 		return 'flexible_content';
 	}
 
+	public function get_expected_field_resolve_kind(): ?string {
+		return 'LIST';
+	}
+
+	public function get_expected_field_of_type(): ?array {
+		return [
+			'name' => 'AcfTestGroupFlexibleContentTest',
+		];
+	}
+
 }
