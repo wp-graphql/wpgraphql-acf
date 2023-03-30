@@ -116,8 +116,8 @@ class Settings {
 
 			if ( ! empty( $acf_field_types ) ) {
 
-				array_map( function( $field_type ) {
-					add_action( 'acf/field_group/render_field_settings_tab/graphql/type=' . $field_type, function( $acf_field ) use ( $field_type ) {
+				array_map( function ( $field_type ) {
+					add_action( 'acf/field_group/render_field_settings_tab/graphql/type=' . $field_type, function ( $acf_field ) use ( $field_type ) {
 						$this->add_field_settings( $acf_field, (string) $field_type );
 					}, 10, 1 );
 				}, $acf_field_types );
@@ -346,14 +346,14 @@ class Settings {
 				}
 
 				$default_config = [
-					'conditions'    => [
+					'conditions' => [
 						'field'    => 'show_in_graphql',
 						'operator' => '==',
 						'value'    => '1',
 					],
-					'ui'            => true,
+					'ui'         => true,
 					// used in the acf_render_field_setting below. Can be overridden per-field
-					'global'        => true,
+					'global'     => true,
 				];
 
 				// Merge the default field setting with the passed in field setting
@@ -404,93 +404,14 @@ class Settings {
 			'allow_null'    => false,
 			'default_value' => 'list:string',
 			'choices'       => [
-				'string' => 'String',
-				'int'    => 'Int',
-				'float'  => 'Float',
+				'string'      => 'String',
+				'int'         => 'Int',
+				'float'       => 'Float',
 				'list:string' => '[String] (List of Strings)',
-				'list:int' => '[Int] (List of Integers)',
-				'list:float' => '[Float] (List of Floats)',
+				'list:int'    => '[Int] (List of Integers)',
+				'list:float'  => '[Float] (List of Floats)',
 			],
 		], $override );
-	}
-
-	/**
-	 * @param array $field The ACF Field the settings are displayed for
-	 *
-	 * @return void
-	 */
-	public function default_graphql_field_settings( array $field ): void {
-
-		// Render the "show_in_graphql" setting for the field.
-		// @phpstan-ignore-next-line
-//		acf_render_field_setting(
-//			$field,
-//			[
-//				'label'         => __( 'Show in GraphQL', 'wp-graphql-acf' ),
-//				'instructions'  => __( 'Whether the field should be queryable via GraphQL. NOTE: Changing this to false for existing field can cause a breaking change to the GraphQL Schema. Proceed with caution.', 'wp-graphql-acf' ),
-//				'name'          => 'show_in_graphql',
-//				'type'          => 'true_false',
-//				'ui'            => 1,
-//				'default_value' => 1,
-//				'value'         => ! isset( $field['show_in_graphql'] ) || (bool) $field['show_in_graphql'],
-//			],
-//			true
-//		);
-//
-//		// @phpstan-ignore-next-line
-//		acf_render_field_setting(
-//			$field,
-//			[
-//				'label'         => __( 'GraphQL Field Name', 'wp-graphql-acf' ),
-//				'instructions'  => __( 'The name of the field in the GraphQL Schema. Should only contain numbers and letters. Must start with a letter. Recommended format is "snakeCase".', 'wp-graphql-acf' ),
-//				'name'          => 'graphql_field_name',
-//				'type'          => 'text',
-//				'ui'            => true,
-//				'required'      => true,
-//				// we don't allow underscores if the value is auto formatted
-//				'placeholder'   => __( 'newFieldName', 'wp-graphql-acf' ),
-//				'default_value' => '',
-//				// allow underscores if the user enters the value with underscores
-//				'value'         => ! empty( $field['graphql_field_name'] ) ? \WPGraphQL\Utils\Utils::format_field_name( $field['graphql_field_name'], true ) : '',
-//				'conditions'    => [
-//					'field'    => 'show_in_graphql',
-//					'operator' => '==',
-//					'value'    => '1',
-//				],
-//			],
-//			true
-//		);
-
-//		// If there's a description provided, use it.
-//		if ( ! empty( $field['graphql_description'] ) ) {
-//			$description = $field['graphql_description'];
-//
-//			// fallback to the fields instructions
-//		} elseif ( ! empty( $field['instructions'] ) ) {
-//			$description = $field['instructions'];
-//		}
-//
-//		// @phpstan-ignore-next-line
-//		acf_render_field_setting(
-//			$field,
-//			[
-//				'label'         => __( 'GraphQL Description', 'wp-graphql-acf' ),
-//				'instructions'  => __( 'The description of the field, shown in the GraphQL Schema. Should not include any special characters.', 'wp-graphql-acf' ),
-//				'name'          => 'graphql_description',
-//				'type'          => 'text',
-//				'ui'            => true,
-//				'default_value' => null,
-//				'placeholder'   => __( 'Explanation of how this field should be used in the GraphQL Schema', 'wp-graphql-acf' ),
-//				'value'         => ! empty( $description ) ? $description : null,
-//				'conditions'    => [
-//					'field'    => 'show_in_graphql',
-//					'operator' => '==',
-//					'value'    => '1',
-//				],
-//			],
-//			true
-//		);
-
 	}
 
 	/**

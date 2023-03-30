@@ -60,7 +60,7 @@ class AcfGraphQLFieldType {
 
 		if ( is_array( $config ) ) {
 			$this->config = $config;
-		} else if ( is_callable( $config ) ) {
+		} elseif ( is_callable( $config ) ) {
 			$_config = $config( $this->get_acf_field_type(), $this );
 			if ( is_array( $_config ) ) {
 				$this->config = $_config;
@@ -132,6 +132,18 @@ class AcfGraphQLFieldType {
 			],
 		];
 
+		$graphql_field_name = '';
+
+		// If there's a graphql_field_name value, use it, allowing underscores
+		if ( ! empty( $field['graphql_field_name'] ) ) {
+			$graphql_field_name = \WPGraphQL\Utils\Utils::format_field_name( $field['graphql_field_name'], true );
+
+			// Else, use the field's name, if it's not "new_field" and format it without underscores
+		} elseif ( ! empty( $field['name'] ) && 'new_field' !== $field['name'] ) {
+			$graphql_field_name = \WPGraphQL\Utils\Utils::format_field_name( $field['name'], false );
+		}
+
+
 		$default_admin_settings['graphql_field_name'] = [
 			'label'         => __( 'GraphQL Field Name', 'wp-graphql-acf' ),
 			'instructions'  => __( 'The name of the field in the GraphQL Schema. Should only contain numbers and letters. Must start with a letter. Recommended format is "snakeCase".', 'wp-graphql-acf' ),
@@ -143,7 +155,7 @@ class AcfGraphQLFieldType {
 			'placeholder'   => __( 'newFieldName', 'wp-graphql-acf' ),
 			'default_value' => '',
 			// allow underscores if the user enters the value with underscores
-			'value'         => ! empty( $field['graphql_field_name'] ) ? \WPGraphQL\Utils\Utils::format_field_name( $field['graphql_field_name'], true ) : \WPGraphQL\Utils\Utils::format_field_name( $field['name'], false ),
+			'value'         => $graphql_field_name,
 			'conditions'    => [
 				'field'    => 'show_in_graphql',
 				'operator' => '==',
@@ -165,8 +177,8 @@ class AcfGraphQLFieldType {
 		}
 
 		// Remove excluded fields
-		if ( isset( $this->config['exclude_admin_fields' ] ) && is_array( $this->config[ 'exclude_admin_fields' ] ) ) {
-			foreach ( $this->config['exclude_admin_fields' ] as $excluded ) {
+		if ( isset( $this->config['exclude_admin_fields'] ) && is_array( $this->config['exclude_admin_fields'] ) ) {
+			foreach ( $this->config['exclude_admin_fields'] as $excluded ) {
 				unset( $default_admin_settings[ $excluded ] );
 			}
 		}
@@ -215,7 +227,7 @@ class AcfGraphQLFieldType {
 	 *
 	 * @return void
 	 */
-	protected function set_acf_field_type( string  $acf_field_type ): void {
+	protected function set_acf_field_type( string $acf_field_type ): void {
 		$this->acf_field_type = $acf_field_type;
 	}
 
@@ -226,15 +238,15 @@ class AcfGraphQLFieldType {
 
 		$this->excluded_admin_field_settings = [];
 
-		if ( empty( $this->get_config( 'exclude_admin_fields' ) ) ) {
+		if ( empty( $excluded_admin_fields = $this->get_config( 'exclude_admin_fields' ) ) ) {
 			return;
 		}
 
-		if ( ! is_array( $this->config['exclude_admin_fields'] ) ) {
+		if ( ! is_array( $excluded_admin_fields ) ) {
 			return;
 		}
 
-		$this->excluded_admin_field_settings = $this->config['exclude_admin_fields'];
+		$this->excluded_admin_field_settings = $excluded_admin_fields;
 	}
 
 	/**
@@ -255,14 +267,13 @@ class AcfGraphQLFieldType {
 
 		if ( isset( $acf_field['graphql_resolve_type'] ) ) {
 			$resolve_type = $acf_field['graphql_resolve_type'];
-		} else if ( ! empty( $this->get_config('graphql_type' ) ) ) {
+		} elseif ( ! empty( $this->get_config( 'graphql_type' ) ) ) {
 
-			if ( is_callable( $this->get_config('graphql_type' ) ) ) {
-				$resolve_type = $this->get_config('graphql_type' )( $field_config, $this );
+			if ( is_callable( $this->get_config( 'graphql_type' ) ) ) {
+				$resolve_type = $this->get_config( 'graphql_type' )( $field_config, $this );
 			} else {
-				$resolve_type = $this->get_config('graphql_type' );
-			}
-
+				$resolve_type = $this->get_config( 'graphql_type' );
+			}       
 		}
 
 		return $resolve_type;

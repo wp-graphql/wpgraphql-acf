@@ -14,7 +14,7 @@ class Gallery {
 	public static function register_field_type(): void {
 
 		register_graphql_acf_field_type( 'gallery', [
-			'graphql_type' => function( FieldConfig $field_config, AcfGraphQLFieldType $acf_field_type ) {
+			'graphql_type' => function ( FieldConfig $field_config, AcfGraphQLFieldType $acf_field_type ) {
 
 				$type_name       = $field_config->get_graphql_field_group_type_name();
 				$to_type         = 'MediaItem';
@@ -30,9 +30,9 @@ class Gallery {
 					'connectionTypeName'    => $connection_name,
 					'oneToOne'              => false,
 					'allowFieldUnderscores' => true,
-					'resolve'               => function ( $root, $args, AppContext $context, $info ) {
+					'resolve'               => function ( $root, $args, AppContext $context, $info ) use ( $field_config ) {
 
-						$value = $this->resolve_field( $root, $args, $context, $info );
+						$value = $field_config->resolve_field( $root, $args, $context, $info );
 
 						if ( empty( $value ) || ! is_array( $value ) ) {
 							return null;

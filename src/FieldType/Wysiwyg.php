@@ -9,8 +9,8 @@ class Wysiwyg {
 	public static function register_field_type(): void {
 
 		register_graphql_acf_field_type( 'wysiwyg', [
-			'graphql_type' => 'String',
-			'prepare_value' => function( $value, $root, $node_id, array $acf_field_config ) {
+			'graphql_type'  => 'String',
+			'prepare_value' => function ( $value, $root, $node_id, array $acf_field_config ) {
 
 				// @todo: This was ported over, but I'm not 💯 sure what this is solving and
 				// why it's only applied on options pages and not other pages 🤔
@@ -23,7 +23,7 @@ class Wysiwyg {
 
 				return $value;
 
-			}
+			},
 		] );
 
 	}

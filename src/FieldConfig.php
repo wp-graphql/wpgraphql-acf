@@ -172,6 +172,14 @@ class FieldConfig {
 			}
 
 			switch ( $this->acf_field['type'] ) {
+				// Connection field types
+				// should return null for the $field_config;
+				case 'file':
+				case 'image':
+				case 'user':
+				case 'gallery':
+					$field_config = $field_type;
+					break;
 				case 'color_picker':
 				case 'number':
 				case 'range':
@@ -180,10 +188,11 @@ class FieldConfig {
 				case 'google_map':
 				case 'link':
 				case 'oembed':
+				case 'radio':
 					$field_config['type'] = $field_type;
 					break;
 				case 'true_false':
-					$field_config['type'] = $field_type;
+					$field_config['type']    = $field_type;
 					$field_config['resolve'] = function ( $node, array $args, AppContext $context, ResolveInfo $info ) {
 						$value = $this->resolve_field( $node, $args, $context, $info );
 						return (bool) $value;
@@ -191,7 +200,7 @@ class FieldConfig {
 					break;
 				case 'checkbox':
 				case 'select':
-					$field_config['type']    = [ 'list_of' => 'String' ];
+					$field_config['type']    = $field_type;
 					$field_config['resolve'] = function ( $node, array $args, AppContext $context, ResolveInfo $info ) {
 						$value = $this->resolve_field( $node, $args, $context, $info );
 						if ( empty( $value ) && ! is_array( $value ) ) {
@@ -201,13 +210,6 @@ class FieldConfig {
 						return is_array( $value ) ? $value : [ $value ];
 					};
 					break;
-				case 'file':
-				case 'image':
-				case 'user':
-				case 'gallery':
-					$field_config = $field_type;
-					break;
-
 				case 'flexible_content':
 					$parent_type             = $this->graphql_field_group_type_name;
 					$field_name              = $this->graphql_field_name;

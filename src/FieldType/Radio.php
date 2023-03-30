@@ -1,15 +1,15 @@
 <?php
 namespace WPGraphQLAcf\FieldType;
 
-class Range {
+class Radio {
 
 	/**
 	 * @return void
 	 */
 	public static function register_field_type(): void {
 
-		register_graphql_acf_field_type( 'range', [
-			'graphql_type' => 'Float',
+		register_graphql_acf_field_type( 'radio', [
+			'graphql_type' => 'String',
 		] );
 
 	}

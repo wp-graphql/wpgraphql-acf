@@ -2,6 +2,7 @@
 
 namespace WPGraphQLAcf;
 
+use WPGraphQLAcf\FieldType\Checkbox;
 use WPGraphQLAcf\FieldType\ColorPicker;
 use WPGraphQLAcf\FieldType\Email;
 use WPGraphQLAcf\FieldType\File;
@@ -13,7 +14,9 @@ use WPGraphQLAcf\FieldType\Link;
 use WPGraphQLAcf\FieldType\Number;
 use WPGraphQLAcf\FieldType\Oembed;
 use WPGraphQLAcf\FieldType\Password;
+use WPGraphQLAcf\FieldType\Radio;
 use WPGraphQLAcf\FieldType\Range;
+use WPGraphQLAcf\FieldType\Select;
 use WPGraphQLAcf\FieldType\Text;
 use WPGraphQLAcf\FieldType\Textarea;
 use WPGraphQLAcf\FieldType\TrueFalse;
@@ -49,22 +52,25 @@ class FieldTypeRegistry {
 	 */
 	protected function register_acf_field_types(): void {
 
+		Checkbox::register_field_type();
 		ColorPicker::register_field_type();
-		Text::register_field_type();
-		Textarea::register_field_type();
 		Number::register_field_type();
-		Range::register_field_type();
 		Email::register_field_type();
-		Url::register_field_type();
-		Password::register_field_type();
-		Image::register_field_type();
 		File::register_field_type();
+		Image::register_field_type();
 		Gallery::register_field_type();
 		GoogleMap::register_field_type();
 		Group::register_field_type();
 		Link::register_field_type();
 		Oembed::register_field_type();
+		Password::register_field_type();
+		Radio::register_field_type();
+		Range::register_field_type();
+		Select::register_field_type();
+		Text::register_field_type();
+		Textarea::register_field_type();
 		TrueFalse::register_field_type();
+		Url::register_field_type();
 		User::register_field_type();
 		Wysiwyg::register_field_type();
 
