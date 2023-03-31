@@ -4,7 +4,7 @@
  * Description: Re-imagining the WPGraphQL for ACF plugin
  * Author: WPGraphQL, Jason Bahl
  * Author URI: https://www.wpgraphql.com
- * Version: 0.2.1-beta
+ * Version: 2.0.0-beta.1
  * Text Domain: wpgraphql-acf
  * Requires PHP: 7.3
  * Requires at least: 5.9
@@ -29,7 +29,7 @@ if ( file_exists( __DIR__ . '/vendor/autoload.php' ) ) {
 }
 
 if ( ! defined( 'WPGRAPHQL_FOR_ACF_VERSION' ) ) {
-	define( 'WPGRAPHQL_FOR_ACF_VERSION', '0.2.0-beta' );
+	define( 'WPGRAPHQL_FOR_ACF_VERSION', '2.0.0-beta.1' );
 }
 
 if ( ! defined( 'WPGRAPHQL_FOR_ACF_VERSION_WPGRAPHQL_REQUIRED_MIN_VERSION' ) ) {
