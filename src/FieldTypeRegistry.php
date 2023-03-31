@@ -9,6 +9,7 @@ use WPGraphQLAcf\FieldType\DatePicker;
 use WPGraphQLAcf\FieldType\DateTimePicker;
 use WPGraphQLAcf\FieldType\Email;
 use WPGraphQLAcf\FieldType\File;
+use WPGraphQLAcf\FieldType\FlexibleContent;
 use WPGraphQLAcf\FieldType\Gallery;
 use WPGraphQLAcf\FieldType\GoogleMap;
 use WPGraphQLAcf\FieldType\Group;
@@ -67,6 +68,7 @@ class FieldTypeRegistry {
 		Number::register_field_type();
 		Email::register_field_type();
 		File::register_field_type();
+		FlexibleContent::register_field_type();
 		Image::register_field_type();
 		Gallery::register_field_type();
 		GoogleMap::register_field_type();

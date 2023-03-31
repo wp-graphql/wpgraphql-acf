@@ -58,7 +58,6 @@ add_action( 'graphql_acf_init', function () {
 	// Registers the field type to show in the GraphQL Schema
 	register_graphql_acf_field_type( 'relationship' );
 	register_graphql_acf_field_type( 'repeater' );
-	register_graphql_acf_field_type( 'flexible_content' );
 	register_graphql_acf_field_type( 'clone', [
 		'exclude_admin_fields' => [ 'show_in_graphql', 'graphql_field_name', 'graphql_description' ],
 		'admin_fields'         => function ( $field, $config, \WPGraphQLAcf\Admin\Settings $settings ) {

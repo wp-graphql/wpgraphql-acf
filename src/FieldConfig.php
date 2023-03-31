@@ -198,6 +198,8 @@ class FieldConfig {
 				case 'date_picker':
 				case 'date_time_picker':
 				case 'time_picker':
+				case 'flexible_content':
+				case 'button_group':
 					$field_config['type'] = $field_type;
 					break;
 				case 'true_false':
@@ -209,7 +211,6 @@ class FieldConfig {
 					break;
 				case 'checkbox':
 				case 'select':
-				case 'button_group':
 					$field_config['type']    = $field_type;
 					$field_config['resolve'] = function ( $node, array $args, AppContext $context, ResolveInfo $info ) {
 						$value = $this->resolve_field( $node, $args, $context, $info );
@@ -220,66 +221,7 @@ class FieldConfig {
 						return is_array( $value ) ? $value : [ $value ];
 					};
 					break;
-				case 'flexible_content':
-					$parent_type             = $this->graphql_field_group_type_name;
-					$field_name              = $this->graphql_field_name;
-					$layout_interface_prefix = \WPGraphQL\Utils\Utils::format_type_name( $parent_type . ' ' . $field_name );
-					$layout_interface_name   = $layout_interface_prefix . '_Layout';
 
-					if ( ! $this->registry->has_registered_field_group( $layout_interface_name ) ) {
-						register_graphql_interface_type( $layout_interface_name, [
-							'eagerlyLoadType' => true,
-							'description'     => sprintf( __( 'Layout of the "%1$s" Field of the "%2$s" Field Group Field', 'wp-graphql-acf' ), $field_name, $parent_type ),
-							'fields'          => [
-								'fieldGroupName' => [
-									'type'              => 'String',
-									'description'       => __( 'The name of the ACF Flex Field Layout', 'wp-graphql-acf' ),
-									'deprecationReason' => __( 'Use __typename instead', 'wp-graphql-acf' ),
-								],
-							],
-							'resolveType'     => function ( $object ) use ( $layout_interface_prefix ) {
-								$layout = $object['acf_fc_layout'] ?? null;
-								return \WPGraphQL\Utils\Utils::format_type_name( $layout_interface_prefix . ' ' . $layout );
-							},
-						] );
-
-						$this->registry->register_field_group( $layout_interface_name, $layout_interface_name );
-
-					}
-
-					$layouts = [];
-					if ( ! empty( $this->acf_field['layouts'] ) ) {
-						foreach ( $this->acf_field['layouts'] as $layout ) {
-
-							// Format the name of the group using the layout prefix + the layout name
-							$layout_name = \WPGraphQL\Utils\Utils::format_type_name( $layout_interface_prefix . ' ' . $this->registry->get_field_group_graphql_type_name( $layout ) );
-
-							// set the graphql_field_name using the $layout_name
-							$layout['graphql_field_name'] = $layout_name;
-
-							// Pass that the layout is a flexLayout (compared to a standard field group)
-							$layout['isFlexLayout'] = true;
-
-							// Get interfaces, including cloned field groups, for the layout
-							$interfaces = $this->registry->get_field_group_interfaces( $layout );
-
-							// Add the layout interface name as an interface. This is the type that is returned as a list of for accessing all layouts of the flex field
-							$interfaces[]                 = $layout_interface_name;
-							$layout['eagerlyLoadType']    = true;
-							$layout['graphql_field_name'] = $layout_name;
-							$layout['fields']             = $this->registry->get_fields_for_field_group( $layout );
-							$layout['interfaces']         = $interfaces;
-							$layouts[ $layout_name ]      = $layout;
-						}
-					}
-
-					if ( ! empty( $layouts ) ) {
-						$this->registry->register_acf_field_groups_to_graphql( $layouts );
-					}
-
-
-					$field_config['type'] = [ 'list_of' => $layout_interface_name ];
-					break;
 				case 'relationship':
 					$this->register_graphql_connections( [
 						'toType'  => 'ContentNode',
