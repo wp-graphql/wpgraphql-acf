@@ -3,6 +3,7 @@ namespace WPGraphQLAcf\FieldType;
 
 use WPGraphQL\AppContext;
 use WPGraphQL\Data\Connection\PostObjectConnectionResolver;
+use WPGraphQL\Utils\Utils;
 use WPGraphQLAcf\AcfGraphQLFieldType;
 use WPGraphQLAcf\FieldConfig;
 
@@ -42,7 +43,7 @@ class PostObject {
 				$acf_field = $field_config->get_acf_field();
 
 				if ( ! isset( $acf_field['multiple'] ) || true !== (bool) $acf_field['multiple'] ) {
-					$connection_name = \WPGraphQL\Utils\Utils::format_type_name( $field_config->get_graphql_field_group_type_name() ) . \WPGraphQL\Utils\Utils::format_type_name( $field_config->get_graphql_field_name() ) . 'ToSingleContentNodeConnection';
+					$connection_name = Utils::format_type_name( $field_config->get_graphql_field_group_type_name() ) . Utils::format_type_name( $field_config->get_graphql_field_name() ) . 'ToSingleContentNodeConnection';
 
 					$connection_config['connectionTypeName'] = $connection_name;
 					$connection_config['oneToOne']           = true;

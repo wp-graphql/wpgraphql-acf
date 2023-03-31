@@ -4,6 +4,7 @@ namespace WPGraphQLAcf;
 
 use WPGraphQLAcf\FieldType\ButtonGroup;
 use WPGraphQLAcf\FieldType\Checkbox;
+use WPGraphQLAcf\FieldType\CloneField;
 use WPGraphQLAcf\FieldType\ColorPicker;
 use WPGraphQLAcf\FieldType\DatePicker;
 use WPGraphQLAcf\FieldType\DateTimePicker;
@@ -22,6 +23,8 @@ use WPGraphQLAcf\FieldType\Password;
 use WPGraphQLAcf\FieldType\PostObject;
 use WPGraphQLAcf\FieldType\Radio;
 use WPGraphQLAcf\FieldType\Range;
+use WPGraphQLAcf\FieldType\Relationship;
+use WPGraphQLAcf\FieldType\Repeater;
 use WPGraphQLAcf\FieldType\Select;
 use WPGraphQLAcf\FieldType\Taxonomy;
 use WPGraphQLAcf\FieldType\Text;
@@ -62,6 +65,7 @@ class FieldTypeRegistry {
 
 		ButtonGroup::register_field_type();
 		Checkbox::register_field_type();
+		CloneField::register_field_type();
 		ColorPicker::register_field_type();
 		DatePicker::register_field_type();
 		DateTimePicker::register_field_type();
@@ -80,6 +84,8 @@ class FieldTypeRegistry {
 		PostObject::register_field_type();
 		Radio::register_field_type();
 		Range::register_field_type();
+		Relationship::register_field_type();
+		Repeater::register_field_type();
 		Select::register_field_type();
 		Taxonomy::register_field_type();
 		Text::register_field_type();

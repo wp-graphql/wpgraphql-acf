@@ -21,4 +21,18 @@ class RepeaterFieldTest extends \Tests\WPGraphQLAcf\WPUnit\AcfFieldTestCase {
 		return 'repeater';
 	}
 
+	public function get_expected_field_of_type(): ?array {
+		return [
+			'name' => 'AcfTestGroupTestRepeater',
+		];
+	}
+
+	public function get_expected_field_resolve_kind(): ?string {
+		return 'LIST';
+	}
+
+	public function get_expected_field_resolve_type(): ?string {
+		return null;
+	}
+
 }

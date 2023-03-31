@@ -200,6 +200,7 @@ class FieldConfig {
 				case 'time_picker':
 				case 'flexible_content':
 				case 'button_group':
+				case 'repeater':
 					$field_config['type'] = $field_type;
 					break;
 				case 'true_false':
@@ -247,20 +248,6 @@ class FieldConfig {
 						},
 					] );
 					$field_config = null;
-					break;
-				case 'repeater':
-					$parent_type     = $this->graphql_field_group_type_name;
-					$field_name      = $this->graphql_field_name;
-					$sub_field_group = $this->acf_field;
-					$type_name       = \WPGraphQL\Utils\Utils::format_type_name( $parent_type . ' ' . $field_name );
-
-					$sub_field_group['graphql_field_name'] = $type_name;
-
-					$this->registry->register_acf_field_groups_to_graphql( [
-						$sub_field_group,
-					] );
-
-					$field_config['type'] = [ 'list_of' => $type_name ];
 					break;
 				default:
 					$field_config['type'] = 'String';

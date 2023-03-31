@@ -55,25 +55,6 @@ graphql_acf_init();
 
 add_action( 'graphql_acf_init', function () {
 
-	// Registers the field type to show in the GraphQL Schema
-	register_graphql_acf_field_type( 'relationship' );
-	register_graphql_acf_field_type( 'repeater' );
-	register_graphql_acf_field_type( 'clone', [
-		'exclude_admin_fields' => [ 'show_in_graphql', 'graphql_field_name', 'graphql_description' ],
-		'admin_fields'         => function ( $field, $config, \WPGraphQLAcf\Admin\Settings $settings ) {
-			return [
-				'graphql_clone' => [
-					'admin_field' => [
-						'type'         => 'message',
-						'label'        => __( 'GraphQL Settings for Clone Fields', 'wp-graphql-acf' ),
-						'instructions' => __( 'Clone Fields will inherit their GraphQL settings from the field(s) being cloned. If all Fields from a Field Group are cloned, an Interface representing the cloned field Group will be applied to this field group.', 'wp-graphql-acf' ),
-						'conditions'   => [],
-					],
-				],
-			];
-		},
-	] );
-
 	// This field type is added support some legacy features of ACF versions lower than v6.1
 	if ( ! defined( 'ACF_MAJOR_VERSION' ) || version_compare( ACF_MAJOR_VERSION, '6.1', '<=' ) ) {
 		register_graphql_acf_field_type( '<6.1' );
