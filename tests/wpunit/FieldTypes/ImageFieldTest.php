@@ -25,4 +25,8 @@ class ImageFieldTest extends \Tests\WPGraphQLAcf\WPUnit\AcfFieldTestCase {
 		return 'AcfTestGroupTestImageToMediaItemConnectionEdge';
 	}
 
+	public function get_expected_field_resolve_kind(): ?string {
+		return 'OBJECT';
+	}
+
 }

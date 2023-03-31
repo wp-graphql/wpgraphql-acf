@@ -21,8 +21,12 @@ class PageLinkFieldTest extends \Tests\WPGraphQLAcf\WPUnit\AcfFieldTestCase {
 		return 'page_link';
 	}
 
-//	public function get_expected_field_resolve_type(): ?string {
-//		return 'ContentNodeConnection';
-//	}
+	public function get_expected_field_resolve_type(): ?string {
+		return 'AcfTestGroupTestPageLinkToSingleContentNodeConnectionEdge';
+	}
+
+	public function get_expected_field_resolve_kind(): ?string {
+		return 'OBJECT';
+	}
 
 }

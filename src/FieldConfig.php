@@ -177,6 +177,9 @@ class FieldConfig {
 				case 'image':
 				case 'user':
 				case 'gallery':
+				case 'post_object':
+				case 'page_link':
+				case 'taxonomy':
 				// Connection field types
 				// should return null for the $field_config;
 				// There should be a better way of identifying that the field type
@@ -192,7 +195,6 @@ class FieldConfig {
 				case 'link':
 				case 'oembed':
 				case 'radio':
-				case 'button_group':
 				case 'date_picker':
 				case 'date_time_picker':
 				case 'time_picker':
@@ -207,6 +209,7 @@ class FieldConfig {
 					break;
 				case 'checkbox':
 				case 'select':
+				case 'button_group':
 					$field_config['type']    = $field_type;
 					$field_config['resolve'] = function ( $node, array $args, AppContext $context, ResolveInfo $info ) {
 						$value = $this->resolve_field( $node, $args, $context, $info );
@@ -276,57 +279,6 @@ class FieldConfig {
 
 
 					$field_config['type'] = [ 'list_of' => $layout_interface_name ];
-					break;
-
-				case 'post_object':
-				case 'page_link':
-					$connection_config = [
-						'toType'  => 'ContentNode',
-						'resolve' => function ( $root, $args, AppContext $context, $info ) {
-							$value = $this->resolve_field( $root, $args, $context, $info );
-
-							if ( empty( $value ) || ! is_array( $value ) ) {
-								return null;
-							}
-
-							$value = array_map(static function ( $id ) {
-								return absint( $id );
-							}, $value );
-
-
-							$resolver = new PostObjectConnectionResolver( $root, $args, $context, $info, 'any' );
-							return $resolver
-								// the relationship field doesn't require related things to be published
-								// so we set the status to "any"
-								->set_query_arg( 'post_status', 'any' )
-								->set_query_arg( 'post__in', $value )
-								->set_query_arg( 'orderby', 'post__in' )
-								->get_connection();
-						},
-					];
-
-					if ( ! isset( $this->acf_field['multiple'] ) || true !== (bool) $this->acf_field['multiple'] ) {
-						$connection_name = \WPGraphQL\Utils\Utils::format_type_name( $this->graphql_field_group_type_name ) . \WPGraphQL\Utils\Utils::format_type_name( $this->graphql_field_name ) . 'ToSingleContentNodeConnection';
-
-						$connection_config['connectionTypeName'] = $connection_name;
-						$connection_config['oneToOne']           = true;
-						$connection_config['resolve']            = function ( $root, $args, AppContext $context, $info ) {
-							$value = $this->resolve_field( $root, $args, $context, $info );
-
-							if ( empty( $value ) || ! absint( $value ) ) {
-								return null;
-							}
-
-							$resolver = new PostObjectConnectionResolver( $root, $args, $context, $info, 'any' );
-							return $resolver
-								->one_to_one()
-								->set_query_arg( 'p', absint( $value ) )
-								->get_connection();
-						};
-					}
-
-					$this->register_graphql_connections( $connection_config );
-					$field_config = null;
 					break;
 				case 'relationship':
 					$this->register_graphql_connections( [

@@ -56,10 +56,7 @@ graphql_acf_init();
 add_action( 'graphql_acf_init', function () {
 
 	// Registers the field type to show in the GraphQL Schema
-	register_graphql_acf_field_type( 'post_object' );
-	register_graphql_acf_field_type( 'page_link' );
 	register_graphql_acf_field_type( 'relationship' );
-	register_graphql_acf_field_type( 'taxonomy' );
 	register_graphql_acf_field_type( 'repeater' );
 	register_graphql_acf_field_type( 'flexible_content' );
 	register_graphql_acf_field_type( 'clone', [
