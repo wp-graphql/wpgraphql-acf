@@ -195,7 +195,7 @@ class AcfGraphQLFieldType {
 	 */
 	public function get_admin_fields( array $acf_field, Settings $settings ): array {
 
-		if ( ! empty( $this->admin_fields ) && is_array( $this->admin_fields ) ) {
+		if ( ! empty( $this->admin_fields ) ) {
 			return $this->admin_fields;
 		}
 
@@ -209,7 +209,7 @@ class AcfGraphQLFieldType {
 			$this->admin_fields = $admin_fields( $acf_field, $this->config, $settings );
 		}
 
-		return $this->admin_fields ?? [];
+		return $this->admin_fields;
 	}
 
 	/**
@@ -273,7 +273,7 @@ class AcfGraphQLFieldType {
 				$resolve_type = $this->get_config( 'graphql_type' )( $field_config, $this );
 			} else {
 				$resolve_type = $this->get_config( 'graphql_type' );
-			}       
+			}
 		}
 
 		return $resolve_type;

@@ -3,7 +3,10 @@ namespace WPGraphQLAcf\FieldType;
 
 class CloneField {
 
-	public static function register_field_type() {
+	/**
+	 * @return void
+	 */
+	public static function register_field_type():void {
 
 		register_graphql_acf_field_type( 'clone', [
 

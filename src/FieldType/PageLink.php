@@ -14,7 +14,7 @@ class PageLink {
 	public static function register_field_type(): void {
 
 		register_graphql_acf_field_type( 'page_link', [
-			'graphql_type' => function( FieldConfig $field_config, AcfGraphQLFieldType $acf_field_type ) {
+			'graphql_type' => function ( FieldConfig $field_config, AcfGraphQLFieldType $acf_field_type ) {
 				$connection_config = [
 					'toType'  => 'ContentNode',
 					'resolve' => static function ( $root, $args, AppContext $context, $info ) use ( $field_config ) {
@@ -42,6 +42,11 @@ class PageLink {
 				$acf_field = $field_config->get_acf_field();
 
 				if ( ! isset( $acf_field['multiple'] ) || true !== (bool) $acf_field['multiple'] ) {
+
+					if ( empty( $field_config->get_graphql_field_group_type_name() ) || $field_config->get_graphql_field_name() ) {
+						return;
+					}
+
 					$connection_name = \WPGraphQL\Utils\Utils::format_type_name( $field_config->get_graphql_field_group_type_name() ) . \WPGraphQL\Utils\Utils::format_type_name( $field_config->get_graphql_field_name() ) . 'ToSingleContentNodeConnection';
 
 					$connection_config['connectionTypeName'] = $connection_name;

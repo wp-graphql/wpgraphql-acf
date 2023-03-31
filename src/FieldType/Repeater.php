@@ -13,7 +13,7 @@ class Repeater {
 	public static function register_field_type(): void {
 
 		register_graphql_acf_field_type( 'repeater', [
-			'graphql_type' => function( FieldConfig $field_config, AcfGraphQLFieldType $acf_field_type ) {
+			'graphql_type' => function ( FieldConfig $field_config, AcfGraphQLFieldType $acf_field_type ) {
 
 				$parent_type     = $field_config->get_graphql_field_group_type_name();
 				$field_name      = $field_config->get_graphql_field_name();
@@ -27,7 +27,7 @@ class Repeater {
 				] );
 
 				return [ 'list_of' => $type_name ];
-			}
+			},
 
 		] );
 

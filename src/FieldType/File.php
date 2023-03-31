@@ -18,6 +18,10 @@ class File {
 		register_graphql_acf_field_type( 'file', [
 			'graphql_type' => function ( FieldConfig $field_config, AcfGraphQLFieldType $acf_field_type ) {
 
+				if ( empty( $field_config->get_graphql_field_group_type_name() ) || $field_config->get_graphql_field_name() ) {
+					return null;
+				}
+
 				$type_name       = $field_config->get_graphql_field_group_type_name();
 				$to_type         = 'MediaItem';
 				$connection_name = $field_config->get_connection_name( $type_name, $to_type, $field_config->get_graphql_field_name() );

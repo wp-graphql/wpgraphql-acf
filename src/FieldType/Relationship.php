@@ -9,10 +9,13 @@ use WPGraphQLAcf\FieldConfig;
 
 class Relationship {
 
-	public static function register_field_type() {
+	/**
+	 * @return void
+	 */
+	public static function register_field_type():void {
 
 		register_graphql_acf_field_type( 'relationship', [
-			'graphql_type' => function( FieldConfig $field_config, AcfGraphQLFieldType $acf_field_type ) {
+			'graphql_type' => function ( FieldConfig $field_config, AcfGraphQLFieldType $acf_field_type ) {
 				$connection_config = [
 					'toType'  => 'ContentNode',
 					'resolve' => static function ( $root, $args, AppContext $context, $info ) use ( $field_config ) {
@@ -38,7 +41,7 @@ class Relationship {
 				];
 
 				$field_config->register_graphql_connections( $connection_config );
-			}
+			},
 		]);
 	}
 }

@@ -166,9 +166,12 @@ class FieldConfig {
 
 			$graphql_field_type = $this->get_graphql_field_type();
 
-			$field_type = 'String';
 			if ( $graphql_field_type instanceof AcfGraphQLFieldType ) {
 				$field_type = $graphql_field_type->get_resolve_type( $this );
+			}
+
+			if ( empty( $field_type ) ) {
+				$field_type = 'String';
 			}
 
 			switch ( $this->acf_field['type'] ) {
@@ -180,11 +183,11 @@ class FieldConfig {
 				case 'post_object':
 				case 'page_link':
 				case 'taxonomy':
-				// Connection field types
-				// should return null for the $field_config;
-				// There should be a better way of identifying that the field type
-				// registers a connection
-					$field_config = $field_type;
+					// Connection field types
+					// should return null for the $field_config;
+					// There should be a better way of identifying that the field type
+					// registers a connection
+					$field_config = null;
 					break;
 				case 'color_picker':
 				case 'number':
@@ -292,12 +295,13 @@ class FieldConfig {
 		// @todo: Handle options pages??
 		$field_config = $info->fieldDefinition->config['acf_field'] ?? $this->acf_field;
 		$node         = $root['node'] ?: null;
-		$node_id      = \WPGraphQLAcf\Utils::get_node_acf_id( $node ) ?: null;
+		$node_id      = Utils::get_node_acf_id( $node ) ?: null;
 		$field_key    = $field_config['cloned_key'] ?? ( $field_config['key'] ?: null );
 
-		$is_cloned = isset( $field_config['cloned_key'] ) ?? false;
+		$is_cloned = ! empty( $field_config['cloned_key'] );
 
 		if ( $is_cloned ) {
+			// @phpstan-ignore-next-line
 			$field_config = acf_get_field( $field_config['key'] );
 		}
 

@@ -13,7 +13,7 @@ class FlexibleContent {
 	public static function register_field_type(): void {
 
 		register_graphql_acf_field_type( 'flexible_content', [
-			'graphql_type' => function( FieldConfig $field_config, AcfGraphQLFieldType $acf_field_type ) {
+			'graphql_type' => function ( FieldConfig $field_config, AcfGraphQLFieldType $acf_field_type ) {
 
 				$parent_type             = $field_config->get_graphql_field_group_type_name();
 				$field_name              = $field_config->get_graphql_field_name();
@@ -74,7 +74,7 @@ class FlexibleContent {
 
 				return [ 'list_of' => $layout_interface_name ];
 
-			}
+			},
 		]);
 
 	}
