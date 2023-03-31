@@ -46,6 +46,20 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 	 * @return string|null
 	 */
 	public function get_expected_field_resolve_type(): ?string {
+		return 'undefined';
+	}
+
+	/**
+	 * @return string|null
+	 */
+	public function get_expected_field_resolve_kind(): ?string {
+		return 'SCALAR';
+	}
+
+	/**
+	 * @return array|null
+	 */
+	public function get_expected_field_of_type(): ?array {
 		return null;
 	}
 
@@ -122,7 +136,7 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 
 	public function testFieldShowsInSchemaWithExpectedResolveType() {
 
-		if ( empty( $this->get_expected_field_resolve_type() ) ) {
+		if ( 'undefined' === $this->get_expected_field_resolve_type() ) {
 			$this->markTestIncomplete( sprintf( "The '%s' test needs to define an expected resolve type by defining the 'get_expected_field_resolve_type' function with a return value", __CLASS__ ) );
 		}
 
@@ -138,6 +152,9 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 		      type {
 		        kind
 		        name
+		        ofType {
+		          name
+		        }
 		      }
 		    }
 		  }
@@ -156,10 +173,13 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 		// the query should succeed
 		self::assertQuerySuccessful( $actual, [
 			$this->expectedObject( '__type.fields', [
+				// expect the fields to have the formatted field name
 				'name' => $this->get_formatted_field_name(),
 				'type' => [
-					'kind' => 'SCALAR',
+					'kind' => $this->get_expected_field_resolve_kind(),
+					// Ensure the fields return the expected resolve type
 					'name' => $this->get_expected_field_resolve_type(),
+					'ofType' => $this->get_expected_field_of_type(),
 				],
 			])
 		] );
@@ -600,5 +620,11 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 //	abstract public function testQueryFieldOnCategoryReturnsExpectedValue();
 //	abstract public function testQueryFieldOnUserReturnsExpectedValue();
 //	abstract public function testQueryFieldOnMenuItemReturnsExpectedValue();
+
+
+// clone field tests
+
+// - test cloning the field and querying for it
+// - test cloning all fields of a field group and querying for them
 
 }

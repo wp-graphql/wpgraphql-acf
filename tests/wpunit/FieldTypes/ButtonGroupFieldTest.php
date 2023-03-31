@@ -21,4 +21,8 @@ class ButtonGroupFieldTest extends \Tests\WPGraphQLAcf\WPUnit\AcfFieldTestCase {
 		return 'button_group';
 	}
 
+	public function get_expected_field_resolve_type(): ?string {
+		return 'String';
+	}
+
 }

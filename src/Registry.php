@@ -39,6 +39,7 @@ class Registry {
 			$this->type_registry = \WPGraphQL::get_type_registry();
 		}
 
+
 	}
 
 	/**

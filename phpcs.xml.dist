@@ -31,7 +31,7 @@
 	<file>./access-functions.php</file>
 	<file>./activation.php</file>
 	<file>./deactivation.php</file>
-	<file>./wp-graphql-acf-redux.php</file>
+	<file>./wpgraphql-acf.php</file>
 	<file>./src</file>
 
 	<!-- Only lint php files by default -->

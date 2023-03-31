@@ -9,6 +9,8 @@ namespace WPGraphQLAcf\Admin;
 
 use Exception;
 use GraphQL\Error\Error;
+use WP_Post;
+use WPGraphQLAcf\AcfGraphQLFieldType;
 use WPGraphQLAcf\LocationRules;
 use WPGraphQLAcf\Utils;
 use WPGraphQLAcf\Registry;
@@ -49,61 +51,17 @@ class Settings {
 
 		$this->is_acf6_or_higher = defined( 'ACF_MAJOR_VERSION' ) && version_compare( ACF_MAJOR_VERSION, '6', '>=' );
 
-
 		/**
 		 * Add settings to individual fields to allow each field granular control
 		 * over how it's shown in the GraphQL Schema
 		 */
-		add_filter( 'acf/field_group/additional_field_settings_tabs', static function( $tabs ) {
+		add_filter( 'acf/field_group/additional_field_settings_tabs', static function ( $tabs ) {
 			$tabs['graphql'] = __( 'GraphQL', 'wp-graphql-acf' );
 			return $tabs;
 		});
 
-		if ( ! defined( 'ACF_VERSION' ) || version_compare( ACF_VERSION, '6.1', '<' ) ) {
-			add_action( 'acf/render_field_settings',  [ $this, 'add_field_settings' ] );
-		} else {
-			add_action( 'acf/field_group/render_field_settings_tab/graphql',  [ $this, 'add_field_settings' ] );
-		}
-
-		// NOTE: when we add support for showing fields in tabs,
-		// and support for different fields based on field type, we're going to
-		// need to refactor this a bit.
-		// we will need some conditions in place for ACF version
-		// since ACF 6.1 will have tab support
-		// And we'll need to have different callbacks per type, like:
-		// acf/render_field_settings/type=$field_type.
-		//
-		// If we have one callback like we do now ("add_field_settings") with a switch statement
-		// inside, things don't work as expected, so we actually need
-		// to have different callbacks per field type, from my testing.
-		// something like the following (pseudo):
-
-
-		//     Get the supported field types
-		//
-		//     $supported_field_types = Utils::get_supported_field_types();
-		//
-		//	   if ( $this->is_acf6_or_higher ) {
-		//          foreach ( $supported_field_types as $supported_field_type ) {
-		//
-		//				// if there's a valid callback, call it
-		//				if ( is_callable( [ __CLASS__, 'add_' . $supported_field_type . '_settings' ] ) ) {
-		//
-		//					add_action( 'acf/render_field_general_settings/type=' . $supported_field_type, [
-		//						__CLASS__,
-		//						'add_' . $supported_field_type . '_settings'
-		//					], 10, 1 );
-		//				}
-		//			}
-		//
-		//		} else {
-		//			// fallback for v5 and older
-		//          foreach ( $supported_field_types as $supported_field_type ) {
-		//            if ( is_callable( [ __CLASS__, 'add_' . $supported_field_type . '_settings' ] ) ) {
-		//			    add_action( 'acf/render_field_settings/type=' . $supported_field_type, [ __CLASS__, 'add_' . $supported_field_type . '_settings' ], 10, 1 );
-		//            }
-		//          }
-		//		}
+		// Setup the Field Settings for each field type.
+		$this->setup_field_settings();
 
 		/**
 		 * Enqueue scripts to enhance the UI of the ACF Field Group Settings
@@ -113,11 +71,11 @@ class Settings {
 		/**
 		 * Register meta boxes for the ACF Field Group Settings
 		 */
-		if ( ! defined( 'ACF_VERSION' ) || version_compare( ACF_VERSION, '6.1', '<' )  ) {
+		if ( ! defined( 'ACF_VERSION' ) || version_compare( ACF_VERSION, '6.1', '<' ) ) {
 			add_action( 'add_meta_boxes', [ $this, 'register_meta_boxes' ] );
 		} else {
 			add_action( 'acf/field_group/render_group_settings_tab/graphql', [ $this, 'display_graphql_field_group_fields' ] );
-			add_filter( 'acf/field_group/additional_group_settings_tabs', static function( $tabs ) {
+			add_filter( 'acf/field_group/additional_group_settings_tabs', static function ( $tabs ) {
 				$tabs['graphql'] = __( 'GraphQL', 'wp-graphql-acf' );
 
 				return $tabs;
@@ -134,6 +92,39 @@ class Settings {
 		add_filter( 'manage_acf-field-group_posts_columns', [ $this, 'wpgraphql_admin_table_column_headers' ], 11, 1 );
 
 		add_action( 'manage_acf-field-group_posts_custom_column', [ $this, 'wpgraphql_admin_table_columns_html' ], 11, 2 );
+	}
+
+	/**
+	 * Setup the Field Settings for configuring how each field should map to GraphQL
+	 *
+	 * @return void
+	 */
+	protected function setup_field_settings(): void {
+
+		if ( ! function_exists( 'acf_get_field_types' ) ) {
+			return;
+		}
+
+		// for ACF versions below 6.1, there's not field setting tabs, so we add the
+		// graphql fields to each
+		if ( ! defined( 'ACF_VERSION' ) || version_compare( ACF_VERSION, '6.1', '<' ) ) {
+			add_action( 'acf/render_field_settings', [ $this, 'add_field_settings' ] );
+		} else {
+
+			// We want to add settings to _all_ field types
+			$acf_field_types = array_keys( acf_get_field_types() );
+
+			if ( ! empty( $acf_field_types ) ) {
+
+				array_map( function ( $field_type ) {
+					add_action( 'acf/field_group/render_field_settings_tab/graphql/type=' . $field_type, function ( $acf_field ) use ( $field_type ) {
+						$this->add_field_settings( $acf_field, (string) $field_type );
+					}, 10, 1 );
+				}, $acf_field_types );
+
+			}
+		}
+
 	}
 
 	/**
@@ -195,12 +186,17 @@ class Settings {
 	/**
 	 * Display the GraphQL Settings fields on the ACF Field Group add/edit admin page
 	 *
-	 * @param array $field_group The Field Group being edited
+	 * @param array|WP_Post $field_group The Field Group being edited
 	 *
 	 * @return void
 	 * @throws Error
+	 * @throws Exception
 	 */
-	public function display_graphql_field_group_fields( array $field_group ): void {
+	public function display_graphql_field_group_fields( $field_group ): void {
+
+		if ( $field_group instanceof WP_Post ) {
+			$field_group = (array) $field_group;
+		}
 
 		// Render a field in the Field Group settings to allow for a Field Group to be shown in GraphQL.
 		// @phpstan-ignore-next-line
@@ -317,90 +313,105 @@ class Settings {
 	 * Add settings to each field to show in GraphQL
 	 *
 	 * @param array $field The field to add the setting to.
+	 * @param string|null $field_type The Type of field being configured.
 	 *
 	 * @return void
 	 */
-	public function add_field_settings( array $field ): void {
+	public function add_field_settings( array $field, ?string $field_type = null ): void {
 
-		$supported_field_types = Utils::get_supported_acf_fields_types();
+		// We define a non-empty string for field type for ACF versions before 6.1
+		if ( ! defined( 'ACF_VERSION' ) || version_compare( ACF_VERSION, '6.1', '<' ) ) {
+			$field_type = '<6.1';
+		}
 
-		/**
-		 * If there are no supported fields, or the field is not supported, don't add a setting field.
-		 */
-		if ( empty( $supported_field_types ) || ! in_array( $field['type'], $supported_field_types, true ) ) {
+		$field_registry = Utils::get_type_registry();
+		if ( empty( $field_type ) ) {
 			return;
 		}
 
-		// Render the "show_in_graphql" setting for the field.
-		// @phpstan-ignore-next-line
-		acf_render_field_setting(
-			$field,
-			[
-				'label'         => __( 'Show in GraphQL', 'wp-graphql-acf' ),
-				'instructions'  => __( 'Whether the field should be queryable via GraphQL. NOTE: Changing this to false for existing field can cause a breaking change to the GraphQL Schema. Proceed with caution.', 'wp-graphql-acf' ),
-				'name'          => 'show_in_graphql',
-				'type'          => 'true_false',
-				'ui'            => 1,
-				'default_value' => 1,
-				'value'         => ! isset( $field['show_in_graphql'] ) || (bool) $field['show_in_graphql'],
-			],
-			true
-		);
+		$acf_field_type = Utils::get_graphql_field_type( $field_type );
 
-		// @phpstan-ignore-next-line
-		acf_render_field_setting(
-			$field,
-			[
-				'label'         => __( 'GraphQL Field Name', 'wp-graphql-acf' ),
-				'instructions'  => __( 'The name of the field in the GraphQL Schema. Should only contain numbers and letters. Must start with a letter. Recommended format is "snakeCase".', 'wp-graphql-acf' ),
-				'name'          => 'graphql_field_name',
-				'type'          => 'text',
-				'ui'            => true,
-				'required'      => true,
-				// we don't allow underscores if the value is auto formatted
-				'placeholder'   => __( 'newFieldName', 'wp-graphql-acf' ),
-				'default_value' => '',
-				// allow underscores if the user enters the value with underscores
-				'value'         => ! empty( $field['graphql_field_name'] ) ? \WPGraphQL\Utils\Utils::format_field_name( $field['graphql_field_name'], true ) : '',
-				'conditions'    => [
-					'field'    => 'show_in_graphql',
-					'operator' => '==',
-					'value'    => '1',
-				],
-			],
-			true
-		);
-
-		// If there's a description provided, use it.
-		if ( ! empty( $field['graphql_description'] ) ) {
-			$description = $field['graphql_description'];
-
-			// fallback to the fields instructions
-		} elseif ( ! empty( $field['instructions'] ) ) {
-			$description = $field['instructions'];
+		if ( ! $acf_field_type instanceof AcfGraphQLFieldType ) {
+			return;
 		}
 
-		// @phpstan-ignore-next-line
-		acf_render_field_setting(
-			$field,
-			[
-				'label'         => __( 'GraphQL Description', 'wp-graphql-acf' ),
-				'instructions'  => __( 'The description of the field, shown in the GraphQL Schema. Should not include any special characters.', 'wp-graphql-acf' ),
-				'name'          => 'graphql_description',
-				'type'          => 'text',
-				'ui'            => true,
-				'default_value' => null,
-				'placeholder'   => __( 'Explanation of how this field should be used in the GraphQL Schema', 'wp-graphql-acf' ),
-				'value'         => ! empty( $description ) ? $description : null,
-				'conditions'    => [
-					'field'    => 'show_in_graphql',
-					'operator' => '==',
-					'value'    => '1',
-				],
-			],
-			true
-		);
+		$admin_field_settings = $acf_field_type->get_admin_field_settings( $field, $this );
 
+		if ( ! empty( $admin_field_settings ) && is_array( $admin_field_settings ) ) {
+
+			foreach ( $admin_field_settings as $admin_field_setting_name => $admin_field_setting_config ) {
+
+				if ( empty( $admin_field_setting_config ) || ! is_array( $admin_field_setting_config ) ) {
+					continue;
+				}
+
+				$default_config = [
+					'conditions' => [
+						'field'    => 'show_in_graphql',
+						'operator' => '==',
+						'value'    => '1',
+					],
+					'ui'         => true,
+					// used in the acf_render_field_setting below. Can be overridden per-field
+					'global'     => true,
+				];
+
+				// Merge the default field setting with the passed in field setting
+				$setting_field_config = array_merge( $default_config, $admin_field_setting_config );
+
+				// @phpstan-ignore-next-line
+				acf_render_field_setting( $field, $setting_field_config, (bool) $setting_field_config['global'] );
+			}
+		}
+
+
+	}
+
+	/**
+	 * Get the config for the non_null field
+	 *
+	 * @param array $override Array of settings to override the default behavior
+	 *
+	 * @return array
+	 */
+	public function get_graphql_non_null_field_config( array $override = [] ): array {
+		return array_merge( [
+			'label'         => __( 'GraphQL NonNull?', 'wp-graphql-acf' ),
+			'instructions'  => __( 'Whether the field should be non-null in the GraphQL Schema. Entries that do not have a value for this field will result in a GraphQL error. Default false, even for "required" fields, as a field can be set required after previous entries have no data entered for the field and would cause errors. Changing this value can lead to breaking changes in your GraphQL Schema.', 'wp-graphql-acf' ),
+			'name'          => 'graphql_non_null',
+			'key'           => 'graphql_non_null',
+			'type'          => 'true_false',
+			'default_value' => false,
+		], $override );
+	}
+
+	/**
+	 * Get the config for the non_null field
+	 *
+	 * @param array $override Array of settings to override the default behavior
+	 *
+	 * @return array
+	 */
+	public function get_graphql_resolve_type_field_config( array $override = [] ): array {
+		return array_merge( [
+			'label'         => __( 'GraphQL Resolve Type', 'wp-graphql-acf' ),
+			'instructions'  => __( 'The GraphQL Type the field will show in the Schema as and resolve to.', 'wp-graphql-acf' ),
+			'name'          => 'graphql_resolve_type',
+			'key'           => 'graphql_resolve_type',
+			'type'          => 'select',
+			'multiple'      => false,
+			'ui'            => false,
+			'allow_null'    => false,
+			'default_value' => 'list:string',
+			'choices'       => [
+				'string'      => 'String',
+				'int'         => 'Int',
+				'float'       => 'Float',
+				'list:string' => '[String] (List of Strings)',
+				'list:int'    => '[Int] (List of Integers)',
+				'list:float'  => '[Float] (List of Floats)',
+			],
+		], $override );
 	}
 
 	/**

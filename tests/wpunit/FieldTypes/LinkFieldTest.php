@@ -21,8 +21,12 @@ class LinkFieldTest extends \Tests\WPGraphQLAcf\WPUnit\AcfFieldTestCase {
 		return 'link';
 	}
 
-//	public function get_expected_field_resolve_type(): ?string {
-//		return 'AcfLink';
-//	}
+	public function get_expected_field_resolve_type(): ?string {
+		return 'AcfLink';
+	}
+
+	public function get_expected_field_resolve_kind(): ?string {
+		return 'OBJECT';
+	}
 
 }

@@ -1,8 +1,8 @@
 <?php
 /**
- * Plugin Name: WPGraphQL for ACF (BETA)
+ * Plugin Name: WPGraphQL for ACF
  * Description: Re-imagining the WPGraphQL for ACF plugin
- * Author: WPGraphQL
+ * Author: WPGraphQL, Jason Bahl
  * Author URI: https://www.wpgraphql.com
  * Version: 0.2.1-beta
  * Text Domain: wpgraphql-acf
@@ -11,7 +11,6 @@
  * Tested up to: 6.1
  * License: GPL-3
  * License URI: https://www.gnu.org/licenses/gpl-3.0.html
- *
  */
 
 // Exit if accessed directly.
@@ -53,3 +52,12 @@ if ( ! function_exists( 'graphql_acf_init' ) ) {
 	}
 }
 graphql_acf_init();
+
+add_action( 'graphql_acf_init', function () {
+
+	// This field type is added support some legacy features of ACF versions lower than v6.1
+	if ( ! defined( 'ACF_MAJOR_VERSION' ) || version_compare( ACF_MAJOR_VERSION, '6.1', '<=' ) ) {
+		register_graphql_acf_field_type( '<6.1' );
+	}
+
+});

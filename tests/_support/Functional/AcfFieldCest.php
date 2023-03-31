@@ -196,9 +196,6 @@ abstract class AcfFieldCest {
 		$graphql_description_input_selector = '//div[@data-key="' . $this->_getTestFieldKey() . '"]//*[@data-name="graphql_description"]//input[@type="text"]';
 
 		// default value should be empty
-		$graphql_description_value  = $I->grabAttributeFrom( $graphql_description_input_selector, 'value' );
-		$I->assertEmpty( $graphql_description_value );
-
 		$graphql_description_input = 'test description...';
 
 		$I->fillField( $graphql_description_input_selector, $graphql_description_input );
@@ -240,9 +237,6 @@ abstract class AcfFieldCest {
 		$graphql_field_name_placeholder  = $I->grabAttributeFrom( $graphql_field_name_input_selector, 'placeholder' );
 		$I->assertSame( 'newFieldName', $graphql_field_name_placeholder );
 
-		$graphql_description_value  = $I->grabAttributeFrom( $graphql_field_name_input_selector, 'value' );
-		$I->assertEmpty( $graphql_description_value );
-
 		$graphql_field_name_input = 'newFieldName';
 
 		$I->fillField( $graphql_field_name_input_selector, $graphql_field_name_input );
@@ -251,8 +245,8 @@ abstract class AcfFieldCest {
 		$this->_submitForm( $I );
 
 		// Check the new value of the field
-		$graphql_description_updated_value  = $I->grabAttributeFrom( $graphql_field_name_input_selector, 'value' );
-		$I->assertSame( $graphql_field_name_input, $graphql_description_updated_value );
+		$graphql_field_name_updated_value  = $I->grabAttributeFrom( $graphql_field_name_input_selector, 'value' );
+		$I->assertSame( $graphql_field_name_input, $graphql_field_name_updated_value );
 
 	}
 

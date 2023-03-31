@@ -12,7 +12,23 @@ $j(document).ready(function () {
 
 			var field = acf.getInstance($el);
 			var $name = field.$setting('name');
-			var name = acf.getInstance( $name ).getValue();
+			var $nameField = acf.getInstance( $name );
+
+			// when a field is emptied, we'll do nothing
+			if ( '' === $nameField || undefined === $nameField ) {
+				return;
+			}
+
+			if ( undefined === $nameField?.getValue() ) {
+				return;
+			}
+
+			var name = $nameField?.getValue() ?? null;
+
+			if ( '' === name ) {
+				return;
+			}
+
 			var $graphqlFieldName = field.$setting('graphql_field_name');
 			var graphqlFieldName = acf.getInstance($graphqlFieldName).getValue();
 

@@ -9,7 +9,6 @@ class UserFieldTest extends \Tests\WPGraphQLAcf\WPUnit\AcfFieldTestCase {
 		parent::setUp();
 	}
 
-
 	/**
 	 * @return void
 	 */
@@ -21,8 +20,12 @@ class UserFieldTest extends \Tests\WPGraphQLAcf\WPUnit\AcfFieldTestCase {
 		return 'user';
 	}
 
-//	public function get_expected_field_resolve_type(): ?string {
-//		return 'UserConnection';
-//	}
+	public function get_expected_field_resolve_type(): ?string {
+		return 'AcfTestGroupTestUserToUserConnection';
+	}
+
+	public function get_expected_field_resolve_kind(): ?string {
+		return 'OBJECT';
+	}
 
 }

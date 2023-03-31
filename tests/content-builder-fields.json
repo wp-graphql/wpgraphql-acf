@@ -172,7 +172,7 @@
                 {
                     "param": "options_page",
                     "operator": "==",
-                    "value": "theme-general-settings"
+                    "value": ""
                 }
             ]
         ],
@@ -999,11 +999,12 @@
                     "class": "",
                     "id": ""
                 },
-                "show_in_graphql": 1,
-                "graphql_field_name": "",
                 "default_value": "#ffffff",
                 "enable_opacity": 0,
-                "return_format": "string"
+                "return_format": "string",
+                "show_in_graphql": 1,
+                "graphql_description": "",
+                "graphql_field_name": "mobileColor"
             },
             {
                 "key": "field_5fada479b10e1",
@@ -1019,11 +1020,12 @@
                     "class": "",
                     "id": ""
                 },
-                "show_in_graphql": 1,
-                "graphql_field_name": "",
                 "default_value": "#ffffff",
                 "enable_opacity": 0,
-                "return_format": "string"
+                "return_format": "string",
+                "show_in_graphql": 1,
+                "graphql_description": "",
+                "graphql_field_name": "desktopColor"
             }
         ],
         "location": [
@@ -1031,7 +1033,7 @@
                 {
                     "param": "options_page",
                     "operator": "==",
-                    "value": "theme-general-settings"
+                    "value": ""
                 }
             ]
         ],
@@ -1182,7 +1184,8 @@
                         "layout": "horizontal",
                         "toggle": 0,
                         "return_format": "value",
-                        "save_custom": 0
+                        "save_custom": 0,
+                        "custom_choice_button_text": "Add new choice"
                     },
                     {
                         "key": "field_605de39f4c129",
@@ -1998,6 +2001,7 @@
                                         "layout": "table",
                                         "button_label": "Add Row",
                                         "rows_per_page": 20,
+                                        "parent_repeater": "field_605deaed0c660",
                                         "sub_fields": [
                                             {
                                                 "key": "field_605deb290c663",
@@ -2021,8 +2025,7 @@
                                                 "maxlength": "",
                                                 "parent_repeater": "field_605deb210c662"
                                             }
-                                        ],
-                                        "parent_repeater": "field_605deaed0c660"
+                                        ]
                                     }
                                 ]
                             }
@@ -4118,10 +4121,8 @@
                     "class": "",
                     "id": ""
                 },
-                "show_in_graphql": 1,
-                "graphql_field_name": "",
-                "return_format": "",
-                "library": "",
+                "return_format": "array",
+                "library": "all",
                 "min_width": "",
                 "min_height": "",
                 "min_size": "",
@@ -4129,7 +4130,10 @@
                 "max_height": "",
                 "max_size": "",
                 "mime_types": "",
-                "preview_size": "thumbnail"
+                "preview_size": "thumbnail",
+                "show_in_graphql": 1,
+                "graphql_description": "",
+                "graphql_field_name": "mobileImage"
             },
             {
                 "key": "field_5fada64ca6c96",
@@ -4145,10 +4149,8 @@
                     "class": "",
                     "id": ""
                 },
-                "show_in_graphql": 1,
-                "graphql_field_name": "",
-                "return_format": "",
-                "library": "",
+                "return_format": "array",
+                "library": "all",
                 "min_width": "",
                 "min_height": "",
                 "min_size": "",
@@ -4156,7 +4158,10 @@
                 "max_height": "",
                 "max_size": "",
                 "mime_types": "",
-                "preview_size": "thumbnail"
+                "preview_size": "thumbnail",
+                "show_in_graphql": 1,
+                "graphql_description": "",
+                "graphql_field_name": "desktopImage"
             }
         ],
         "location": [
@@ -4164,7 +4169,7 @@
                 {
                     "param": "options_page",
                     "operator": "==",
-                    "value": "theme-general-settings"
+                    "value": ""
                 }
             ]
         ],
@@ -4380,6 +4385,7 @@
                         "layout": "table",
                         "button_label": "Add Row",
                         "rows_per_page": 20,
+                        "parent_repeater": "field_604f36443a8a1",
                         "sub_fields": [
                             {
                                 "key": "field_604f375d3a8a5",
@@ -4428,8 +4434,7 @@
                                 "prefix_name": 0,
                                 "parent_repeater": "field_604f36fd3a8a4"
                             }
-                        ],
-                        "parent_repeater": "field_604f36443a8a1"
+                        ]
                     }
                 ]
             }
@@ -4980,6 +4985,7 @@
                         "layout": "table",
                         "button_label": "Add Row",
                         "rows_per_page": 20,
+                        "parent_repeater": "field_6040e05592bd0",
                         "sub_fields": [
                             {
                                 "key": "field_6040e0e7a1f84",
@@ -5003,8 +5009,7 @@
                                 "maxlength": "",
                                 "parent_repeater": "field_6040e0d8a1f83"
                             }
-                        ],
-                        "parent_repeater": "field_6040e05592bd0"
+                        ]
                     }
                 ]
             }
@@ -7155,7 +7160,8 @@
                         "layout": "horizontal",
                         "toggle": 0,
                         "return_format": "value",
-                        "save_custom": 0
+                        "save_custom": 0,
+                        "custom_choice_button_text": "Add new choice"
                     }
                 ]
             }

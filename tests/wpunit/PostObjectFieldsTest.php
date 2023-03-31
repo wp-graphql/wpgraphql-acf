@@ -22,12 +22,9 @@ class PostObjectFieldsTest extends \Codeception\TestCase\WPTestCase {
 		]);
 
 		$this->test_image = dirname( __FILE__, 2 ) . '/_data/images/test.png';
-
-
-
 	}
-	public function tearDown(): void {
 
+	public function tearDown(): void {
 		$this->deregister_acf_field_group();
 		WPGraphQL::clear_schema();
 		wp_delete_post( $this->post_id, true );
@@ -1343,7 +1340,6 @@ class PostObjectFieldsTest extends \Codeception\TestCase\WPTestCase {
 
 		$filename      = ( $this->test_image );
 		$img_id = $this->factory()->attachment->create_upload_object( $filename );
-
 
 		update_field( 'relationship_field', [ $post_id, $page_id, $img_id ], $this->post_id );
 
