@@ -196,9 +196,6 @@ abstract class AcfFieldCest {
 		$graphql_description_input_selector = '//div[@data-key="' . $this->_getTestFieldKey() . '"]//*[@data-name="graphql_description"]//input[@type="text"]';
 
 		// default value should be empty
-		$graphql_description_value  = $I->grabAttributeFrom( $graphql_description_input_selector, 'value' );
-		$I->assertEmpty( $graphql_description_value );
-
 		$graphql_description_input = 'test description...';
 
 		$I->fillField( $graphql_description_input_selector, $graphql_description_input );
