@@ -16,6 +16,6 @@ class Utils extends \Codeception\Module
 
         $this->getModule('WPBrowser')->attachFile('//input[@id="acf_import_file"]', $json_file );
 
-        $this->getModule('WPBrowser')->submitForm('//*[@id="acf-admin-tool-import"]//input[@type="submit"]', [], 'Choose File');
+        $this->getModule('WPBrowser')->submitForm('//*[@id="acf-admin-tool-import"]//*[@type="submit"]', [], 'Choose File');
     }
 }
