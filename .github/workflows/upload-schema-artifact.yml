@@ -20,7 +20,7 @@ jobs:
           cp .env.dist .env
           cp .env.testing.dist .env.testing
 
-      - name: Setup WordPress
+      - name: Setup WordPress in Docker
         env:
           PHP_VERSION: 8.1
           WP_VERSION: 6.1
@@ -31,20 +31,23 @@ jobs:
             --build-arg WP_VERSION=6.1 \
             --build-arg PHP_VERSION=8.1 \
             --build-arg DOCKER_REGISTRY=ghcr.io/wp-graphql/
+
+      - name: Start Docker
+        run:
           docker-compose up app
 
       - name: Install WP CLI for ACF
         run: |
-          docker-compose exec app wp --allow-root plugin install https://github.com/hoppinger/advanced-custom-fields-wpcli/archive/refs/heads/master.zip --activate
+          docker-compose exec -T app wp --allow-root plugin install https://github.com/hoppinger/advanced-custom-fields-wpcli/archive/refs/heads/master.zip --activate
 
       - name: Import test Field Group
         run: |
-          docker-compose exec app wp --allow-root acf import --json_file="${GITHUB_WORKSPACE}/tests/_data/acf-basic-fields.json"
+          docker-compose exec -T app wp --allow-root acf import --json_file="${GITHUB_WORKSPACE}/tests/_data/acf-basic-fields.json"
 
       - name: Generate the Static Schema
         run: |
           # Output: /tmp/schema.graphql
-          docker-compose exec app wp --allow-root graphql generate-static-schema
+          docker-compose exec -T app wp --allow-root graphql generate-static-schema
 
       - name: Upload schema as release artifact
         uses: softprops/action-gh-release@v1
