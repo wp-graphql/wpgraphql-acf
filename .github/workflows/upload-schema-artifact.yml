@@ -31,9 +31,6 @@ jobs:
             --build-arg WP_VERSION=6.1 \
             --build-arg PHP_VERSION=8.1 \
             --build-arg DOCKER_REGISTRY=ghcr.io/wp-graphql/
-
-      - name: Start Docker
-        run:
           docker-compose up app
 
       - name: Install WP CLI for ACF
