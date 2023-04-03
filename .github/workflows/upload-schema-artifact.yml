@@ -12,6 +12,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
+      - name: Install dependencies
+        run: composer install
+
       - name: Copy environment files
         run: |
           cp .env.dist .env
@@ -28,7 +31,7 @@ jobs:
             --build-arg WP_VERSION=6.1 \
             --build-arg PHP_VERSION=8.1 \
             --build-arg DOCKER_REGISTRY=ghcr.io/wp-graphql/
-          docker-compose start app
+          docker-compose run app
 
       - name: Install WP CLI for ACF
         run: |
