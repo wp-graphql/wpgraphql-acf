@@ -17,6 +17,10 @@ class User {
 		register_graphql_acf_field_type( 'user', [
 			'graphql_type' => function ( FieldConfig $field_config, AcfGraphQLFieldType $acf_field_type ) {
 
+				if ( empty( $field_config->get_graphql_field_group_type_name() ) || empty( $field_config->get_graphql_field_name() ) ) {
+					return null;
+				}
+
 				$to_type = 'User';
 				$field_config->register_graphql_connections([
 					'toType'  => $to_type,

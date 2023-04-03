@@ -26,7 +26,7 @@ class AcfGraphQLFieldType {
 	/**
 	 * @var array
 	 */
-	protected $admin_fields;
+	protected $admin_fields = [];
 
 	/**
 	 * @var AcfGraphQLFieldResolver

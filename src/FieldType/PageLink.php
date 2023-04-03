@@ -43,8 +43,8 @@ class PageLink {
 
 				if ( ! isset( $acf_field['multiple'] ) || true !== (bool) $acf_field['multiple'] ) {
 
-					if ( empty( $field_config->get_graphql_field_group_type_name() ) || $field_config->get_graphql_field_name() ) {
-						return;
+					if ( empty( $field_config->get_graphql_field_group_type_name() ) || empty( $field_config->get_graphql_field_name() ) ) {
+						return null;
 					}
 
 					$connection_name = \WPGraphQL\Utils\Utils::format_type_name( $field_config->get_graphql_field_group_type_name() ) . \WPGraphQL\Utils\Utils::format_type_name( $field_config->get_graphql_field_name() ) . 'ToSingleContentNodeConnection';

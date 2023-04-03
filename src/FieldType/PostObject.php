@@ -44,7 +44,7 @@ class PostObject {
 
 				if ( ! isset( $acf_field['multiple'] ) || true !== (bool) $acf_field['multiple'] ) {
 
-					if ( empty( $field_config->get_graphql_field_group_type_name() ) || $field_config->get_graphql_field_name() ) {
+					if ( empty( $field_config->get_graphql_field_group_type_name() ) || empty( $field_config->get_graphql_field_name() ) ) {
 						return null;
 					}
 
