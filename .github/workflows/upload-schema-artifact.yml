@@ -33,10 +33,10 @@ jobs:
           tools: composer, wp-cli
 
       - name: Setup WordPress
-        env:
-          ACF_LICENSE_KEY: ${{ secrets.ACF_LICENSE_KEY }}
         run: |
           composer run install-test-env
+        env:
+          ACF_LICENSE_KEY: ${{secrets.ACF_LICENSE_KEY}}
 
       - name: Generate the Static Schema
         run: |
@@ -62,4 +62,4 @@ jobs:
         with:
           files: /tmp/schema.graphql
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
