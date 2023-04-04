@@ -3,9 +3,6 @@ name: Upload Schema Artifact
 on:
   release:
     types: [ published ]
-  push:
-    branches:
-      - "fix/upload-schema-workflow"
 
 jobs:
   run:
