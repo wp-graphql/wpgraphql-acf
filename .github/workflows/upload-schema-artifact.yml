@@ -52,22 +52,19 @@ jobs:
         env:
           ACF_LICENSE_KEY: ${{secrets.ACF_LICENSE_KEY}}
 
-      - name: Generate the Static Schema
-        run: |
-          cd /tmp/wordpress/
-          # Output: /tmp/schema.graphql
-          wp graphql generate-static-schema
-
       - name: Install WP CLI for ACF
         run: |
+          cd /tmp/wordpress/
           wp --allow-root plugin install https://github.com/hoppinger/advanced-custom-fields-wpcli/archive/refs/heads/master.zip --activate
 
       - name: Import test Field Group
         run: |
+          cd /tmp/wordpress/
           wp --allow-root acf import --json_file="${GITHUB_WORKSPACE}/tests/_data/acf-basic-fields.json"
 
       - name: Generate the Static Schema
         run: |
+          cd /tmp/wordpress/
           # Output: /tmp/schema.graphql
           wp --allow-root graphql generate-static-schema
 
