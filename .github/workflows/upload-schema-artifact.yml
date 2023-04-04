@@ -3,6 +3,9 @@ name: Upload Schema Artifact
 on:
   release:
     types: [ published ]
+  push:
+    branches:
+      - main
 
 jobs:
   run:
