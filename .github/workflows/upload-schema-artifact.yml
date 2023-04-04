@@ -3,9 +3,6 @@ name: Upload Schema Artifact
 on:
   release:
     types: [ published ]
-  push:
-    branches:
-      - main
 
 jobs:
   run:
@@ -32,26 +29,39 @@ jobs:
           coverage: none
           tools: composer, wp-cli
 
+      - name: Get Composer Cache Directory
+        id: composercache
+        run: echo "::set-output name=dir::$(composer config cache-files-dir)"
+
+      - name: Cache dependencies
+        uses: actions/cache@v2
+        with:
+          path: ${{ steps.composercache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+
+      - name: Install dependencies
+        run: composer install --no-dev
+
       - name: Setup WordPress
         run: |
           composer run install-test-env
-
-      - name: Generate the Static Schema
-        run: |
-          cd /tmp/wordpress/
-          # Output: /tmp/schema.graphql
-          wp graphql generate-static-schema
+        env:
+          ACF_LICENSE_KEY: ${{secrets.ACF_LICENSE_KEY}}
 
       - name: Install WP CLI for ACF
         run: |
+          cd /tmp/wordpress/
           wp --allow-root plugin install https://github.com/hoppinger/advanced-custom-fields-wpcli/archive/refs/heads/master.zip --activate
 
       - name: Import test Field Group
         run: |
+          cd /tmp/wordpress/
           wp --allow-root acf import --json_file="${GITHUB_WORKSPACE}/tests/_data/acf-basic-fields.json"
 
       - name: Generate the Static Schema
         run: |
+          cd /tmp/wordpress/
           # Output: /tmp/schema.graphql
           wp --allow-root graphql generate-static-schema
 
@@ -60,4 +70,4 @@ jobs:
         with:
           files: /tmp/schema.graphql
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
