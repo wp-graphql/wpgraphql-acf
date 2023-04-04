@@ -5,7 +5,7 @@ on:
     types: [ published ]
   push:
     branches:
-      - main
+      - "fix/upload-schema-workflow"
 
 jobs:
   run:
