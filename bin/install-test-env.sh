@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
 
-if [[ ! -f ".env" ]]; then
+if [ ! -f .env ]; then
   echo "No .env file was detected. .env.dist has been copied to .env"
   echo "Open the .env file and enter values to match your local environment"
-  cp .env.dist .env
+  cp ./.env.dist ./.env
+  export $(cat .env | xargs)
 fi
 
 source .env
@@ -35,7 +36,7 @@ TMPDIR=$(echo $TMPDIR | sed -e "s/\/$//")
 WP_TESTS_DIR=${WP_TESTS_DIR-$TMPDIR/wordpress-tests-lib}
 WP_CORE_DIR=${TEST_WP_ROOT_FOLDER-$TMPDIR/wordpress/}
 PLUGIN_DIR=$(pwd)
-DB_SERVE_NAME=${DB_SERVE_NAME-wpgatsby_serve}
+DB_SERVE_NAME=${DB_SERVE_NAME-wpgraphql_acf_serve}
 SKIP_DB_CREATE=${SKIP_DB_CREATE-false}
 
 download() {
@@ -148,40 +149,52 @@ install_db() {
 configure_wordpress() {
     cd $WP_CORE_DIR
     wp config create --dbname="$DB_NAME" --dbuser="$DB_USER" --dbpass="$DB_PASS" --dbhost="$DB_HOST" --skip-check --force=true
-    wp core install --url="$WP_DOMAIN" --title="WPGraphQL Tests" --admin_user="$ADMIN_USERNAME" --admin_password="$ADMIN_PASSWORD" --admin_email="$ADMIN_EMAIL"
+    wp core install --url=wp.test --title="WPGraphQL for ACF Tests" --admin_user=admin --admin_password=password --admin_email=admin@wp.test
     wp rewrite structure '/%year%/%monthnum%/%postname%/'
 }
 
-setup_plugin() {
+install_acf_pro() {
+	if [ ! -d $WP_CORE_DIR/wp-content/plugins/advanced-custom-fields-pro ]; then
+		echo "Installing ACF Pro from AdvancedCustomFields.com"
+		wp plugin install "https://connect.advancedcustomfields.com/v2/plugins/download?p=pro&k=${ACF_LICENSE_KEY}" --activate
+		wp plugin list
+	fi
+}
 
+setup_plugin() {
 	# Add this repo as a plugin to the repo
-	if [ ! -d $WP_CORE_DIR/wp-content/plugins/wp-graphql ]; then
-		ln -s $PLUGIN_DIR $WP_CORE_DIR/wp-content/plugins/wp-graphql
+	if [ ! -d $WP_CORE_DIR/wp-content/plugins/wpgraphql-acf ]; then
+		ln -s $PLUGIN_DIR $WP_CORE_DIR/wp-content/plugins/wpgraphql-acf
 		cd $WP_CORE_DIR/wp-content/plugins
 		pwd
 		ls
 	fi
 
-	cd $PLUGIN_DIR
-
-	composer install
-
 	cd $WP_CORE_DIR
 
-	wp plugin list
+    wp plugin list
+
+    # Install WPGraphQL
+    wp plugin install wp-graphql
+
+	# Activate WPGraphQL
+    wp plugin activate wp-graphql
 
 	# activate the plugin
-	wp plugin activate wp-graphql
+	wp plugin activate wpgraphql-acf
+
+	# List the active plugins
+	wp plugin list
 
 	# Flush the permalinks
 	wp rewrite flush
 
 	# Export the db for codeception to use
 	wp db export $PLUGIN_DIR/tests/_data/dump.sql
-
 }
 
 install_wp
 install_db
 configure_wordpress
+install_acf_pro
 setup_plugin
