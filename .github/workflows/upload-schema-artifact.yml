@@ -33,6 +33,8 @@ jobs:
           tools: composer, wp-cli
 
       - name: Setup WordPress
+        env:
+          ACF_LICENSE_KEY: ${{ secrets.ACF_LICENSE_KEY }}
         run: |
           composer run install-test-env
 
