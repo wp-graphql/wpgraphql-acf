@@ -1,7 +1,10 @@
 <?php
 
 use WPGraphQL\Registry\TypeRegistry;
+use WPGraphQL\Utils\Utils;
+use WPGraphQLAcf\Admin\PostTypeRegistration;
 use WPGraphQLAcf\Admin\Settings;
+use WPGraphQLAcf\Admin\TaxonomyRegistration;
 use WPGraphQLAcf\Registry;
 
 class WPGraphQLAcf {
@@ -17,7 +20,9 @@ class WPGraphQLAcf {
 	public function init(): void {
 
 		add_action( 'admin_init', [ $this, 'init_admin_settings' ] );
+		add_action( 'after_setup_theme', [ $this, 'cpt_tax_registration' ] );
 		add_action( 'graphql_register_types', [ $this, 'init_registry' ] );
+		do_action( 'graphql_acf_init' );
 
 	}
 
@@ -27,6 +32,22 @@ class WPGraphQLAcf {
 	public function init_admin_settings(): void {
 		$this->admin_settings = new WPGraphQLAcf\Admin\Settings();
 		$this->admin_settings->init();
+
+
+	}
+
+	/**
+	 * Add functionality to the Custom Post Type and Custom Taxonomy registration screens
+	 * and underlying functionality (like exports, php code generation)
+	 *
+	 * @return void
+	 */
+	public function cpt_tax_registration(): void {
+		$taxonomy_registration_screen = new TaxonomyRegistration();
+		$taxonomy_registration_screen->init();
+
+		$cpt_registration_screen = new PostTypeRegistration();
+		$cpt_registration_screen->init();
 	}
 
 	/**

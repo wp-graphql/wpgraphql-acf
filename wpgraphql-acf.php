@@ -1,11 +1,13 @@
 <?php
 /**
- * Plugin Name: WPGraphQL for ACF - Redux
+ * Plugin Name: WPGraphQL for ACF
  * Description: Re-imagining the WPGraphQL for ACF plugin
- * Author: WPGraphQL
+ * Author: WPGraphQL, Jason Bahl
  * Author URI: https://www.wpgraphql.com
+ * Version: 2.0.0-beta.2.0.5
  * Text Domain: wpgraphql-acf
  * Requires PHP: 7.3
+ * Requires at least: 5.9
  * Tested up to: 6.1
  * License: GPL-3
  * License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -27,11 +29,11 @@ if ( file_exists( __DIR__ . '/vendor/autoload.php' ) ) {
 }
 
 if ( ! defined( 'WPGRAPHQL_FOR_ACF_VERSION' ) ) {
-	define( 'WPGRAPHQL_FOR_ACF_VERSION', '0.0.1' );
+	define( 'WPGRAPHQL_FOR_ACF_VERSION', '2.0.0-beta.2.0.5' );
 }
 
 if ( ! defined( 'WPGRAPHQL_FOR_ACF_VERSION_WPGRAPHQL_REQUIRED_MIN_VERSION' ) ) {
-	define( 'WPGRAPHQL_FOR_ACF_VERSION_WPGRAPHQL_REQUIRED_MIN_VERSION', '1.12.0' );
+	define( 'WPGRAPHQL_FOR_ACF_VERSION_WPGRAPHQL_REQUIRED_MIN_VERSION', '1.14.0' );
 }
 
 if ( ! defined( 'WPGRAPHQL_FOR_ACF_VERSION_PLUGIN_DIR' ) ) {
@@ -50,3 +52,12 @@ if ( ! function_exists( 'graphql_acf_init' ) ) {
 	}
 }
 graphql_acf_init();
+
+add_action( 'graphql_acf_init', function () {
+
+	// This field type is added support some legacy features of ACF versions lower than v6.1
+	if ( ! defined( 'ACF_MAJOR_VERSION' ) || version_compare( ACF_MAJOR_VERSION, '6.1', '<=' ) ) {
+		register_graphql_acf_field_type( '<6.1' );
+	}
+
+});

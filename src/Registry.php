@@ -39,6 +39,7 @@ class Registry {
 			$this->type_registry = \WPGraphQL::get_type_registry();
 		}
 
+
 	}
 
 	/**
@@ -77,6 +78,10 @@ class Registry {
 	public function should_field_group_show_in_graphql( array $acf_field_group ): bool {
 
 		$should = true;
+
+		if ( isset( $acf_field_group['active'] ) && false === $acf_field_group['active'] ) {
+			$should = false;
+		}
 
 		if ( isset( $acf_field_group['show_in_graphql'] ) && false === $acf_field_group['show_in_graphql'] ) {
 			$should = false;
@@ -324,6 +329,10 @@ class Registry {
 
 			$graphql_field_name = $this->get_graphql_field_name( $acf_field );
 
+			if ( empty( $graphql_field_name ) ) {
+				continue;
+			}
+
 			if ( isset( $acf_field['_clone'] ) ) {
 				$cloned_fields[ $graphql_field_name ] = $acf_field;
 				continue;
@@ -338,9 +347,11 @@ class Registry {
 		if ( ! empty( $cloned_fields ) ) {
 			foreach ( $cloned_fields as $cloned_field ) {
 				$graphql_field_name = $this->get_graphql_field_name( $cloned_field );
-				$original_key       = $graphql_fields[ $graphql_field_name ]['acf_field']['key'] ?? null;
-				$graphql_fields[ $graphql_field_name ]['acf_field']['key_original'] = $original_key;
-				$graphql_fields[ $graphql_field_name ]['acf_field']['cloned_key']   = $cloned_field['key'];
+				if ( ! empty( $graphql_field_name ) ) {
+					$original_key = $graphql_fields[ $graphql_field_name ]['acf_field']['key'] ?? null;
+					$graphql_fields[ $graphql_field_name ]['acf_field']['key_original'] = $original_key;
+					$graphql_fields[ $graphql_field_name ]['acf_field']['cloned_key']   = $cloned_field['key'];
+				}
 			}
 		}
 
@@ -361,13 +372,14 @@ class Registry {
 	}
 
 
-
 	/**
-	 * Given a field group config, return the name of the field group to be used in the GraphQL Schema
+	 * Given a field group config, return the name of the field group to be used in the GraphQL
+	 * Schema
 	 *
 	 * @param array $field_group The field group config array
 	 *
 	 * @return string
+	 * @throws \GraphQL\Error\Error
 	 */
 	public function get_field_group_name( array $field_group ): string {
 
@@ -375,15 +387,33 @@ class Registry {
 
 		if ( ! empty( $field_group['graphql_field_name'] ) ) {
 			$field_group_name = $field_group['graphql_field_name'];
-		} elseif ( ! empty( $field_group['name'] ) ) {
-			$field_group_name = $field_group['name'];
-		} elseif ( ! empty( $field_group['title'] ) ) {
-			$field_group_name = $field_group['title'];
-		} elseif ( ! empty( $field_group['label'] ) ) {
-			$field_group_name = $field_group['label'];
+		} else {
+			if ( ! empty( $field_group['name'] ) ) {
+				$field_group_name = $field_group['name'];
+			} elseif ( ! empty( $field_group['title'] ) ) {
+				$field_group_name = $field_group['title'];
+			} elseif ( ! empty( $field_group['label'] ) ) {
+				$field_group_name = $field_group['label'];
+			}
+			// if the graphql_field_name isn't explicitly defined, we'll format it without underscores
+			$field_group_name = Utils::format_field_name( $field_group_name, false );
+		}
+
+		if ( empty( $field_group_name ) ) {
+			return $field_group_name;
+		}
+
+		$starts_with_string = is_numeric( substr( $field_group_name, 0, 1 ) );
+
+		if ( $starts_with_string ) {
+			graphql_debug( __( 'The ACF Field or Field Group could not be added to the schema. GraphQL Field and Type names cannot start with a number', 'wp-graphql-acf' ), [
+				'invalid' => $field_group,
+			] );
+			return '';
 		}
 
 		return $field_group_name;
+
 	}
 
 	/**
@@ -393,25 +423,14 @@ class Registry {
 	 * @throws Error
 	 */
 	public function get_graphql_field_name( array $acf_field ): string {
-		$name = $this->get_field_group_name( $acf_field );
-
-		if ( empty( $name ) ) {
-			return $name;
-		}
-
-		$replaced = preg_replace( '/[\W_]+/u', ' ', $name );
-
-		if ( empty( $replaced ) ) {
-			throw new Error( sprintf( __( 'The graphql field name %s is not a valid name and cannot be added to the GraphQL Schema', 'wp-graphql-acf' ), $name ) );
-		}
-
-		return Utils::format_field_name( $replaced );
+		return Utils::format_field_name( $this->get_field_group_name( $acf_field ), true );
 	}
 
 	/**
 	 * @param array $field_group
 	 *
 	 * @return string|null
+	 * @throws \GraphQL\Error\Error
 	 */
 	public function get_field_group_graphql_type_name( array $field_group ): ?string {
 		$name = $this->get_field_group_name( $field_group );
@@ -478,7 +497,7 @@ class Registry {
 		$graphql_types = $field_group['graphql_types'] ?? [];
 
 		$field_group_name = $field_group['graphql_field_name'] ?? $field_group['title'];
-		$field_group_name = Utils::format_field_name( $field_group_name );
+		$field_group_name = Utils::format_field_name( $field_group_name, true );
 
 		$manually_set_graphql_types = isset( $field_group['map_graphql_types_from_location_rules'] ) && (bool) $field_group['map_graphql_types_from_location_rules'];
 
@@ -527,7 +546,7 @@ class Registry {
 			if ( ! empty( $locations ) ) {
 				$with_field_group_interface_name = 'WithAcf' . $type_name;
 
-				$field_name = Utils::format_field_name( $type_name );
+				$field_name = Utils::format_field_name( $type_name, true );
 
 				if ( ! $this->has_registered_field_group( $with_field_group_interface_name ) ) {
 

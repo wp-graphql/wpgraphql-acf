@@ -13,11 +13,11 @@ settings:
 coverage:
   enabled: true
   remote: false
-  c3_url: '%WP_URL%/wp-content/plugins/wp-graphql-acf-redux/wp-graphql-acf-redux.php'
+  c3_url: '%WP_URL%/wp-content/plugins/wpgraphql-acf/wpgraphql-acf.php'
   include:
     - src/*
   exclude:
-    - wp-graphql-acf-redux.php
+    - wpgraphql-acf.php
     - vendor/*
   show_only_summary: false
 extensions:
@@ -74,9 +74,9 @@ modules:
       plugins:
         - '%ACF_PLUGIN_SLUG%'
         - wp-graphql/wp-graphql.php
-        - wp-graphql-acf-redux/wp-graphql-acf-redux.php
+        - wpgraphql-acf/wpgraphql-acf.php
       activatePlugins:
         - '%ACF_PLUGIN_SLUG%'
         - wp-graphql/wp-graphql.php
-        - wp-graphql-acf-redux/wp-graphql-acf-redux.php
+        - wpgraphql-acf/wpgraphql-acf.php
       configFile: 'tests/_data/config.php'

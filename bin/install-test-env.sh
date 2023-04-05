@@ -1,10 +1,9 @@
 #!/usr/bin/env bash
 
-if [ ! -f .env ]; then
+if [[ ! -f ".env" ]]; then
   echo "No .env file was detected. .env.dist has been copied to .env"
   echo "Open the .env file and enter values to match your local environment"
-  cp ./.env.dist ./.env
-  export $(cat .env | xargs)
+  cp .env.dist .env
 fi
 
 source .env
@@ -156,14 +155,15 @@ configure_wordpress() {
 install_acf_pro() {
 	if [ ! -d $WP_CORE_DIR/wp-content/plugins/advanced-custom-fields-pro ]; then
 		echo "Installing ACF Pro from AdvancedCustomFields.com"
-		wp plugin install "https://connect.advancedcustomfields.com/v2/plugins/download?p=pro&k=${ACF_LICENSE_KEY}" --activate
+		wp plugin install "https://connect.advancedcustomfields.com/v2/plugins/download?p=pro&k=${ACF_LICENSE_KEY}" --activate --quiet
+		wp plugin list
 	fi
 }
 
 setup_plugin() {
 	# Add this repo as a plugin to the repo
-	if [ ! -d $WP_CORE_DIR/wp-content/plugins/wp-graphql-acf-redux ]; then
-		ln -s $PLUGIN_DIR $WP_CORE_DIR/wp-content/plugins/wp-graphql-acf-redux
+	if [ ! -d $WP_CORE_DIR/wp-content/plugins/wpgraphql-acf ]; then
+		ln -s $PLUGIN_DIR $WP_CORE_DIR/wp-content/plugins/wpgraphql-acf
 		cd $WP_CORE_DIR/wp-content/plugins
 		pwd
 		ls
@@ -180,7 +180,7 @@ setup_plugin() {
     wp plugin activate wp-graphql
 
 	# activate the plugin
-	wp plugin activate wp-graphql-acf-redux
+	wp plugin activate wpgraphql-acf
 
 	# List the active plugins
 	wp plugin list

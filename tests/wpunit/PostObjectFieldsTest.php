@@ -14,7 +14,7 @@ class PostObjectFieldsTest extends \Codeception\TestCase\WPTestCase {
 		WPGraphQL::clear_schema();
 		$this->register_acf_field_group();
 
-		$this->post_id = $this->factory()->post->create([
+		$this->post_id = self::factory()->post->create([
 			'post_type' => 'post',
 			'post_status' => 'publish',
 			'post_title' => 'Test',
@@ -22,12 +22,9 @@ class PostObjectFieldsTest extends \Codeception\TestCase\WPTestCase {
 		]);
 
 		$this->test_image = dirname( __FILE__, 2 ) . '/_data/images/test.png';
-
-
-
 	}
-	public function tearDown(): void {
 
+	public function tearDown(): void {
 		$this->deregister_acf_field_group();
 		WPGraphQL::clear_schema();
 		wp_delete_post( $this->post_id, true );
@@ -42,7 +39,7 @@ class PostObjectFieldsTest extends \Codeception\TestCase\WPTestCase {
 
 		$defaults = [
 			'key'                   => $this->group_key,
-			'title'                 => 'Post Object Fields',
+			'title'                 => 'Test Post Object Fields',
 			'fields'                => [],
 			'location'              => [
 				[
@@ -74,7 +71,7 @@ class PostObjectFieldsTest extends \Codeception\TestCase\WPTestCase {
 
 		$defaults = [
 			'parent'            => $this->group_key,
-			'key'               => 'field_5d7812fd000a4',
+			'key'               => uniqid( 'acf_field', true ),
 			'label'             => 'Text',
 			'name'              => 'text',
 			'type'              => 'text',
@@ -144,8 +141,6 @@ class PostObjectFieldsTest extends \Codeception\TestCase\WPTestCase {
 		$this->assertArrayNotHasKey( 'errors', $actual );
 		$this->assertSame( $expected_text_1, $actual['data']['postBy']['postFields']['textField'] );
 
-
-
 	}
 
 	/**
@@ -197,11 +192,11 @@ class PostObjectFieldsTest extends \Codeception\TestCase\WPTestCase {
 
 		$this->register_acf_field([
 			'type' => 'number',
-			'name' => 'number_field'
+			'name' => 'test_number_field'
 		]);
 
 		$expected = absint(55 );
-		update_field( 'number_field', $expected, $this->post_id );
+		update_field( 'test_number_field', $expected, $this->post_id );
 
 		$query = '
 		query GET_POST_WITH_ACF_FIELD( $postId: Int! ) {
@@ -209,7 +204,7 @@ class PostObjectFieldsTest extends \Codeception\TestCase\WPTestCase {
 		    id
 		    title
 		    postFields {
-		      numberField
+		      testNumberField
 		    }
 		  }
 		}';
@@ -224,7 +219,7 @@ class PostObjectFieldsTest extends \Codeception\TestCase\WPTestCase {
 		codecept_debug( $actual );
 
 		$this->assertArrayNotHasKey( 'errors', $actual );
-		$this->assertSame( (float) $expected, $actual['data']['postBy']['postFields']['numberField'] );
+		$this->assertSame( (float) $expected, $actual['data']['postBy']['postFields']['testNumberField'] );
 
 	}
 
@@ -1216,108 +1211,108 @@ class PostObjectFieldsTest extends \Codeception\TestCase\WPTestCase {
 
 	}
 
-	/**
-	 * Test field on Custom Post Type
-	 * @throws Exception
-	 */
-	public function testQueryFieldOnCustomPostType() {
-
-		$this->markTestIncomplete();
-
-		register_post_type( 'acf_test', [
-			'public'              => true,
-			'show_in_graphql'     => 'true',
-			'graphql_single_name' => 'acfTest',
-			'graphql_plural_name' => 'acfTests'
-		] );
-
-		$group_key = uniqid();
-
-		$this->register_acf_field_group([
-			'key' =>  $group_key . 'acf_test_group',
-			'title'                 => 'ACF Test Fields',
-			'location'              => [
-				[
-					[
-						'param'    => 'post_type',
-						'operator' => '==',
-						'value'    => 'acf_test',
-					],
-				],
-			],
-			'graphql_field_name'    => 'acfTestFields',
-			'graphql_types' => [ 'acfTest' ]
-		]);
-
-
-
-		$this->register_acf_field([
-			'parent' => $group_key . 'acf_test_group',
-			'type' => 'text',
-			'name' => 'acf_text_field',
-		]);
-
-		$id = $this->factory()->post->create([
-			'post_type' => 'acf_test',
-			'post_status' => 'publish',
-			'post_title' => 'ACF Test',
-		]);
-
-		$query = '
-		{
-		  __type( name: "AcfTestFields" ) {
-		    name
-		    description
-		    fields {
-		      name
-		    }
-		  }
-		  acfTest: __type( name: "AcfTest" ) {
-		    name
-		    description
-		    fields {
-		      name
-		    }
-		  }
-		}
-		';
-
-		$debug = graphql([
-			'query' => $query,
-		]);
-
-		codecept_debug( $debug );
-
-		$expected_text_1 = 'test value';
-
-		update_field( 'acf_text_field', $expected_text_1, $id );
-
-		$query = '
-		query GET_CUSTOM_POST_TYPE_WITH_ACF_FIELD( $testId: ID! ) {
-		  acfTest( id: $testId idType: DATABASE_ID ) {
-		    __typename
-		    id
-		    title
-		    acfTestFields {
-		        fieldGroupName
-		    }
-		  }
-		}';
-
-		$actual = graphql([
-			'query' => $query,
-			'variables' => [
-				'testId' => $id,
-			],
-		]);
-
-		codecept_debug( $actual );
-
-		$this->assertArrayNotHasKey( 'errors', $actual );
-		$this->assertEquals( 'acfTestFields', $actual['data']['acfTest']['acfTestFields']['fieldGroupName'] );
-
-		acf_remove_local_field_group( $group_key . 'acf_test_group' );
-	}
+//	/**
+//	 * Test field on Custom Post Type
+//	 * @throws Exception
+//	 */
+//	public function testQueryFieldOnCustomPostType() {
+//
+//		$this->markTestIncomplete();
+//
+//		register_post_type( 'acf_test', [
+//			'public'              => true,
+//			'show_in_graphql'     => 'true',
+//			'graphql_single_name' => 'acfTest',
+//			'graphql_plural_name' => 'acfTests'
+//		] );
+//
+//		$group_key = uniqid();
+//
+//		$this->register_acf_field_group([
+//			'key' =>  $group_key . 'acf_test_group',
+//			'title'                 => 'ACF Test Fields',
+//			'location'              => [
+//				[
+//					[
+//						'param'    => 'post_type',
+//						'operator' => '==',
+//						'value'    => 'acf_test',
+//					],
+//				],
+//			],
+//			'graphql_field_name'    => 'acfTestFields',
+//			'graphql_types' => [ 'acfTest' ]
+//		]);
+//
+//
+//
+//		$this->register_acf_field([
+//			'parent' => $group_key . 'acf_test_group',
+//			'type' => 'text',
+//			'name' => 'acf_text_field',
+//		]);
+//
+//		$id = $this->factory()->post->create([
+//			'post_type' => 'acf_test',
+//			'post_status' => 'publish',
+//			'post_title' => 'ACF Test',
+//		]);
+//
+//		$query = '
+//		{
+//		  __type( name: "AcfTestFields" ) {
+//		    name
+//		    description
+//		    fields {
+//		      name
+//		    }
+//		  }
+//		  acfTest: __type( name: "AcfTest" ) {
+//		    name
+//		    description
+//		    fields {
+//		      name
+//		    }
+//		  }
+//		}
+//		';
+//
+//		$debug = graphql([
+//			'query' => $query,
+//		]);
+//
+//		codecept_debug( $debug );
+//
+//		$expected_text_1 = 'test value';
+//
+//		update_field( 'acf_text_field', $expected_text_1, $id );
+//
+//		$query = '
+//		query GET_CUSTOM_POST_TYPE_WITH_ACF_FIELD( $testId: ID! ) {
+//		  acfTest( id: $testId idType: DATABASE_ID ) {
+//		    __typename
+//		    id
+//		    title
+//		    acfTestFields {
+//		        fieldGroupName
+//		    }
+//		  }
+//		}';
+//
+//		$actual = graphql([
+//			'query' => $query,
+//			'variables' => [
+//				'testId' => $id,
+//			],
+//		]);
+//
+//		codecept_debug( $actual );
+//
+//		$this->assertArrayNotHasKey( 'errors', $actual );
+//		$this->assertEquals( 'acfTestFields', $actual['data']['acfTest']['acfTestFields']['fieldGroupName'] );
+//
+//		acf_remove_local_field_group( $group_key . 'acf_test_group' );
+//	}
 
 	/**
 	 * Test querying a Relationship field
@@ -1345,7 +1340,6 @@ class PostObjectFieldsTest extends \Codeception\TestCase\WPTestCase {
 
 		$filename      = ( $this->test_image );
 		$img_id = $this->factory()->attachment->create_upload_object( $filename );
-
 
 		update_field( 'relationship_field', [ $post_id, $page_id, $img_id ], $this->post_id );
 
