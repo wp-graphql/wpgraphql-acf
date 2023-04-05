@@ -8,7 +8,7 @@ on:
   pull_request:
     branches:
       - develop
-      - master
+      - main
 jobs:
   run:
     runs-on: ubuntu-latest
