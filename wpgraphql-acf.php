@@ -144,3 +144,29 @@ function show_graphql_debug_messages(): void {
 		graphql_debug( $prefix . ' because ' . $message );
 	}
 }
+
+/**
+ * Initialize the plugin tracker
+ *
+ * @return void
+ */
+function graphql_acf_init_appsero_telemetry() {
+	// If the class doesn't exist, or code is being scanned by PHPSTAN, move on.
+	if ( ! class_exists( 'Appsero\Client' ) || defined( 'PHPSTAN' ) ) {
+		return;
+	}
+
+	$client   = new Appsero\Client( '4988d797-77ee-4201-84ce-1d610379f843', 'WPGraphQL for Advanced Custom Fields', __FILE__ );
+	$insights = $client->insights();
+
+	// If the Appsero client has the add_plugin_data method, use it
+	if ( method_exists( $insights, 'add_plugin_data' ) ) {
+		// @phpstan-ignore-next-line
+		$insights->add_plugin_data();
+	}
+
+	// @phpstan-ignore-next-line
+	$insights->init();
+}
+
+graphql_acf_init_appsero_telemetry();
