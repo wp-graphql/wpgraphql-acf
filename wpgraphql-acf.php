@@ -47,103 +47,11 @@ if ( ! function_exists( 'graphql_acf_init' ) ) {
 	 * @return void
 	 */
 	function graphql_acf_init() {
-
-		if ( ! empty( get_plugin_load_error_messages() ) ) {
-			add_action( 'admin_init', __NAMESPACE__ . '\show_admin_notice' );
-			add_action( 'graphql_init', __NAMESPACE__ . '\show_graphql_debug_messages' );
-			return;
-		}
-
 		$wp_graphql_acf = new \WPGraphQLAcf();
-		add_action( 'init', [ $wp_graphql_acf, 'init' ], 11 );
+		add_action( 'plugins_loaded', [ $wp_graphql_acf, 'init' ], 50 );
 	}
 }
 graphql_acf_init();
-
-/**
- * Empty array if the plugin can load. Array of messages if the plugin cannot load.
- *
- * @return array
- */
-function get_plugin_load_error_messages(): array {
-
-	$messages = [];
-
-	// Is ACF active?
-	if ( ! class_exists( 'ACF' ) ) {
-		$messages[] = __( 'Advanced Custom Fields must be installed and activated', 'wp-graphql-acf' );
-	}
-
-	if ( class_exists( 'WPGraphQL\ACF\ACF' ) ) {
-		$messages[] = __( 'Multiple versions of WPGraphQL for ACF cannot be active at the same time.', 'wp-graphql-acf' );
-	}
-
-	// Is WPGraphQL active?
-	if ( ! class_exists( 'WPGraphQL' ) ) {
-		$messages[] = __( 'WPGraphQL must be installed and activated.', 'wp-graphql-acf' );
-	}
-
-	// Have we met the minimum version requirement?
-	if ( ! defined( 'WPGRAPHQL_VERSION' ) || empty( WPGRAPHQL_VERSION ) || true === version_compare( WPGRAPHQL_VERSION, WPGRAPHQL_FOR_ACF_VERSION_WPGRAPHQL_REQUIRED_MIN_VERSION, 'lt' ) ) {
-		$messages[] = sprintf( __( 'WPGraphQL v%s or higher is required.', 'wp-graphql-acf' ), WPGRAPHQL_FOR_ACF_VERSION_WPGRAPHQL_REQUIRED_MIN_VERSION );
-	}
-
-	return $messages;
-
-}
-
-/**
- * Show admin notice to admins if this plugin is active but either ACF and/or WPGraphQL
- * are not active
- *
- * @return void
- */
-function show_admin_notice(): void {
-
-	$can_load_messages = get_plugin_load_error_messages();
-
-	/**
-	 * For users with lower capabilities, don't show the notice
-	 */
-	if ( empty( $can_load_messages ) || ! current_user_can( 'manage_options' ) ) {
-		return;
-	}
-
-	add_action(
-		'admin_notices',
-		function () use ( $can_load_messages ) {
-			?>
-			<div class="error notice">
-				<h3><?php echo esc_html( sprintf( __( 'WPGraphQL for Advanced Custom Fields v%s cannot load', 'wp-graphql-acf' ), WPGRAPHQL_FOR_ACF_VERSION ) ); ?></h3>
-				<ol>
-				<?php foreach ( $can_load_messages as $message ) : ?>
-					<li><?php echo esc_html( $message ); ?></li>
-				<?php endforeach; ?>
-				</ol>
-			</div>
-			<?php
-		}
-	);
-}
-
-/**
- * Output graphql debug messages if the plugin cannot load properly.
- *
- * @return void
- */
-function show_graphql_debug_messages(): void {
-
-	$messages = get_plugin_load_error_messages();
-
-	if ( empty( $messages ) ) {
-		return;
-	}
-
-	$prefix = sprintf( 'WPGraphQL for Advanced Custom Fields v%s cannot load', WPGRAPHQL_FOR_ACF_VERSION );
-	foreach ( $messages as $message ) {
-		graphql_debug( $prefix . ' because ' . $message );
-	}
-}
 
 /**
  * Initialize the plugin tracker
