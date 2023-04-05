@@ -124,6 +124,7 @@ class Registry {
 	public function register_initial_graphql_types(): void {
 
 		register_graphql_interface_type( 'AcfFieldGroup', [
+			'description' => __( 'A Field Group managed by ACF', 'wp-graphql-acf' ),
 			'fields' => [
 				'fieldGroupName' => [
 					'type'              => 'String',
@@ -137,6 +138,7 @@ class Registry {
 		] );
 
 		register_graphql_interface_type( 'AcfFieldGroupFields', [
+			'description' => __( 'Fields associated with an ACF Field Group', 'wp-graphql-acf' ),
 			'fields' => [
 				'fieldGroupName' => [
 					'type'              => 'String',
