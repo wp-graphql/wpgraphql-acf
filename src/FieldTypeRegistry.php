@@ -63,6 +63,11 @@ class FieldTypeRegistry {
 	 */
 	protected function register_acf_field_types(): void {
 
+		// This field type is added support some legacy features of ACF versions lower than v6.1
+		if ( ! defined( 'ACF_MAJOR_VERSION' ) || version_compare( ACF_MAJOR_VERSION, '6.1', '<=' ) ) {
+			register_graphql_acf_field_type( '<6.1' );
+		}
+
 		ButtonGroup::register_field_type();
 		Checkbox::register_field_type();
 		CloneField::register_field_type();
