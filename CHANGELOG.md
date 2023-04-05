@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.0.0-beta.2.1.0
+
+- [#35](https://github.com/wp-graphql/wpgraphql-acf/pull/35) feat: add Appsero opt-in telemetry.
+- feat: add checks for dependencies (WPGraphQL, ACF, min versions, etc) before loading functionality. Show admin notice and graphql_debug messages if pre-reqs aren't satisfied.
+
 ## 2.0.0-beta.2.0.1 to 2.0.0-beta.2.0.5
 
 ### Chores / Bugfixes:
