@@ -2,6 +2,8 @@
 namespace WPGraphQLAcf;
 
 use Codeception\PHPUnit\Constraint\Page;
+use GraphQL\Type\Definition\ResolveInfo;
+use WPGraphQL\AppContext;
 use WPGraphQLAcf\Admin\Settings;
 
 /**
@@ -254,6 +256,37 @@ class AcfGraphQLFieldType {
 	 */
 	public function get_excluded_admin_field_settings(): array {
 		return apply_filters( 'graphql_acf_excluded_admin_field_settings', $this->excluded_admin_field_settings );
+	}
+
+	/**
+	 * @param                     $root
+	 * @param array               $args
+	 * @param AppContext          $context
+	 * @param ResolveInfo         $info
+	 * @param AcfGraphQLFieldType $field_type
+	 * @param FieldConfig         $field_config
+	 *
+	 * @return array|callable|mixed|null
+	 */
+	public function get_resolver( $root, array $args, AppContext $context, ResolveInfo $info, AcfGraphQLFieldType $field_type, FieldConfig $field_config ) {
+
+		$acf_field = $field_config->get_acf_field();
+
+		$resolver = $field_config->resolve_field( $root, $args, $context, $info );
+
+		if ( isset( $acf_field['graphql_resolver'] ) ) {
+			$resolver = $acf_field['graphql_resolver'];
+		} elseif ( ! empty( $this->get_config( 'resolve' ) ) ) {
+
+			if ( is_callable( $this->get_config( 'resolve' ) ) ) {
+				$resolver = $this->get_config( 'resolve' )( $root, $args, $context, $info, $field_type, $field_config );
+			} else {
+				$resolver = $this->get_config( 'resolve' );
+			}
+		}
+
+		return $resolver;
+
 	}
 
 	/**

@@ -51,6 +51,8 @@ class Image {
 					'allowFieldUnderscores' => true,
 				]);
 
+				return 'connection';
+
 			},
 		] );
 

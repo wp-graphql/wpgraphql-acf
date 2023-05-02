@@ -47,11 +47,11 @@ class FieldTypeRegistry {
 	 */
 	public function __construct() {
 
-		// Initialize the Field Type Registry
-		do_action( 'graphql_acf_registry_init', $this );
-
 		// Register supported ACF Field Types
 		$this->register_acf_field_types();
+
+		// Initialize the Field Type Registry
+		do_action( 'graphql_acf_registry_init', $this );
 
 		// Initialize the Field Type Registry
 		do_action( 'graphql_acf_register_field_types', $this );

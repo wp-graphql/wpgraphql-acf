@@ -166,29 +166,31 @@ class FieldConfig {
 
 			$graphql_field_type = $this->get_graphql_field_type();
 
+			$resolver = function ( $root, $args, AppContext $context, ResolveInfo $info ) use ( $graphql_field_type ) {
+
+				return $graphql_field_type->get_resolver( $root, $args, $context, $info, $graphql_field_type, $this );
+
+			};
+
 			if ( $graphql_field_type instanceof AcfGraphQLFieldType ) {
 				$field_type = $graphql_field_type->get_resolve_type( $this );
 			}
+
+			$field_config['resolve'] = $resolver;
 
 			if ( empty( $field_type ) ) {
 				$field_type = 'String';
 			}
 
+			// if the field type returns a connection,
+			// bail and let the connection handle registration to the schema
+			// and resolution
+			if ( $field_type === 'connection' ) {
+				return null;
+			}
+
 			switch ( $this->acf_field['type'] ) {
 
-				case 'file':
-				case 'image':
-				case 'user':
-				case 'gallery':
-				case 'post_object':
-				case 'page_link':
-				case 'taxonomy':
-					// Connection field types
-					// should return null for the $field_config;
-					// There should be a better way of identifying that the field type
-					// registers a connection
-					$field_config = null;
-					break;
 				case 'color_picker':
 				case 'number':
 				case 'range':
@@ -218,6 +220,7 @@ class FieldConfig {
 					$field_config['type']    = $field_type;
 					$field_config['resolve'] = function ( $node, array $args, AppContext $context, ResolveInfo $info ) {
 						$value = $this->resolve_field( $node, $args, $context, $info );
+
 						if ( empty( $value ) && ! is_array( $value ) ) {
 							return null;
 						}
@@ -253,7 +256,7 @@ class FieldConfig {
 					$field_config = null;
 					break;
 				default:
-					$field_config['type'] = 'String';
+					$field_config['type'] = $field_type;
 					break;
 			}
 		}

@@ -83,6 +83,12 @@ class Registry {
 			$should = false;
 		}
 
+		// if the field group was configured with no "show_in_graphql" value, default to the "show_in_rest" value
+		// to determine if the group should be available in an API
+		if ( ! isset( $acf_field_group['show_in_graphql'] ) ) {
+			$acf_field_group['show_in_graphql'] = $acf_field_group['show_in_rest'] ?? false;
+		}
+
 		if ( isset( $acf_field_group['show_in_graphql'] ) && false === $acf_field_group['show_in_graphql'] ) {
 			$should = false;
 		}
@@ -99,6 +105,7 @@ class Registry {
 
 		// @phpstan-ignore-next-line
 		$all_acf_field_groups = acf_get_field_groups();
+
 		$graphql_field_groups = [];
 		foreach ( $all_acf_field_groups as $acf_field_group ) {
 
@@ -387,8 +394,11 @@ class Registry {
 
 		$field_group_name = '';
 
+
+
 		if ( ! empty( $field_group['graphql_field_name'] ) ) {
 			$field_group_name = $field_group['graphql_field_name'];
+			$field_group_name = preg_replace( '/[^0-9a-zA-Z_\s]/i', '', $field_group_name );
 		} else {
 			if ( ! empty( $field_group['name'] ) ) {
 				$field_group_name = $field_group['name'];
@@ -397,6 +407,7 @@ class Registry {
 			} elseif ( ! empty( $field_group['label'] ) ) {
 				$field_group_name = $field_group['label'];
 			}
+			$field_group_name = preg_replace( '/[^0-9a-zA-Z_\s]/i', ' ', $field_group_name );
 			// if the graphql_field_name isn't explicitly defined, we'll format it without underscores
 			$field_group_name = Utils::format_field_name( $field_group_name, false );
 		}

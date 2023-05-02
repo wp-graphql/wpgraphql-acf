@@ -68,6 +68,8 @@ class PostObject {
 				}
 
 				$field_config->register_graphql_connections( $connection_config );
+
+				return 'connection';
 			},
 		] );
 
