@@ -28,7 +28,7 @@ class AcfExtended {
 	public function init(): void {
 
 		// if ACFE is not active, don't add support for ACFE Features
-		if ( ! $this->is_acfe_active() ) {
+		if ( ! self::is_acfe_active() ) {
 			return;
 		}
 
@@ -44,8 +44,12 @@ class AcfExtended {
 	 *
 	 * @return bool
 	 */
-	public function is_acfe_active(): bool {
-		return class_exists( 'ACFE' );
+	public static function is_acfe_active(): bool {
+
+		$is_active = class_exists( 'ACFE' ) || defined( 'TESTS_ACF_EXTENDED_IS_ACTIVE' );
+
+		// Filter the response. This is helpful for test environments to mock tests as if the plugin were active
+		return (bool) apply_filters( 'graphql_acf_is_acfe_active', $is_active );
 	}
 
 	/**
@@ -306,6 +310,44 @@ class AcfExtended {
 
 						return $context->get_loader( 'term' )->load_deferred( absint( $source['value'] ) );
 					},
+				],
+			],
+		]);
+
+		register_graphql_object_type( 'ACFE_Date_Range', [
+			'description' => __( 'A date range made up of a start date and end date', 'wp-graphql-acf' ),
+			'fields'      => [
+				'startDate' => [
+					// @todo: DATETIME Scalar
+					'type'        => 'String',
+					'description' => __( 'The start date of a date range returned as an RFC 3339 time string', 'wp-graphql-acf' ),
+				],
+				'endDate'   => [
+					// @todo: DATETIME Scalar
+					'type'        => 'String',
+					'description' => __( 'The start date of a date range RFC 3339 time string', 'wp-graphql-acf' ),
+				],
+			],
+		]);
+
+		register_graphql_object_type( 'ACFE_Image_Size', [
+			'description' => __( 'Registered image size', 'wp-graphql-acf' ),
+			'fields'      => [
+				'name'   => [
+					'type'        => 'String',
+					'description' => __( 'Image size identifier.', 'wp-graphql-acf' ),
+				],
+				'width'  => [
+					'type'        => 'Int',
+					'description' => __( 'Image width in pixels. Default 0.', 'wp-graphql-acf' ),
+				],
+				'height' => [
+					'type'        => 'Int',
+					'description' => __( 'Image height in pixels. Default 0.', 'wp-graphql-acf' ),
+				],
+				'crop'   => [
+					'type'        => 'Boolean',
+					'description' => __( 'Image cropping behavior. If false, the image will be scaled (default), If true, image will be cropped to the specified dimensions using center positions', 'wp-graphql-acf' ),
 				],
 			],
 		]);

@@ -32,11 +32,10 @@ class AcfeLanguages {
 	 */
 	public static function register_field_type(): void {
 		register_graphql_acf_field_type( 'acfe_languages', [
-			'graphql_type' => [ 'list_of' => 'String' ],
+			'graphql_type' => [ 'list_of' => 'ACFE_Language' ],
 			'resolve'      => function ( $root, $args, $context, $info, $field_type, $field_config ) {
 				$value = $field_config->resolve_field( $root, $args, $context, $info );
 				return self::resolve_languages( $value );
-
 			},
 		]);
 	}
