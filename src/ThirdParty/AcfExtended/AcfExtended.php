@@ -33,7 +33,7 @@ class AcfExtended {
 		}
 
 		// ACF Extended Pro
-		add_filter( 'graphql_acf_should_field_group_show_in_graphql', [ $this, 'filter_out_acfe_dynamic_groups' ] , 10, 2 );
+		add_filter( 'graphql_acf_should_field_group_show_in_graphql', [ $this, 'filter_out_acfe_dynamic_groups' ], 10, 2 );
 		add_action( 'graphql_register_types', [ $this, 'register_initial_types' ] );
 		add_action( 'graphql_acf_registry_init', [ $this, 'register_field_types' ] );
 
@@ -45,7 +45,7 @@ class AcfExtended {
 	 * @return bool
 	 */
 	public function is_acfe_active(): bool {
-		return class_exists('ACFE' );
+		return class_exists( 'ACFE' );
 	}
 
 	/**
@@ -73,179 +73,179 @@ class AcfExtended {
 	public function register_initial_types(): void {
 
 		register_graphql_object_type( 'ACFE_Country', [
-			'description' => __( 'ACFE Country Object', 'wp-graphql-acf-extended' ),
-			'fields' => [
-				'code' => [
+			'description' => __( 'ACFE Country Object', 'wp-graphql-acf' ),
+			'fields'      => [
+				'code'       => [
 					// @todo: CountryCode Scalar. See: https://github.com/Urigo/graphql-scalars/blob/master/src/scalars/CountryCode.ts
-					'type' => 'String',
+					'type'        => 'String',
 					'description' => __( 'A country code as defined by ISO 3166-1 alpha-2', 'wp-graphql-acf' ),
 				],
-				'name' => [
-					'type' => 'String',
+				'name'       => [
+					'type'        => 'String',
 					'description' => __( 'The name of the country', 'wp-graphql-acf' ),
 				],
-				'localized' => [
-					'type' => 'String',
+				'localized'  => [
+					'type'        => 'String',
 					'description' => __( 'The name of the country, localized to the current locale', 'wp-graphql-acf' ),
 				],
-				'native' => [
-					'type' => 'String',
+				'native'     => [
+					'type'        => 'String',
 					'description' => __( 'The name of the country, in the country\'s native dialect', 'wp-graphql-acf' ),
 				],
-				'dial' => [
-					'type' => 'Integer',
+				'dial'       => [
+					'type'        => 'Integer',
 					'description' => __( 'The calling code for the country', 'wp-graphql-acf' ),
 				],
-				'capital' => [
-					'type' => 'String',
+				'capital'    => [
+					'type'        => 'String',
 					'description' => __( 'The name of the Country\'s capital city', 'wp-graphql-acf' ),
 				],
-				'people' => [
-					'type' => 'String',
+				'people'     => [
+					'type'        => 'String',
 					'description' => __( 'The term used to denote the inhabitants of the country', 'wp-graphql-acf' ),
 				],
-				'continent' => [
-					'type' =>'String',
+				'continent'  => [
+					'type'        => 'String',
 					'description' => __( 'The name of the continent the country is in', 'wp-graphql-acf' ),
 				],
-				'latitude' => [
-					'type' => 'Float',
+				'latitude'   => [
+					'type'        => 'Float',
 					'description' => __( 'The latitude of the country\'s position', 'wp-graphql-acf' ),
-					'resolve' => function( $country ) {
+					'resolve'     => function ( $country ) {
 						return $country['coords']['lat'] ?? null;
-					}
+					},
 				],
-				'longitude' => [
-					'type' => 'Float',
+				'longitude'  => [
+					'type'        => 'Float',
 					'description' => __( 'The longitude of the country\'s position', 'wp-graphql-acf' ),
-					'resolve' => function( $country ) {
+					'resolve'     => function ( $country ) {
 						return $country['coords']['lng'] ?? null;
-					}
+					},
 				],
-				'languages'=> [
-					'type' => [ 'list_of' => 'ACFE_Language' ],
+				'languages'  => [
+					'type'        => [ 'list_of' => 'ACFE_Language' ],
 					'description' => __( 'A list of languages spoken in the country', 'wp-graphql-acf' ),
-					'resolve' => function( $root ) {
+					'resolve'     => function ( $root ) {
 						$value = $root['languages'] ?? null;
 						return AcfeLanguages::resolve_languages( $value );
-					}
+					},
 				],
-				'currencies'=> [
-					'type' => [ 'list_of' => 'ACFE_Currency' ],
+				'currencies' => [
+					'type'        => [ 'list_of' => 'ACFE_Currency' ],
 					'description' => __( 'A list of currencies used in the country', 'wp-graphql-acf' ),
-					'resolve' => function( $root ) {
+					'resolve'     => function ( $root ) {
 						$value = $root['currencies'] ?? null;
 						return AcfeCurrencies::resolve_currencies( $value );
-					}
-				]
-			]
+					},
+				],
+			],
 		]);
 
 		register_graphql_object_type( 'ACFE_Currency', [
 			'fields' => [
-				'code' => [
-					'type' => 'String',
+				'code'      => [
+					'type'        => 'String',
 					'description' => __( 'The currency code according to ISO 4217: https://en.wikipedia.org/wiki/ISO_4217', 'wp-graphql-acf' ),
 				],
-				'name' => [
-					'type' => 'String',
+				'name'      => [
+					'type'        => 'String',
 					'description' => __( 'The name of the currency', 'wp-graphql-acf' ),
 				],
-				'symbol'=> [
-					'type' => 'String',
+				'symbol'    => [
+					'type'        => 'String',
 					'description' => __( 'The symbol used to represent the currency (i.e. $)', 'wp-graphql-acf' ),
 				],
-				'flag'=> [
-					'type' => 'String',
+				'flag'      => [
+					'type'        => 'String',
 					'description' => __( 'The code representing the flag for the country', 'wp-graphql-acf' ),
 				],
 				'continent' => [
-					'type' => 'String',
+					'type'        => 'String',
 					'description' => __( 'The name of the continent the currency is used in', 'wp-graphql-acf' ),
 				],
 				'countries' => [
-					'type' => [ 'list_of' => 'ACFE_Country' ],
+					'type'        => [ 'list_of' => 'ACFE_Country' ],
 					'description' => __( 'A list of countries the currency is used in', 'wp-graphql-acf' ),
-					'resolve' => function( $root ) {
+					'resolve'     => function ( $root ) {
 						$value = $root['countries'] ?? null;
 						return AcfeCountries::resolve_countries( $value );
-					}
+					},
 				],
-				'languages'=> [
-					'type' => [ 'list_of' => 'ACFE_Language' ],
+				'languages' => [
+					'type'        => [ 'list_of' => 'ACFE_Language' ],
 					'description' => __( 'A list of languages spoken in the country', 'wp-graphql-acf' ),
-					'resolve' => function( $root ) {
+					'resolve'     => function ( $root ) {
 						$value = $root['languages'] ?? null;
 						return AcfeLanguages::resolve_languages( $value );
-					}
-				]
-			]
+					},
+				],
+			],
 		]);
 
 		register_graphql_object_type( 'ACFE_Language', [
 			'description' => __( 'ACFE Language Object', 'wp-graphql-acf' ),
-			'fields' => [
-				'code' => [
-					'type' => 'String',
+			'fields'      => [
+				'code'       => [
+					'type'        => 'String',
 					'description' => __( 'A 2-letter language code as defined by ISO 639-1. https://en.wikipedia.org/wiki/ISO_639-1', 'wp-graphql-acf' ),
 				],
-				'locale' => [
-					'type' => 'String',
+				'locale'     => [
+					'type'        => 'String',
 					'description' => __( 'The locale in the format of a BCP 47 (RFC 5646) standard string', 'wp-graphql-acf' ),
 				],
-				'alt' => [
-					'type' => 'String',
+				'alt'        => [
+					'type'        => 'String',
 					'description' => __( 'Alternative locale in the format of a BCP 47 (RFC 5646) standard string', 'wp-graphql-acf' ),
 				],
-				'name' => [
-					'type' => 'String',
+				'name'       => [
+					'type'        => 'String',
 					'description' => __( 'The name of the language', 'wp-graphql-acf' ),
 				],
-				'native' => [
-					'type' => 'String',
+				'native'     => [
+					'type'        => 'String',
 					'description' => __( 'The name of the language, in the country\'s native dialect', 'wp-graphql-acf' ),
 				],
-				'dir' => [
-					'type' => 'String',
+				'dir'        => [
+					'type'        => 'String',
 					'description' => __( 'The direction of the language. (i.e. ltr / rtl / ttb, btt )', 'wp-graphql-acf' ),
 				],
-				'flag' => [
-					'type' => 'String',
+				'flag'       => [
+					'type'        => 'String',
 					'description' => __( 'The code representing the flag for the country', 'wp-graphql-acf' ),
 				],
-				'countries' => [
-					'type' => [ 'list_of' => 'ACFE_Country' ],
-					'resolve' => function( $root ) {
+				'countries'  => [
+					'type'    => [ 'list_of' => 'ACFE_Country' ],
+					'resolve' => function ( $root ) {
 						$value = $root['countries'] ?? null;
 						return AcfeCountries::resolve_countries( $value );
-					}
+					},
 				],
 				'currencies' => [
-					'type' => [ 'list_of' => 'ACFE_Currency' ],
-					'resolve' => function( $root ) {
+					'type'    => [ 'list_of' => 'ACFE_Currency' ],
+					'resolve' => function ( $root ) {
 						$value = $root['currencies'] ?? null;
 						return AcfeCurrencies::resolve_currencies( $value );
-					}
-				]
+					},
+				],
 			],
 		] );
 
 		register_graphql_interface_type( 'ACFE_AdvancedLink', [
-			'fields' => [
-				'linkText' => [
-					'type' => 'String',
-					'resolve' => function( $link ) {
+			'fields'      => [
+				'linkText'              => [
+					'type'    => 'String',
+					'resolve' => function ( $link ) {
 						return $link['title'] ?? null;
-					}
+					},
 				],
 				'shouldOpenInNewWindow' => [
-					'type' => 'Boolean',
-					'resolve' => function( $link ) {
+					'type'    => 'Boolean',
+					'resolve' => function ( $link ) {
 						return (bool) $link['target'];
-					}
+					},
 				],
 			],
-			'resolveType' => function( $node ) {
+			'resolveType' => function ( $node ) {
 
 				$type = 'ACFE_AdvancedLink_Url';
 
@@ -253,7 +253,7 @@ class AcfExtended {
 					return $type;
 				}
 
-				switch( $node['type'] ) {
+				switch ( $node['type'] ) {
 					case 'post':
 						$type = 'ACFE_AdvancedLink_ContentNode';
 						break;
@@ -263,51 +263,51 @@ class AcfExtended {
 				}
 
 				return $type;
-			}
+			},
 		]);
 
 		register_graphql_object_type( 'ACFE_AdvancedLink_Url', [
 			'interfaces' => [ 'ACFE_AdvancedLink' ],
-			'fields' => [
+			'fields'     => [
 				'url' => [
-					'type' => 'String'
+					'type' => 'String',
 				],
-			]
+			],
 		]);
 
 		register_graphql_object_type( 'ACFE_AdvancedLink_ContentNode', [
-			'interfaces' => [ 'ACFE_AdvancedLink' ],
+			'interfaces'      => [ 'ACFE_AdvancedLink' ],
 			'eagerlyLoadType' => true,
-			'fields' => [
+			'fields'          => [
 				'contentNode' => [
-					'type' => 'ContentNode',
-					'resolve' => function( $source, $args, $context, $info ) {
+					'type'    => 'ContentNode',
+					'resolve' => function ( $source, $args, $context, $info ) {
 
 						if ( empty( $source['value'] ) ) {
 							return null;
 						}
 
 						return $context->get_loader( 'post' )->load_deferred( absint( $source['value'] ) );
-					}
+					},
 				],
-			]
+			],
 		]);
 
 		register_graphql_object_type( 'ACFE_AdvancedLink_TermNode', [
-			'interfaces' => [ 'ACFE_AdvancedLink' ],
+			'interfaces'      => [ 'ACFE_AdvancedLink' ],
 			'eagerlyLoadType' => true,
-			'fields' => [
+			'fields'          => [
 				'term' => [
-					'type' => 'TermNode',
-					'resolve' => function( $source, $args, $context, $info ) {
+					'type'    => 'TermNode',
+					'resolve' => function ( $source, $args, $context, $info ) {
 						if ( empty( $source['value'] ) ) {
 							return null;
 						}
 
 						return $context->get_loader( 'term' )->load_deferred( absint( $source['value'] ) );
-					}
+					},
 				],
-			]
+			],
 		]);
 
 	}

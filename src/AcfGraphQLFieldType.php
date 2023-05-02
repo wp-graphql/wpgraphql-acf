@@ -259,12 +259,12 @@ class AcfGraphQLFieldType {
 	}
 
 	/**
-	 * @param                     $root
-	 * @param array               $args
-	 * @param AppContext          $context
-	 * @param ResolveInfo         $info
-	 * @param AcfGraphQLFieldType $field_type
-	 * @param FieldConfig         $field_config
+	 * @param mixed               $root The value of the previously resolved field in the tree
+	 * @param array               $args The arguments input on the field
+	 * @param AppContext          $context The Context passed through resolution
+	 * @param ResolveInfo         $info Information about the field resolving
+	 * @param AcfGraphQLFieldType $field_type The Type of ACF Field resolving
+	 * @param FieldConfig         $field_config The Config of the ACF Field resolving
 	 *
 	 * @return array|callable|mixed|null
 	 */

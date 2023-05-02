@@ -166,17 +166,20 @@ class FieldConfig {
 
 			$graphql_field_type = $this->get_graphql_field_type();
 
-			$resolver = function ( $root, $args, AppContext $context, ResolveInfo $info ) use ( $graphql_field_type ) {
+			// If the field type overrode the resolver, use it
+			if ( null !== $graphql_field_type && method_exists( $graphql_field_type, 'get_resolver' ) ) {
 
-				return $graphql_field_type->get_resolver( $root, $args, $context, $info, $graphql_field_type, $this );
-
-			};
+				$resolver                = function ( $root, $args, AppContext $context, ResolveInfo $info ) use ( $graphql_field_type ) {
+					return $graphql_field_type->get_resolver( $root, $args, $context, $info, $graphql_field_type, $this );
+				};
+				$field_config['resolve'] = $resolver;
+			}
 
 			if ( $graphql_field_type instanceof AcfGraphQLFieldType ) {
 				$field_type = $graphql_field_type->get_resolve_type( $this );
 			}
 
-			$field_config['resolve'] = $resolver;
+
 
 			if ( empty( $field_type ) ) {
 				$field_type = 'String';
@@ -185,7 +188,7 @@ class FieldConfig {
 			// if the field type returns a connection,
 			// bail and let the connection handle registration to the schema
 			// and resolution
-			if ( $field_type === 'connection' ) {
+			if ( 'connection' === $field_type ) {
 				return null;
 			}
 
