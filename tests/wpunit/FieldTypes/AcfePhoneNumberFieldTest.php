@@ -30,7 +30,7 @@ class AcfePhoneNumberFieldTest extends \Tests\WPGraphQLAcf\WPUnit\AcfFieldTestCa
 		if ( class_exists('ACFE_Pro') ) {
 			$this->assertTrue( array_key_exists( $this->get_field_type(), $field_types ) );
 		} else {
-			$this->assertTrue( array_key_exists( $this->get_field_type(), $field_types ) );
+			$this->assertFalse( array_key_exists( $this->get_field_type(), $field_types ) );
 		}
 	}
 

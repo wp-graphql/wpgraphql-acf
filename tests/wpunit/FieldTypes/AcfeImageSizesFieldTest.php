@@ -37,7 +37,11 @@ class AcfeImageSizesFieldTest extends \Tests\WPGraphQLAcf\WPUnit\AcfFieldTestCas
 
 	public function testFieldExists(): void {
 		$field_types = acf_get_field_types();
-		$this->assertTrue( array_key_exists( $this->get_field_type(), $field_types ) );
+		if ( class_exists('ACFE_Pro') ) {
+			$this->assertTrue( array_key_exists( $this->get_field_type(), $field_types ) );
+		} else {
+			$this->assertFalse( array_key_exists( $this->get_field_type(), $field_types ) );
+		}
 	}
 
 }
