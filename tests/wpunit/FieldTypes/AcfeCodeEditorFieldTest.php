@@ -6,9 +6,6 @@ class AcfeCodeEditorFieldTest extends \Tests\WPGraphQLAcf\WPUnit\AcfFieldTestCas
 	 * @return void
 	 */
 	public function setUp(): void {
-		// fake like acfe is active so we can mock our tests
-		$field_type = new \Tests\WPGraphQLAcf\WPUnit\AcfeFieldType( $this->get_field_type() );
-		acf_register_field_type( $field_type );
 		parent::setUp();
 	}
 
@@ -17,7 +14,6 @@ class AcfeCodeEditorFieldTest extends \Tests\WPGraphQLAcf\WPUnit\AcfFieldTestCas
 	 * @return void
 	 */
 	public function tearDown(): void {
-		add_filter( 'graphql_acf_is_acfe_active', '__return_false' );
 		parent::tearDown();
 	}
 
