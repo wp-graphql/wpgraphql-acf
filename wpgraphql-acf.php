@@ -78,8 +78,3 @@ function graphql_acf_init_appsero_telemetry() {
 }
 
 graphql_acf_init_appsero_telemetry();
-
-add_filter('acf/settings/remove_wp_meta_box', '__return_false');
-
-//// Don't track meta key updates at all
-add_filter( 'graphql_cache_should_track_meta_key', '__return_false' );
