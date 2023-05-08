@@ -15,7 +15,7 @@ class AdminSettingsCest
 		$I->loginAsAdmin();
 		$I->amOnPage('/wp-admin/edit.php?post_type=acf-field-group');
 		$I->checkOption( '//tbody/tr/th[@class="check-column"]/input[@type="checkbox"]' );
-		$I->selectOption( '#bulk-action-selector-bottom', 'acfdeactivate' );
+		$I->selectOption( '#bulk-action-selector-bottom', 'trash' );
 		$I->click( '#doaction2' );
 	}
 
