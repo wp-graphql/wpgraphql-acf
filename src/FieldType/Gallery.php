@@ -53,6 +53,8 @@ class Gallery {
 							->get_connection();
 					},
 				]);
+
+				return 'connection';
 			},
 		] );
 

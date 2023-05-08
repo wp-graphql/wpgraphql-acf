@@ -148,6 +148,7 @@ class Settings {
 			wp_send_json( __( 'No form data.', 'wp-graphql-acf' ) );
 		}
 
+		// @phpstan-ignore-next-line
 		if ( empty( $_POST['nonce'] ) || ! wp_verify_nonce( filter_input( INPUT_POST, 'nonce', FILTER_SANITIZE_STRING ), 'wp_graphql_acf' ) ) {
 			wp_send_json_error();
 		}
@@ -332,10 +333,17 @@ class Settings {
 		$acf_field_type = Utils::get_graphql_field_type( $field_type );
 
 		if ( ! $acf_field_type instanceof AcfGraphQLFieldType ) {
-			return;
+			$admin_field_settings = [
+				'not_supported' => [
+					'type'         => 'message',
+					'label'        => __( 'Not supported in the GraphQL Schema', 'wp-graphql-acf' ),
+					'instructions' => sprintf( __( 'The "%s" Field Type is not set up to map to the GraphQL Schema. If you want to query this field type in the Schema, visit our guide for <a href="" target="_blank" rel="nofollow">adding GraphQL support for additional ACF field types</a>.', 'wp-graphql-acf' ), $field_type ),
+					'conditions'   => [],
+				],
+			];
+		} else {
+			$admin_field_settings = $acf_field_type->get_admin_field_settings( $field, $this );
 		}
-
-		$admin_field_settings = $acf_field_type->get_admin_field_settings( $field, $this );
 
 		if ( ! empty( $admin_field_settings ) && is_array( $admin_field_settings ) ) {
 

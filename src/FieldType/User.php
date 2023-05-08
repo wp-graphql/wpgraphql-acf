@@ -39,7 +39,7 @@ class User {
 				]);
 
 				// The connection will be registered to the Schema so we return null for the field type
-				return null;
+				return 'connection';
 
 			},
 		] );
