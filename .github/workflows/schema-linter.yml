@@ -54,7 +54,7 @@ jobs:
         env:
           ACF_LICENSE_KEY: ${{secrets.ACF_LICENSE_KEY}}
           ACF_EXTENDED_PRO: true
-          ACF_EXTENDED_LICENSE_KEY: ${{secrents.ACF_EXTENDED_LICENSE_KEY}}
+          ACF_EXTENDED_LICENSE_KEY: ${{secrets.ACF_EXTENDED_LICENSE_KEY}}
 
       - name: Install WP CLI for ACF
         run: |
