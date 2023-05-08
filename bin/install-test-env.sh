@@ -160,29 +160,6 @@ install_acf_pro() {
 	fi
 }
 
-install_acfe_pro() {
-	if [ ! -d $WP_CORE_DIR/wp-content/plugins/acf-extended-pro ]; then
-
-    		echo "Installing ACF Extended Pro from www.acf-extended.com"
-
-			# Make a request to the Easy Digital Downloads endpoint for ACF Extended to get the download link
-			# see: https://gist.github.com/acf-extended/b65882979cdf7c4f5e6a0e5ed733aca7#file-acfe-pro-api-download-postman_collection-json
-			result=$(curl --location --request GET "https://acf-extended.com?edd_action=get_version&license=${ACF_EXTENDED_LICENSE_KEY}&item_name=ACF%20Extended%20Pro&url=https://acf.wpgraphql.com" )
-
-	        # Get the download link from the curl response. Note jq must be installed. Github has it installed but your local machine might not?
-	        download_link=$( jq -n "$result" | jq .download_link);
-
-			# Remove quotes from the download_link
-			download_link="${download_link%\"}"
-            download_link="${download_link#\"}"
-
-            # Install the plugin from the download link. --quiet prevents the license key from being leaked
-    		wp plugin install ${download_link} --activate --quiet
-
-    		wp plugin list
-    	fi
-}
-
 setup_plugin() {
 	# Add this repo as a plugin to the repo
 	if [ ! -d $WP_CORE_DIR/wp-content/plugins/wpgraphql-acf ]; then
@@ -219,5 +196,4 @@ install_wp
 install_db
 configure_wordpress
 install_acf_pro
-install_acfe_pro
 setup_plugin
