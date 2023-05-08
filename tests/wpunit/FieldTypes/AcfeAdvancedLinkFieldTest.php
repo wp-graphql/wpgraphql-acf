@@ -1,11 +1,17 @@
 <?php
 
-class AcfeAdvancedLinkFieldTest extends \Tests\WPGraphQLAcf\WPUnit\AcfFieldTestCase {
+class AcfeAdvancedLinkFieldTest extends \Tests\WPGraphQLAcf\WPUnit\AcfeFieldTestCase {
 
 	/**
 	 * @return void
 	 */
 	public function setUp(): void {
+
+		// if the plugin version is before 6.1, we're not testing this functionality
+		if ( ! isset( $_ENV['ACF_PRO'] ) || true !== (bool) $_ENV['ACF_PRO'] || version_compare( $this->acf_plugin_version, '6.1', 'lt' ) ) {
+			$this->markTestSkipped( sprintf( 'Version "%s" does not include the ability to register custom post types, so we do not need to test the extensions of the feature', $this->acf_plugin_version ) );
+		}
+
 		parent::setUp();
 	}
 
@@ -27,11 +33,6 @@ class AcfeAdvancedLinkFieldTest extends \Tests\WPGraphQLAcf\WPUnit\AcfFieldTestC
 
 	public function get_expected_field_resolve_type(): ?string {
 		return 'ACFE_AdvancedLink';
-	}
-
-	public function testFieldExists(): void {
-		$field_types = acf_get_field_types();
-		$this->assertTrue( array_key_exists( $this->get_field_type(), $field_types ) );
 	}
 
 }

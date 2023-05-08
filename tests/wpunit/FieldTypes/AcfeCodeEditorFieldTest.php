@@ -1,6 +1,6 @@
 <?php
 
-class AcfeCodeEditorFieldTest extends \Tests\WPGraphQLAcf\WPUnit\AcfFieldTestCase {
+class AcfeCodeEditorFieldTest extends \Tests\WPGraphQLAcf\WPUnit\AcfeFieldTestCase {
 
 	/**
 	 * @return void
@@ -23,11 +23,6 @@ class AcfeCodeEditorFieldTest extends \Tests\WPGraphQLAcf\WPUnit\AcfFieldTestCas
 
 	public function get_expected_field_resolve_type(): ?string {
 		return 'String';
-	}
-
-	public function testFieldExists(): void {
-		$field_types = acf_get_field_types();
-		$this->assertTrue( array_key_exists( $this->get_field_type(), $field_types ) );
 	}
 
 }

@@ -1,6 +1,6 @@
 <?php
 
-class AcfeUserRolesFieldTest extends \Tests\WPGraphQLAcf\WPUnit\AcfFieldTestCase {
+class AcfeUserRolesFieldTest extends \Tests\WPGraphQLAcf\WPUnit\AcfeFieldTestCase {
 
 	/**
 	 * @return void

@@ -1,6 +1,6 @@
 <?php
 
-class AcfeTaxonomyTermsFieldTest extends \Tests\WPGraphQLAcf\WPUnit\AcfFieldTestCase {
+class AcfeTaxonomyTermsFieldTest extends \Tests\WPGraphQLAcf\WPUnit\AcfeFieldTestCase {
 
 	/**
 	 * @return void
