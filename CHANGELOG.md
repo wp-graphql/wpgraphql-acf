@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.0.0-beta.2.2.0
+
+### New Features
+
+- [#38](https://github.com/wp-graphql/wpgraphql-acf/pull/38) feat: ACF Extended / ACF Extended Pro support
+
 ## 2.0.0-beta.2.1.0
 
 - [#35](https://github.com/wp-graphql/wpgraphql-acf/pull/35) feat: add Appsero opt-in telemetry.
