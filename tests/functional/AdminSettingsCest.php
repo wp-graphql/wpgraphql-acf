@@ -9,6 +9,16 @@ class AdminSettingsCest
         $I->importJson( $json_file );
     }
 
+	public function _after( FunctionalTester $I ) {
+
+		// Cleanup the imported field group
+		$I->loginAsAdmin();
+		$I->amOnPage('/wp-admin/edit.php?post_type=acf-field-group');
+		$I->checkOption( '//tbody/tr/th[@class="check-column"]/input[@type="checkbox"]' );
+		$I->selectOption( '#bulk-action-selector-bottom', 'trash' );
+		$I->click( '#doaction2' );
+	}
+
     public function seeCustomFieldsFieldGroupWpgraphqlHeadersTest( FunctionalTester $I ) {
         $I->loginAsAdmin();
 

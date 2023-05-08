@@ -52,7 +52,7 @@ class File {
 					'allowFieldUnderscores' => true,
 				]);
 
-				return null;
+				return 'connection';
 			},
 		] );
 

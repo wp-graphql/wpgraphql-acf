@@ -42,7 +42,7 @@ class Taxonomy {
 				$field_config->register_graphql_connections( $connection_config );
 
 				// Return null because registering a connection adds it to the Schema for us
-				return null;
+				return 'connection';
 			},
 		] );
 

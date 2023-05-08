@@ -21,7 +21,8 @@ jobs:
         php: [ '8.0', '7.4' ]
         wordpress: [ '6.1', '5.9' ]
         acf_pro: [ true, false ]
-        acf_version: [ 5.12.4, 6.0.7 ]
+        acf_version: [ 5.12.4, 6.1.6 ]
+        acf_extended_pro: [ true, false ]
         include:
           - php: '8.1'
             wordpress: '6.1'
@@ -36,7 +37,7 @@ jobs:
           - php: '7.3'
             wordpress: '5.9'
       fail-fast: false
-    name: WordPress ${{ matrix.wordpress }}, PHP ${{ matrix.php }}, ACF Version ${{matrix.acf_version}}, ACF PRO ${{matrix.acf_pro}}
+    name: WordPress ${{ matrix.wordpress }}, PHP ${{ matrix.php }}, ACF ${{matrix.acf_version}}, ACF PRO ${{matrix.acf_pro}}, ACF Extended PRO ${{matrix.acf_extended_pro}}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -85,6 +86,8 @@ jobs:
             -e ACF_PRO=${{matrix.acf_pro }} \
             -e ACF_LICENSE_KEY=${{secrets.ACF_LICENSE_KEY}} \
             -e ACF_VERSION=${{matrix.ACF_VERSION}} \
+            -e ACF_EXTENDED_PRO=${{matrix.acf_extended_pro}} \
+            -e ACF_EXTENDED_LICENSE_KEY=${{secrets.ACF_EXTENDED_LICENSE_KEY}} \
             testing
 
       - name: Push Codecoverage to Coveralls.io

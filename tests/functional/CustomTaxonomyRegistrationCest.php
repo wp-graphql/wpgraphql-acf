@@ -27,7 +27,7 @@ class CustomTaxonomyRegistrationCest {
 
 		$I->seeElement( '#acf-advanced-settings' );
 
-		$I->checkOption( "Advanced configuration" );
+		$I->checkOption( "#acf_taxonomy-advanced_configuration" );
 
 		$I->click( '//a[contains(@class, "acf-tab-button") and text()[normalize-space(.) = "GraphQL"]]' );
 

@@ -73,10 +73,12 @@ modules:
       title: 'Test'
       plugins:
         - '%ACF_PLUGIN_SLUG%'
+        - '%ACF_EXTENDED_PLUGIN_SLUG%'
         - wp-graphql/wp-graphql.php
         - wpgraphql-acf/wpgraphql-acf.php
       activatePlugins:
         - '%ACF_PLUGIN_SLUG%'
+        - '%ACF_EXTENDED_PLUGIN_SLUG%'
         - wp-graphql/wp-graphql.php
         - wpgraphql-acf/wpgraphql-acf.php
       configFile: 'tests/_data/config.php'

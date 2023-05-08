@@ -6,3 +6,6 @@
  */
 define( 'CODECEPTION_REMOTE_COVERAGE', true );
 define( 'GRAPHQL_DEBUG', true );
+
+// Mock that ACF Extended is active
+define( 'TESTS_ACF_EXTENDED_IS_ACTIVE', true );
