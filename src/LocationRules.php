@@ -962,10 +962,11 @@ class LocationRules {
 
 			$options_page = acf_get_options_page( $value );
 
-			if ( ! isset( $options_page['show_in_graphql'] ) || false === (bool) $options_page['show_in_graphql'] ) {
+			if ( empty( $options_page ) || ! \WPGraphQLAcf\Utils::should_field_group_show_in_graphql( $options_page ) ) {
 				return;
 			}
-			$type_name = isset( $options_page['graphql_field_name'] ) ? Utils::format_type_name( $options_page['graphql_field_name'] ) : Utils::format_type_name( $options_page['menu_slug'] );
+
+			$type_name = \WPGraphQLAcf\Utils::get_field_group_name( $options_page );
 			$this->set_graphql_type( $field_group_name, $type_name );
 		}
 

@@ -37,6 +37,11 @@ class WPGraphQLAcf {
 		add_action( 'admin_init', [ $this, 'init_admin_settings' ] );
 		add_action( 'after_setup_theme', [ $this, 'cpt_tax_registration' ] );
 		add_action( 'graphql_register_types', [ $this, 'init_registry' ] );
+
+		add_filter( 'graphql_data_loaders', [ $this, 'register_loaders' ], 10, 2 );
+		add_filter( 'graphql_resolve_node_type', [ $this, 'resolve_acf_options_page_node' ], 10, 2 );
+
+
 		do_action( 'graphql_acf_init' );
 
 	}
@@ -85,6 +90,7 @@ class WPGraphQLAcf {
 		// of the specific fields and field groups registered by ACF
 		$registry = new Registry( $type_registry );
 		$registry->register_initial_graphql_types();
+		$registry->register_options_pages();
 
 		// Get the field groups that should be mapped to the Schema
 		$acf_field_groups = $registry->get_acf_field_groups();
@@ -160,6 +166,31 @@ class WPGraphQLAcf {
 			}
 		);
 	}
+
+	/**
+	 * @param mixed $type The GraphQL Type to return based on the resolving node
+	 * @param mixed $node The Node being resolved
+	 *
+	 * @return mixed
+	 */
+	public function resolve_acf_options_page_node( $type, $node ) {
+		if ( $node instanceof \WPGraphQLAcf\Model\AcfOptionsPage ) {
+			return \WPGraphQLAcf\Utils::get_field_group_name( $node->get_data() );
+		}
+		return $type;
+	}
+
+	/**
+	 * @param array                 $loaders
+	 * @param \WPGraphQL\AppContext $context
+	 *
+	 * @return array
+	 */
+	public function register_loaders( array $loaders, \WPGraphQL\AppContext $context ): array {
+		$loaders['acf_options_page'] = new \WPGraphQLAcf\Data\Loader\AcfOptionsPageLoader( $context );
+		return $loaders;
+	}
+
 
 	/**
 	 * Output graphql debug messages if the plugin cannot load properly.

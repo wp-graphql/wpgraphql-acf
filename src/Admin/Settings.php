@@ -136,6 +136,8 @@ class Settings {
 
 		if ( ! isset( $_POST['data'] ) ) {
 			echo esc_html( __( 'No location rules were found', 'wp-graphql-acf' ) );
+
+			/** @noinspection ForgottenDebugOutputInspection */
 			wp_die();
 		}
 
@@ -208,7 +210,7 @@ class Settings {
 				'type'         => 'true_false',
 				'name'         => 'show_in_graphql',
 				'prefix'       => 'acf_field_group',
-				'value'        => isset( $field_group['show_in_graphql'] ) && (bool) $field_group['show_in_graphql'],
+				'value'        => isset( $field_group['show_in_graphql'] ) ? (bool) $field_group['show_in_graphql'] : 1,
 				'ui'           => 1,
 			],
 			'div',

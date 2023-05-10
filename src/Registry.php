@@ -4,8 +4,12 @@ namespace WPGraphQLAcf;
 
 use Exception;
 use GraphQL\Error\Error;
+use GraphQL\Type\Definition\ResolveInfo;
+use WPGraphQL\AppContext;
 use WPGraphQL\Registry\TypeRegistry;
 use WPGraphQL\Utils\Utils;
+use WPGraphQLAcf\Data\Loader\AcfOptionsPageLoader;
+use WPGraphQLAcf\Model\AcfOptionsPage;
 
 class Registry {
 
@@ -76,24 +80,7 @@ class Registry {
 	 * @return bool
 	 */
 	public function should_field_group_show_in_graphql( array $acf_field_group ): bool {
-
-		$should = true;
-
-		if ( isset( $acf_field_group['active'] ) && false === $acf_field_group['active'] ) {
-			$should = false;
-		}
-
-		// if the field group was configured with no "show_in_graphql" value, default to the "show_in_rest" value
-		// to determine if the group should be available in an API
-		if ( ! isset( $acf_field_group['show_in_graphql'] ) ) {
-			$acf_field_group['show_in_graphql'] = $acf_field_group['show_in_rest'] ?? false;
-		}
-
-		if ( isset( $acf_field_group['show_in_graphql'] ) && false === $acf_field_group['show_in_graphql'] ) {
-			$should = false;
-		}
-
-		return (bool) apply_filters( 'graphql_acf_should_field_group_show_in_graphql', $should, $acf_field_group );
+		return \WPGraphQLAcf\Utils::should_field_group_show_in_graphql( $acf_field_group );
 	}
 
 	/**
@@ -269,6 +256,26 @@ class Registry {
 				],
 			],
 		] );
+
+		register_graphql_interface_type( 'AcfOptionsPage', [
+			'interfaces'  => [ 'Node' ],
+			'description' => __( 'Options Page registered by ACF', 'wp-graphql-acf' ),
+			'fields'      => [
+				'id'        => [
+					'type' => [ 'non_null' => 'ID' ],
+				],
+				'pageTitle' => [
+					'type' => 'String',
+				],
+				'menuTitle' => [
+					'type' => 'String',
+				],
+				'parentId'  => [
+					'type' => 'String',
+				],
+			],
+		] );
+
 	}
 
 	/**
@@ -277,6 +284,7 @@ class Registry {
 	 * @param array $acf_field_group The ACF Field Group config
 	 *
 	 * @return array
+	 * @throws Error
 	 */
 	public function get_field_group_interfaces( array $acf_field_group ): array {
 
@@ -304,6 +312,76 @@ class Registry {
 		$interfaces = array_unique( array_values( $interfaces ) );
 
 		return array_unique( $interfaces );
+
+	}
+
+	/**
+	 * @return void
+	 * @throws Error
+	 * @throws Exception
+	 */
+	public function register_options_pages():void {
+
+		if ( ! function_exists( 'acf_get_options_pages' ) ) {
+			return;
+		}
+
+		$graphql_options_pages = acf_get_options_pages();
+
+		if ( empty( $graphql_options_pages ) ) {
+			return;
+		}
+
+		foreach ( $graphql_options_pages as $graphql_options_page ) {
+			if ( ! $this->should_field_group_show_in_graphql( $graphql_options_page ) ) {
+				continue;
+			}
+
+			$type_name = $this->get_field_group_graphql_type_name( $graphql_options_page );
+
+			if ( empty( $type_name ) ) {
+				continue;
+			}
+
+			register_graphql_object_type( $type_name, [
+				'interfaces' => [ 'AcfOptionsPage' ],
+				'model'      => AcfOptionsPage::class,
+				'fields'     => [
+					'id'        => [
+						'type' => [ 'non_null' => 'ID' ],
+					],
+					'pageTitle' => [
+						'type' => 'String',
+					],
+				],
+			] );
+
+			$field_name = Utils::format_field_name( $type_name );
+
+			$interface_name = 'WithAcfOptionsPage' . $type_name;
+
+			register_graphql_interface_type( $interface_name, [
+				'description' => sprintf( __( 'Access point for the "%s" ACF Options Page', 'wp-graphql-acf' ), $type_name ),
+				'fields'      => [
+					$field_name => [
+						'type'    => $type_name,
+						'resolve' => function ( $source, $args, AppContext $context, ResolveInfo $info ) use ( $graphql_options_page ) {
+
+							$loader = $context->get_loader( 'acf_options_page' );
+
+							if ( ! $loader instanceof AcfOptionsPageLoader ) {
+								return 'null';
+							}
+
+							return $context->get_loader( 'acf_options_page' )->load_deferred( $graphql_options_page['menu_slug'] );
+						},
+					],
+				],
+			]);
+
+			register_graphql_interfaces_to_types( [ $interface_name ], [ 'RootQuery' ] );
+
+		}
 
 	}
 
@@ -391,42 +469,7 @@ class Registry {
 	 * @throws \GraphQL\Error\Error
 	 */
 	public function get_field_group_name( array $field_group ): string {
-
-		$field_group_name = '';
-
-
-
-		if ( ! empty( $field_group['graphql_field_name'] ) ) {
-			$field_group_name = $field_group['graphql_field_name'];
-			$field_group_name = preg_replace( '/[^0-9a-zA-Z_\s]/i', '', $field_group_name );
-		} else {
-			if ( ! empty( $field_group['name'] ) ) {
-				$field_group_name = $field_group['name'];
-			} elseif ( ! empty( $field_group['title'] ) ) {
-				$field_group_name = $field_group['title'];
-			} elseif ( ! empty( $field_group['label'] ) ) {
-				$field_group_name = $field_group['label'];
-			}
-			$field_group_name = preg_replace( '/[^0-9a-zA-Z_\s]/i', ' ', $field_group_name );
-			// if the graphql_field_name isn't explicitly defined, we'll format it without underscores
-			$field_group_name = Utils::format_field_name( $field_group_name, false );
-		}
-
-		if ( empty( $field_group_name ) ) {
-			return $field_group_name;
-		}
-
-		$starts_with_string = is_numeric( substr( $field_group_name, 0, 1 ) );
-
-		if ( $starts_with_string ) {
-			graphql_debug( __( 'The ACF Field or Field Group could not be added to the schema. GraphQL Field and Type names cannot start with a number', 'wp-graphql-acf' ), [
-				'invalid' => $field_group,
-			] );
-			return '';
-		}
-
-		return $field_group_name;
-
+		return \WPGraphQLAcf\Utils::get_field_group_name( $field_group );
 	}
 
 	/**
@@ -506,6 +549,10 @@ class Registry {
 	 * @return array
 	 */
 	public function get_graphql_locations_for_field_group( array $field_group, array $acf_field_groups ): array {
+
+		if ( ! $this->should_field_group_show_in_graphql( $field_group ) ) {
+			return [];
+		}
 
 		$graphql_types = $field_group['graphql_types'] ?? [];
 
