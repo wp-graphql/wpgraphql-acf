@@ -9,6 +9,7 @@ use WPGraphQL\AppContext;
 use WPGraphQL\Registry\TypeRegistry;
 use WPGraphQL\Utils\Utils;
 use WPGraphQLAcf\Data\Loader\AcfOptionsPageLoader;
+use WPGraphQLAcf\Model\AcfOptionsPage;
 
 class Registry {
 
@@ -344,6 +345,7 @@ class Registry {
 
 			register_graphql_object_type( $type_name, [
 				'interfaces' => [ 'AcfOptionsPage' ],
+				'model'      => AcfOptionsPage::class,
 				'fields'     => [
 					'id' => [
 						'type' => [ 'non_null' => 'ID' ],

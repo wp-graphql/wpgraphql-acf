@@ -243,6 +243,17 @@ class Utils {
 	/**
 	 * Whether the ACF Field Group should show in the GraphQL Schema
 	 *
+	 * @param array $acf_field
+	 *
+	 * @return bool
+	 */
+	public static function should_field_show_in_graphql( array $acf_field ): bool {
+		return self::should_field_group_show_in_graphql( $acf_field );
+	}
+
+	/**
+	 * Whether the ACF Field Group should show in the GraphQL Schema
+	 *
 	 * @param array $acf_field_group
 	 *
 	 * @return bool
