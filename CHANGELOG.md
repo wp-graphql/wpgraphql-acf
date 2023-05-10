@@ -1,5 +1,9 @@
 # Changelog
 
+## v2.0.0-beta-2.3.0
+
+- [#38](https://github.com/wp-graphql/wpgraphql-acf/pull/38) feat: ACF Options Page support
+
 ## 2.0.0-beta.2.2.0
 
 ### New Features
