@@ -4,6 +4,10 @@ class OptionsPageTest extends \Tests\WPGraphQLAcf\WPUnit\WPGraphQLAcfTestCase {
 
 
 	public function setUp():void {
+		if ( ! isset( $_ENV['ACF_PRO'] ) || true !== (bool) $_ENV['ACF_PRO'] ) {
+			$I->markTestSkipped( 'Options Pages are an ACF PRO feature. Skipping tests.' );
+		}
+
 		parent::setUp();
 	}
 

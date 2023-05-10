@@ -138,7 +138,7 @@ class Settings {
 			echo esc_html( __( 'No location rules were found', 'wp-graphql-acf' ) );
 
 			/** @noinspection ForgottenDebugOutputInspection */
-			wp_die( __( 'No location rules were found', 'wp-graphql-acf' ) );
+			wp_die();
 		}
 
 		$form_data           = [];

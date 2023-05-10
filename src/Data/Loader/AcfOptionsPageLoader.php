@@ -25,8 +25,8 @@ class AcfOptionsPageLoader extends AbstractDataLoader {
 		$response = [];
 
 		foreach ( $keys as $key ) {
-			if  ( isset( $options_pages[ $key ] ) ) {
-				$response[ $key ] = new \WPGraphQLAcf\Model\AcfOptionsPage(  $options_pages[ $key ] );
+			if ( isset( $options_pages[ $key ] ) ) {
+				$response[ $key ] = new \WPGraphQLAcf\Model\AcfOptionsPage( $options_pages[ $key ] );
 			}
 		}
 

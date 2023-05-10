@@ -258,20 +258,20 @@ class Registry {
 		] );
 
 		register_graphql_interface_type( 'AcfOptionsPage', [
-			'interfaces' => [ 'Node' ],
+			'interfaces'  => [ 'Node' ],
 			'description' => __( 'Options Page registered by ACF', 'wp-graphql-acf' ),
 			'fields'      => [
-				'id' => [
+				'id'        => [
 					'type' => [ 'non_null' => 'ID' ],
 				],
-				'pageTitle'  => [
-					'type'    => 'String',
+				'pageTitle' => [
+					'type' => 'String',
 				],
-				'menuTitle'  => [
-					'type'    => 'String',
+				'menuTitle' => [
+					'type' => 'String',
 				],
-				'parentId' => [
-					'type'    => 'String',
+				'parentId'  => [
+					'type' => 'String',
 				],
 			],
 		] );
@@ -347,7 +347,7 @@ class Registry {
 				'interfaces' => [ 'AcfOptionsPage' ],
 				'model'      => AcfOptionsPage::class,
 				'fields'     => [
-					'id' => [
+					'id'        => [
 						'type' => [ 'non_null' => 'ID' ],
 					],
 					'pageTitle' => [

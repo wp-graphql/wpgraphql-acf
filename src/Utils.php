@@ -150,7 +150,7 @@ class Utils {
 				'label'        => __( 'Page Template', 'wp-graphql-acf' ),
 				'plural_label' => __( 'All Templates Assignable to Content', 'wp-graphql-acf' ),
 			],
-			'AcfOptionsPage'   => [
+			'AcfOptionsPage'  => [
 				'label'        => __( 'ACF Options Page', 'wp-graphql-acf' ),
 				'plural_label' => __( 'All Options Pages registered by ACF', 'wp-graphql-acf' ),
 			],
@@ -307,7 +307,7 @@ class Utils {
 				$field_group_name = $field_group['title'];
 			} elseif ( ! empty( $field_group['label'] ) ) {
 				$field_group_name = $field_group['label'];
-			} else if ( ! empty( $field_group['page_title'] ) ) {
+			} elseif ( ! empty( $field_group['page_title'] ) ) {
 				$field_group_name = $field_group['page_title'];
 			}
 			$field_group_name = preg_replace( '/[^0-9a-zA-Z_\s]/i', ' ', $field_group_name );

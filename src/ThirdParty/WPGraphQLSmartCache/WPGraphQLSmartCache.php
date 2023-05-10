@@ -8,6 +8,8 @@ class WPGraphQLSmartCache {
 
 	/**
 	 * @var Invalidation
+	 *
+	 * @phpstan-ignore-next-line
 	 */
 	protected $invalidation;
 
@@ -28,6 +30,7 @@ class WPGraphQLSmartCache {
 	 *
 	 * @return void
 	 */
+	// @phpstan-ignore-next-line
 	public function initialize_cache_invalidation( \WPGraphQL\SmartCache\Cache\Invalidation $invalidation ) {
 
 			$this->invalidation = $invalidation;
@@ -47,10 +50,12 @@ class WPGraphQLSmartCache {
 	 */
 	public function updated_acf_option_cb( string $option, $value, $original_value ): void {
 
-		if ( ! isset( $_POST['_acf_screen'] ) || 'options' !== $_POST['_acf_screen' ] ) {
+		// phpcs:ignore
+		if ( ! isset( $_POST['_acf_screen'] ) || 'options' !== $_POST['_acf_screen'] ) {
 			return;
 		}
 
+		// phpcs:ignore
 		$options_page = $_GET['page'] ?? null;
 
 		if ( empty( $options_page ) ) {
@@ -59,6 +64,7 @@ class WPGraphQLSmartCache {
 
 		$id = \GraphQLRelay\Relay::toGlobalId( 'acf_options_page', $options_page );
 
+		// @phpstan-ignore-next-line
 		$this->invalidation->purge( $id, sprintf( 'update_acf_options_page ( "%s" )', $options_page ) );
 
 	}

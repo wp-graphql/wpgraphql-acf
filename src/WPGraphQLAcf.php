@@ -168,12 +168,12 @@ class WPGraphQLAcf {
 	}
 
 	/**
-	 * @param string|null $type The GraphQL Type to return based on the resolving node
+	 * @param mixed $type The GraphQL Type to return based on the resolving node
 	 * @param mixed $node The Node being resolved
 	 *
-	 * @return string
+	 * @return mixed
 	 */
-	public function resolve_acf_options_page_node( ?string $type, $node ) {
+	public function resolve_acf_options_page_node( $type, $node ) {
 		if ( $node instanceof \WPGraphQLAcf\Model\AcfOptionsPage ) {
 			return \WPGraphQLAcf\Utils::get_field_group_name( $node->get_data() );
 		}
@@ -187,7 +187,7 @@ class WPGraphQLAcf {
 	 * @return array
 	 */
 	public function register_loaders( array $loaders, \WPGraphQL\AppContext $context ): array {
-		$loaders[ 'acf_options_page' ] = new \WPGraphQLAcf\Data\Loader\AcfOptionsPageLoader( $context );
+		$loaders['acf_options_page'] = new \WPGraphQLAcf\Data\Loader\AcfOptionsPageLoader( $context );
 		return $loaders;
 	}
 

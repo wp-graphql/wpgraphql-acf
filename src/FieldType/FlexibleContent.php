@@ -62,7 +62,6 @@ class FlexibleContent {
 						$interfaces[]                 = $layout_interface_name;
 						$layout['eagerlyLoadType']    = true;
 						$layout['graphql_field_name'] = $layout_name;
-//						$layout['fields']             = $field_config->get_registry()->get_fields_for_field_group( $layout );
 						$layout['fields']             = [
 							'fieldGroupName' => [
 								'type'              => 'String',
