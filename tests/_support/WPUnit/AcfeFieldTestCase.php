@@ -6,7 +6,7 @@ abstract class AcfeFieldTestCase extends \Tests\WPGraphQLAcf\WPUnit\AcfFieldTest
 	public function _setUp() {
 
 		// if the plugin version is before 6.1, we're not testing this functionality
-		if ( ! isset( $_ENV['ACF_EXTENDED_PRO'] ) || true !== (bool) $_ENV['ACF_EXTENDED_PRO'] ) {
+		if ( ! class_exists( 'ACFE_PRO' ) ) {
 			$this->markTestSkipped( 'ACF Extended Pro is not active so this test will not run.' );
 		}
 

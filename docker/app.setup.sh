@@ -73,7 +73,7 @@ else
 fi
 
 # If ACF_EXTENDED_PRO is not true, or the license key is a default value, we'll be using the FREE version of ACF EXTENDED
-if [[ true != ${ACF_EXTENDED_PRO} || '.' == ${ACF_EXTENDED_LICENSE_KEY} || 'Your License Key' == ${ACF_EXTENDED_LICENSE_KEY} ]]; then
+if [[ true != ${ACF_PRO} || '.' == ${ACF_EXTENDED_LICENSE_KEY} || 'Your License Key' == ${ACF_EXTENDED_LICENSE_KEY} ]]; then
 
 	echo "ACF EXTENDED Version: " ${ACF_EXTENDED_VERSION}
 	ACF_EXTENDED_PLUGIN_SLUG="acf-extended/acf-extended.php"
