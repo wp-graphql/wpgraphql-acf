@@ -8,6 +8,7 @@ use WPGraphQL\Model\MenuItem;
 use WPGraphQL\Model\Post;
 use WPGraphQL\Model\Term;
 use WPGraphQL\Model\User;
+use WPGraphQLAcf\Model\AcfOptionsPage;
 
 class Utils {
 
@@ -48,6 +49,9 @@ class Utils {
 				break;
 			case is_array( $node ) && isset( $node['post_id'] ) && 'options' === $node['post_id']:
 				$id = $node['post_id'];
+				break;
+			case $node instanceof AcfOptionsPage:
+				$id = $node->acfId;
 				break;
 			default:
 				$id = 0;
@@ -146,6 +150,10 @@ class Utils {
 				'label'        => __( 'Page Template', 'wp-graphql-acf' ),
 				'plural_label' => __( 'All Templates Assignable to Content', 'wp-graphql-acf' ),
 			],
+			'AcfOptionsPage'   => [
+				'label'        => __( 'ACF Options Page', 'wp-graphql-acf' ),
+				'plural_label' => __( 'All Options Pages registered by ACF', 'wp-graphql-acf' ),
+			],
 		];
 
 		foreach ( $interfaces as $interface_name => $config ) {
@@ -194,12 +202,8 @@ class Utils {
 		 */
 		$graphql_types['User'] = __( 'User', 'wp-graphql-acf' );
 
-		/**
-		 * Add options pages to GraphQL types
-		 */
-		global $acf_options_page;
+		if ( function_exists( 'acf_get_options_pages' ) ) {
 
-		if ( isset( $acf_options_page ) && function_exists( 'acf_get_options_pages' ) ) {
 			// Get a list of post types that have been registered to show in graphql
 			$graphql_options_pages = acf_get_options_pages();
 
@@ -211,13 +215,13 @@ class Utils {
 				/**
 				 * Prepare type key prefix and label surfix
 				 */
-				$label = '<span class="options-page"> (' . __( 'ACF Options Page', 'wp-graphql-acf' ) . ')</span>';
+				$label = '<span class="options-page">(' . __( 'ACF Options Page', 'wp-graphql-acf' ) . ')</span>';
 
 				/**
 				 * Loop over the post types exposed to GraphQL
 				 */
 				foreach ( $graphql_options_pages as $options_page_key => $options_page ) {
-					if ( ! isset( $options_page['show_in_graphql'] ) || false === (bool) $options_page['show_in_graphql'] ) {
+					if ( isset( $options_page['show_in_graphql'] ) && ! $options_page['show_in_graphql'] ) {
 						continue;
 					}
 
@@ -225,7 +229,7 @@ class Utils {
 					 * Get options page properties.
 					 */
 					$page_title = $options_page['page_title'];
-					$type_label = $page_title . $label;
+					$type_label = $page_title . '&nbsp;' . $label;
 					$type_name  = isset( $options_page['graphql_field_name'] ) ? \WPGraphQL\Utils\Utils::format_type_name( $options_page['graphql_field_name'] ) : \WPGraphQL\Utils\Utils::format_type_name( $options_page['menu_slug'] );
 
 					$graphql_types[ $type_name ] = $type_label;
@@ -237,6 +241,87 @@ class Utils {
 	}
 
 	/**
+	 * Whether the ACF Field Group should show in the GraphQL Schema
+	 *
+	 * @param array $acf_field_group
+	 *
+	 * @return bool
+	 */
+	public static function should_field_group_show_in_graphql( array $acf_field_group ): bool {
+
+		$should = true;
+
+		if ( isset( $acf_field_group['active'] ) && false === $acf_field_group['active'] ) {
+			$should = false;
+		}
+
+		$show_in_rest = $acf_field_group['show_in_rest'] ?? false;
+
+
+		// if the field group was configured with no "show_in_graphql" value, default to the "show_in_rest" value
+		// to determine if the group should be available in an API
+		if (
+			( isset( $acf_field_group['post_id'] ) && 'options' !== $acf_field_group['post_id'] ) &&
+			! isset( $acf_field_group['show_in_graphql'] ) ) {
+			$acf_field_group['show_in_graphql'] = $show_in_rest ?? false;
+		}
+
+		if ( isset( $acf_field_group['show_in_graphql'] ) && false === $acf_field_group['show_in_graphql'] ) {
+			$should = false;
+		}
+
+		return (bool) apply_filters( 'graphql_acf_should_field_group_show_in_graphql', $should, $acf_field_group );
+
+	}
+
+	/**
+	 * Given a field group config, return the name of the field group to be used in the GraphQL
+	 * Schema
+	 *
+	 * @param array $field_group The field group config array
+	 *
+	 * @return string
+	 */
+	public static function get_field_group_name( array $field_group ): string {
+
+		$field_group_name = '';
+
+		if ( ! empty( $field_group['graphql_field_name'] ) ) {
+			$field_group_name = $field_group['graphql_field_name'];
+			$field_group_name = preg_replace( '/[^0-9a-zA-Z_\s]/i', '', $field_group_name );
+		} else {
+			if ( ! empty( $field_group['name'] ) ) {
+				$field_group_name = $field_group['name'];
+			} elseif ( ! empty( $field_group['title'] ) ) {
+				$field_group_name = $field_group['title'];
+			} elseif ( ! empty( $field_group['label'] ) ) {
+				$field_group_name = $field_group['label'];
+			} else if ( ! empty( $field_group['page_title'] ) ) {
+				$field_group_name = $field_group['page_title'];
+			}
+			$field_group_name = preg_replace( '/[^0-9a-zA-Z_\s]/i', ' ', $field_group_name );
+			// if the graphql_field_name isn't explicitly defined, we'll format it without underscores
+			$field_group_name = \WPGraphQL\Utils\Utils::format_field_name( $field_group_name, false );
+		}
+
+		if ( empty( $field_group_name ) ) {
+			return $field_group_name;
+		}
+
+		$starts_with_string = is_numeric( substr( $field_group_name, 0, 1 ) );
+
+		if ( $starts_with_string ) {
+			graphql_debug( __( 'The ACF Field or Field Group could not be added to the schema. GraphQL Field and Type names cannot start with a number', 'wp-graphql-acf' ), [
+				'invalid' => $field_group,
+			] );
+			return '';
+		}
+
+		return $field_group_name;
+
+	}
+
+	/**
 	 * Returns string of the items in the array list. Limit allows string to be limited length.
 	 *
 	 * @param array $list
@@ -244,7 +329,7 @@ class Utils {
 	 *
 	 * @return string
 	 */
-	public static function array_list_by_limit( array $list, $limit = 5 ): string {
+	public static function array_list_by_limit( array $list, int $limit = 5 ): string {
 		$flat_list = '';
 		$total     = count( $list );
 

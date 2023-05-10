@@ -12,10 +12,13 @@ use WPGraphQL\Utils\Utils;
  */
 abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 
+	public $acf_plugin_version;
+
 	/**
 	 * @return void
 	 */
 	public function setUp(): void {
+		$this->acf_plugin_version = $_ENV['ACF_VERSION'] ?? 'latest';
 		$this->clearSchema();
 		parent::setUp();
 	}

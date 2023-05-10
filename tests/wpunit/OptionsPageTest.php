@@ -76,9 +76,7 @@ class OptionsPageTest extends \Tests\WPGraphQLAcf\WPUnit\WPGraphQLAcfTestCase {
 		$query = '
 		query GetType( $name: String! ) {
 		  __type( name: $name ) {
-		    fields {
-		      name
-		    }
+		    name
 		  }
 		}
 		';
@@ -91,13 +89,16 @@ class OptionsPageTest extends \Tests\WPGraphQLAcf\WPUnit\WPGraphQLAcfTestCase {
 		]);
 
 		self::assertQuerySuccessful( $actual, [
-			$this->expectedField( '__type.fields.name', 'MyOptionsPage' )
+			$this->expectedField( '__type.name', 'MyOptionsPage' )
 		]);
 
 	}
 
 	// @todo:
 	// - options page not in Schema if "show_in_graphql" set to false
+	/**
+	 * @throws Exception
+	 */
 	public function testOptionsPageNotInSchemaIfShowInGraphqlIsFalse() {
 
 		acf_add_options_page(
@@ -152,9 +153,7 @@ class OptionsPageTest extends \Tests\WPGraphQLAcf\WPUnit\WPGraphQLAcfTestCase {
 		$query = '
 		query GetType( $name: String! ) {
 		  __type( name: $name ) {
-		    fields {
-		      name
-		    }
+		    name
 		  }
 		}
 		';
@@ -166,7 +165,7 @@ class OptionsPageTest extends \Tests\WPGraphQLAcf\WPUnit\WPGraphQLAcfTestCase {
 			]
 		]);
 
-		self::assertQuerySuccessful( $actual, [
+		$this->assertQueryError( $actual, [
 			$this->expectedField( '__type', self::IS_NULL )
 		]);
 
@@ -228,9 +227,7 @@ class OptionsPageTest extends \Tests\WPGraphQLAcf\WPUnit\WPGraphQLAcfTestCase {
 		$query = '
 		query GetType( $name: String! ) {
 		  __type( name: $name ) {
-		    fields {
-		      name
-		    }
+		    name
 		  }
 		}
 		';
@@ -243,8 +240,49 @@ class OptionsPageTest extends \Tests\WPGraphQLAcf\WPUnit\WPGraphQLAcfTestCase {
 		]);
 
 		self::assertQuerySuccessful( $actual, [
-			$this->expectedField( '__type.fields.name', 'MyCustomOptionsName' )
+			$this->expectedField( '__type.name', 'MyCustomOptionsName' )
 		]);
+	}
+
+	public function testQueryOptionsPageAsNode() {
+
+		acf_add_options_page(
+			[
+				'page_title' => 'OptionsPageNode',
+				'menu_title' => __( 'Options Page Node' ),
+				'menu_slug'  => 'options-page-node',
+				'capability' => 'edit_posts',
+				// options pages will show in the Schema unless set to false
+				'graphql_field_name'   => 'OptionsPageNode',
+			]
+		);
+
+		$query = '
+		query GetOptionsPage($id: ID!) {
+		  node(id:$id) {
+		    id
+		    __typename
+		    ...on AcfOptionsPage {
+		      menuTitle
+		    }
+		  }
+        }
+		';
+
+		$id = \GraphQLRelay\Relay::toGlobalId( 'acf_options_page', 'options-page-node' );
+
+		$actual = $this->graphql([
+			'query' => $query,
+			'variables' => [
+				'id' => $id
+			]
+		]);
+
+		self::assertQuerySuccessful( $actual, [
+			$this->expectedField( 'node.__typename', 'OptionsPageNode' ),
+			$this->expectedField( 'node.id', $id )
+		]);
+
 	}
 
 }
