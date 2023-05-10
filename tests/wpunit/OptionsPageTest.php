@@ -4,8 +4,8 @@ class OptionsPageTest extends \Tests\WPGraphQLAcf\WPUnit\WPGraphQLAcfTestCase {
 
 
 	public function setUp():void {
-		if ( ! isset( $_ENV['ACF_PRO'] ) || true !== (bool) $_ENV['ACF_PRO'] ) {
-			$this->markTestSkipped( 'Options Pages are an ACF PRO feature. Skipping tests.' );
+		if ( ! function_exists( 'acf_add_options_page' ) ) {
+			$this->markTestSkipped( 'ACF Options Pages are not available in this test environment' );
 		}
 
 		parent::setUp();
@@ -16,9 +16,7 @@ class OptionsPageTest extends \Tests\WPGraphQLAcf\WPUnit\WPGraphQLAcfTestCase {
 	}
 
 	public function registerOptionsPage( $title = 'My Options Page', $config = [] ) {
-		if ( ! function_exists( 'acf_add_options_page' ) ) {
-			$this->markTestIncomplete( 'ACF Options Pages are not available in this test environment' );
-		}
+
 
 		// register options page
 		acf_add_options_page(
