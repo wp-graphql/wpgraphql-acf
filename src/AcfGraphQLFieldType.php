@@ -165,6 +165,21 @@ class AcfGraphQLFieldType {
 			],
 		];
 
+		$default_admin_settings['graphql_non_null'] = [
+			'label' => __( 'GraphQL NonNull', 'wp-graphql-acf' ),
+			'instructions'  => __( 'Whether the field should be NonNull in the GraphQL Schema. <strong>Use with caution.</strong> Only check this if you can gaurantee there will be data stored for this field on all objects that have this field.', 'wp-graphql-acf' ),
+			'name'          => 'graphql_non_null',
+			'type'          => 'true_false',
+			'ui'            => 1,
+			'default_value' => 0,
+			'value'         => isset( $field['graphql_non_null'] ) && true === (bool) $field['graphql_non_null'],
+			'conditions'    => [
+				'field'    => 'show_in_graphql',
+				'operator' => '==',
+				'value'    => '1',
+			],
+		];
+
 		// Get the admin fields for the field type
 		$admin_fields = $this->get_admin_fields( $field, $settings );
 
@@ -290,6 +305,8 @@ class AcfGraphQLFieldType {
 	}
 
 	/**
+	 * Determine the GraphQL Type the field should resolve as.
+	 *
 	 * @return array|string
 	 */
 	public function get_resolve_type( FieldConfig $field_config ) {
@@ -307,6 +324,11 @@ class AcfGraphQLFieldType {
 			} else {
 				$resolve_type = $this->get_config( 'graphql_type' );
 			}
+		}
+
+		// If the ACF Field is set to "graphql_non_null", map it to the schema as non_null
+		if ( isset( $acf_field['graphql_non_null'] ) && true === (bool) $acf_field['graphql_non_null'] ) {
+			$resolve_type = [ 'non_null' => $resolve_type ];
 		}
 
 		return $resolve_type;
