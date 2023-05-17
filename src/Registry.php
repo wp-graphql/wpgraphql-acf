@@ -325,7 +325,7 @@ class Registry {
 				],
 			],
 		] );
-		
+
 		$graphql_options_pages = acf_get_options_pages();
 
 		if ( empty( $graphql_options_pages ) ) {
