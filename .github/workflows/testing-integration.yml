@@ -36,7 +36,7 @@ jobs:
           - php: '7.3'
             wordpress: '5.9'
       fail-fast: false
-    name: WordPress ${{ matrix.wordpress }}, PHP ${{ matrix.php }}, ACF ${{matrix.acf_version}}, ACF PRO & ACF EXTENDED PRO ${{matrix.acf_pro}}
+    name: WordPress ${{ matrix.wordpress }}, PHP ${{ matrix.php }}, ACF ${{matrix.acf_version}}, ACF & ACF EXTENDED PRO ${{matrix.acf_pro}}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
