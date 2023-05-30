@@ -166,7 +166,7 @@ class AcfGraphQLFieldType {
 		];
 
 		$default_admin_settings['graphql_non_null'] = [
-			'label' => __( 'GraphQL Non-Null', 'wp-graphql-acf' ),
+			'label'         => __( 'GraphQL Non-Null', 'wp-graphql-acf' ),
 			'instructions'  => __( 'Whether the field should be Non-Null in the GraphQL Schema. <br/><br/><strong>Use with caution.</strong> Only check this if you can guarantee there will be data stored for this field on all objects that have this field. i.e. the field should be required and should have data entered for all previous entries with this field. Unchecking this, if already checked, is considered a breaking change to the GraphQL Schema.', 'wp-graphql-acf' ),
 			'name'          => 'graphql_non_null',
 			'type'          => 'true_false',
@@ -200,11 +200,12 @@ class AcfGraphQLFieldType {
 
 	/**
 	 * @param array $acf_field The ACF Field to get the settings for
+	 * @param array $default_admin_settings The default admin settings
 	 * @param Settings $settings Instance of the Settings class
 	 *
 	 * @return array
 	 */
-	public function get_admin_fields( array $acf_field, $default_admin_settings = [], Settings $settings ): array {
+	public function get_admin_fields( array $acf_field, array $default_admin_settings, Settings $settings ): array {
 
 		if ( ! empty( $this->admin_fields ) ) {
 			return $this->admin_fields;
@@ -214,7 +215,7 @@ class AcfGraphQLFieldType {
 
 		if ( is_array( $admin_fields ) ) {
 			$this->admin_fields = $admin_fields;
-		} else if ( is_callable( $admin_fields ) ) {
+		} elseif ( is_callable( $admin_fields ) ) {
 			$this->admin_fields = $admin_fields( $default_admin_settings, $acf_field, $this->config, $settings );
 		} else {
 			$this->admin_fields = $default_admin_settings;
@@ -320,7 +321,7 @@ class AcfGraphQLFieldType {
 			}
 		}
 
-		if ( $resolve_type === 'connection' ) {
+		if ( 'connection' === $resolve_type ) {
 			return $resolve_type;
 		}
 

@@ -15,7 +15,7 @@ class Gallery {
 
 		register_graphql_acf_field_type( 'gallery', [
 			'exclude_admin_fields' => [ 'graphql_non_null' ],
-			'graphql_type' => function ( FieldConfig $field_config, AcfGraphQLFieldType $acf_field_type ) {
+			'graphql_type'         => function ( FieldConfig $field_config, AcfGraphQLFieldType $acf_field_type ) {
 
 				if ( empty( $field_config->get_graphql_field_group_type_name() ) || empty( $field_config->get_graphql_field_name() ) ) {
 					return null;
