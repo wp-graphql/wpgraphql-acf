@@ -66,8 +66,9 @@ else
 	if [ ! -d ${PLUGINS_DIR}/advanced-custom-fields-pro ]; then
 		echo "Installing ACF Pro from AdvancedCustomFields.com"
 		# Using --quiet prevents the license key from being echoed in the test run
-		echo "https://connect.advancedcustomfields.com/v2/plugins/download?p=pro&k=LICENSE_KEY${ACF_PRO_DOWNLOAD_VERSION}"
-		wp plugin install "https://connect.advancedcustomfields.com/v2/plugins/download?p=pro&k=${ACF_LICENSE_KEY}${ACF_PRO_DOWNLOAD_VERSION}" --activate --allow-root --quiet
+		echo "https://connect.advancedcustomfields.com/v2/plugins/download?p=pro&k=${ACF_LICENSE_KEY}${ACF_PRO_DOWNLOAD_VERSION}"
+#		wp plugin install "https://connect.advancedcustomfields.com/v2/plugins/download?p=pro&k=${ACF_LICENSE_KEY}${ACF_PRO_DOWNLOAD_VERSION}" --activate --allow-root --quiet
+		wp plugin install "https://connect.advancedcustomfields.com/v2/plugins/download?p=pro&k=${ACF_LICENSE_KEY}${ACF_PRO_DOWNLOAD_VERSION}" --activate --allow-root
 	else
 		echo "Warning: Advanced Custom Fields Pro plugin already installed"
 	fi
