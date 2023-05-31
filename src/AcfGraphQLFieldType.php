@@ -165,37 +165,47 @@ class AcfGraphQLFieldType {
 			],
 		];
 
+		$default_admin_settings['graphql_non_null'] = [
+			'label'         => __( 'GraphQL Non-Null', 'wp-graphql-acf' ),
+			'instructions'  => __( 'Whether the field should be Non-Null in the GraphQL Schema. <br/><br/><strong>Use with caution.</strong> Only check this if you can guarantee there will be data stored for this field on all objects that have this field. i.e. the field should be required and should have data entered for all previous entries with this field. Unchecking this, if already checked, is considered a breaking change to the GraphQL Schema.', 'wp-graphql-acf' ),
+			'name'          => 'graphql_non_null',
+			'type'          => 'true_false',
+			'ui'            => 1,
+			'default_value' => 0,
+			'value'         => isset( $field['graphql_non_null'] ) && true === (bool) $field['graphql_non_null'],
+			'conditions'    => [
+				[
+					'field'    => 'show_in_graphql',
+					'operator' => '==',
+					'value'    => '1',
+				],
+			],
+		];
+
+		$default_admin_settings = apply_filters( 'graphql_acf_field_type_default_admin_settings', $default_admin_settings );
+
 		// Get the admin fields for the field type
-		$admin_fields = $this->get_admin_fields( $field, $settings );
-
-
-		// Add additional fields to the defaults
-		if ( ! empty( $admin_fields ) ) {
-			foreach ( $admin_fields as $admin_field_key => $admin_field_config ) {
-				if ( ! empty( $admin_field_config['admin_field'] ) && ! isset( $default_admin_settings[ $admin_field_key ] ) ) {
-					$default_admin_settings[ $admin_field_key ] = $admin_field_config['admin_field'];
-				}
-			}
-		}
+		$admin_fields = $this->get_admin_fields( $field, $default_admin_settings, $settings );
 
 		// Remove excluded fields
 		if ( isset( $this->config['exclude_admin_fields'] ) && is_array( $this->config['exclude_admin_fields'] ) ) {
 			foreach ( $this->config['exclude_admin_fields'] as $excluded ) {
-				unset( $default_admin_settings[ $excluded ] );
+				unset( $admin_fields[ $excluded ] );
 			}
 		}
 
-		return apply_filters( 'graphql_acf_field_type_default_admin_settings', $default_admin_settings );
+		return apply_filters( 'graphql_acf_field_type_admin_settings', $admin_fields );
 
 	}
 
 	/**
 	 * @param array $acf_field The ACF Field to get the settings for
+	 * @param array $default_admin_settings The default admin settings
 	 * @param Settings $settings Instance of the Settings class
 	 *
 	 * @return array
 	 */
-	public function get_admin_fields( array $acf_field, Settings $settings ): array {
+	public function get_admin_fields( array $acf_field, array $default_admin_settings, Settings $settings ): array {
 
 		if ( ! empty( $this->admin_fields ) ) {
 			return $this->admin_fields;
@@ -205,10 +215,10 @@ class AcfGraphQLFieldType {
 
 		if ( is_array( $admin_fields ) ) {
 			$this->admin_fields = $admin_fields;
-		}
-
-		if ( is_callable( $admin_fields ) ) {
-			$this->admin_fields = $admin_fields( $acf_field, $this->config, $settings );
+		} elseif ( is_callable( $admin_fields ) ) {
+			$this->admin_fields = $admin_fields( $default_admin_settings, $acf_field, $this->config, $settings );
+		} else {
+			$this->admin_fields = $default_admin_settings;
 		}
 
 		return $this->admin_fields;
@@ -290,6 +300,8 @@ class AcfGraphQLFieldType {
 	}
 
 	/**
+	 * Determine the GraphQL Type the field should resolve as.
+	 *
 	 * @return array|string
 	 */
 	public function get_resolve_type( FieldConfig $field_config ) {
@@ -307,6 +319,15 @@ class AcfGraphQLFieldType {
 			} else {
 				$resolve_type = $this->get_config( 'graphql_type' );
 			}
+		}
+
+		if ( 'connection' === $resolve_type ) {
+			return $resolve_type;
+		}
+
+		// If the ACF Field is set to "graphql_non_null", map it to the schema as non_null
+		if ( isset( $acf_field['graphql_non_null'] ) && true === (bool) $acf_field['graphql_non_null'] ) {
+			$resolve_type = [ 'non_null' => $resolve_type ];
 		}
 
 		return $resolve_type;

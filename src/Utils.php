@@ -165,20 +165,22 @@ class Utils {
 				],
 			]);
 
-			$possible_types = is_array( $interface_query ) && isset( $interface_query['data']['__type']['possibleTypes'] ) ? $interface_query['data']['__type']['possibleTypes'] : [];
+			$possible_types = is_array( $interface_query ) && ! empty( $interface_query['data']['__type']['possibleTypes'] ) ? $interface_query['data']['__type']['possibleTypes'] : [];
+
+			if ( empty( $possible_types ) ) {
+				continue;
+			}
+
 			asort( $possible_types );
 
-			if ( ! empty( $possible_types ) && is_array( $possible_types ) ) {
+			// Intentionally not translating "ContentNode Interface" as this is part of the GraphQL Schema and should not be translated.
+			$graphql_types[ $interface_name ] = '<span data-interface="' . $interface_name . '">' . $interface_name . ' Interface (' . $config['plural_label'] . ')</span>';
+			$label                            = '<span data-implements="' . $interface_name . '"> (' . $config['label'] . ')</span>';
+			foreach ( $possible_types as $type ) {
+				$type_label = $type['name'] . '&nbsp;' . $label;
+				$type_key   = $type['name'];
 
-				// Intentionally not translating "ContentNode Interface" as this is part of the GraphQL Schema and should not be translated.
-				$graphql_types[ $interface_name ] = '<span data-interface="' . $interface_name . '">' . $interface_name . ' Interface (' . $config['plural_label'] . ')</span>';
-				$label                            = '<span data-implements="' . $interface_name . '"> (' . $config['label'] . ')</span>';
-				foreach ( $possible_types as $type ) {
-					$type_label = $type['name'] . '&nbsp;' . $label;
-					$type_key   = $type['name'];
-
-					$graphql_types[ $type_key ] = $type_label;
-				}
+				$graphql_types[ $type_key ] = $type_label;
 			}
 		}
 
@@ -201,41 +203,6 @@ class Utils {
 		 * Add users to GraphQL types
 		 */
 		$graphql_types['User'] = __( 'User', 'wp-graphql-acf' );
-
-		if ( function_exists( 'acf_get_options_pages' ) ) {
-
-			// Get a list of post types that have been registered to show in graphql
-			$graphql_options_pages = acf_get_options_pages();
-
-			/**
-			 * If there are no post types exposed to GraphQL, bail
-			 */
-			if ( ! empty( $graphql_options_pages ) && is_array( $graphql_options_pages ) ) {
-
-				/**
-				 * Prepare type key prefix and label surfix
-				 */
-				$label = '<span class="options-page">(' . __( 'ACF Options Page', 'wp-graphql-acf' ) . ')</span>';
-
-				/**
-				 * Loop over the post types exposed to GraphQL
-				 */
-				foreach ( $graphql_options_pages as $options_page_key => $options_page ) {
-					if ( isset( $options_page['show_in_graphql'] ) && ! $options_page['show_in_graphql'] ) {
-						continue;
-					}
-
-					/**
-					 * Get options page properties.
-					 */
-					$page_title = $options_page['page_title'];
-					$type_label = $page_title . '&nbsp;' . $label;
-					$type_name  = isset( $options_page['graphql_field_name'] ) ? \WPGraphQL\Utils\Utils::format_type_name( $options_page['graphql_field_name'] ) : \WPGraphQL\Utils\Utils::format_type_name( $options_page['menu_slug'] );
-
-					$graphql_types[ $type_name ] = $type_label;
-				}
-			}
-		}
 
 		return $graphql_types;
 	}

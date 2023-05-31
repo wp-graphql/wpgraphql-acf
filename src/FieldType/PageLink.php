@@ -14,7 +14,8 @@ class PageLink {
 	public static function register_field_type(): void {
 
 		register_graphql_acf_field_type( 'page_link', [
-			'graphql_type' => function ( FieldConfig $field_config, AcfGraphQLFieldType $acf_field_type ) {
+			'exclude_admin_fields' => [ 'graphql_non_null' ],
+			'graphql_type'         => function ( FieldConfig $field_config, AcfGraphQLFieldType $acf_field_type ) {
 				$connection_config = [
 					'toType'  => 'ContentNode',
 					'resolve' => static function ( $root, $args, AppContext $context, $info ) use ( $field_config ) {

@@ -36,10 +36,14 @@ jobs:
           - php: '7.3'
             wordpress: '5.9'
       fail-fast: false
-    name: WordPress ${{ matrix.wordpress }}, PHP ${{ matrix.php }}, ACF ${{matrix.acf_version}}, ACF PRO ${{matrix.acf_pro}}, ACF Extended PRO ${{matrix.acf_extended_pro}}
+    name: WordPress ${{ matrix.wordpress }}, PHP ${{ matrix.php }}, ACF ${{matrix.acf_version}}, ACF & ACF EXTENDED PRO ${{matrix.acf_pro}}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+
+        # This is used in case the IP gets blocked by one of the services used to download the pro plugins
+      - name: 🔎 Check IP
+        run: curl https://api.ipify.org
 
       - name: Install PHP
         uses: shivammathur/setup-php@v2
@@ -61,7 +65,7 @@ jobs:
       - name: Install dependencies
         run: composer install
 
-      - name: Copy environemt files
+      - name: Copy environment files
         run: |
           cp .env.dist .env
           cp .env.testing.dist .env.testing
