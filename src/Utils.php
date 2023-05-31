@@ -229,9 +229,6 @@ class Utils {
 
 		$should = true;
 
-		if ( isset( $acf_field_group['active'] ) && false === $acf_field_group['active'] ) {
-			$should = false;
-		}
 
 		$show_in_rest = $acf_field_group['show_in_rest'] ?? false;
 

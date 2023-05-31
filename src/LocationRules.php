@@ -362,6 +362,12 @@ class LocationRules {
 
 				$field_group_name = $field_group['graphql_field_name'] ?? $field_group['title'];
 
+				// If the field group is not active,
+				// then the location rules won't be applied as the field group won't show in the admin
+				if ( isset( $field_group['active'] ) && false === $field_group['active'] ) {
+					continue;
+				}
+
 				if ( ! empty( $field_group['location'] ) && is_array( $field_group['location'] ) ) {
 
 					foreach ( $field_group['location'] as $location_rule_group ) {
