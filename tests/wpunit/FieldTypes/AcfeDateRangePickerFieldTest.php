@@ -9,7 +9,6 @@ class AcfeDateRangePickerFieldTest extends \Tests\WPGraphQLAcf\WPUnit\AcfeFieldT
 		parent::setUp();
 	}
 
-
 	/**
 	 * @return void
 	 */
