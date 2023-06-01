@@ -1,6 +1,14 @@
 # Changelog
 
+## v2.0.0-beta.2.4.0
+
+### New Features
+
+- [#47](https://github.com/wp-graphql/wpgraphql-acf/pull/47) feat: Expose field groups that are not active, but set to "show_in_graphql" to allow inactive groups to be cloned and used in the schema.
+
 ## v2.0.0-beta.2.3.0
+
+### New Features
 
 - [#38](https://github.com/wp-graphql/wpgraphql-acf/pull/38) feat: ACF Options Page support
 
