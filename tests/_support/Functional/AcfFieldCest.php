@@ -165,7 +165,16 @@ abstract class AcfFieldCest {
 		// Check the option again
 		$I->checkOption( $show_in_graphql_checkbox_selector );
 
+		// since JS is not active to add a default field, we add a field
+		$I->fillField( '//div[@data-key="' . $this->_getTestFieldKey() . '"]//*[@data-name="graphql_field_name"]//input[@type="text"]', 'newFieldName' );
+
 		$this->_submitForm( $I );
+
+		// make sure there's no errors
+		$I->dontSeeElement( '#message.notice-error' );
+
+		// Make sure the save succeeded
+		$I->seeElement( '#message.notice-success' );
 
 		// The checkbox SHOULD be checked again now
 		$I->seeCheckboxIsChecked( $show_in_graphql_checkbox_selector );

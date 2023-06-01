@@ -275,12 +275,13 @@ class Registry {
 		$interfaces[]     = $fields_interface;
 
 		if ( defined( 'ACF_PRO' ) ) {
-			// @phpstan-ignore-next-line
+
 			$fields = [];
 
 			if ( isset( $acf_field_group['sub_fields'] ) ) {
 				$fields = $acf_field_group['sub_fields'];
 			} elseif ( isset( $acf_field_group['ID'] ) ) {
+				// @phpstan-ignore-next-line
 				$fields = acf_get_fields( $acf_field_group );
 			}
 
@@ -415,24 +416,14 @@ class Registry {
 			],
 		];
 
-		if ( ! isset( $acf_field_group['parent'] ) ) {
-			$acf_field_group['parent'] = null;
-		}
-
-		if ( ! isset( $acf_field_group['ID'] ) ) {
-			$acf_field_group['ID'] = 0;
-		}
-
 		$fields = [];
 
 		if ( isset( $acf_field_group['sub_fields'] ) ) {
 			$fields = $acf_field_group['sub_fields'];
 		} elseif ( isset( $acf_field_group['ID'] ) ) {
+			// @phpstan-ignore-next-line
 			$fields = acf_get_fields( $acf_field_group );
 		}
-
-		// @phpstan-ignore-next-line
-//		$fields = $acf_field_group['sub_fields'] ?? acf_get_fields( $acf_field_group );
 
 		// Track cloned fields so that their keys can be passed down in the field config for use in resolvers
 		$cloned_fields = [];

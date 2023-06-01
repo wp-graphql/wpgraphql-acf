@@ -469,23 +469,17 @@ class LocationRules {
 				// loop over and set all post types
 				foreach ( $allowed_post_types as $allowed_post_type ) {
 
-					if ( $allowed_post_type instanceof \WP_Post_Type ) {
-						$allowed_post_type = $allowed_post_type->name;
-					}
-
 					$post_type_object = get_post_type_object( $allowed_post_type );
 					$graphql_name     = $post_type_object->graphql_single_name ?? null;
 					if ( ! empty( $graphql_name ) ) {
 						$this->set_graphql_type( $field_group_name, $graphql_name );
 					}
 				}
-			} else {
-				if ( in_array( $value, $allowed_post_types, true ) ) {
-					$post_type_object = get_post_type_object( $value );
-					$graphql_name     = $post_type_object->graphql_single_name ?? null;
-					if ( ! empty( $graphql_name ) ) {
-						$this->set_graphql_type( $field_group_name, $graphql_name );
-					}
+			} else if ( in_array( $value, $allowed_post_types, true ) ) {
+				$post_type_object = get_post_type_object( $value );
+				$graphql_name     = $post_type_object->graphql_single_name ?? null;
+				if ( ! empty( $graphql_name ) ) {
+					$this->set_graphql_type( $field_group_name, $graphql_name );
 				}
 			}
 		}
@@ -495,10 +489,6 @@ class LocationRules {
 			if ( 'all' !== $value ) {
 				// loop over and set all post types
 				foreach ( $allowed_post_types as $allowed_post_type ) {
-
-					if ( $allowed_post_type instanceof \WP_Post_Type ) {
-						$allowed_post_type = $allowed_post_type->name;
-					}
 
 					$post_type_object = get_post_type_object( $allowed_post_type );
 					$graphql_name     = $post_type_object->graphql_single_name ?? null;
@@ -581,10 +571,6 @@ class LocationRules {
 		// It will be added to the Schema for any Post Type that is set to show in GraphQL
 		$allowed_post_types = get_post_types( [ 'show_in_graphql' => true ] );
 		foreach ( $allowed_post_types as $post_type ) {
-
-			if ( $post_type instanceof \WP_Post_Type ) {
-				$post_type = $post_type->name;
-			}
 
 			$post_type_object = get_post_type_object( $post_type );
 			$graphql_name     = $post_type_object->graphql_single_name ?? null;
@@ -690,10 +676,6 @@ class LocationRules {
 			// loop over and set all post types
 			foreach ( $allowed_post_types as $allowed_post_type ) {
 
-				if ( $allowed_post_type instanceof \WP_Post_Type ) {
-					$allowed_post_type = $allowed_post_type->name;
-				}
-
 				$post_type_object = get_post_type_object( $allowed_post_type );
 				$graphql_name     = $post_type_object->graphql_single_name ?? null;
 				if ( ! empty( $graphql_name ) ) {
@@ -737,10 +719,6 @@ class LocationRules {
 
 			// loop over and set all post types
 			foreach ( $hierarchical_post_types as $allowed_post_type ) {
-
-				if ( $allowed_post_type instanceof \WP_Post_Type ) {
-					$allowed_post_type = $allowed_post_type->name;
-				}
 
 				$post_type_object = get_post_type_object( $allowed_post_type );
 				$graphql_name     = $post_type_object->graphql_single_name ?? null;
