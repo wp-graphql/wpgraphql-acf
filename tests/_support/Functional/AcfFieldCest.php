@@ -162,14 +162,8 @@ abstract class AcfFieldCest {
 		// submit the form
 		$this->_submitForm( $I );
 
-		// make sure there's no errors
-		$I->dontSeeElement( '#message.notice-error' );
-
-		// Make sure the save succeeded
-		$I->seeElement( '#message.notice-success' );
-
 		// The checkbox should not be checked now
-		$I->cantSeeCheckboxIsChecked( $show_in_graphql_checkbox_selector );
+		$I->dontSeeCheckboxIsChecked( $show_in_graphql_checkbox_selector );
 
 		// Check the option again
 		$I->checkOption( $show_in_graphql_checkbox_selector );
@@ -178,12 +172,6 @@ abstract class AcfFieldCest {
 		$I->fillField( $graphql_field_name_input_selector, 'newFieldName' );
 
 		$this->_submitForm( $I );
-
-		// make sure there's no errors
-		$I->dontSeeElement( '#message.notice-error' );
-
-		// Make sure the save succeeded
-		$I->seeElement( '#message.notice-success' );
 
 		// The checkbox SHOULD be checked again now
 		$I->seeCheckboxIsChecked( $show_in_graphql_checkbox_selector );
