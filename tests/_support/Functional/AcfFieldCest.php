@@ -62,8 +62,15 @@ abstract class AcfFieldCest {
 	/**
 	 * @return void
 	 */
-	public function _after(): void {
-		// @todo
+	public function _after( FunctionalTester $I ): void {
+
+		// Delete imported field group
+		$I->loginAsAdmin();
+		$I->amOnPage('/wp-admin/edit.php?post_type=acf-field-group');
+		$I->checkOption( '//tbody/tr/th[@class="check-column"]/input[@type="checkbox"]' );
+		$I->selectOption( '#bulk-action-selector-bottom', 'trash' );
+		$I->click( '#doaction2' );
+
 	}
 
 	/**
@@ -137,12 +144,14 @@ abstract class AcfFieldCest {
 	 *
 	 * @return void
 	 */
-	public function testSavingShowInGraphqlField( FunctionalTester $I ) {
+	public function testSavingShowInGraphqlField( FunctionalTester $I ): void {
 
 		// Here we want to test that saving the "show_in_graphql" field
 		// properly sets the value as unchecked and checked again
 
 		$show_in_graphql_checkbox_selector = '//div[@data-key="' . $this->_getTestFieldKey() . '"]//*[@data-name="show_in_graphql"]//input[@type="checkbox"]';
+
+		$graphql_field_name_input_selector = '//div[@data-key="' . $this->_getTestFieldKey() . '"]//*[@data-name="graphql_field_name"]//input[@type="text"]';
 
 		// default value is checked
 		$I->canSeeCheckboxIsChecked( $show_in_graphql_checkbox_selector );
@@ -166,7 +175,7 @@ abstract class AcfFieldCest {
 		$I->checkOption( $show_in_graphql_checkbox_selector );
 
 		// since JS is not active to add a default field, we add a field
-		$I->fillField( '//div[@data-key="' . $this->_getTestFieldKey() . '"]//*[@data-name="graphql_field_name"]//input[@type="text"]', 'newFieldName' );
+		$I->fillField( $graphql_field_name_input_selector, 'newFieldName' );
 
 		$this->_submitForm( $I );
 
