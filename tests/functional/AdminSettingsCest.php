@@ -41,6 +41,6 @@ class AdminSettingsCest
         $I->assertEquals( 'Foo Name', $I->grabTextFrom( "//tbody/tr/td[1]/*/a[@class='row-title']" ) );
 
         // Grab the wpgraphql type name
-        $I->assertEquals( 'FooGraphql', $I->grabTextFrom( "//tbody/tr/td/span[@class='acf-wpgraphql-type']" ) );
+        $I->assertEquals( 'FooGraphql', $I->grabTextFrom( "//tbody/tr/td/*[@class='acf-wpgraphql-type']" ) );
     }
 }

@@ -274,20 +274,30 @@ class Registry {
 		$interfaces[]     = 'AcfFieldGroup';
 		$interfaces[]     = $fields_interface;
 
-		// @phpstan-ignore-next-line
-		$fields = $acf_field_group['sub_fields'] ?? acf_get_fields( $acf_field_group );
+		if ( defined( 'ACF_PRO' ) ) {
 
-		foreach ( $fields as $field ) {
-			if ( ! empty( $field['_clone'] ) && ! empty( $field['__key'] ) ) {
+			$fields = [];
+
+			if ( isset( $acf_field_group['sub_fields'] ) ) {
+				$fields = $acf_field_group['sub_fields'];
+			} elseif ( isset( $acf_field_group['ID'] ) ) {
 				// @phpstan-ignore-next-line
-				$cloned_from = acf_get_field( $field['__key'] );
+				$fields = acf_get_fields( $acf_field_group );
+			}
 
-				if ( ! empty( $cloned_from ) ) {
-
+			foreach ( $fields as $field ) {
+				if ( ! empty( $field['_clone'] ) && ! empty( $field['__key'] ) ) {
 					// @phpstan-ignore-next-line
-					$interfaces[ $field['key'] ] = $this->get_field_group_graphql_type_name( acf_get_field_group( $cloned_from['parent'] ) ) . '_Fields';
+					$cloned_from = acf_get_field( $field['__key'] );
+
+					if ( ! empty( $cloned_from ) ) {
+
+						// @phpstan-ignore-next-line
+						$interfaces[ $field['key'] ] = $this->get_field_group_graphql_type_name( acf_get_field_group( $cloned_from['parent'] ) ) . '_Fields';
+					}
 				}
 			}
+
 		}
 
 		$interfaces = array_unique( array_values( $interfaces ) );
@@ -406,8 +416,14 @@ class Registry {
 			],
 		];
 
-		// @phpstan-ignore-next-line
-		$fields = $acf_field_group['sub_fields'] ?? acf_get_fields( $acf_field_group );
+		$fields = [];
+
+		if ( isset( $acf_field_group['sub_fields'] ) ) {
+			$fields = $acf_field_group['sub_fields'];
+		} elseif ( isset( $acf_field_group['ID'] ) ) {
+			// @phpstan-ignore-next-line
+			$fields = acf_get_fields( $acf_field_group );
+		}
 
 		// Track cloned fields so that their keys can be passed down in the field config for use in resolvers
 		$cloned_fields = [];
@@ -420,7 +436,7 @@ class Registry {
 				continue;
 			}
 
-			if ( isset( $acf_field['_clone'] ) ) {
+			if ( defined( 'ACF_PRO' ) && isset( $acf_field['_clone'] ) ) {
 				$cloned_fields[ $graphql_field_name ] = $acf_field;
 				continue;
 			}
@@ -431,7 +447,7 @@ class Registry {
 		}
 
 		// If there are cloned fields, pass the cloned field key to the field config for use in resolution
-		if ( ! empty( $cloned_fields ) ) {
+		if ( defined( 'ACF_PRO' ) && ! empty( $cloned_fields ) ) {
 			foreach ( $cloned_fields as $cloned_field ) {
 				$graphql_field_name = $this->get_graphql_field_name( $cloned_field );
 				if ( ! empty( $graphql_field_name ) ) {
