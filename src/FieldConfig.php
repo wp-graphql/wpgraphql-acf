@@ -118,6 +118,9 @@ class FieldConfig {
 	 * @return array
 	 */
 	public function get_acf_field(): array {
+
+
+
 		return $this->acf_field;
 	}
 
@@ -297,21 +300,21 @@ class FieldConfig {
 	 */
 	public function resolve_field( $root, array $args, AppContext $context, ResolveInfo $info ) {
 
-
 		// @todo: Handle options pages??
 		$field_config = $info->fieldDefinition->config['acf_field'] ?? $this->acf_field;
+
 		$node         = $root['node'] ?: null;
 		$node_id      = Utils::get_node_acf_id( $node ) ?: null;
 		$field_key    = $field_config['cloned_key'] ?? ( $field_config['key'] ?: null );
 
 		$is_cloned = ! empty( $field_config['cloned_key'] );
 
-		if ( $is_cloned ) {
-			// @phpstan-ignore-next-line
-			$field_config = acf_get_field( $field_config['key'] );
+		if ( $is_cloned && isset( $field_config['_name'] ) && ! empty( $node_id ) ) {
+			$field_key = $field_config['_name'];
+			$field_config = acf_get_field( $field_key );
 		}
 
-		$should_format_value = $this->should_format_field_value( $field_config['type'] ?? null );
+		$should_format_value = ! empty( $field_config['type'] ) && $this->should_format_field_value( $field_config['type'] ?? null );
 
 		if ( empty( $field_key ) ) {
 			return null;
@@ -327,6 +330,10 @@ class FieldConfig {
 		if ( empty( $node_id ) ) {
 			return null;
 		}
+
+
+
+
 
 		/**
 		 * Filter the field value before resolving.
