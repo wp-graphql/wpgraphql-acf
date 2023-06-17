@@ -500,12 +500,14 @@ class Settings {
 
 		if ( empty( $post_id ) ) {
 			echo null;
+			return;
 		}
 
 		$field_group = acf_get_field_group( $post_id );
 
 		if ( empty( $field_group ) ) {
 			echo null;
+			return;
 		}
 
 		switch ( $column_name ) {
