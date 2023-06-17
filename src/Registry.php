@@ -283,14 +283,24 @@ class Registry {
 			}
 
 			foreach ( $fields as $field ) {
-				if ( ! empty( $field['_clone'] ) && ! empty( $field['__key'] ) ) {
-					$cloned_from = acf_get_field( $field['__key'] );
-
-					if ( ! empty( $cloned_from ) ) {
-						$interfaces[ $field['key'] ] = $this->get_field_group_graphql_type_name( acf_get_field_group( $cloned_from['parent'] ) ) . '_Fields';
-					}
+				if ( empty( $field['_clone'] ) || empty( $field['__key'] ) ) {
+					continue;
 				}
-			}       
+
+				$cloned_from = acf_get_field( $field['__key'] );
+
+				if ( empty( $cloned_from ) ) {
+					continue;
+				}
+
+				$parent_field_group = acf_get_field_group( $cloned_from['parent'] );
+
+				if ( empty( $parent_field_group ) ) {
+					continue;
+				}
+
+				$interfaces[ $field['key'] ] = $this->get_field_group_graphql_type_name( $parent_field_group ) . '_Fields';
+			}
 		}
 
 		$interfaces = array_unique( array_values( $interfaces ) );
