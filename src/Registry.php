@@ -39,7 +39,6 @@ class Registry {
 		if ( $type_registry instanceof TypeRegistry ) {
 			$this->type_registry = $type_registry;
 		} else {
-			// @phpstan-ignore-next-line
 			$this->type_registry = \WPGraphQL::get_type_registry();
 		}
 
@@ -90,7 +89,6 @@ class Registry {
 	 */
 	public function get_acf_field_groups(): array {
 
-		// @phpstan-ignore-next-line
 		$all_acf_field_groups = acf_get_field_groups();
 
 		$graphql_field_groups = [];
@@ -281,18 +279,14 @@ class Registry {
 			if ( isset( $acf_field_group['sub_fields'] ) ) {
 				$fields = $acf_field_group['sub_fields'];
 			} elseif ( isset( $acf_field_group['ID'] ) ) {
-				// @phpstan-ignore-next-line
 				$fields = acf_get_fields( $acf_field_group );
 			}
 
 			foreach ( $fields as $field ) {
 				if ( ! empty( $field['_clone'] ) && ! empty( $field['__key'] ) ) {
-					// @phpstan-ignore-next-line
 					$cloned_from = acf_get_field( $field['__key'] );
 
 					if ( ! empty( $cloned_from ) ) {
-
-						// @phpstan-ignore-next-line
 						$interfaces[ $field['key'] ] = $this->get_field_group_graphql_type_name( acf_get_field_group( $cloned_from['parent'] ) ) . '_Fields';
 					}
 				}
@@ -420,7 +414,6 @@ class Registry {
 		if ( isset( $acf_field_group['sub_fields'] ) ) {
 			$fields = $acf_field_group['sub_fields'];
 		} elseif ( isset( $acf_field_group['ID'] ) ) {
-			// @phpstan-ignore-next-line
 			$fields = acf_get_fields( $acf_field_group );
 		}
 

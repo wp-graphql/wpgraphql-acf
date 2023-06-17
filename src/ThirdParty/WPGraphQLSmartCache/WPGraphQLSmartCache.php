@@ -2,14 +2,10 @@
 
 namespace WPGraphQLAcf\ThirdParty\WPGraphQLSmartCache;
 
-use WPGraphQL\SmartCache\Cache\Invalidation;
-
 class WPGraphQLSmartCache {
 
 	/**
-	 * @var Invalidation
-	 *
-	 * @phpstan-ignore-next-line
+	 * @var \WPGraphQL\SmartCache\Cache\Invalidation
 	 */
 	protected $invalidation;
 
@@ -30,7 +26,6 @@ class WPGraphQLSmartCache {
 	 *
 	 * @return void
 	 */
-	// @phpstan-ignore-next-line
 	public function initialize_cache_invalidation( \WPGraphQL\SmartCache\Cache\Invalidation $invalidation ) {
 
 			$this->invalidation = $invalidation;
@@ -64,9 +59,7 @@ class WPGraphQLSmartCache {
 
 		$id = \GraphQLRelay\Relay::toGlobalId( 'acf_options_page', $options_page );
 
-		// @phpstan-ignore-next-line
 		$this->invalidation->purge( $id, sprintf( 'update_acf_options_page ( "%s" )', $options_page ) );
-
 	}
 
 }

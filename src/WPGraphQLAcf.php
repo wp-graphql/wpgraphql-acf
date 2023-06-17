@@ -1,7 +1,6 @@
 <?php
 
 use WPGraphQL\Registry\TypeRegistry;
-use WPGraphQL\Utils\Utils;
 use WPGraphQLAcf\Admin\PostTypeRegistration;
 use WPGraphQLAcf\Admin\Settings;
 use WPGraphQLAcf\Admin\TaxonomyRegistration;

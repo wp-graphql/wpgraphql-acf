@@ -50,7 +50,6 @@ class LocationRules {
 	 * @param array $acf_field_groups
 	 */
 	public function __construct( array $acf_field_groups = [] ) {
-		// @phpstan-ignore-next-line
 		$this->acf_field_groups = ! empty( $acf_field_groups ) ? $acf_field_groups : acf_get_field_groups();
 	}
 
@@ -955,8 +954,6 @@ class LocationRules {
 		}
 
 		if ( '!=' === $operator ) {
-
-			// @phpstan-ignore-next-line
 			$options_pages = acf_get_options_pages();
 
 			if ( empty( $options_pages ) || ! is_array( $options_pages ) ) {

@@ -202,7 +202,6 @@ class WPGraphQLAcfTestCase extends \Tests\WPGraphQL\TestCase\WPGraphQLTestCase {
 	 */
 	public function remove_acf_field_groups(): void {
 
-		// @phpstan-ignore-next-line
 		$field_groups = acf_get_local_field_groups();
 		if ( ! empty( $field_groups ) ) {
 			foreach ( $field_groups as $field_group ) {

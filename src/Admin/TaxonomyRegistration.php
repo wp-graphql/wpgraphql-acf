@@ -57,7 +57,6 @@ class TaxonomyRegistration {
 	 */
 	public function render_settings_tab( array $acf_taxonomy ): void {
 
-		// @phpstan-ignore-next-line
 		acf_render_field_wrap(
 			[
 				'type'         => 'true_false',
@@ -80,7 +79,6 @@ class TaxonomyRegistration {
 
 		$graphql_single_name = Utils::format_field_name( $graphql_single_name, true );
 
-		// @phpstan-ignore-next-line
 		acf_render_field_wrap(
 			[
 				'type'         => 'text',
@@ -109,7 +107,6 @@ class TaxonomyRegistration {
 
 		$graphql_plural_name = Utils::format_field_name( $graphql_plural_name, true );
 
-		// @phpstan-ignore-next-line
 		acf_render_field_wrap(
 			[
 				'type'         => 'text',
@@ -221,7 +218,6 @@ class TaxonomyRegistration {
 	 */
 	public function render_graphql_columns( string $column_name, int $post_id ): void {
 
-		// @phpstan-ignore-next-line
 		$post_type = acf_get_internal_post_type( $post_id, 'acf-taxonomy' );
 
 		// if there's no post type, bail early

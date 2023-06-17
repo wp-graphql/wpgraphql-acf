@@ -307,7 +307,6 @@ class FieldConfig {
 		$is_cloned = ! empty( $field_config['cloned_key'] );
 
 		if ( $is_cloned ) {
-			// @phpstan-ignore-next-line
 			$field_config = acf_get_field( $field_config['key'] );
 		}
 
@@ -344,7 +343,6 @@ class FieldConfig {
 			return $value;
 		}
 
-		// @phpstan-ignore-next-line
 		$value = get_field( $field_key, $node_id, $should_format_value );
 		$value = $this->prepare_acf_field_value( $value, $root, $node_id, $field_config );
 
