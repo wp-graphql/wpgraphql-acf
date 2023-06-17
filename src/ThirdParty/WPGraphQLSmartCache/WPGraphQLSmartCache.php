@@ -28,9 +28,9 @@ class WPGraphQLSmartCache {
 	 */
 	public function initialize_cache_invalidation( \WPGraphQL\SmartCache\Cache\Invalidation $invalidation ) {
 
-			$this->invalidation = $invalidation;
+		$this->invalidation = $invalidation;
 
-			add_action( 'updated_option', [ $this, 'updated_acf_option_cb' ], 10, 4 );
+		add_action( 'updated_option', [ $this, 'updated_acf_option_cb' ], 10, 3 );
 
 	}
 
