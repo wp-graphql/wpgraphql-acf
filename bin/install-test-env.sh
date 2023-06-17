@@ -193,6 +193,9 @@ setup_plugin() {
 	# Activate WPGraphQL
 	wp plugin activate wp-graphql
 
+	# Install WPGraphQL Smart Cache (dont activate)
+	wp plugin install wpgraphql-smart-cache
+
 	# activate the plugin
 	wp plugin activate wpgraphql-acf
 

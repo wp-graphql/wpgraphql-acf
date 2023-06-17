@@ -26,5 +26,6 @@ parameters:
 		scanDirectories:
 			- ../advanced-custom-fields/
 			- ../acf-extended/
+			- ../wpgraphql-smart-cache/
 		scanFiles:
 			- vendor/axepress/wp-graphql-stubs/wp-graphql-stubs.php
