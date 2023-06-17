@@ -150,7 +150,9 @@ class Settings {
 			wp_send_json( __( 'No form data.', 'wp-graphql-acf' ) );
 		}
 
-		if ( empty( $_POST['nonce'] ) || ! wp_verify_nonce( filter_input( INPUT_POST, 'nonce', FILTER_SANITIZE_STRING ), 'wp_graphql_acf' ) ) {
+		$nonce = ! empty( $_POST['nonce'] ) ? filter_input( INPUT_POST, 'nonce', FILTER_SANITIZE_STRING ) : null;
+
+		if ( empty( $nonce ) || ! wp_verify_nonce( $nonce, 'wp_graphql_acf' ) ) {
 			wp_send_json_error();
 		}
 
