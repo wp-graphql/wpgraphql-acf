@@ -475,7 +475,7 @@ class LocationRules {
 						$this->set_graphql_type( $field_group_name, $graphql_name );
 					}
 				}
-			} else if ( in_array( $value, $allowed_post_types, true ) ) {
+			} elseif ( in_array( $value, $allowed_post_types, true ) ) {
 				$post_type_object = get_post_type_object( $value );
 				$graphql_name     = $post_type_object->graphql_single_name ?? null;
 				if ( ! empty( $graphql_name ) ) {
