@@ -10,14 +10,6 @@ if [ ! -f .env ]; then
   cp .env.dist .env
 fi
 
-# This allows us to commit default settings to .env.dist, but lets users
-# override those values in their .gitignored .env file (i.e. ACF PRO License Key)
-if [ ! -f .env.testing ]; then
-  echo "No .env.testing file was detected. .env.testing.dist has been copied to .env.testing"
-  echo "Open the .env.testing file and enter values to match your local testing environment"
-  cp .env.testing.dist .env.testing
-fi
-
 ##
 # Use this script through Composer scripts in the package.json.
 # To quickly build and run the docker-compose scripts for an app or automated testing
@@ -77,7 +69,6 @@ case "$subcommand" in
                         --build-arg DOCKER_REGISTRY=${DOCKER_REGISTRY} \
                         .
                     echo "Build testing"
-                    source .env.testing
                     docker build $BUILD_NO_CACHE -f docker/Dockerfile.testing \
                         -t wp-graphql-acf-testing:${TAG}-wp${WP_VERSION}-php${PHP_VERSION} \
                         --build-arg WP_VERSION=${WP_VERSION} \
@@ -98,7 +89,6 @@ case "$subcommand" in
                     docker compose up app
                     ;;
                 t )
-                    source .env.testing
                     docker-compose run --rm testing
                     ;;
                 \? ) print_usage_instructions;;

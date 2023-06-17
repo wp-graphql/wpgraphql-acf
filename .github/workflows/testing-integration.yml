@@ -20,7 +20,8 @@ jobs:
       matrix:
         php: [ '8.0', '7.4' ]
         wordpress: [ '6.1', '5.9' ]
-        acf_pro: [ true, false ]
+        acf_plugin_slug: [ 'advanced-custom-fields', 'advanced-custom-fields-pro' ]
+        acf_extended_plugin_slug: [ 'acf-extended', 'acf-extended-pro' ]
         acf_version: [ 5.12.4, 6.1.6 ]
         include:
           - php: '8.1'
@@ -68,7 +69,6 @@ jobs:
       - name: Copy environment files
         run: |
           cp .env.dist .env
-          cp .env.testing.dist .env.testing
 
       - name: Build and run tests
         env:
@@ -86,9 +86,10 @@ jobs:
             -e USING_XDEBUG=${{ matrix.coverage }} \
             -e DEBUG=${{ matrix.debug }} \
             -e SKIP_TESTS_CLEANUP=${{ matrix.coverage }} \
-            -e ACF_PRO=${{matrix.acf_pro }} \
+            -e ACF_PLUGIN_SLUG=${{matrix.acf_plugin_slug }} \
             -e ACF_LICENSE_KEY=${{secrets.ACF_LICENSE_KEY}} \
             -e ACF_VERSION=${{matrix.ACF_VERSION}} \
+            -e ACF_EXTENDED_PLUGIN_SLUG=${{matrix.acf_extended_plugin_slug }} \
             -e ACF_EXTENDED_LICENSE_KEY=${{secrets.ACF_EXTENDED_LICENSE_KEY}} \
             testing
 

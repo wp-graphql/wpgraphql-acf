@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
 if [[ ! -f ".env" ]]; then
-  echo "No .env file was detected. .env.dist has been copied to .env"
-  echo "Open the .env file and enter values to match your local environment"
-  cp .env.dist .env
+	echo "No .env file was detected. .env.dist has been copied to .env"
+	echo "Open the .env file and enter values to match your local environment"
+	cp .env.dist .env
 fi
 
 source .env
@@ -32,18 +32,17 @@ DB_PASS=${TEST_DB_PASSWORD-""}
 WP_VERSION=${WP_VERSION-latest}
 TMPDIR=${TMPDIR-/tmp}
 TMPDIR=$(echo $TMPDIR | sed -e "s/\/$//")
-WP_TESTS_DIR=${WP_TESTS_DIR-$TMPDIR/wordpress-tests-lib}
 WP_CORE_DIR=${TEST_WP_ROOT_FOLDER-$TMPDIR/wordpress/}
 PLUGIN_DIR=$(pwd)
 DB_SERVE_NAME=${DB_SERVE_NAME-wpgraphql_acf_serve}
 SKIP_DB_CREATE=${SKIP_DB_CREATE-false}
 
 download() {
-    if [ `which curl` ]; then
-        curl -s "$1" > "$2";
-    elif [ `which wget` ]; then
-        wget -nv -O "$2" "$1"
-    fi
+	if [ $(which curl) ]; then
+		curl -s "$1" >"$2"
+	elif [ $(which wget) ]; then
+		wget -nv -O "$2" "$1"
+	fi
 }
 
 if [[ $WP_VERSION =~ ^[0-9]+\.[0-9]+\-(beta|RC)[0-9]+$ ]]; then
@@ -77,14 +76,14 @@ set -ex
 install_wp() {
 
 	if [ -d $WP_CORE_DIR ]; then
-		return;
+		return
 	fi
 
 	mkdir -p $WP_CORE_DIR
 
 	if [[ $WP_VERSION == 'nightly' || $WP_VERSION == 'trunk' ]]; then
 		mkdir -p $TMPDIR/wordpress-nightly
-		download https://wordpress.org/nightly-builds/wordpress-latest.zip  $TMPDIR/wordpress-nightly/wordpress-nightly.zip
+		download https://wordpress.org/nightly-builds/wordpress-latest.zip $TMPDIR/wordpress-nightly/wordpress-nightly.zip
 		unzip -q $TMPDIR/wordpress-nightly/wordpress-nightly.zip -d $TMPDIR/wordpress-nightly/
 		mv $TMPDIR/wordpress-nightly/wordpress/* $WP_CORE_DIR
 	else
@@ -98,7 +97,7 @@ install_wp() {
 				LATEST_VERSION=${WP_VERSION%??}
 			else
 				# otherwise, scan the releases and get the most up to date minor version of the major release
-				local VERSION_ESCAPED=`echo $WP_VERSION | sed 's/\./\\\\./g'`
+				local VERSION_ESCAPED=$(echo $WP_VERSION | sed 's/\./\\\\./g')
 				LATEST_VERSION=$(grep -o '"version":"'$VERSION_ESCAPED'[^"]*' $TMPDIR/wp-latest.json | sed 's/"version":"//' | head -1)
 			fi
 			if [[ -z "$LATEST_VERSION" ]]; then
@@ -109,7 +108,7 @@ install_wp() {
 		else
 			local ARCHIVE_NAME="wordpress-$WP_VERSION"
 		fi
-		download https://wordpress.org/${ARCHIVE_NAME}.tar.gz  $TMPDIR/wordpress.tar.gz
+		download https://wordpress.org/${ARCHIVE_NAME}.tar.gz $TMPDIR/wordpress.tar.gz
 		tar --strip-components=1 -zxmf $TMPDIR/wordpress.tar.gz -C $WP_CORE_DIR
 	fi
 
@@ -124,38 +123,55 @@ install_db() {
 
 	# parse DB_HOST for port or socket references
 	local PARTS=(${DB_HOST//\:/ })
-	local DB_HOSTNAME=${PARTS[0]};
-	local DB_SOCK_OR_PORT=${PARTS[1]};
+	local DB_HOSTNAME=${PARTS[0]}
+	local DB_SOCK_OR_PORT=${PARTS[1]}
 	local EXTRA=""
 
-	if ! [ -z $DB_HOSTNAME ] ; then
+	if ! [ -z $DB_HOSTNAME ]; then
 		if [ $(echo $DB_SOCK_OR_PORT | grep -e '^[0-9]\{1,\}$') ]; then
 			EXTRA=" --host=$DB_HOSTNAME --port=$DB_SOCK_OR_PORT --protocol=tcp"
-		elif ! [ -z $DB_SOCK_OR_PORT ] ; then
+		elif ! [ -z $DB_SOCK_OR_PORT ]; then
 			EXTRA=" --socket=$DB_SOCK_OR_PORT"
-		elif ! [ -z $DB_HOSTNAME ] ; then
+		elif ! [ -z $DB_HOSTNAME ]; then
 			EXTRA=" --host=$DB_HOSTNAME --protocol=tcp"
 		fi
 	fi
 
 	# create database
-	RESULT=`mysql -u $DB_USER --password="$DB_PASS" --skip-column-names -e "SHOW DATABASES LIKE '$DB_NAME'"$EXTRA`
+	RESULT=$(mysql -u $DB_USER --password="$DB_PASS" --skip-column-names -e "SHOW DATABASES LIKE '$DB_NAME'"$EXTRA)
 	if [ "$RESULT" != $DB_NAME ]; then
-			mysqladmin create $DB_NAME --user="$DB_USER" --password="$DB_PASS"$EXTRA
+		mysqladmin create $DB_NAME --user="$DB_USER" --password="$DB_PASS"$EXTRA
 	fi
 }
 
 configure_wordpress() {
-    cd $WP_CORE_DIR
-    wp config create --dbname="$DB_NAME" --dbuser="$DB_USER" --dbpass="$DB_PASS" --dbhost="$DB_HOST" --skip-check --force=true
-    wp core install --url=wp.test --title="WPGraphQL for ACF Tests" --admin_user=admin --admin_password=password --admin_email=admin@wp.test
-    wp rewrite structure '/%year%/%monthnum%/%postname%/'
+	cd $WP_CORE_DIR
+	wp config create --dbname="$DB_NAME" --dbuser="$DB_USER" --dbpass="$DB_PASS" --dbhost="$DB_HOST" --skip-check --force=true
+	wp core install --url=$WP_DOMAIN --title="WPGraphQL for ACF Tests" --admin_user=$ADMIN_USERNAME --admin_password=$ADMIN_PASSWORD --admin_email=$ADMIN_EMAIL
+	wp rewrite structure '/%year%/%monthnum%/%postname%/' --category-base='category' --hard
 }
 
-install_acf_pro() {
-	if [ ! -d $WP_CORE_DIR/wp-content/plugins/advanced-custom-fields-pro ]; then
-		echo "Installing ACF Pro from AdvancedCustomFields.com"
-		wp plugin install "https://connect.advancedcustomfields.com/v2/plugins/download?p=pro&k=${ACF_LICENSE_KEY}" --activate --quiet
+install_acf() {
+	if [ ! -d "$WP_CORE_DIR/wp-content/plugins/$ACF_PLUGIN_SLUG" ]; then
+		if [ 'advanced-custom-fields-pro' == "$ACF_PLUGIN_SLUG" ]; then
+			echo "Installing ACF Pro from AdvancedCustomFields.com"
+			wp plugin install "https://connect.advancedcustomfields.com/v2/plugins/download?p=pro&k=${ACF_LICENSE_KEY}" --activate --quiet
+		else
+			wp plugin install advanced-custom-fields --activate --quiet
+		fi
+
+		wp plugin list
+	fi
+}
+
+install_acf_extended() {
+	if [ ! -d "$WP_CORE_DIR/wp-content/plugins/$ACF_EXTENDED_PLUGIN_SLUG" ]; then
+		if [ 'acf-extended-pro' == "$ACF_EXTENDED_PLUGIN_SLUG" ]; then
+			echo "@TODO Needs a correct URL to install ACF Extended Pro from ACFExtended.com"
+		else
+			wp plugin install acf-extended --activate --quiet
+		fi
+
 		wp plugin list
 	fi
 }
@@ -171,13 +187,11 @@ setup_plugin() {
 
 	cd $WP_CORE_DIR
 
-    wp plugin list
-
-    # Install WPGraphQL
-    wp plugin install wp-graphql
+	# Install WPGraphQL
+	wp plugin install wp-graphql
 
 	# Activate WPGraphQL
-    wp plugin activate wp-graphql
+	wp plugin activate wp-graphql
 
 	# activate the plugin
 	wp plugin activate wpgraphql-acf
@@ -195,5 +209,6 @@ setup_plugin() {
 install_wp
 install_db
 configure_wordpress
-install_acf_pro
+install_acf
+install_acf_extended
 setup_plugin

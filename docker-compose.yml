@@ -41,7 +41,7 @@ services:
       - './.log/testing:/var/log/apache2'
       - './codeception.dist.yml:/var/www/html/wp-content/plugins/wpgraphql-acf/codeception.yml'
     env_file:
-      - .env.testing
+      - .env
     environment:
       WP_URL: http://localhost
       USING_XDEBUG: ${USING_XDEBUG:-}
@@ -51,7 +51,7 @@ services:
   testing_db:
     image: mariadb:10.2
     env_file:
-      - .env.testing
+      - .env
     ports:
       - '3306'
     networks:

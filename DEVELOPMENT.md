@@ -1,3 +1,43 @@
+# Configuring your .env file
+
+The `.env` file is used to configure your testing environment, whether you are running the tests locally (with `composer install-test-env`) or in a docker container. Your first step is to copy the `.env.dist` file to `.env` and update the values to match your environment.
+
+## ACF Pro + ACF Extended Pro
+
+To test with ACF Pro and ACF Extended Pro, you need to update the `ACF_PLUGIN_SLUG`, `ACF_LICENSE_KEY`, `ACF_EXTENDED_PLUGIN_SLUG` and `ACF_EXTENDED_LICENCE_KEY` values in your `.env` file.
+```diff
+# .env
+
+# Change to 'advanced-custom-fields-pro' and add your license key to test against ACF PRO
+- ACF_PLUGIN_SLUG="advanced-custom-fields"
++ ACF_PLUGIN_SLUG="advanced-custom-fields-pro"
+- # ACF_LICENSE_KEY="Your License Key"
++ ACF_LICENSE_KEY="Your Actual License Key"
+
+# Change to 'acf-extended-pro' and add your license key to test against ACF Extended PRO
+- ACF_EXTENDED_PLUGIN_SLUG="acf-extended"
++ ACF_EXTENDED_PLUGIN_SLUG="acf-extended-pro"
+- # ACF_EXTENDED_LICENSE_KEY="Your License Key"
++ ACF_EXTENDED_LICENSE_KEY="Your Actual License Key"
+```
+
+Additionally, you will need to copy your `phpstan.neon.dist` file to `phpstan.neon` and update the `scanDirectories` value to the correct path for your ACF Pro and ACF Extended Pro plugins.
+```diff
+# phpstan.neon
+
+excludePaths:
+	analyseAndScan:
+			- */node_modules/*
+			- */vendor/*
+	scanDirectories:
+-		- ../advanced-custom-fields/
++		- ../advanced-custom-fields-pro/
+-		- ../acf-extended/
++		- ../acf-extended-pro/
+	scanFiles:
+		- vendor/axepress/wp-graphql-stubs/wp-graphql-stubs.php
+```diff
+
 # Using Docker For Local Development
 
 ## WordPress Site

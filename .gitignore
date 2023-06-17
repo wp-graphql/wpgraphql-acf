@@ -28,6 +28,9 @@ schema.graphql
 # Used to override phpcs.xml.dist
 phpcs.xml
 
+# Used to override phpstan.neon.dist
+phpstan.neon
+
 # Config for phpunit. Used to override phpunit.xml.dist
 phpunit.xml
 
