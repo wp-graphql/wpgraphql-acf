@@ -25,14 +25,14 @@ class Registry {
 	public $registered_field_groups;
 
 	/**
-	 * @var TypeRegistry The WPGraphQL TypeRegistry
+	 * @var \WPGraphQL\Registry\TypeRegistry The WPGraphQL TypeRegistry
 	 */
 	protected $type_registry;
 
 	/**
-	 * @param TypeRegistry|null $type_registry
+	 * @param \WPGraphQL\Registry\TypeRegistry|null $type_registry
 	 *
-	 * @throws Exception
+	 * @throws \Exception
 	 */
 	public function __construct( TypeRegistry $type_registry = null ) {
 
@@ -46,7 +46,7 @@ class Registry {
 	}
 
 	/**
-	 * @return TypeRegistry
+	 * @return \WPGraphQL\Registry\TypeRegistry
 	 */
 	public function get_type_registry(): TypeRegistry {
 		return $this->type_registry;
@@ -111,7 +111,7 @@ class Registry {
 	 * Register Initial Types to the Schema
 	 *
 	 * @return void
-	 * @throws Exception
+	 * @throws \Exception
 	 */
 	public function register_initial_graphql_types(): void {
 
@@ -263,7 +263,7 @@ class Registry {
 	 * @param array $acf_field_group The ACF Field Group config
 	 *
 	 * @return array
-	 * @throws Error
+	 * @throws \GraphQL\Error\Error
 	 */
 	public function get_field_group_interfaces( array $acf_field_group ): array {
 
@@ -311,8 +311,8 @@ class Registry {
 
 	/**
 	 * @return void
-	 * @throws Error
-	 * @throws Exception
+	 * @throws \GraphQL\Error\Error
+	 * @throws \Exception
 	 */
 	public function register_options_pages():void {
 
@@ -402,7 +402,7 @@ class Registry {
 	 * @param array $acf_field_group
 	 *
 	 * @return array
-	 * @throws Error
+	 * @throws \GraphQL\Error\Error
 	 */
 	public function get_fields_for_field_group( array $acf_field_group ): array {
 
@@ -469,8 +469,8 @@ class Registry {
 	 * @param array $acf_field_group
 	 *
 	 * @return array|null
-	 * @throws Error
-	 * @throws Exception
+	 * @throws \GraphQL\Error\Error
+	 * @throws \Exception
 	 */
 	public function map_acf_field_to_graphql( array $acf_field, array $acf_field_group ): ?array {
 		return ( new FieldConfig( $acf_field, $acf_field_group, $this ) )->get_graphql_field_config();
@@ -494,7 +494,7 @@ class Registry {
 	 * @param array $acf_field The ACF Field config
 	 *
 	 * @return string
-	 * @throws Error
+	 * @throws \GraphQL\Error\Error
 	 */
 	public function get_graphql_field_name( array $acf_field ): string {
 		return Utils::format_field_name( $this->get_field_group_name( $acf_field ), true );
@@ -597,7 +597,7 @@ class Registry {
 	 *
 	 * @param array $acf_field_groups ACF Field Groups to register to the WPGraphQL Schema
 	 * @return void
-	 * @throws Exception
+	 * @throws \Exception
 	 */
 	public function register_acf_field_groups_to_graphql( array $acf_field_groups = [] ): void {
 

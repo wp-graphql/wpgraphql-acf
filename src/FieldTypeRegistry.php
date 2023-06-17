@@ -127,7 +127,7 @@ class FieldTypeRegistry {
 	 *
 	 * @param string $acf_field_type The type of field to get the config for
 	 *
-	 * @return AcfGraphQLFieldType|null
+	 * @return \WPGraphQLAcf\AcfGraphQLFieldType|null
 	 */
 	public function get_field_type( string $acf_field_type ): ?AcfGraphQLFieldType {
 		return $this->registered_field_types[ $acf_field_type ] ?? null;
@@ -139,7 +139,7 @@ class FieldTypeRegistry {
 	 * @param string $acf_field_type The name of the ACF Field Type to map to the GraphQL Schema
 	 * @param array|callable $config Config for mapping the ACF Field Type to the GraphQL Schema
 	 *
-	 * @return AcfGraphQLFieldType
+	 * @return \WPGraphQLAcf\AcfGraphQLFieldType
 	 */
 	public function register_field_type( string $acf_field_type, $config = [] ): AcfGraphQLFieldType {
 

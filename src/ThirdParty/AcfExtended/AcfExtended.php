@@ -72,7 +72,7 @@ class AcfExtended {
 	 * Register initial types for ACF Extended field types to use
 	 *
 	 * @return void
-	 * @throws Exception
+	 * @throws \Exception
 	 */
 	public function register_initial_types(): void {
 

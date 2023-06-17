@@ -31,7 +31,7 @@ class AcfGraphQLFieldType {
 	protected $admin_fields = [];
 
 	/**
-	 * @var AcfGraphQLFieldResolver
+	 * @var \WPGraphQLAcf\AcfGraphQLFieldResolver
 	 */
 	protected $resolver;
 
@@ -90,7 +90,7 @@ class AcfGraphQLFieldType {
 	 * Return Admin Field Settings for configuring GraphQL Behavior.
 	 *
 	 * @param array $field The Instance of the ACF Field the settings are for
-	 * @param Settings $settings The Settings class
+	 * @param \WPGraphQLAcf\Admin\Settings $settings The Settings class
 	 *
 	 * @return mixed|void
 	 */
@@ -201,7 +201,7 @@ class AcfGraphQLFieldType {
 	/**
 	 * @param array $acf_field The ACF Field to get the settings for
 	 * @param array $default_admin_settings The default admin settings
-	 * @param Settings $settings Instance of the Settings class
+	 * @param \WPGraphQLAcf\Admin\Settings $settings Instance of the Settings class
 	 *
 	 * @return array
 	 */
@@ -271,10 +271,10 @@ class AcfGraphQLFieldType {
 	/**
 	 * @param mixed               $root The value of the previously resolved field in the tree
 	 * @param array               $args The arguments input on the field
-	 * @param AppContext          $context The Context passed through resolution
-	 * @param ResolveInfo         $info Information about the field resolving
-	 * @param AcfGraphQLFieldType $field_type The Type of ACF Field resolving
-	 * @param FieldConfig         $field_config The Config of the ACF Field resolving
+	 * @param \WPGraphQL\AppContext $context The Context passed through resolution
+	 * @param \GraphQL\Type\Definition\ResolveInfo $info Information about the field resolving
+	 * @param \WPGraphQLAcf\AcfGraphQLFieldType $field_type The Type of ACF Field resolving
+	 * @param \WPGraphQLAcf\FieldConfig $field_config The Config of the ACF Field resolving
 	 *
 	 * @return array|callable|mixed|null
 	 */

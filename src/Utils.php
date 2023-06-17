@@ -13,7 +13,7 @@ use WPGraphQLAcf\Model\AcfOptionsPage;
 class Utils {
 
 	/**
-	 * @var null|FieldTypeRegistry
+	 * @var null|\WPGraphQLAcf\FieldTypeRegistry
 	 */
 	protected static $type_registry;
 
@@ -64,7 +64,7 @@ class Utils {
 	/**
 	 * Return the Field Type Registry instance
 	 *
-	 * @return FieldTypeRegistry
+	 * @return \WPGraphQLAcf\FieldTypeRegistry
 	 */
 	public static function get_type_registry(): FieldTypeRegistry {
 
@@ -82,7 +82,7 @@ class Utils {
 	 *
 	 * @param string $acf_field_type The name of the ACF Field Type (text, textarea, etc)
 	 *
-	 * @return AcfGraphQLFieldType|null
+	 * @return \WPGraphQLAcf\AcfGraphQLFieldType|null
 	 */
 	public static function get_graphql_field_type( string $acf_field_type ): ?AcfGraphQLFieldType {
 
@@ -118,7 +118,7 @@ class Utils {
 	 * Returns all available GraphQL Types
 	 *
 	 * @return array
-	 * @throws Exception
+	 * @throws \Exception
 	 */
 	public static function get_all_graphql_types(): array {
 		$graphql_types = [];

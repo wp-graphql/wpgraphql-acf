@@ -26,7 +26,7 @@ class AcfOptionsPage extends Model {
 	 *
 	 * @param array $options_page The incoming ACF Options Page to be modeled
 	 *
-	 * @throws Exception Throws Exception.
+	 * @throws \Exception Throws Exception.
 	 */
 	public function __construct( array $options_page ) {
 		$this->data = $options_page;

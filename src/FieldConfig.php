@@ -31,17 +31,17 @@ class FieldConfig {
 	protected $graphql_field_name;
 
 	/**
-	 * @var AcfGraphQLFieldType|null
+	 * @var \WPGraphQLAcf\AcfGraphQLFieldType|null
 	 */
 	protected $graphql_field_type;
 
 	/**
-	 * @var Registry
+	 * @var \WPGraphQLAcf\Registry
 	 */
 	protected $registry;
 
 	/**
-	 * @throws Error
+	 * @throws \GraphQL\Error\Error
 	 */
 	public function __construct( array $acf_field, array $acf_field_group, Registry $registry ) {
 
@@ -54,7 +54,7 @@ class FieldConfig {
 	}
 
 	/**
-	 * @return Registry
+	 * @return \WPGraphQLAcf\Registry
 	 */
 	public function get_registry(): Registry {
 		return $this->registry;
@@ -68,7 +68,7 @@ class FieldConfig {
 	}
 
 	/**
-	 * @return AcfGraphQLFieldType|null
+	 * @return \WPGraphQLAcf\AcfGraphQLFieldType|null
 	 */
 	public function get_graphql_field_type(): ?AcfGraphQLFieldType {
 		return $this->graphql_field_type;
@@ -95,7 +95,7 @@ class FieldConfig {
 	 * Get the description of the field for the GraphQL Schema
 	 *
 	 * @return string
-	 * @throws Error
+	 * @throws \GraphQL\Error\Error
 	 */
 	public function get_field_description(): string {
 
@@ -130,8 +130,8 @@ class FieldConfig {
 
 	/**
 	 * @return array|null
-	 * @throws Error
-	 * @throws Exception
+	 * @throws \GraphQL\Error\Error
+	 * @throws \Exception
 	 */
 	public function get_graphql_field_config():?array {
 
@@ -290,8 +290,8 @@ class FieldConfig {
 	/**
 	 * @param mixed       $root
 	 * @param array       $args
-	 * @param AppContext  $context
-	 * @param ResolveInfo $info
+	 * @param \WPGraphQL\AppContext $context
+	 * @param \GraphQL\Type\Definition\ResolveInfo $info
 	 *
 	 * @return mixed
 	 */
@@ -428,7 +428,7 @@ class FieldConfig {
 	 * @param array $config The Connection Config to use
 	 *
 	 * @return void
-	 * @throws Exception
+	 * @throws \Exception
 	 */
 	public function register_graphql_connections( array $config ): void {
 
