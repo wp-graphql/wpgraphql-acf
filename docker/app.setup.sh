@@ -10,6 +10,7 @@ ACF_VERSION=${ACF_VERSION-"latest"}
 ACF_PLUGIN_SLUG=${ACF_PLUGIN_SLUG-"advanced-custom-fields"}
 ACF_EXTENDED_PLUGIN_SLUG=${ACF_PLUGIN_SLUG-"acf-extended"}
 
+
 # If an ACF_VERSION is passed, use it, else the latest version will be downloaded
 ACF_PRO_DOWNLOAD_VERSION=""
 
@@ -19,27 +20,26 @@ fi
 
 echo "Plugins dir ($PLUGINS_DIR)"
 echo "ACF_VERSION ($ACF_VERSION)"
-echo "ACF_PLUGING_SLUG ($ACF_PLUGIN_SLUG)"
+echo "ACF_PLUGIN_SLUG ($ACF_PLUGIN_SLUG)"
 
 echo "INSTALL jq"
 apt-get -y update
 apt-get -y install jq
 
 if [ ! -f "${PLUGINS_DIR}/wp-graphql/wp-graphql.php" ]; then
-    # WPGRAPHQL_VERSION in format like v1.2.3 or latest
-    echo "Install wp-graphql version (${WPGRAPHQL_VERSION})"
-    if [[ -z ${WPGRAPHQL_VERSION} || "${WPGRAPHQL_VERSION}" == "latest" ]]; then
-        echo "Installing latest WPGraphQL from WordPress.org"
-        wp plugin install wp-graphql --activate --allow-root
-    else
-    	echo "Installing WPGraphQL from Github"
-        wp plugin install "https://downloads.wordpress.org/plugin/wp-graphql.${WPGRAPHQL_VERSION-1.4.3}.zip" --allow-root --activate
-    fi
+	# WPGRAPHQL_VERSION in format like v1.2.3 or latest
+	echo "Install wp-graphql version (${WPGRAPHQL_VERSION})"
+	if [[ -z ${WPGRAPHQL_VERSION} || "${WPGRAPHQL_VERSION}" == "latest" ]]; then
+		echo "Installing latest WPGraphQL from WordPress.org"
+		wp plugin install wp-graphql --activate --allow-root
+	else
+		echo "Installing WPGraphQL from Github"
+		wp plugin install "https://downloads.wordpress.org/plugin/wp-graphql.${WPGRAPHQL_VERSION-1.4.3}.zip" --allow-root --activate
+	fi
 fi
 
 # Activate the plugin
 wp plugin activate wpgraphql-acf --allow-root
-
 
 # If the ACF_PLUGIN_SLUG is not set to pro, or the license key is a default value, we'll be using the FREE version of ACF
 if [[ 'advanced-custom-fields-pro' != ${ACF_PLUGIN_SLUG} || '.' == ${ACF_LICENSE_KEY} || 'Your License Key' == ${ACF_LICENSE_KEY} ]]; then
@@ -53,9 +53,6 @@ if [[ 'advanced-custom-fields-pro' != ${ACF_PLUGIN_SLUG} || '.' == ${ACF_LICENSE
 	fi
 else
 
-	# The slug is needed when the tests run, so we set it here
-	ACF_PLUGIN_SLUG="advanced-custom-fields-pro/acf.php"
-
 	if [ ! -d ${PLUGINS_DIR}/advanced-custom-fields-pro ]; then
 		echo "Installing ACF Pro from AdvancedCustomFields.com"
 		# Using --quiet prevents the license key from being echoed in the test run
@@ -67,47 +64,43 @@ else
 fi
 
 # If ACF_EXTENDED_PLUGIN_SLUG is not set to pro, or the license key is a default value, we'll be using the FREE version of ACF EXTENDED
-if [[ 'acf-extended-pro' != ${ACF_EXTENDED_PLUGIN_SLUG} || '.' == ${ACF_EXTENDED_LICENSE_KEY} || 'Your License Key' == ${ACF_EXTENDED_LICENSE_KEY} ]]; then
+if [[ 'advanced-custom-fields-pro' != ${ACF_PLUGIN_SLUG} || '.' == ${ACF_EXTENDED_LICENSE_KEY} || 'Your License Key' == ${ACF_EXTENDED_LICENSE_KEY} ]]; then
+
+	# Overwrite the plugin slug to the Acf Extended Free plugin slug
+	export ACF_EXTENDED_PLUGIN_SLUG="acf-extended"
 
 	echo "ACF EXTENDED Version: " ${ACF_EXTENDED_VERSION}
-	ACF_EXTENDED_PLUGIN_SLUG="acf-extended/acf-extended.php"
 	if [[ -z ${ACF_EXTENDED_VERSION} || "${ACF_EXTENDED_VERSION}" == "latest" ]]; then
 		echo "Installing ACF EXTENDED FREE (latest) from wordpress.org"
 		wp plugin install acf-extended --allow-root --activate
 	else
 		echo "Installing ACF EXTENDED FREE (v${ACF_VERSION}) from wordpress.org"
 		wp plugin install acf-extended --version=$ACF_EXTENDED_VERSION --allow-root --activate
-
 	fi
 
 else
+	if [ ! -d ${PLUGINS_DIR}/acf-extended-pro ]; then
+		echo "Installing ACF Extended Pro from acf-extended.com"
 
-	# The slug is needed when the tests run, so we set it here
-    	ACF_EXTENDED_PLUGIN_SLUG="acf-extended-pro/acf-extended.php"
+		# Make a request to the Easy Digital Downloads endpoint for ACF Extended to get the download link
+		# see: https://gist.github.com/acf-extended/b65882979cdf7c4f5e6a0e5ed733aca7#file-acfe-pro-api-download-postman_collection-json
+		download_link=$(curl --location --request GET "https://acf-extended.com?edd_action=get_version&license=${ACF_EXTENDED_LICENSE_KEY}&item_name=ACF%20Extended%20Pro&url=https://acf.wpgraphql.com" | jq '.download_link')
 
-    	if [ ! -d ${PLUGINS_DIR}/acf-extended-pro ]; then
-    		echo "Installing ACF Extended Pro from acf-extended.com"
+		#			# Get the download link from the curl response. Note jq must be installed. Github has it installed but your local machine might not?
+		#			download_link=$( jq -n -f "acfe.json" | jq -f .download_link);
 
-    		# Make a request to the Easy Digital Downloads endpoint for ACF Extended to get the download link
-			# see: https://gist.github.com/acf-extended/b65882979cdf7c4f5e6a0e5ed733aca7#file-acfe-pro-api-download-postman_collection-json
-			download_link=$(curl --location --request GET "https://acf-extended.com?edd_action=get_version&license=${ACF_EXTENDED_LICENSE_KEY}&item_name=ACF%20Extended%20Pro&url=https://acf.wpgraphql.com" | jq '.download_link' )
+		#			download_link=$( "$result" | grep -o '"download_link":"[^"]*' | grep -o '[^"]*' | tail -1)
 
+		# Remove quotes from the download_link
+		download_link="${download_link%\"}"
+		download_link="${download_link#\"}"
 
-#			# Get the download link from the curl response. Note jq must be installed. Github has it installed but your local machine might not?
-#	        download_link=$( jq -n -f "acfe.json" | jq -f .download_link);
+		# Install the plugin from the download link. --quiet prevents the license key from being leaked
+		wp plugin install ${download_link} --allow-root --activate --quiet
 
-#			download_link=$( "$result" | grep -o '"download_link":"[^"]*' | grep -o '[^"]*' | tail -1)
-
-	        # Remove quotes from the download_link
-			download_link="${download_link%\"}"
-			download_link="${download_link#\"}"
-
-    		# Install the plugin from the download link. --quiet prevents the license key from being leaked
-			wp plugin install ${download_link} --allow-root --activate --quiet
-
-    	else
-    		echo "Warning: ACF Extended Pro plugin already installed"
-    	fi
+	else
+		echo "Warning: ACF Extended Pro plugin already installed"
+	fi
 
 fi
 
