@@ -1,6 +1,6 @@
 <?php
 
-class AcfeMenuLocationsFieldTest extends \Tests\WPGraphQLAcf\WPUnit\AcfeFieldTestCase {
+class AcfeMenuLocationsFieldTest extends \Tests\WPGraphQL\Acf\WPUnit\AcfeFieldTestCase {
 
 	/**
 	 * @return void

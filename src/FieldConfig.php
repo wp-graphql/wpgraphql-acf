@@ -1,6 +1,6 @@
 <?php
 
-namespace WPGraphQLAcf;
+namespace WPGraphQL\Acf;
 
 use Exception;
 use GraphQL\Error\Error;

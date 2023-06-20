@@ -1,6 +1,6 @@
 <?php
 
-namespace WPGraphQLAcf\Model;
+namespace WPGraphQL\Acf\Model;
 
 use Exception;
 use GraphQLRelay\Relay;
@@ -50,7 +50,7 @@ class AcfOptionsPage extends Model {
 				'pageTitle' => $this->data['page_title'] ?? null,
 				'menuTitle' => $this->data['menu_title'] ?? null,
 				'parentId'  => function () {
-					$type_name = Utils::format_type_name( \WPGraphQLAcf\Utils::get_field_group_name( $this->data ) );
+					$type_name = Utils::format_type_name( \WPGraphQL\Acf\Utils::get_field_group_name( $this->data ) );
 					return ! empty( $this->data['parent_slug'] ) ? Relay::toGlobalId( 'acf_options_page', $this->data['parent_slug'] ) : null;
 				},
 				'id'        => function () {

@@ -1,6 +1,6 @@
 <?php
 
-class AcfePhoneNumberFieldTest extends \Tests\WPGraphQLAcf\WPUnit\AcfeFieldTestCase {
+class AcfePhoneNumberFieldTest extends \Tests\WPGraphQL\Acf\WPUnit\AcfeFieldTestCase {
 
 	/**
 	 * @return void

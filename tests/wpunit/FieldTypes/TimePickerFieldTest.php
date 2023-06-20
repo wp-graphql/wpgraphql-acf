@@ -1,6 +1,6 @@
 <?php
 
-class TimePickerFieldTest extends \Tests\WPGraphQLAcf\WPUnit\AcfFieldTestCase {
+class TimePickerFieldTest extends \Tests\WPGraphQL\Acf\WPUnit\AcfFieldTestCase {
 
 	/**
 	 * @return void

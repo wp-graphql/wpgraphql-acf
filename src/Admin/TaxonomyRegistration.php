@@ -1,6 +1,6 @@
 <?php
 
-namespace WPGraphQLAcf\Admin;
+namespace WPGraphQL\Acf\Admin;
 
 use WPGraphQL\Utils\Utils;
 

@@ -1,11 +1,11 @@
 <?php
-namespace WPGraphQLAcf\FieldType;
+namespace WPGraphQL\Acf\FieldType;
 
 use WPGraphQL\AppContext;
 use WPGraphQL\Data\Connection\PostObjectConnectionResolver;
 use WPGraphQL\Utils\Utils;
-use WPGraphQLAcf\AcfGraphQLFieldType;
-use WPGraphQLAcf\FieldConfig;
+use WPGraphQL\Acf\AcfGraphQLFieldType;
+use WPGraphQL\Acf\FieldConfig;
 
 class Relationship {
 

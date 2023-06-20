@@ -1,22 +1,22 @@
 <?php
-namespace WPGraphQLAcf\ThirdParty\AcfExtended;
+namespace WPGraphQL\Acf\ThirdParty\AcfExtended;
 
 use Exception;
-use WPGraphQLAcf\ThirdParty\AcfExtended\FieldType\AcfeAdvancedLink;
-use WPGraphQLAcf\ThirdParty\AcfExtended\FieldType\AcfeCodeEditor;
-use WPGraphQLAcf\ThirdParty\AcfExtended\FieldType\AcfeCountries;
-use WPGraphQLAcf\ThirdParty\AcfExtended\FieldType\AcfeCurrencies;
-use WPGraphQLAcf\ThirdParty\AcfExtended\FieldType\AcfeDateRangePicker;
-use WPGraphQLAcf\ThirdParty\AcfExtended\FieldType\AcfeImageSelector;
-use WPGraphQLAcf\ThirdParty\AcfExtended\FieldType\AcfeImageSizes;
-use WPGraphQLAcf\ThirdParty\AcfExtended\FieldType\AcfeLanguages;
-use WPGraphQLAcf\ThirdParty\AcfExtended\FieldType\AcfeMenuLocations;
-use WPGraphQLAcf\ThirdParty\AcfExtended\FieldType\AcfeMenus;
-use WPGraphQLAcf\ThirdParty\AcfExtended\FieldType\AcfePhoneNumber;
-use WPGraphQLAcf\ThirdParty\AcfExtended\FieldType\AcfePostFormats;
-use WPGraphQLAcf\ThirdParty\AcfExtended\FieldType\AcfeTaxonomies;
-use WPGraphQLAcf\ThirdParty\AcfExtended\FieldType\AcfeTaxonomyTerms;
-use WPGraphQLAcf\ThirdParty\AcfExtended\FieldType\AcfeUserRoles;
+use WPGraphQL\Acf\ThirdParty\AcfExtended\FieldType\AcfeAdvancedLink;
+use WPGraphQL\Acf\ThirdParty\AcfExtended\FieldType\AcfeCodeEditor;
+use WPGraphQL\Acf\ThirdParty\AcfExtended\FieldType\AcfeCountries;
+use WPGraphQL\Acf\ThirdParty\AcfExtended\FieldType\AcfeCurrencies;
+use WPGraphQL\Acf\ThirdParty\AcfExtended\FieldType\AcfeDateRangePicker;
+use WPGraphQL\Acf\ThirdParty\AcfExtended\FieldType\AcfeImageSelector;
+use WPGraphQL\Acf\ThirdParty\AcfExtended\FieldType\AcfeImageSizes;
+use WPGraphQL\Acf\ThirdParty\AcfExtended\FieldType\AcfeLanguages;
+use WPGraphQL\Acf\ThirdParty\AcfExtended\FieldType\AcfeMenuLocations;
+use WPGraphQL\Acf\ThirdParty\AcfExtended\FieldType\AcfeMenus;
+use WPGraphQL\Acf\ThirdParty\AcfExtended\FieldType\AcfePhoneNumber;
+use WPGraphQL\Acf\ThirdParty\AcfExtended\FieldType\AcfePostFormats;
+use WPGraphQL\Acf\ThirdParty\AcfExtended\FieldType\AcfeTaxonomies;
+use WPGraphQL\Acf\ThirdParty\AcfExtended\FieldType\AcfeTaxonomyTerms;
+use WPGraphQL\Acf\ThirdParty\AcfExtended\FieldType\AcfeUserRoles;
 
 class AcfExtended {
 

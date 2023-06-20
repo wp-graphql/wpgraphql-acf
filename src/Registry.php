@@ -1,6 +1,6 @@
 <?php
 
-namespace WPGraphQLAcf;
+namespace WPGraphQL\Acf;
 
 use Exception;
 use GraphQL\Error\Error;
@@ -8,8 +8,8 @@ use GraphQL\Type\Definition\ResolveInfo;
 use WPGraphQL\AppContext;
 use WPGraphQL\Registry\TypeRegistry;
 use WPGraphQL\Utils\Utils;
-use WPGraphQLAcf\Data\Loader\AcfOptionsPageLoader;
-use WPGraphQLAcf\Model\AcfOptionsPage;
+use WPGraphQL\Acf\Data\Loader\AcfOptionsPageLoader;
+use WPGraphQL\Acf\Model\AcfOptionsPage;
 
 class Registry {
 
@@ -80,7 +80,7 @@ class Registry {
 	 * @return bool
 	 */
 	public function should_field_group_show_in_graphql( array $acf_field_group ): bool {
-		return \WPGraphQLAcf\Utils::should_field_group_show_in_graphql( $acf_field_group );
+		return \WPGraphQL\Acf\Utils::should_field_group_show_in_graphql( $acf_field_group );
 	}
 
 	/**
@@ -485,7 +485,7 @@ class Registry {
 	 * @throws \GraphQL\Error\Error
 	 */
 	public function get_field_group_name( array $field_group ): string {
-		return \WPGraphQLAcf\Utils::get_field_group_name( $field_group );
+		return \WPGraphQL\Acf\Utils::get_field_group_name( $field_group );
 	}
 
 	/**

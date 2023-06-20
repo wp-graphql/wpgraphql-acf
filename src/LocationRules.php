@@ -1,6 +1,6 @@
 <?php
 
-namespace WPGraphQLAcf;
+namespace WPGraphQL\Acf;
 
 use WPGraphQL\Utils\Utils;
 
@@ -946,11 +946,11 @@ class LocationRules {
 
 			$options_page = acf_get_options_page( $value );
 
-			if ( empty( $options_page ) || ! \WPGraphQLAcf\Utils::should_field_group_show_in_graphql( $options_page ) ) {
+			if ( empty( $options_page ) || ! \WPGraphQL\Acf\Utils::should_field_group_show_in_graphql( $options_page ) ) {
 				return;
 			}
 
-			$type_name = \WPGraphQLAcf\Utils::get_field_group_name( $options_page );
+			$type_name = \WPGraphQL\Acf\Utils::get_field_group_name( $options_page );
 			$this->set_graphql_type( $field_group_name, $type_name );
 		}
 

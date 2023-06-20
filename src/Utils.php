@@ -1,5 +1,5 @@
 <?php
-namespace WPGraphQLAcf;
+namespace WPGraphQL\Acf;
 
 use Exception;
 use WPGraphQL\Model\Comment;
@@ -8,7 +8,7 @@ use WPGraphQL\Model\MenuItem;
 use WPGraphQL\Model\Post;
 use WPGraphQL\Model\Term;
 use WPGraphQL\Model\User;
-use WPGraphQLAcf\Model\AcfOptionsPage;
+use WPGraphQL\Acf\Model\AcfOptionsPage;
 
 class Utils {
 

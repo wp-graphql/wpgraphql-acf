@@ -1,5 +1,5 @@
 <?php
-namespace WPGraphQLAcf\Data\Loader;
+namespace WPGraphQL\Acf\Data\Loader;
 
 use WPGraphQL\Data\Loader\AbstractDataLoader;
 
@@ -26,7 +26,7 @@ class AcfOptionsPageLoader extends AbstractDataLoader {
 
 		foreach ( $keys as $key ) {
 			if ( isset( $options_pages[ $key ] ) ) {
-				$response[ $key ] = new \WPGraphQLAcf\Model\AcfOptionsPage( $options_pages[ $key ] );
+				$response[ $key ] = new \WPGraphQL\Acf\Model\AcfOptionsPage( $options_pages[ $key ] );
 			}
 		}
 
