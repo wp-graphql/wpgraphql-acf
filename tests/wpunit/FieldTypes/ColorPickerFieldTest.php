@@ -1,6 +1,6 @@
 <?php
 
-class ColorPickerFieldTest extends \Tests\WPGraphQLAcf\WPUnit\AcfFieldTestCase {
+class ColorPickerFieldTest extends \Tests\WPGraphQL\Acf\WPUnit\AcfFieldTestCase {
 
 	/**
 	 * @return void

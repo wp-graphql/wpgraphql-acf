@@ -1,39 +1,39 @@
 <?php
 
-namespace WPGraphQLAcf;
+namespace WPGraphQL\Acf;
 
-use WPGraphQLAcf\FieldType\ButtonGroup;
-use WPGraphQLAcf\FieldType\Checkbox;
-use WPGraphQLAcf\FieldType\CloneField;
-use WPGraphQLAcf\FieldType\ColorPicker;
-use WPGraphQLAcf\FieldType\DatePicker;
-use WPGraphQLAcf\FieldType\DateTimePicker;
-use WPGraphQLAcf\FieldType\Email;
-use WPGraphQLAcf\FieldType\File;
-use WPGraphQLAcf\FieldType\FlexibleContent;
-use WPGraphQLAcf\FieldType\Gallery;
-use WPGraphQLAcf\FieldType\GoogleMap;
-use WPGraphQLAcf\FieldType\Group;
-use WPGraphQLAcf\FieldType\Image;
-use WPGraphQLAcf\FieldType\Link;
-use WPGraphQLAcf\FieldType\Number;
-use WPGraphQLAcf\FieldType\Oembed;
-use WPGraphQLAcf\FieldType\PageLink;
-use WPGraphQLAcf\FieldType\Password;
-use WPGraphQLAcf\FieldType\PostObject;
-use WPGraphQLAcf\FieldType\Radio;
-use WPGraphQLAcf\FieldType\Range;
-use WPGraphQLAcf\FieldType\Relationship;
-use WPGraphQLAcf\FieldType\Repeater;
-use WPGraphQLAcf\FieldType\Select;
-use WPGraphQLAcf\FieldType\Taxonomy;
-use WPGraphQLAcf\FieldType\Text;
-use WPGraphQLAcf\FieldType\Textarea;
-use WPGraphQLAcf\FieldType\TimePicker;
-use WPGraphQLAcf\FieldType\TrueFalse;
-use WPGraphQLAcf\FieldType\Url;
-use WPGraphQLAcf\FieldType\User;
-use WPGraphQLAcf\FieldType\Wysiwyg;
+use WPGraphQL\Acf\FieldType\ButtonGroup;
+use WPGraphQL\Acf\FieldType\Checkbox;
+use WPGraphQL\Acf\FieldType\CloneField;
+use WPGraphQL\Acf\FieldType\ColorPicker;
+use WPGraphQL\Acf\FieldType\DatePicker;
+use WPGraphQL\Acf\FieldType\DateTimePicker;
+use WPGraphQL\Acf\FieldType\Email;
+use WPGraphQL\Acf\FieldType\File;
+use WPGraphQL\Acf\FieldType\FlexibleContent;
+use WPGraphQL\Acf\FieldType\Gallery;
+use WPGraphQL\Acf\FieldType\GoogleMap;
+use WPGraphQL\Acf\FieldType\Group;
+use WPGraphQL\Acf\FieldType\Image;
+use WPGraphQL\Acf\FieldType\Link;
+use WPGraphQL\Acf\FieldType\Number;
+use WPGraphQL\Acf\FieldType\Oembed;
+use WPGraphQL\Acf\FieldType\PageLink;
+use WPGraphQL\Acf\FieldType\Password;
+use WPGraphQL\Acf\FieldType\PostObject;
+use WPGraphQL\Acf\FieldType\Radio;
+use WPGraphQL\Acf\FieldType\Range;
+use WPGraphQL\Acf\FieldType\Relationship;
+use WPGraphQL\Acf\FieldType\Repeater;
+use WPGraphQL\Acf\FieldType\Select;
+use WPGraphQL\Acf\FieldType\Taxonomy;
+use WPGraphQL\Acf\FieldType\Text;
+use WPGraphQL\Acf\FieldType\Textarea;
+use WPGraphQL\Acf\FieldType\TimePicker;
+use WPGraphQL\Acf\FieldType\TrueFalse;
+use WPGraphQL\Acf\FieldType\Url;
+use WPGraphQL\Acf\FieldType\User;
+use WPGraphQL\Acf\FieldType\Wysiwyg;
 
 class FieldTypeRegistry {
 

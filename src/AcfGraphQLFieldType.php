@@ -1,10 +1,10 @@
 <?php
-namespace WPGraphQLAcf;
+namespace WPGraphQL\Acf;
 
 use Codeception\PHPUnit\Constraint\Page;
 use GraphQL\Type\Definition\ResolveInfo;
 use WPGraphQL\AppContext;
-use WPGraphQLAcf\Admin\Settings;
+use WPGraphQL\Acf\Admin\Settings;
 
 /**
  * Configures how an ACF Field Type should interact with WPGraphQL

@@ -1,6 +1,6 @@
 <?php
 
-class UrlFieldCest extends \Tests\WPGraphQLAcf\Functional\AcfFieldCest {
+class UrlFieldCest extends \Tests\WPGraphQL\Acf\Functional\AcfFieldCest {
 
 	public function _getAcfFieldType(): string {
 		return 'url';

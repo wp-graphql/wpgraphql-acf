@@ -1,7 +1,7 @@
 <?php
-namespace Tests\WPGraphQLAcf\WPUnit;
+namespace Tests\WPGraphQL\Acf\WPUnit;
 
-abstract class AcfeFieldTestCase extends \Tests\WPGraphQLAcf\WPUnit\AcfFieldTestCase {
+abstract class AcfeFieldTestCase extends \Tests\WPGraphQL\Acf\WPUnit\AcfFieldTestCase {
 
 	public function _setUp() {
 

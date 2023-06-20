@@ -1,6 +1,6 @@
 <?php
 
-namespace WPGraphQLAcf\ThirdParty\AcfExtended\FieldType;
+namespace WPGraphQL\Acf\ThirdParty\AcfExtended\FieldType;
 
 use GraphQL\Deferred;
 use WPGraphQL\Model\Taxonomy;

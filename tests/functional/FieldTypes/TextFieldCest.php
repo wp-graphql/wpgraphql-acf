@@ -1,6 +1,6 @@
 <?php
 
-class TextFieldCest extends \Tests\WPGraphQLAcf\Functional\AcfFieldCest {
+class TextFieldCest extends \Tests\WPGraphQL\Acf\Functional\AcfFieldCest {
 
 	// Run these steps before each test
 	public function _before( FunctionalTester $I ): void {

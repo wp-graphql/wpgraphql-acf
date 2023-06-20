@@ -1,5 +1,5 @@
 <?php
-namespace WPGraphQLAcf\FieldType;
+namespace WPGraphQL\Acf\FieldType;
 
 class Radio {
 

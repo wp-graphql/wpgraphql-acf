@@ -1,6 +1,6 @@
 <?php
 
-class GroupFieldCest extends \Tests\WPGraphQLAcf\Functional\AcfFieldCest {
+class GroupFieldCest extends \Tests\WPGraphQL\Acf\Functional\AcfFieldCest {
 
 	public function _getAcfFieldType(): string {
 		return 'group';

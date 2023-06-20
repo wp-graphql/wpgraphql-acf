@@ -5,15 +5,15 @@
  * @package wp-graphql-acf
  */
 
-namespace WPGraphQLAcf\Admin;
+namespace WPGraphQL\Acf\Admin;
 
 use Exception;
 use GraphQL\Error\Error;
 use WP_Post;
-use WPGraphQLAcf\AcfGraphQLFieldType;
-use WPGraphQLAcf\LocationRules;
-use WPGraphQLAcf\Utils;
-use WPGraphQLAcf\Registry;
+use WPGraphQL\Acf\AcfGraphQLFieldType;
+use WPGraphQL\Acf\LocationRules;
+use WPGraphQL\Acf\Utils;
+use WPGraphQL\Acf\Registry;
 
 
 /**
