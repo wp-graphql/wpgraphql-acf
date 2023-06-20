@@ -296,8 +296,7 @@ class Registry {
 						$interfaces[ $field['key'] ] = $this->get_field_group_graphql_type_name( acf_get_field_group( $cloned_from['parent'] ) ) . '_Fields';
 					}
 				}
-			}
-
+			}       
 		}
 
 		$interfaces = array_unique( array_values( $interfaces ) );
