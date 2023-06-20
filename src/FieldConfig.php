@@ -305,16 +305,35 @@ class FieldConfig {
 
 		$node         = $root['node'] ?: null;
 		$node_id      = Utils::get_node_acf_id( $node ) ?: null;
-		$field_key    = $field_config['cloned_key'] ?? ( $field_config['key'] ?: null );
 
-		$is_cloned = ! empty( $field_config['cloned_key'] );
+		$field_key = null;
+		$is_cloned = false;
 
-		if ( $is_cloned && isset( $field_config['_name'] ) && ! empty( $node_id ) ) {
-			$field_key = $field_config['_name'];
+		if ( ! empty( $field_config['cloned_key'] ) ) {
+			$field_key = $field_config['cloned_key'];
+			$is_cloned = true;
+		} else if ( ! empty( $field_config['key'] ) ) {
+			$field_key = $field_config['key'];
+		}
+
+		if ( empty( $field_key ) ) {
+			return null;
+		}
+
+		if ( $is_cloned ) {
+			if ( isset( $field_config['_name'] ) && ! empty( $node_id ) ) {
+				$field_key = $field_config['_name'];
+			} else if ( isset( $field_config['cloned_key'])) {
+				$field_key = $field_config['cloned_key'];
+			}
 			$field_config = acf_get_field( $field_key );
 		}
 
-		$should_format_value = ! empty( $field_config['type'] ) && $this->should_format_field_value( $field_config['type'] ?? null );
+		$should_format_value = false;
+
+		if ( ! empty( $field_config['type'] ) && $this->should_format_field_value( $field_config['type'] ) ) {
+			$should_format_value = true;
+		}
 
 		if ( empty( $field_key ) ) {
 			return null;
@@ -330,10 +349,6 @@ class FieldConfig {
 		if ( empty( $node_id ) ) {
 			return null;
 		}
-
-
-
-
 
 		/**
 		 * Filter the field value before resolving.
@@ -395,7 +410,7 @@ class FieldConfig {
 
 		// @todo: This was ported over, but I'm not 💯 sure what this is solving and
 		// why it's only applied on options pages and not other pages 🤔
-		if ( is_array( $root ) && ! ( ! empty( $root['type'] ) && 'options_page' === $root['type'] ) && isset( $root[ $acf_field_config['key'] ] ) ) {
+		if ( is_array( $root ) && ! ( ! empty( $root['type'] ) && 'options_page' === $root['type'] ) && isset( $acf_field_config['key'] ) && isset( $root[ $acf_field_config['key'] ] ) ) {
 			$value = $root[ $acf_field_config['key'] ];
 			if ( 'wysiwyg' === $acf_field_config['type'] ) {
 				$value = apply_filters( 'the_content', $value );

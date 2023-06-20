@@ -1,6 +1,8 @@
 <?php
 namespace Tests\WPGraphQLAcf\WPUnit;
 
+use WPGraphQLAcf\Utils;
+
 /**
  * Test Case for testing WPGraphQL for ACF Functionality
  *
@@ -73,11 +75,6 @@ class WPGraphQLAcfTestCase extends \Tests\WPGraphQL\TestCase\WPGraphQLTestCase {
 	/**
 	 * @var string
 	 */
-	public $acf_field_group_key;
-
-	/**
-	 * @var string
-	 */
 	public $test_image;
 
 	/**
@@ -88,10 +85,7 @@ class WPGraphQLAcfTestCase extends \Tests\WPGraphQL\TestCase\WPGraphQLTestCase {
 		parent::setUp();
 
 		$this->clearSchema();
-
-		// Ensure the field group keys are unique to prevent
-		// conflicts across tests
-		$this->acf_field_group_key = uniqid(__CLASS__, true );
+		Utils::_clear_field_type_registry();
 
 		$active_plugins = get_option( 'active_plugins' );
 
@@ -165,6 +159,20 @@ class WPGraphQLAcfTestCase extends \Tests\WPGraphQL\TestCase\WPGraphQLTestCase {
 	}
 
 	/**
+	 * @return string
+	 */
+	public function get_acf_field_group_key() {
+		return uniqid( 'group_' . __CLASS__, true );
+	}
+
+	/**
+	 * @return string
+	 */
+	public function get_acf_clone_field_group_key() {
+		return uniqid( 'group_clone_' . __CLASS__, true );
+	}
+
+	/**
 	 * @return void
 	 */
 	public function tearDown(): void {
@@ -224,7 +232,7 @@ class WPGraphQLAcfTestCase extends \Tests\WPGraphQL\TestCase\WPGraphQLTestCase {
 
 		// merge the defaults with the passed in options
 		$config = array_merge( [
-			'key'                   => $this->acf_field_group_key,
+			'key'                   => $this->get_acf_field_group_key(),
 			'title'                 => 'ACF Test Group',
 			'fields'                => [],
 			'location'              => [
@@ -262,11 +270,11 @@ class WPGraphQLAcfTestCase extends \Tests\WPGraphQL\TestCase\WPGraphQLTestCase {
 	 */
 	public function register_acf_field( array $acf_field = [], array $acf_field_group = [] ): string {
 
-		$this->register_acf_field_group( $acf_field_group );
+		$field_group_key = $this->register_acf_field_group( $acf_field_group );
 		$key = uniqid( 'acf_test',true );
 
 		$config = array_merge( [
-			'parent'            => $this->acf_field_group_key,
+			'parent'            => $field_group_key,
 			'key'               => $key,
 			'label'             => 'Text',
 			'name'              => 'text',
@@ -291,6 +299,52 @@ class WPGraphQLAcfTestCase extends \Tests\WPGraphQL\TestCase\WPGraphQLTestCase {
 
 		return $key;
 
+	}
+
+	/**
+	 * Register a cloned field.
+	 *
+	 * This will add an inactive field group with a field
+	 * then will add an active field group with a field of the type "clone"
+	 * that will "clone" the inactive field group
+	 *
+	 * @param array $acf_field Config array to override the defaults
+	 * @param array $acf_field_group Config array to override the defaults of the field group the field will be registered to
+	 *
+	 * @return string
+	 */
+	public function register_cloned_acf_field( array $acf_field = [], array $acf_field_group = [] ): string {
+
+		// the field group needs to be unique
+		// for each test
+		$clone_field_group_key = $this->get_acf_clone_field_group_key();
+
+		// register an inactive field group
+		// register a %type% field to the inactive field group
+		// - name: clone . $fieldName
+		// - graphql_field_name: clone . $graphqlFieldName
+		$inactive_field = $this->register_acf_field(
+			$acf_field,
+			[
+				'key' => $clone_field_group_key,
+				'active' => false,
+				'title' => 'Inactive Field Group for Cloning',
+				'graphql_field_name' => 'InactiveFieldGroup'
+			]
+		);
+
+		// register a field to the active field group
+		// - type: clone
+		// - clone: [ 'group_' . $inactive_field_group_key ]
+		$this->register_acf_field([
+			'type' => 'clone',
+			// clone the inactive field group
+			'clone' => [
+				$clone_field_group_key
+			]
+		], $acf_field_group );
+
+		return $inactive_field;
 	}
 
 }

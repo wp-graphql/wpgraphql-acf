@@ -62,6 +62,15 @@ class Utils {
 	}
 
 	/**
+	 * Clear the Type Registry for tests
+	 *
+	 * @return void
+	 */
+	public static function _clear_field_type_registry(): void {
+		self::$type_registry = null;
+	}
+
+	/**
 	 * Return the Field Type Registry instance
 	 *
 	 * @return FieldTypeRegistry

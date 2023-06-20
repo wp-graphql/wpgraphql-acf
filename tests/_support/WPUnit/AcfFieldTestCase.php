@@ -20,6 +20,8 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 	public function setUp(): void {
 		$this->acf_plugin_version = $_ENV['ACF_VERSION'] ?? 'latest';
 		$this->clearSchema();
+		\WPGraphQLAcf\Utils::_clear_field_type_registry();
+		do_action( 'acf/init ');
 		parent::setUp();
 	}
 
@@ -27,6 +29,7 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 	 * @return void
 	 */
 	public function tearDown(): void {
+		$this->clearSchema();
 		parent::tearDown();
 	}
 
@@ -35,6 +38,42 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 	 * @return string
 	 */
 	abstract public function get_field_type(): string;
+
+	/**
+	 * @return mixed
+	 */
+	public function get_data_to_store() {
+		return 'text value...';
+	}
+
+	/***
+	 * @return string
+	 */
+	public function get_query_fragment(): string {
+		return '
+			fragment QueryFragment on AcfTestGroup {
+				testText
+			}
+		';
+	}
+
+	/**
+	 * @return string
+	 */
+	public function get_cloned_field_query_fragment():string {
+		return '
+			fragment CloneFieldQueryFragment on AcfTestGroup {
+				clonedTestText
+			}
+		';
+	}
+
+	/**
+	 * @return mixed
+	 */
+	public function get_expected_fragment_response() {
+		return $this->get_data_to_store();
+	}
 
 	/**
 	 * Return the acf "field_name". This is the name that's used to store data in meta.
@@ -88,6 +127,29 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 	}
 
 	/**
+	 * @param array $acf_field
+	 * @param array $acf_field_group
+	 *
+	 * @return string
+	 */
+	public function register_cloned_acf_field( array $acf_field = [], array $acf_field_group = [] ): string {
+
+		// set defaults on the acf field
+		// using helper methods from this class.
+		// this allows test cases extending this class
+		// to more easily make use of repeatedly registering
+		// fields of the same type and testing them
+		$acf_field = array_merge( [
+			'name' => 'cloned_' . $this->get_field_name(),
+			'type' => $this->get_field_type()
+		], $acf_field );
+
+		return parent::register_cloned_acf_field( $acf_field, $acf_field_group );
+	}
+
+
+
+	/**
 	 * Returns a GraphQL formatted version of the field name
 	 *
 	 * @param bool $allow_underscores Whether to allow underscores
@@ -96,6 +158,16 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 	 */
 	public function get_formatted_field_name( bool $allow_underscores = false ): string {
 		return \WPGraphQL\Utils\Utils::format_field_name( $this->get_field_name(), $allow_underscores );
+	}
+
+	public function get_formatted_clone_field_name( bool $allow_underscores = false ): string {
+		return \WPGraphQL\Utils\Utils::format_field_name( 'cloned_' . $this->get_field_name(), $allow_underscores );
+	}
+
+	public function get_expectation() {
+		return [
+			$this->expectedField( 'post.acfTestGroup.' . $this->get_formatted_clone_field_name(), $this->get_expected_fragment_response() ),
+		];
 	}
 
 

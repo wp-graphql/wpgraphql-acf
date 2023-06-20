@@ -13,11 +13,6 @@ class TextFieldTest extends \Tests\WPGraphQLAcf\WPUnit\AcfFieldTestCase {
 	public $post_id;
 
 	/**
-	 * @var string
-	 */
-	public $acf_field_group_key;
-
-	/**
 	 * @return void
 	 */
 	public function setUp(): void {

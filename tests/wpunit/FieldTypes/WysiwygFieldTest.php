@@ -24,6 +24,22 @@ class WysiwygFieldTest extends \Tests\WPGraphQLAcf\WPUnit\AcfFieldTestCase {
 		return 'String';
 	}
 
+	public function get_data_to_store():string {
+		return 'some text';
+	}
+
+	public function get_expected_fragment_response() {
+		return wpautop( $this->get_data_to_store() );
+	}
+
+	public function get_cloned_field_query_fragment(): string {
+		return '
+		fragment CloneFieldQueryFragment on AcfTestGroup {
+			clonedTestWysiwyg
+		}
+		';
+	}
+
 	public function queryForPostByDatabaseId() {
 		return '
 		query GetPost($id:ID!){
