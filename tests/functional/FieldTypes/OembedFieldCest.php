@@ -1,6 +1,6 @@
 <?php
 
-class OembedFieldCest extends \Tests\WPGraphQLAcf\Functional\AcfFieldCest {
+class OembedFieldCest extends \Tests\WPGraphQL\Acf\Functional\AcfFieldCest {
 
 	public function _getAcfFieldType(): string {
 		return 'oembed';

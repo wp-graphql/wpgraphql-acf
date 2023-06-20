@@ -1,6 +1,6 @@
 <?php
 
-class DatePickerFieldTest extends \Tests\WPGraphQLAcf\WPUnit\AcfFieldTestCase {
+class DatePickerFieldTest extends \Tests\WPGraphQL\Acf\WPUnit\AcfFieldTestCase {
 
 	/**
 	 * @return void

@@ -1,6 +1,6 @@
 <?php
 
-class OptionsPageTest extends \Tests\WPGraphQLAcf\WPUnit\WPGraphQLAcfTestCase {
+class OptionsPageTest extends \Tests\WPGraphQL\Acf\WPUnit\WPGraphQLAcfTestCase {
 
 
 	public function setUp():void {

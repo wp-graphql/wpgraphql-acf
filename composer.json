@@ -51,12 +51,12 @@
       "deactivation.php"
     ],
     "psr-4": {
-      "WPGraphQLAcf\\": "src/"
+      "WPGraphQL\\Acf\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Tests\\WPGraphQLAcf\\": "tests/_support/"
+      "Tests\\WPGraphQL\\Acf\\": "tests/_support/"
     }
   },
   "scripts": {

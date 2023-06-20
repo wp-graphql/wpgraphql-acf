@@ -1,8 +1,7 @@
 <?php
 
+class TrueFalseFieldTest extends \Tests\WPGraphQL\Acf\WPUnit\AcfFieldTestCase {
 
-
-class TrueFalseFieldTest extends \Tests\WPGraphQLAcf\WPUnit\AcfFieldTestCase {
 
 	/**
 	 * @return void

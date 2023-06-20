@@ -2,7 +2,7 @@
 
 
 
-class ButtonGroupFieldCest extends \Tests\WPGraphQLAcf\Functional\AcfFieldCest {
+class ButtonGroupFieldCest extends \Tests\WPGraphQL\Acf\Functional\AcfFieldCest {
 
 	public function _getAcfFieldType(): string {
 		return 'button_group';

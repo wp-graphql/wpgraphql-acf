@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\WPGraphQLAcf\Functional;
+namespace Tests\WPGraphQL\Acf\Functional;
 
 use FunctionalTester;
 

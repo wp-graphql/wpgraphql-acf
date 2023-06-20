@@ -58,7 +58,7 @@ class WPGraphQLAcf {
 	 * @return void
 	 */
 	public function init_admin_settings(): void {
-		$this->admin_settings = new WPGraphQLAcf\Admin\Settings();
+		$this->admin_settings = new WPGraphQL\Acf\Admin\Settings();
 		$this->admin_settings->init();
 
 
@@ -174,8 +174,8 @@ class WPGraphQLAcf {
 	 * @return mixed
 	 */
 	public function resolve_acf_options_page_node( $type, $node ) {
-		if ( $node instanceof \WPGraphQLAcf\Model\AcfOptionsPage ) {
-			return \WPGraphQLAcf\Utils::get_field_group_name( $node->get_data() );
+		if ( $node instanceof \WPGraphQL\Acf\Model\AcfOptionsPage ) {
+			return \WPGraphQL\Acf\Utils::get_field_group_name( $node->get_data() );
 		}
 		return $type;
 	}
@@ -187,7 +187,7 @@ class WPGraphQLAcf {
 	 * @return array
 	 */
 	public function register_loaders( array $loaders, \WPGraphQL\AppContext $context ): array {
-		$loaders['acf_options_page'] = new \WPGraphQLAcf\Data\Loader\AcfOptionsPageLoader( $context );
+		$loaders['acf_options_page'] = new \WPGraphQL\Acf\Data\Loader\AcfOptionsPageLoader( $context );
 		return $loaders;
 	}
 

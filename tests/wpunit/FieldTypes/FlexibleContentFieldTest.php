@@ -1,6 +1,6 @@
 <?php
 
-class FlexibleContentFieldTest extends \Tests\WPGraphQLAcf\WPUnit\AcfFieldTestCase {
+class FlexibleContentFieldTest extends \Tests\WPGraphQL\Acf\WPUnit\AcfFieldTestCase {
 
 	/**
 	 * @return void

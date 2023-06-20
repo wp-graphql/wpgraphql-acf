@@ -1,6 +1,6 @@
 <?php
 
-class PageLinkFieldTest extends \Tests\WPGraphQLAcf\WPUnit\AcfFieldTestCase {
+class PageLinkFieldTest extends \Tests\WPGraphQL\Acf\WPUnit\AcfFieldTestCase {
 
 	/**
 	 * @return void

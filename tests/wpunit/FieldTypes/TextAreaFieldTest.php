@@ -5,7 +5,7 @@
  *
  * Tests the behavior of "text_area" field mapping to the WPGraphQL Schema
  */
-class TextAreaFieldTest extends \Tests\WPGraphQLAcf\WPUnit\AcfFieldTestCase {
+class TextAreaFieldTest extends \Tests\WPGraphQL\Acf\WPUnit\AcfFieldTestCase {
 
 	public function setUp(): void {
 		parent::setUp();

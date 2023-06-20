@@ -1,5 +1,5 @@
 <?php
-namespace WPGraphQLAcf;
+namespace WPGraphQL\Acf;
 
 class ThirdParty {
 

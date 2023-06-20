@@ -1,6 +1,6 @@
 <?php
 
-class OembedFieldTest extends \Tests\WPGraphQLAcf\WPUnit\AcfFieldTestCase {
+class OembedFieldTest extends \Tests\WPGraphQL\Acf\WPUnit\AcfFieldTestCase {
 
 	/**
 	 * @return void

@@ -1,6 +1,6 @@
 <?php
 
-class GoogleMapFieldTest extends \Tests\WPGraphQLAcf\WPUnit\AcfFieldTestCase {
+class GoogleMapFieldTest extends \Tests\WPGraphQL\Acf\WPUnit\AcfFieldTestCase {
 
 	/**
 	 * @return void

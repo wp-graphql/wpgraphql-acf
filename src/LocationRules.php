@@ -1,6 +1,6 @@
 <?php
 
-namespace WPGraphQLAcf;
+namespace WPGraphQL\Acf;
 
 use WPGraphQL\Utils\Utils;
 
@@ -475,7 +475,7 @@ class LocationRules {
 						$this->set_graphql_type( $field_group_name, $graphql_name );
 					}
 				}
-			} else if ( in_array( $value, $allowed_post_types, true ) ) {
+			} elseif ( in_array( $value, $allowed_post_types, true ) ) {
 				$post_type_object = get_post_type_object( $value );
 				$graphql_name     = $post_type_object->graphql_single_name ?? null;
 				if ( ! empty( $graphql_name ) ) {
@@ -946,11 +946,11 @@ class LocationRules {
 
 			$options_page = acf_get_options_page( $value );
 
-			if ( empty( $options_page ) || ! \WPGraphQLAcf\Utils::should_field_group_show_in_graphql( $options_page ) ) {
+			if ( empty( $options_page ) || ! \WPGraphQL\Acf\Utils::should_field_group_show_in_graphql( $options_page ) ) {
 				return;
 			}
 
-			$type_name = \WPGraphQLAcf\Utils::get_field_group_name( $options_page );
+			$type_name = \WPGraphQL\Acf\Utils::get_field_group_name( $options_page );
 			$this->set_graphql_type( $field_group_name, $type_name );
 		}
 

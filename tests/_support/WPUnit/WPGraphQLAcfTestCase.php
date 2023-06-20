@@ -1,5 +1,5 @@
 <?php
-namespace Tests\WPGraphQLAcf\WPUnit;
+namespace Tests\WPGraphQL\Acf\WPUnit;
 
 use WPGraphQLAcf\Utils;
 
