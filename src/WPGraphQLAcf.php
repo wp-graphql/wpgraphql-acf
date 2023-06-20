@@ -2,11 +2,11 @@
 
 use WPGraphQL\Registry\TypeRegistry;
 use WPGraphQL\Utils\Utils;
-use WPGraphQLAcf\Admin\PostTypeRegistration;
-use WPGraphQLAcf\Admin\Settings;
-use WPGraphQLAcf\Admin\TaxonomyRegistration;
-use WPGraphQLAcf\Registry;
-use WPGraphQLAcf\ThirdParty;
+use WPGraphQL\Acf\Admin\PostTypeRegistration;
+use WPGraphQL\Acf\Admin\Settings;
+use WPGraphQL\Acf\Admin\TaxonomyRegistration;
+use WPGraphQL\Acf\Registry;
+use WPGraphQL\Acf\ThirdParty;
 
 class WPGraphQLAcf {
 
