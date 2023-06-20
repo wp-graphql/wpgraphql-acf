@@ -34,9 +34,6 @@ jobs:
           coverage: none
           tools: composer, wp-cli
 
-      - name: Get Composer Cache Directory
-        id: composercache
-
       - name: Cache dependencies
         uses: actions/cache@v2
         with:
