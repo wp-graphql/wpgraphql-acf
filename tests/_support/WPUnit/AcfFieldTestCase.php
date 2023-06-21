@@ -20,7 +20,7 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 	public function setUp(): void {
 		$this->acf_plugin_version = $_ENV['ACF_VERSION'] ?? 'latest';
 		$this->clearSchema();
-		\WPGraphQLAcf\Utils::_clear_field_type_registry();
+		\WPGraphQL\Acf\Utils::_clear_field_type_registry();
 		do_action( 'acf/init ');
 		parent::setUp();
 	}
@@ -685,6 +685,8 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 		acf_remove_local_field( $field_key );
 	}
 
+
+
 	/**
 	 * @todo: implement the below tests
 	 */
@@ -702,4 +704,185 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 // - test cloning the field and querying for it
 // - test cloning all fields of a field group and querying for them
 
+	/**
+	 * @return void
+	 */
+	public function testClonedFieldExistsInSchema() {
+
+		$this->register_cloned_acf_field();
+
+		$query = '
+		query GetAcfFieldGroup ($name: String! ){
+		  __type( name: $name ) {
+		    name
+		    interfaces {
+		      name
+		    }
+		    fields {
+		      name
+		    }
+		    possibleTypes {
+		      name
+		    }
+		  }
+		}
+		';
+
+		$actual = $this->graphql([
+			'query' => $query,
+			'variables' => [
+				'name' => 'InactiveFieldGroup'
+			]
+		]);
+
+		codecept_debug( [
+			'$actual' => $actual,
+		]);
+
+		self::assertQuerySuccessful( $actual, [
+			$this->expectedNode( '__type', [
+				$this->expectedField( 'name', 'InactiveFieldGroup' ),
+			]),
+			$this->expectedNode( '__type.interfaces', [
+				$this->expectedField( 'name', 'AcfFieldGroup' ),
+				$this->expectedField( 'name', 'InactiveFieldGroup_Fields' )
+			]),
+		]);
+
+		$actual = $this->graphql([
+			'query' => $query,
+			'variables' => [
+				'name' => 'InactiveFieldGroup_Fields'
+			]
+		]);
+
+		codecept_debug( [
+			'$actual' => $actual,
+		]);
+
+		self::assertQuerySuccessful( $actual, [
+			$this->expectedNode( '__type', [
+				$this->expectedField( 'name', 'InactiveFieldGroup_Fields' ),
+			]),
+			$this->expectedNode( '__type.fields', [
+				$this->expectedField( 'name', $this->get_formatted_clone_field_name() )
+			])
+		]);
+
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testClonedFieldGroupIsAppliedAsInterface() {
+
+		$this->register_cloned_acf_field();
+
+		$query = '
+		query GetAcfFieldGroup ($name: String! ){
+		  __type( name: $name ) {
+		    name
+		    interfaces {
+		      name
+		    }
+		    fields {
+		      name
+		    }
+		    possibleTypes {
+		      name
+		    }
+		  }
+		}
+		';
+
+		$actual = $this->graphql([
+			'query' => $query,
+			'variables' => [
+				'name' => 'AcfTestGroup'
+			]
+		]);
+
+		codecept_debug( [
+			'$actual' => $actual,
+		]);
+
+		// the AcfTestGroup should implment the "InactiveFieldGroup_Fields" interface
+		self::assertQuerySuccessful( $actual, [
+			$this->expectedNode( '__type', [
+				$this->expectedField( 'name', 'AcfTestGroup' ),
+			]),
+			$this->expectedNode( '__type.interfaces', [
+				$this->expectedField( 'name', 'InactiveFieldGroup_Fields' )
+			]),
+			// the AcfTestGroup should hace a clonedTextField field
+			$this->expectedNode( '__type.fields', [
+				$this->expectedField( 'name', $this->get_formatted_clone_field_name() )
+			])
+		]);
+
+	}
+
+	/**
+	 * @return string
+	 */
+	public function get_acf_clone_fragment(): string {
+		return '
+		fragment AcfTestGroupFragment on AcfTestGroup {
+		  ' . $this->get_formatted_clone_field_name() . '
+		}
+		';
+	}
+
+	/**
+	 * @return mixed
+	 */
+	public function get_clone_value_to_save() {
+		return 'test value, dood!';
+	}
+
+	/**
+	 * @return mixed
+	 */
+	public function get_expected_clone_value() {
+		return $this->get_clone_value_to_save();
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testQueryCloneFieldOnPost(): void {
+
+		$field_key = $this->register_cloned_acf_field();
+
+		update_field( $field_key, $this->get_clone_value_to_save(), $this->published_post->ID );
+
+		$fragment = $this->get_acf_clone_fragment();
+
+		$query = '
+		query GetPost($id: ID!) {
+		  post( id: $id idType: DATABASE_ID ) {
+		    id
+		    databaseId
+		    __typename
+		    ...on WithAcfAcfTestGroup {
+		      acfTestGroup {
+		        ...AcfTestGroupFragment
+		      }
+		    }
+		  }
+		}' . $fragment;
+
+		$actual = $this->graphql([
+			'query' => $query,
+			'variables' => [
+				'id' => $this->published_post->ID
+			]
+		]);
+
+		self::assertQuerySuccessful( $actual, [
+			$this->expectedField( 'post.databaseId', $this->published_post->ID ),
+			$this->expectedField( 'post.__typename', 'Post' ),
+			$this->expectedField( 'post.acfTestGroup.' . $this->get_formatted_clone_field_name(), $this->get_expected_clone_value() )
+		]);
+	}
 }

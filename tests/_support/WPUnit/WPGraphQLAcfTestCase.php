@@ -1,7 +1,7 @@
 <?php
 namespace Tests\WPGraphQL\Acf\WPUnit;
 
-use WPGraphQLAcf\Utils;
+use WPGraphQL\Acf\Utils;
 
 /**
  * Test Case for testing WPGraphQL for ACF Functionality
@@ -162,14 +162,20 @@ class WPGraphQLAcfTestCase extends \Tests\WPGraphQL\TestCase\WPGraphQLTestCase {
 	 * @return string
 	 */
 	public function get_acf_field_group_key() {
-		return uniqid( 'group_' . __CLASS__, true );
+		return uniqid( 'group_', true );
 	}
 
 	/**
+	 * @param string $key
 	 * @return string
 	 */
-	public function get_acf_clone_field_group_key() {
-		return uniqid( 'group_clone_' . __CLASS__, true );
+	public function get_acf_clone_field_group_key( string $key = '' ): string {
+
+		if ( empty( $key ) ) {
+			$key = uniqid( '', false );
+		}
+
+		return uniqid( 'group_clone_' . $key , false );
 	}
 
 	/**
@@ -327,9 +333,34 @@ class WPGraphQLAcfTestCase extends \Tests\WPGraphQL\TestCase\WPGraphQLTestCase {
 			$acf_field,
 			[
 				'key' => $clone_field_group_key,
-				'active' => false,
 				'title' => 'Inactive Field Group for Cloning',
-				'graphql_field_name' => 'InactiveFieldGroup'
+				'location' => array(
+					array(
+						array(
+							'param' => 'post_type',
+							'operator' => '==',
+							'value' => 'post',
+						),
+					),
+				),
+				'menu_order' => 0,
+				'position' => 'normal',
+				'style' => 'default',
+				'label_placement' => 'left',
+				'instruction_placement' => 'label',
+				'hide_on_screen' => '',
+				'active' => false,
+				'description' => '',
+				'show_in_rest' => 0,
+				'acfe_autosync' => '',
+				'acfe_form' => 0,
+				'acfe_display_title' => '',
+				'show_in_graphql' => 1,
+				'graphql_field_name' => 'inactiveFieldGroup',
+				'map_graphql_types_from_location_rules' => 0,
+				'graphql_types' => '',
+				'acfe_meta' => '',
+				'acfe_note' => 'This Field Group is inactive so that it will not show in the WP Admin anywhere by default (i.e. the location rules won\'t add it to any admin screens). However, it _will_ show up anywhere it has been cloned. WPGraphQL will add the Types to the Schema since the field group is set to "show_in_graphql".',
 			]
 		);
 
@@ -337,11 +368,31 @@ class WPGraphQLAcfTestCase extends \Tests\WPGraphQL\TestCase\WPGraphQLTestCase {
 		// - type: clone
 		// - clone: [ 'group_' . $inactive_field_group_key ]
 		$this->register_acf_field([
+			'key' => uniqid( 'clone' ),
 			'type' => 'clone',
+			'name' => 'cloned_fields',
+			'instructions' => '',
+			'required' => 0,
+			'conditional_logic' => 0,
+			'wrapper' => array(
+				'width' => '',
+				'class' => '',
+				'id' => '',
+			),
+			'acfe_save_meta' => 0,
 			// clone the inactive field group
 			'clone' => [
-				$clone_field_group_key
-			]
+				0 => $clone_field_group_key
+			],
+			'display' => 'seamless',
+			'layout' => 'block',
+			'prefix_label' => 0,
+			'prefix_name' => 0,
+			'acfe_seamless_style' => 0,
+			'acfe_clone_modal' => 0,
+			'acfe_clone_modal_close' => 0,
+			'acfe_clone_modal_button' => '',
+			'acfe_clone_modal_size' => 'large',
 		], $acf_field_group );
 
 		return $inactive_field;

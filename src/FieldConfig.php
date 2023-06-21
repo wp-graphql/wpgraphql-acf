@@ -326,6 +326,7 @@ class FieldConfig {
 			} else if ( isset( $field_config['cloned_key'])) {
 				$field_key = $field_config['cloned_key'];
 			}
+			// @phpstan-ignore-next-line
 			$field_config = acf_get_field( $field_key );
 		}
 

@@ -40,20 +40,27 @@ class WysiwygFieldTest extends \Tests\WPGraphQL\Acf\WPUnit\AcfFieldTestCase {
 		';
 	}
 
-	public function queryForPostByDatabaseId() {
-		return '
-		query GetPost($id:ID!){
-		  post(id:$id idType:DATABASE_ID) {
-		    __typename
-		    ...OnWithAcfAcfTestGroup {
-		      acfTestGroup {
-		        ' . $this->get_formatted_field_name(). '
-		      }
-		    }
-		  }
-		}
-		';
+	/**
+	 * @return mixed
+	 */
+	public function get_expected_clone_value() {
+		return wpautop( $this->get_clone_value_to_save() );
 	}
+
+//	public function queryForPostByDatabaseId() {
+//		return '
+//		query GetPost($id:ID!){
+//		  post(id:$id idType:DATABASE_ID) {
+//		    __typename
+//		    ...OnWithAcfAcfTestGroup {
+//		      acfTestGroup {
+//		        ' . $this->get_formatted_field_name(). '
+//		      }
+//		    }
+//		  }
+//		}
+//		';
+//	}
 
 //	public function testQueryFieldOnPostReturnsExpectedValue() {
 //
