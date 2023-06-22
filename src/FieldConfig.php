@@ -303,8 +303,8 @@ class FieldConfig {
 		// @todo: Handle options pages??
 		$field_config = $info->fieldDefinition->config['acf_field'] ?? $this->acf_field;
 
-		$node         = $root['node'] ?: null;
-		$node_id      = Utils::get_node_acf_id( $node ) ?: null;
+		$node         = $root['node'] ?? null;
+		$node_id      = $node ? Utils::get_node_acf_id( $node ) : null;
 
 		$field_key = null;
 		$is_cloned = false;
@@ -339,6 +339,9 @@ class FieldConfig {
 		if ( empty( $field_key ) ) {
 			return null;
 		}
+
+		// if the field_config is empty or not an array, set it as an empty array as a fallback
+		$field_config = ! empty( $field_config ) && is_array( $field_config ) ? $field_config : [];
 
 		// If the root being passed down already has a value
 		// for the field key, let's use it to resolve
@@ -394,11 +397,15 @@ class FieldConfig {
 	 * @param mixed            $value   The value of the ACF field to return
 	 * @param mixed            $root    The root node/object the field belongs to
 	 * @param mixed|string|int $node_id The ID of the node the field belongs to
-	 * @param array            $acf_field_config The ACF Field Config for the field being resolved
+	 * @param ?array           $acf_field_config The ACF Field Config for the field being resolved
 	 *
 	 * @return mixed
 	 */
-	public function prepare_acf_field_value( $value, $root, $node_id, array $acf_field_config ) {
+	public function prepare_acf_field_value( $value, $root, $node_id, ?array $acf_field_config = [] ) {
+
+		if ( empty( $acf_field_config ) || ! is_array( $acf_field_config ) ) {
+			return $value;
+		}
 
 		if ( isset( $acf_field_config['new_lines'] ) ) {
 			if ( 'wpautop' === $acf_field_config['new_lines'] ) {
