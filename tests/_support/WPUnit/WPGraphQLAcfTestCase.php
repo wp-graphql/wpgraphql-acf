@@ -368,7 +368,7 @@ class WPGraphQLAcfTestCase extends \Tests\WPGraphQL\TestCase\WPGraphQLTestCase {
 		// - type: clone
 		// - clone: [ 'group_' . $inactive_field_group_key ]
 		$this->register_acf_field([
-			'key' => uniqid( 'clone' ),
+			'key' => uniqid( 'clone', false ),
 			'type' => 'clone',
 			'name' => 'cloned_fields',
 			'instructions' => '',

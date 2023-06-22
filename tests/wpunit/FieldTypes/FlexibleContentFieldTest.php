@@ -9,7 +9,6 @@ class FlexibleContentFieldTest extends \Tests\WPGraphQL\Acf\WPUnit\AcfFieldTestC
 		parent::setUp();
 	}
 
-
 	/**
 	 * @return void
 	 */

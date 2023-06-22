@@ -26,9 +26,9 @@ class TextAreaFieldTest extends \Tests\WPGraphQL\Acf\WPUnit\AcfFieldTestCase {
 	/**
 	 * @return string
 	 */
-	public function get_cloned_field_query_fragment():string {
+	public function get_acf_clone_fragment():string {
 		return '
-			fragment CloneFieldQueryFragment on AcfTestGroup {
+			fragment AcfTestGroupFragment on AcfTestGroup {
 				clonedTestTextarea
 			}
 		';

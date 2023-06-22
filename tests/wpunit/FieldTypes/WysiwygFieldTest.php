@@ -32,10 +32,10 @@ class WysiwygFieldTest extends \Tests\WPGraphQL\Acf\WPUnit\AcfFieldTestCase {
 		return wpautop( $this->get_data_to_store() );
 	}
 
-	public function get_cloned_field_query_fragment(): string {
+	public function get_acf_clone_fragment(): string {
 		return '
-		fragment CloneFieldQueryFragment on AcfTestGroup {
-			clonedTestWysiwyg
+		fragment AcfTestGroupFragment on AcfTestGroup {
+		  ' . $this->get_formatted_clone_field_name() . '
 		}
 		';
 	}

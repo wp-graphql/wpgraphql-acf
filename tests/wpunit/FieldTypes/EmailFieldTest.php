@@ -25,4 +25,20 @@ class EmailFieldTest extends \Tests\WPGraphQL\Acf\WPUnit\AcfFieldTestCase {
 		return 'String';
 	}
 
+	public function get_acf_clone_fragment(): string {
+		return '
+		fragment AcfTestGroupFragment on AcfTestGroup {
+		  clonedTestEmail
+		}
+		';
+	}
+
+	public function get_clone_value_to_save():string {
+		return 'test@example.com';
+	}
+
+	public function get_expected_clone_value():string {
+		return 'test@example.com';
+	}
+
 }

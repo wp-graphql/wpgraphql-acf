@@ -26,22 +26,20 @@ class TrueFalseFieldTest extends \Tests\WPGraphQL\Acf\WPUnit\AcfFieldTestCase {
 		return 'Boolean';
 	}
 
-	/**
-	 * @return string
-	 */
-	public function get_cloned_field_query_fragment():string {
-		return '
-			fragment CloneFieldQueryFragment on AcfTestGroup {
-				clonedTestTrueFalse
-			}
-		';
+	public function get_expected_clone_value(): bool {
+		return 'true';
 	}
 
-	/**
-	 * @return int
-	 */
-	public function get_data_to_store():int {
-		return 123;
+	public function get_clone_value_to_save(): string {
+		return "true";
+	}
+
+	public function get_acf_clone_fragment(): string {
+		return '
+		fragment AcfTestGroupFragment on AcfTestGroup {
+			clonedTestTrueFalse
+		}
+		';
 	}
 
 }

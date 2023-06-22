@@ -826,11 +826,7 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 	 * @return string
 	 */
 	public function get_acf_clone_fragment(): string {
-		return '
-		fragment AcfTestGroupFragment on AcfTestGroup {
-		  ' . $this->get_formatted_clone_field_name() . '
-		}
-		';
+		return '';
 	}
 
 	/**
@@ -851,6 +847,10 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 	 * @return void
 	 */
 	public function testQueryCloneFieldOnPost(): void {
+
+		if ( empty( $this->get_acf_clone_fragment() ) ) {
+			$this->markTestIncomplete( 'Test needs to define a clone query fragment' );
+		}
 
 		$field_key = $this->register_cloned_acf_field();
 

@@ -29,4 +29,41 @@ class RelationshipFieldTest extends \Tests\WPGraphQL\Acf\WPUnit\AcfFieldTestCase
 		return 'OBJECT';
 	}
 
+	/**
+	 * @return array
+	 */
+	public function get_clone_value_to_save(): array {
+		return [ $this->published_post->ID ];
+	}
+
+	/**
+	 * @return string
+	 */
+	public function get_acf_clone_fragment(): string {
+		return '
+		fragment AcfTestGroupFragment on AcfTestGroup {
+			clonedTestRelationship {
+			  nodes {
+			     __typename
+			     databaseId
+			  }
+			}
+		}
+		';
+	}
+
+	/**
+	 * @return array
+	 */
+	public function get_expected_clone_value(): array {
+		return [
+			'nodes' => [
+				[
+					'__typename' => 'Post',
+					'databaseId' => $this->published_post->ID,
+				]
+			]
+		];
+	}
+
 }

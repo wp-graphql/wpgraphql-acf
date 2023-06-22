@@ -32,9 +32,9 @@ class AcfeAdvancedLinkFieldTest extends \Tests\WPGraphQL\Acf\WPUnit\AcfeFieldTes
 	/**
 	 * @return string
 	 */
-	public function get_cloned_field_query_fragment():string {
+	public function get_acf_clone_fragment():string {
 		return '
-			fragment CloneFieldQueryFragment on AcfTestGroup {
+			fragment AcfTestGroupFragment on AcfTestGroup {
 				clonedTestAcfeAdvancedLink {
 				  __typename
 			      linkText
@@ -57,7 +57,10 @@ class AcfeAdvancedLinkFieldTest extends \Tests\WPGraphQL\Acf\WPUnit\AcfeFieldTes
 		';
 	}
 
-	public function get_data_to_store() {
+	/**
+	 * @return array
+	 */
+	public function get_clone_value_to_save(): array {
 		return [
 			'type'   => 'url',
 			'url'    => 'https://wpgraphql.com',
@@ -66,7 +69,10 @@ class AcfeAdvancedLinkFieldTest extends \Tests\WPGraphQL\Acf\WPUnit\AcfeFieldTes
 		];
 	}
 
-	public function get_expected_fragment_response() {
+	/**
+	 * @return array
+	 */
+	public function get_expected_clone_value(): array {
 		return [
 			"__typename"            => "ACFE_AdvancedLink_Url",
 			"linkText"              => 'WPGraphQL.com',

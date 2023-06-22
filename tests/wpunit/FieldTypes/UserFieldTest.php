@@ -32,18 +32,24 @@ class UserFieldTest extends \Tests\WPGraphQL\Acf\WPUnit\AcfFieldTestCase {
 		return $this->admin->ID;
 	}
 
-	public function get_expectation() {
+	public function get_clone_value_to_save() {
+		return $this->admin->ID;
+	}
+
+	public function get_expected_clone_value() {
 		return [
-			$this->expectedNode( 'post.acfTestGroup.' . $this->get_formatted_clone_field_name() . '.nodes', [
-				$this->expectedField(  '__typename', 'User' ),
-				$this->expectedField( 'databaseId', $this->admin->ID )
-			])
+			'nodes' => [
+				[
+					'__typename' => 'User',
+					'databaseId' => $this->admin->ID,
+				]
+			]
 		];
 	}
 
-	public function get_cloned_field_query_fragment(): string {
+	public function get_acf_clone_fragment(): string {
 		return '
-		fragment CloneFieldQueryFragment on AcfTestGroup {
+		fragment AcfTestGroupFragment on AcfTestGroup {
 			clonedTestUser {
 			  nodes {
 			    __typename
@@ -53,5 +59,6 @@ class UserFieldTest extends \Tests\WPGraphQL\Acf\WPUnit\AcfFieldTestCase {
 		}
 		';
 	}
+
 
 }
