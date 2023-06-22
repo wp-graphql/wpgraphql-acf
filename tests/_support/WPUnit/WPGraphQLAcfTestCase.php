@@ -85,7 +85,7 @@ class WPGraphQLAcfTestCase extends \Tests\WPGraphQL\TestCase\WPGraphQLTestCase {
 		parent::setUp();
 
 		$this->clearSchema();
-		Utils::_clear_field_type_registry();
+		Utils::clear_field_type_registry();
 
 		$active_plugins = get_option( 'active_plugins' );
 

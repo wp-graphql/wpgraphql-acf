@@ -66,7 +66,7 @@ class Utils {
 	 *
 	 * @return void
 	 */
-	public static function _clear_field_type_registry(): void {
+	public static function clear_field_type_registry(): void {
 		self::$type_registry = null;
 	}
 

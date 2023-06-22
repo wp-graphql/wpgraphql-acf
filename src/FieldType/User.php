@@ -28,10 +28,10 @@ class User {
 					'description'           => $field_config->get_field_description(),
 					'acf_field'             => $field_config->get_acf_field(),
 					'acf_field_group'       => $field_config->get_acf_field_group(),
-					'toType'  => $to_type,
+					'toType'                => $to_type,
 					'oneToOne'              => false,
 					'allowFieldUnderscores' => true,
-					'resolve' => function ( $root, $args, AppContext $context, ResolveInfo $info ) use ( $field_config ) {
+					'resolve'               => function ( $root, $args, AppContext $context, ResolveInfo $info ) use ( $field_config ) {
 
 						$value = $field_config->resolve_field( $root, $args, $context, $info );
 

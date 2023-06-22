@@ -15,7 +15,7 @@ class Range {
 			'resolve'      => static function ( $root, $args, $context, $info, $field_type, FieldConfig $field_config ) {
 				$value = $field_config->resolve_field( $root, $args, $context, $info );
 				return (float) $value;
-			}
+			},
 		] );
 
 	}

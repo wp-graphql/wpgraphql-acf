@@ -303,8 +303,8 @@ class FieldConfig {
 		// @todo: Handle options pages??
 		$field_config = $info->fieldDefinition->config['acf_field'] ?? $this->acf_field;
 
-		$node         = $root['node'] ?? null;
-		$node_id      = $node ? Utils::get_node_acf_id( $node ) : null;
+		$node    = $root['node'] ?? null;
+		$node_id = $node ? Utils::get_node_acf_id( $node ) : null;
 
 		$field_key = null;
 		$is_cloned = false;
@@ -312,7 +312,7 @@ class FieldConfig {
 		if ( ! empty( $field_config['cloned_key'] ) ) {
 			$field_key = $field_config['cloned_key'];
 			$is_cloned = true;
-		} else if ( ! empty( $field_config['key'] ) ) {
+		} elseif ( ! empty( $field_config['key'] ) ) {
 			$field_key = $field_config['key'];
 		}
 
@@ -323,7 +323,7 @@ class FieldConfig {
 		if ( $is_cloned ) {
 			if ( isset( $field_config['_name'] ) && ! empty( $node_id ) ) {
 				$field_key = $field_config['_name'];
-			} else if ( isset( $field_config['cloned_key'])) {
+			} elseif ( isset( $field_config['cloned_key'] ) ) {
 				$field_key = $field_config['cloned_key'];
 			}
 			// @phpstan-ignore-next-line

@@ -271,20 +271,20 @@ class AcfExtended {
 		]);
 
 		register_graphql_object_type( 'ACFE_AdvancedLink_Url', [
-			'interfaces' => [ 'ACFE_AdvancedLink' ],
+			'interfaces'      => [ 'ACFE_AdvancedLink' ],
 			'eagerlyLoadType' => true,
-			'fields'     => [
+			'fields'          => [
 				'url' => [
-					'type' => 'String',
+					'type'        => 'String',
 					'description' => __( 'The url linked to', 'wp-graphql-acf' ),
-					'resolve' => function( $source, $args, $context, $info ) {
+					'resolve'     => function ( $source, $args, $context, $info ) {
 
 						if ( empty( $source['value'] ) ) {
 							return null;
 						}
 
 						return $source['value'];
-					}
+					},
 				],
 			],
 		]);

@@ -20,7 +20,7 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 	public function setUp(): void {
 		$this->acf_plugin_version = $_ENV['ACF_VERSION'] ?? 'latest';
 		$this->clearSchema();
-		\WPGraphQL\Acf\Utils::_clear_field_type_registry();
+		\WPGraphQL\Acf\Utils::clear_field_type_registry();
 		do_action( 'acf/init ');
 		parent::setUp();
 	}
