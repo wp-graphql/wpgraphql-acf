@@ -211,6 +211,11 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 
 	public function testFieldShowsInSchemaWithExpectedResolveType() {
 
+		// if ACF PRO is not active, skip the test
+		if ( ! defined( 'ACF_PRO' ) ) {
+			$this->markTestSkipped( 'ACF Pro is not active so this test will not run.' );
+		}
+
 		if ( 'undefined' === $this->get_expected_field_resolve_type() ) {
 			$this->markTestIncomplete( sprintf( "The '%s' test needs to define an expected resolve type by defining the 'get_expected_field_resolve_type' function with a return value", __CLASS__ ) );
 		}
@@ -568,8 +573,6 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 		 *
 		 * I believe we can add a new argument
 		 */
-		// $this->markTestIncomplete( 'WPGraphQL Core does not allow connection field names to have underscores, see: https://github.com/wp-graphql/wp-graphql/blob/develop/src/Type/WPConnectionType.php#L515, https://github.com/wp-graphql/wp-graphql/blob/develop/src/Registry/TypeRegistry.php#L1029' );
-
 		$graphql_field_name = 'custom_field_name';
 
 		$field_key = $this->register_acf_field([
@@ -847,6 +850,11 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 	 * @return void
 	 */
 	public function testQueryCloneFieldOnPost(): void {
+
+		// if ACF PRO is not active, skip the test
+		if ( ! defined( 'ACF_PRO' ) ) {
+			$this->markTestSkipped( 'ACF Pro is not active so this test will not run.' );
+		}
 
 		if ( empty( $this->get_acf_clone_fragment() ) ) {
 			$this->markTestIncomplete( 'Test needs to define a clone query fragment' );
