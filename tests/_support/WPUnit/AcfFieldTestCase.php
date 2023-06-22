@@ -712,6 +712,11 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 	 */
 	public function testClonedFieldExistsInSchema() {
 
+		// if ACF PRO is not active, skip the test
+		if ( ! defined( 'ACF_PRO' ) ) {
+			$this->markTestSkipped( 'ACF Pro is not active so this test will not run.' );
+		}
+		
 		$this->register_cloned_acf_field();
 
 		$query = '
@@ -778,6 +783,11 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 	 * @return void
 	 */
 	public function testClonedFieldGroupIsAppliedAsInterface() {
+
+		// if ACF PRO is not active, skip the test
+		if ( ! defined( 'ACF_PRO' ) ) {
+			$this->markTestSkipped( 'ACF Pro is not active so this test will not run.' );
+		}
 
 		$this->register_cloned_acf_field();
 
