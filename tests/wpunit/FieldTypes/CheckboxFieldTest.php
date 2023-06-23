@@ -35,5 +35,29 @@ class CheckboxFieldTest extends \Tests\WPGraphQL\Acf\WPUnit\AcfFieldTestCase {
 		return null;
 	}
 
+	// the values are saved as a mix of strings and integers
+	public function get_clone_value_to_save(): array {
+		return [
+			"one",
+			2
+		];
+	}
+
+	// The schema outputs the values as [String] because there can't be Scalar Unions
+	public function get_expected_clone_value(): array {
+		return [
+			"one",
+			"2"
+		];
+	}
+
+	public function get_acf_clone_fragment(): string {
+		return '
+		fragment AcfTestGroupFragment on AcfTestGroup {
+			clonedTestCheckbox
+		}
+		';
+	}
+
 
 }

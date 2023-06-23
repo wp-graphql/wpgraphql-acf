@@ -20,6 +20,8 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 	public function setUp(): void {
 		$this->acf_plugin_version = $_ENV['ACF_VERSION'] ?? 'latest';
 		$this->clearSchema();
+		\WPGraphQL\Acf\Utils::clear_field_type_registry();
+		do_action( 'acf/init ');
 		parent::setUp();
 	}
 
@@ -27,6 +29,7 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 	 * @return void
 	 */
 	public function tearDown(): void {
+		$this->clearSchema();
 		parent::tearDown();
 	}
 
@@ -35,6 +38,42 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 	 * @return string
 	 */
 	abstract public function get_field_type(): string;
+
+	/**
+	 * @return mixed
+	 */
+	public function get_data_to_store() {
+		return 'text value...';
+	}
+
+	/***
+	 * @return string
+	 */
+	public function get_query_fragment(): string {
+		return '
+			fragment QueryFragment on AcfTestGroup {
+				testText
+			}
+		';
+	}
+
+	/**
+	 * @return string
+	 */
+	public function get_cloned_field_query_fragment():string {
+		return '
+			fragment CloneFieldQueryFragment on AcfTestGroup {
+				clonedTestText
+			}
+		';
+	}
+
+	/**
+	 * @return mixed
+	 */
+	public function get_expected_fragment_response() {
+		return $this->get_data_to_store();
+	}
 
 	/**
 	 * Return the acf "field_name". This is the name that's used to store data in meta.
@@ -88,6 +127,29 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 	}
 
 	/**
+	 * @param array $acf_field
+	 * @param array $acf_field_group
+	 *
+	 * @return string
+	 */
+	public function register_cloned_acf_field( array $acf_field = [], array $acf_field_group = [] ): string {
+
+		// set defaults on the acf field
+		// using helper methods from this class.
+		// this allows test cases extending this class
+		// to more easily make use of repeatedly registering
+		// fields of the same type and testing them
+		$acf_field = array_merge( [
+			'name' => 'cloned_' . $this->get_field_name(),
+			'type' => $this->get_field_type()
+		], $acf_field );
+
+		return parent::register_cloned_acf_field( $acf_field, $acf_field_group );
+	}
+
+
+
+	/**
 	 * Returns a GraphQL formatted version of the field name
 	 *
 	 * @param bool $allow_underscores Whether to allow underscores
@@ -96,6 +158,16 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 	 */
 	public function get_formatted_field_name( bool $allow_underscores = false ): string {
 		return \WPGraphQL\Utils\Utils::format_field_name( $this->get_field_name(), $allow_underscores );
+	}
+
+	public function get_formatted_clone_field_name( bool $allow_underscores = false ): string {
+		return \WPGraphQL\Utils\Utils::format_field_name( 'cloned_' . $this->get_field_name(), $allow_underscores );
+	}
+
+	public function get_expectation() {
+		return [
+			$this->expectedField( 'post.acfTestGroup.' . $this->get_formatted_clone_field_name(), $this->get_expected_fragment_response() ),
+		];
 	}
 
 
@@ -138,6 +210,11 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 	}
 
 	public function testFieldShowsInSchemaWithExpectedResolveType() {
+
+		// if ACF PRO is not active, skip the test
+		if ( ! defined( 'ACF_PRO' ) ) {
+			$this->markTestSkipped( 'ACF Pro is not active so this test will not run.' );
+		}
 
 		if ( 'undefined' === $this->get_expected_field_resolve_type() ) {
 			$this->markTestIncomplete( sprintf( "The '%s' test needs to define an expected resolve type by defining the 'get_expected_field_resolve_type' function with a return value", __CLASS__ ) );
@@ -496,8 +573,6 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 		 *
 		 * I believe we can add a new argument
 		 */
-		// $this->markTestIncomplete( 'WPGraphQL Core does not allow connection field names to have underscores, see: https://github.com/wp-graphql/wp-graphql/blob/develop/src/Type/WPConnectionType.php#L515, https://github.com/wp-graphql/wp-graphql/blob/develop/src/Registry/TypeRegistry.php#L1029' );
-
 		$graphql_field_name = 'custom_field_name';
 
 		$field_key = $this->register_acf_field([
@@ -613,6 +688,8 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 		acf_remove_local_field( $field_key );
 	}
 
+
+
 	/**
 	 * @todo: implement the below tests
 	 */
@@ -630,4 +707,200 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 // - test cloning the field and querying for it
 // - test cloning all fields of a field group and querying for them
 
+	/**
+	 * @return void
+	 */
+	public function testClonedFieldExistsInSchema() {
+
+		// if ACF PRO is not active, skip the test
+		if ( ! defined( 'ACF_PRO' ) ) {
+			$this->markTestSkipped( 'ACF Pro is not active so this test will not run.' );
+		}
+		
+		$this->register_cloned_acf_field();
+
+		$query = '
+		query GetAcfFieldGroup ($name: String! ){
+		  __type( name: $name ) {
+		    name
+		    interfaces {
+		      name
+		    }
+		    fields {
+		      name
+		    }
+		    possibleTypes {
+		      name
+		    }
+		  }
+		}
+		';
+
+		$actual = $this->graphql([
+			'query' => $query,
+			'variables' => [
+				'name' => 'InactiveFieldGroup'
+			]
+		]);
+
+		codecept_debug( [
+			'$actual' => $actual,
+		]);
+
+		self::assertQuerySuccessful( $actual, [
+			$this->expectedNode( '__type', [
+				$this->expectedField( 'name', 'InactiveFieldGroup' ),
+			]),
+			$this->expectedNode( '__type.interfaces', [
+				$this->expectedField( 'name', 'AcfFieldGroup' ),
+				$this->expectedField( 'name', 'InactiveFieldGroup_Fields' )
+			]),
+		]);
+
+		$actual = $this->graphql([
+			'query' => $query,
+			'variables' => [
+				'name' => 'InactiveFieldGroup_Fields'
+			]
+		]);
+
+		codecept_debug( [
+			'$actual' => $actual,
+		]);
+
+		self::assertQuerySuccessful( $actual, [
+			$this->expectedNode( '__type', [
+				$this->expectedField( 'name', 'InactiveFieldGroup_Fields' ),
+			]),
+			$this->expectedNode( '__type.fields', [
+				$this->expectedField( 'name', $this->get_formatted_clone_field_name() )
+			])
+		]);
+
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testClonedFieldGroupIsAppliedAsInterface() {
+
+		// if ACF PRO is not active, skip the test
+		if ( ! defined( 'ACF_PRO' ) ) {
+			$this->markTestSkipped( 'ACF Pro is not active so this test will not run.' );
+		}
+
+		$this->register_cloned_acf_field();
+
+		$query = '
+		query GetAcfFieldGroup ($name: String! ){
+		  __type( name: $name ) {
+		    name
+		    interfaces {
+		      name
+		    }
+		    fields {
+		      name
+		    }
+		    possibleTypes {
+		      name
+		    }
+		  }
+		}
+		';
+
+		$actual = $this->graphql([
+			'query' => $query,
+			'variables' => [
+				'name' => 'AcfTestGroup'
+			]
+		]);
+
+		codecept_debug( [
+			'$actual' => $actual,
+		]);
+
+		// the AcfTestGroup should implment the "InactiveFieldGroup_Fields" interface
+		self::assertQuerySuccessful( $actual, [
+			$this->expectedNode( '__type', [
+				$this->expectedField( 'name', 'AcfTestGroup' ),
+			]),
+			$this->expectedNode( '__type.interfaces', [
+				$this->expectedField( 'name', 'InactiveFieldGroup_Fields' )
+			]),
+			// the AcfTestGroup should hace a clonedTextField field
+			$this->expectedNode( '__type.fields', [
+				$this->expectedField( 'name', $this->get_formatted_clone_field_name() )
+			])
+		]);
+
+	}
+
+	/**
+	 * @return string
+	 */
+	public function get_acf_clone_fragment(): string {
+		return '';
+	}
+
+	/**
+	 * @return mixed
+	 */
+	public function get_clone_value_to_save() {
+		return 'test value, dood!';
+	}
+
+	/**
+	 * @return mixed
+	 */
+	public function get_expected_clone_value() {
+		return $this->get_clone_value_to_save();
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testQueryCloneFieldOnPost(): void {
+
+		// if ACF PRO is not active, skip the test
+		if ( ! defined( 'ACF_PRO' ) ) {
+			$this->markTestSkipped( 'ACF Pro is not active so this test will not run.' );
+		}
+
+		if ( empty( $this->get_acf_clone_fragment() ) ) {
+			$this->markTestIncomplete( 'Test needs to define a clone query fragment' );
+		}
+
+		$field_key = $this->register_cloned_acf_field();
+
+		update_field( $field_key, $this->get_clone_value_to_save(), $this->published_post->ID );
+
+		$fragment = $this->get_acf_clone_fragment();
+
+		$query = '
+		query GetPost($id: ID!) {
+		  post( id: $id idType: DATABASE_ID ) {
+		    id
+		    databaseId
+		    __typename
+		    ...on WithAcfAcfTestGroup {
+		      acfTestGroup {
+		        ...AcfTestGroupFragment
+		      }
+		    }
+		  }
+		}' . $fragment;
+
+		$actual = $this->graphql([
+			'query' => $query,
+			'variables' => [
+				'id' => $this->published_post->ID
+			]
+		]);
+
+		self::assertQuerySuccessful( $actual, [
+			$this->expectedField( 'post.databaseId', $this->published_post->ID ),
+			$this->expectedField( 'post.__typename', 'Post' ),
+			$this->expectedField( 'post.acfTestGroup.' . $this->get_formatted_clone_field_name(), $this->get_expected_clone_value() )
+		]);
+	}
 }

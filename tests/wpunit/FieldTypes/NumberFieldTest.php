@@ -25,4 +25,20 @@ class NumberFieldTest extends \Tests\WPGraphQL\Acf\WPUnit\AcfFieldTestCase {
 		return 'Float';
 	}
 
+	public function get_acf_clone_fragment(): string {
+		return '
+		fragment AcfTestGroupFragment on AcfTestGroup {
+		  ' . $this->get_formatted_clone_field_name() . '
+		}
+		';
+	}
+
+	public function get_clone_value_to_save():int {
+		return 123;
+	}
+
+	public function get_expected_clone_value():float {
+		return 123;
+	}
+
 }

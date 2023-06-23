@@ -35,4 +35,29 @@ class SelectFieldTest extends \Tests\WPGraphQL\Acf\WPUnit\AcfFieldTestCase {
 		return null;
 	}
 
+	/**
+	 * @return int
+	 */
+	public function get_clone_value_to_save(): int {
+		return 2;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function get_acf_clone_fragment(): string {
+		return '
+		fragment AcfTestGroupFragment on AcfTestGroup {
+			clonedTestSelect
+		}
+		';
+	}
+
+	/**
+	 * @return string[]
+	 */
+	public function get_expected_clone_value(): array {
+		return [ '2' ];
+	}
+
 }

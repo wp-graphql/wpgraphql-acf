@@ -44,4 +44,30 @@ class AcfeCountriesFieldTest extends \Tests\WPGraphQL\Acf\WPUnit\AcfeFieldTestCa
 		}
 	}
 
+	public function get_clone_value_to_save() {
+		return [ 'us' ];
+	}
+
+	public function get_acf_clone_fragment(): string {
+		return '
+		fragment AcfTestGroupFragment on AcfTestGroup {
+			clonedTestAcfeCountries {
+				__typename
+				name
+				code
+			}
+		}
+		';
+	}
+
+	public function get_expected_clone_value() {
+		return [
+			[
+				'__typename' => 'ACFE_Country',
+				'name' => 'United States',
+				'code' => 'us',
+			],
+		];
+	}
+
 }

@@ -25,4 +25,12 @@ class OembedFieldTest extends \Tests\WPGraphQL\Acf\WPUnit\AcfFieldTestCase {
 		return 'String';
 	}
 
+	public function get_acf_clone_fragment(): string {
+		return '
+		fragment AcfTestGroupFragment on AcfTestGroup {
+		  ' . $this->get_formatted_clone_field_name() . '
+		}
+		';
+	}
+
 }

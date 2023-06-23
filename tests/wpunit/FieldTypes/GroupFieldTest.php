@@ -9,7 +9,6 @@ class GroupFieldTest extends \Tests\WPGraphQL\Acf\WPUnit\AcfFieldTestCase {
 		parent::setUp();
 	}
 
-
 	/**
 	 * @return void
 	 */

@@ -13,11 +13,6 @@ class TextFieldTest extends \Tests\WPGraphQL\Acf\WPUnit\AcfFieldTestCase {
 	public $post_id;
 
 	/**
-	 * @var string
-	 */
-	public $acf_field_group_key;
-
-	/**
 	 * @return void
 	 */
 	public function setUp(): void {
@@ -208,7 +203,13 @@ class TextFieldTest extends \Tests\WPGraphQL\Acf\WPUnit\AcfFieldTestCase {
 
 	}
 
-
+	public function get_acf_clone_fragment(): string {
+		return '
+		fragment AcfTestGroupFragment on AcfTestGroup {
+		  ' . $this->get_formatted_clone_field_name() . '
+		}
+		';
+	}
 
 //
 //	// leave graphql_description and instructions fields empty
