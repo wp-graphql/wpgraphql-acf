@@ -2,7 +2,7 @@
 
 ## WordPress Site
 
-The `app` docker image starts a running WordPress site with the local wpgraphql-acf directory installed and activated. Local changes to the source code is immediately reflects in the app.
+The `app` docker image starts a running WordPress site with the local wp-graphql-acf directory installed and activated. Local changes to the source code is immediately reflects in the app.
 
 1. Build the plugin.
 1.1 `composer install` or `docker run -v $PWD:/app composer --ignore-platform-reqs install`
@@ -66,7 +66,7 @@ If you have WordPress core files in a directory for local development, you can a
 				"show_hidden": 1
 			},
 			"pathMappings": {
-				"/var/www/html/wp-content/plugins/wpgraphql-acf": "${workspaceFolder}",
+				"/var/www/html/wp-content/plugins/wp-graphql-acf": "${workspaceFolder}",
 				"/var/www/html/wp-content/plugins/wp-graphql": "${workspaceFolder}../wp-graphql",
 				"/var/www/html": "${workspaceFolder}/wordpress",
 			}

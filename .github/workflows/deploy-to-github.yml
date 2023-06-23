@@ -22,15 +22,15 @@ jobs:
       - name: Create Artifact
         run: |
           mkdir plugin-build
-          composer archive -vvv --format=zip --file="plugin-build/wpgraphql-acf"
+          composer archive -vvv --format=zip --file="plugin-build/wp-graphql-acf"
 
       - name: Upload artifact
         uses: actions/upload-artifact@v2
         with:
-          name: wpgraphql-acf
-          path: plugin-build/wpgraphql-acf.zip
+          name: wp-graphql-acf
+          path: plugin-build/wp-graphql-acf.zip
 
       - name: Upload release asset to github
         uses: softprops/action-gh-release@v1
         with:
-          files: plugin-build/wpgraphql-acf.zip
+          files: plugin-build/wp-graphql-acf.zip

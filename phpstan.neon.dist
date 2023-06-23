@@ -9,12 +9,12 @@ parameters:
         - phpstan/class-wp-dependency.stub
     bootstrapFiles:
         - phpstan/constants.php
-        - wpgraphql-acf.php
+        - wp-graphql-acf.php
         - access-functions.php
         - activation.php
         - deactivation.php
     paths:
-        - wpgraphql-acf.php
+        - wp-graphql-acf.php
         - access-functions.php
         - activation.php
         - deactivation.php

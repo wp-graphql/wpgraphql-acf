@@ -1,7 +1,6 @@
 <?php
 
 use WPGraphQL\Registry\TypeRegistry;
-use WPGraphQL\Utils\Utils;
 use WPGraphQLAcf\Admin\PostTypeRegistration;
 use WPGraphQLAcf\Admin\Settings;
 use WPGraphQLAcf\Admin\TaxonomyRegistration;
@@ -40,7 +39,6 @@ class WPGraphQLAcf {
 
 		add_filter( 'graphql_data_loaders', [ $this, 'register_loaders' ], 10, 2 );
 		add_filter( 'graphql_resolve_node_type', [ $this, 'resolve_acf_options_page_node' ], 10, 2 );
-
 
 		do_action( 'graphql_acf_init' );
 
