@@ -1,6 +1,6 @@
 <?php
 
-class AcfeCodeEditorFieldTest extends \Tests\WPGraphQLAcf\WPUnit\AcfeFieldTestCase {
+class AcfeCodeEditorFieldTest extends \Tests\WPGraphQL\Acf\WPUnit\AcfeFieldTestCase {
 
 	/**
 	 * @return void
@@ -23,6 +23,18 @@ class AcfeCodeEditorFieldTest extends \Tests\WPGraphQLAcf\WPUnit\AcfeFieldTestCa
 
 	public function get_expected_field_resolve_type(): ?string {
 		return 'String';
+	}
+
+	public function get_data_to_store():string {
+		return '<div>some html</div>';
+	}
+
+	public function get_acf_clone_fragment():string {
+		return '
+		fragment AcfTestGroupFragment on AcfTestGroup {
+			clonedTestAcfeCodeEditor
+		}
+		';
 	}
 
 }

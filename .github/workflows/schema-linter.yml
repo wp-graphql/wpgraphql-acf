@@ -15,7 +15,7 @@ jobs:
     name: Lint WPGraphQL Schema
     services:
       mariadb:
-        image: mariadb
+        image: mariadb:10.8.2
         ports:
           - 3306:3306
         env:
@@ -33,17 +33,6 @@ jobs:
           extensions: mbstring, intl, bcmath, exif, gd, mysqli, opcache, zip, pdo_mysql
           coverage: none
           tools: composer, wp-cli
-
-      - name: Get Composer Cache Directory
-        id: composercache
-        run: echo "::set-output name=dir::$(composer config cache-files-dir)"
-
-      - name: Cache dependencies
-        uses: actions/cache@v2
-        with:
-          path: ${{ steps.composercache.outputs.dir }}
-          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
-          restore-keys: ${{ runner.os }}-composer-
 
       - name: Install dependencies
         run: composer install --no-dev

@@ -1,6 +1,6 @@
 <?php
 
-namespace WPGraphQLAcf;
+namespace WPGraphQL\Acf;
 
 use Exception;
 use GraphQL\Error\Error;
@@ -118,6 +118,9 @@ class FieldConfig {
 	 * @return array
 	 */
 	public function get_acf_field(): array {
+
+
+
 		return $this->acf_field;
 	}
 
@@ -297,25 +300,48 @@ class FieldConfig {
 	 */
 	public function resolve_field( $root, array $args, AppContext $context, ResolveInfo $info ) {
 
-
 		// @todo: Handle options pages??
 		$field_config = $info->fieldDefinition->config['acf_field'] ?? $this->acf_field;
-		$node         = $root['node'] ?: null;
-		$node_id      = Utils::get_node_acf_id( $node ) ?: null;
-		$field_key    = $field_config['cloned_key'] ?? ( $field_config['key'] ?: null );
 
-		$is_cloned = ! empty( $field_config['cloned_key'] );
+		$node    = $root['node'] ?? null;
+		$node_id = $node ? Utils::get_node_acf_id( $node ) : null;
 
-		if ( $is_cloned ) {
-			// @phpstan-ignore-next-line
-			$field_config = acf_get_field( $field_config['key'] );
+		$field_key = null;
+		$is_cloned = false;
+
+		if ( ! empty( $field_config['cloned_key'] ) ) {
+			$field_key = $field_config['cloned_key'];
+			$is_cloned = true;
+		} elseif ( ! empty( $field_config['key'] ) ) {
+			$field_key = $field_config['key'];
 		}
-
-		$should_format_value = $this->should_format_field_value( $field_config['type'] ?? null );
 
 		if ( empty( $field_key ) ) {
 			return null;
 		}
+
+		if ( $is_cloned ) {
+			if ( isset( $field_config['_name'] ) && ! empty( $node_id ) ) {
+				$field_key = $field_config['_name'];
+			} elseif ( isset( $field_config['cloned_key'] ) ) {
+				$field_key = $field_config['cloned_key'];
+			}
+			// @phpstan-ignore-next-line
+			$field_config = acf_get_field( $field_key );
+		}
+
+		$should_format_value = false;
+
+		if ( ! empty( $field_config['type'] ) && $this->should_format_field_value( $field_config['type'] ) ) {
+			$should_format_value = true;
+		}
+
+		if ( empty( $field_key ) ) {
+			return null;
+		}
+
+		// if the field_config is empty or not an array, set it as an empty array as a fallback
+		$field_config = ! empty( $field_config ) && is_array( $field_config ) ? $field_config : [];
 
 		// If the root being passed down already has a value
 		// for the field key, let's use it to resolve
@@ -371,11 +397,15 @@ class FieldConfig {
 	 * @param mixed            $value   The value of the ACF field to return
 	 * @param mixed            $root    The root node/object the field belongs to
 	 * @param mixed|string|int $node_id The ID of the node the field belongs to
-	 * @param array            $acf_field_config The ACF Field Config for the field being resolved
+	 * @param ?array           $acf_field_config The ACF Field Config for the field being resolved
 	 *
 	 * @return mixed
 	 */
-	public function prepare_acf_field_value( $value, $root, $node_id, array $acf_field_config ) {
+	public function prepare_acf_field_value( $value, $root, $node_id, ?array $acf_field_config = [] ) {
+
+		if ( empty( $acf_field_config ) || ! is_array( $acf_field_config ) ) {
+			return $value;
+		}
 
 		if ( isset( $acf_field_config['new_lines'] ) ) {
 			if ( 'wpautop' === $acf_field_config['new_lines'] ) {
@@ -388,7 +418,7 @@ class FieldConfig {
 
 		// @todo: This was ported over, but I'm not 💯 sure what this is solving and
 		// why it's only applied on options pages and not other pages 🤔
-		if ( is_array( $root ) && ! ( ! empty( $root['type'] ) && 'options_page' === $root['type'] ) && isset( $root[ $acf_field_config['key'] ] ) ) {
+		if ( is_array( $root ) && ! ( ! empty( $root['type'] ) && 'options_page' === $root['type'] ) && isset( $acf_field_config['key'] ) && isset( $root[ $acf_field_config['key'] ] ) ) {
 			$value = $root[ $acf_field_config['key'] ];
 			if ( 'wysiwyg' === $acf_field_config['type'] ) {
 				$value = apply_filters( 'the_content', $value );

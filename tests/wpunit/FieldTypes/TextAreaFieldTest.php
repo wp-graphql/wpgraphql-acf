@@ -5,7 +5,7 @@
  *
  * Tests the behavior of "text_area" field mapping to the WPGraphQL Schema
  */
-class TextAreaFieldTest extends \Tests\WPGraphQLAcf\WPUnit\AcfFieldTestCase {
+class TextAreaFieldTest extends \Tests\WPGraphQL\Acf\WPUnit\AcfFieldTestCase {
 
 	public function setUp(): void {
 		parent::setUp();
@@ -21,6 +21,17 @@ class TextAreaFieldTest extends \Tests\WPGraphQLAcf\WPUnit\AcfFieldTestCase {
 
 	public function get_expected_field_resolve_type(): ?string {
 		return 'String';
+	}
+
+	/**
+	 * @return string
+	 */
+	public function get_acf_clone_fragment():string {
+		return '
+			fragment AcfTestGroupFragment on AcfTestGroup {
+				clonedTestTextarea
+			}
+		';
 	}
 
 }

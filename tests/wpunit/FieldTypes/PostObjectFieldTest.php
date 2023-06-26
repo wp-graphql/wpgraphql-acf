@@ -1,6 +1,6 @@
 <?php
 
-class PostObjectFieldTest extends \Tests\WPGraphQLAcf\WPUnit\AcfFieldTestCase {
+class PostObjectFieldTest extends \Tests\WPGraphQL\Acf\WPUnit\AcfFieldTestCase {
 
 	/**
 	 * @return void
@@ -27,6 +27,41 @@ class PostObjectFieldTest extends \Tests\WPGraphQLAcf\WPUnit\AcfFieldTestCase {
 
 	public function get_expected_field_resolve_kind(): ?string {
 		return 'OBJECT';
+	}
+
+	/**
+	 * @return int
+	 */
+	public function get_clone_value_to_save(): int {
+		return $this->published_post->ID;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function get_acf_clone_fragment(): string {
+		return '
+		fragment AcfTestGroupFragment on AcfTestGroup {
+			clonedTestPostObject {
+			  node {
+			     __typename
+			     databaseId
+			  }
+			}
+		}
+		';
+	}
+
+	/**
+	 * @return array
+	 */
+	public function get_expected_clone_value(): array {
+		return [
+			'node' => [
+				'__typename' => 'Post',
+				'databaseId' => $this->published_post->ID,
+			]
+		];
 	}
 
 }

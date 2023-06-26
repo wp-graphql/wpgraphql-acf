@@ -1,6 +1,6 @@
 <?php
 
-class AcfeCountriesFieldTest extends \Tests\WPGraphQLAcf\WPUnit\AcfeFieldTestCase {
+class AcfeCountriesFieldTest extends \Tests\WPGraphQL\Acf\WPUnit\AcfeFieldTestCase {
 
 	/**
 	 * @return void
@@ -42,6 +42,32 @@ class AcfeCountriesFieldTest extends \Tests\WPGraphQLAcf\WPUnit\AcfeFieldTestCas
 		} else {
 			$this->assertFalse( array_key_exists( $this->get_field_type(), $field_types ) );
 		}
+	}
+
+	public function get_clone_value_to_save() {
+		return [ 'us' ];
+	}
+
+	public function get_acf_clone_fragment(): string {
+		return '
+		fragment AcfTestGroupFragment on AcfTestGroup {
+			clonedTestAcfeCountries {
+				__typename
+				name
+				code
+			}
+		}
+		';
+	}
+
+	public function get_expected_clone_value() {
+		return [
+			[
+				'__typename' => 'ACFE_Country',
+				'name' => 'United States',
+				'code' => 'us',
+			],
+		];
 	}
 
 }

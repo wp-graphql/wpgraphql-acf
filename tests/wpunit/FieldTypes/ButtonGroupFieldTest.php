@@ -1,6 +1,6 @@
 <?php
 
-class ButtonGroupFieldTest extends \Tests\WPGraphQLAcf\WPUnit\AcfFieldTestCase {
+class ButtonGroupFieldTest extends \Tests\WPGraphQL\Acf\WPUnit\AcfFieldTestCase {
 
 	/**
 	 * @return void
@@ -23,6 +23,22 @@ class ButtonGroupFieldTest extends \Tests\WPGraphQLAcf\WPUnit\AcfFieldTestCase {
 
 	public function get_expected_field_resolve_type(): ?string {
 		return 'String';
+	}
+
+	public function get_expected_clone_value(): string {
+		return "value";
+	}
+
+	public function get_clone_value_to_save(): string {
+		return "value";
+	}
+
+	public function get_acf_clone_fragment(): string {
+		return '
+		fragment AcfTestGroupFragment on AcfTestGroup {
+			clonedTestButtonGroup
+		}
+		';
 	}
 
 }

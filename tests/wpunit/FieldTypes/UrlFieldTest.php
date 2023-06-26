@@ -1,6 +1,6 @@
 <?php
 
-class UrlFieldTest extends \Tests\WPGraphQLAcf\WPUnit\AcfFieldTestCase {
+class UrlFieldTest extends \Tests\WPGraphQL\Acf\WPUnit\AcfFieldTestCase {
 
 	/**
 	 * @return void
@@ -23,6 +23,14 @@ class UrlFieldTest extends \Tests\WPGraphQLAcf\WPUnit\AcfFieldTestCase {
 
 	public function get_expected_field_resolve_type(): ?string {
 		return 'String';
+	}
+
+	public function get_acf_clone_fragment(): string {
+		return '
+		fragment AcfTestGroupFragment on AcfTestGroup {
+		  ' . $this->get_formatted_clone_field_name() . '
+		}
+		';
 	}
 
 }

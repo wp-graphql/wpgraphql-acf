@@ -1,6 +1,6 @@
 <?php
 
-class TaxonomyFieldTest extends \Tests\WPGraphQLAcf\WPUnit\AcfFieldTestCase {
+class TaxonomyFieldTest extends \Tests\WPGraphQL\Acf\WPUnit\AcfFieldTestCase {
 
 	/**
 	 * @return void
@@ -27,6 +27,36 @@ class TaxonomyFieldTest extends \Tests\WPGraphQLAcf\WPUnit\AcfFieldTestCase {
 
 	public function get_expected_field_resolve_kind(): ?string {
 		return 'OBJECT';
+	}
+
+	public function get_clone_value_to_save(): array {
+		return [
+			$this->category->term_id
+		];
+	}
+
+	public function get_acf_clone_fragment(): string {
+		return '
+		fragment AcfTestGroupFragment on AcfTestGroup {
+			clonedTestTaxonomy {
+			  nodes {
+			    __typename
+			    databaseId
+			  }
+			}
+		}
+		';
+	}
+
+	public function get_expected_clone_value(): array {
+		return [
+			'nodes' => [
+				[
+					'__typename' => 'Category',
+					'databaseId' => $this->category->term_id,
+				]
+			]
+		];
 	}
 
 }

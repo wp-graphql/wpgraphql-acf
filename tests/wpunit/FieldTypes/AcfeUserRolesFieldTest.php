@@ -1,6 +1,6 @@
 <?php
 
-class AcfeUserRolesFieldTest extends \Tests\WPGraphQLAcf\WPUnit\AcfeFieldTestCase {
+class AcfeUserRolesFieldTest extends \Tests\WPGraphQL\Acf\WPUnit\AcfeFieldTestCase {
 
 	/**
 	 * @return void
@@ -40,4 +40,23 @@ class AcfeUserRolesFieldTest extends \Tests\WPGraphQLAcf\WPUnit\AcfeFieldTestCas
 		$this->assertTrue( array_key_exists( $this->get_field_type(), $field_types ) );
 	}
 
+	// Since user roles are not public
+	// they will not be returned in a public query
+	public function get_expected_clone_value(): array {
+		return [];
+	}
+
+	public function get_clone_value_to_save(): array {
+		return [ 'administrator', 'editor' ];
+	}
+
+	public function get_acf_clone_fragment(): string {
+		return '
+		fragment AcfTestGroupFragment on AcfTestGroup {
+			clonedTestAcfeUserRoles {
+			  name
+			}
+		}
+		';
+	}
 }

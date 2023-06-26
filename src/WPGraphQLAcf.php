@@ -1,11 +1,12 @@
 <?php
 
 use WPGraphQL\Registry\TypeRegistry;
-use WPGraphQLAcf\Admin\PostTypeRegistration;
-use WPGraphQLAcf\Admin\Settings;
-use WPGraphQLAcf\Admin\TaxonomyRegistration;
-use WPGraphQLAcf\Registry;
-use WPGraphQLAcf\ThirdParty;
+
+use WPGraphQL\Acf\Admin\PostTypeRegistration;
+use WPGraphQL\Acf\Admin\Settings;
+use WPGraphQL\Acf\Admin\TaxonomyRegistration;
+use WPGraphQL\Acf\Registry;
+use WPGraphQL\Acf\ThirdParty;
 
 class WPGraphQLAcf {
 
@@ -56,7 +57,7 @@ class WPGraphQLAcf {
 	 * @return void
 	 */
 	public function init_admin_settings(): void {
-		$this->admin_settings = new WPGraphQLAcf\Admin\Settings();
+		$this->admin_settings = new WPGraphQL\Acf\Admin\Settings();
 		$this->admin_settings->init();
 
 
@@ -172,8 +173,8 @@ class WPGraphQLAcf {
 	 * @return mixed
 	 */
 	public function resolve_acf_options_page_node( $type, $node ) {
-		if ( $node instanceof \WPGraphQLAcf\Model\AcfOptionsPage ) {
-			return \WPGraphQLAcf\Utils::get_field_group_name( $node->get_data() );
+		if ( $node instanceof \WPGraphQL\Acf\Model\AcfOptionsPage ) {
+			return \WPGraphQL\Acf\Utils::get_field_group_name( $node->get_data() );
 		}
 		return $type;
 	}
@@ -185,7 +186,7 @@ class WPGraphQLAcf {
 	 * @return array
 	 */
 	public function register_loaders( array $loaders, \WPGraphQL\AppContext $context ): array {
-		$loaders['acf_options_page'] = new \WPGraphQLAcf\Data\Loader\AcfOptionsPageLoader( $context );
+		$loaders['acf_options_page'] = new \WPGraphQL\Acf\Data\Loader\AcfOptionsPageLoader( $context );
 		return $loaders;
 	}
 

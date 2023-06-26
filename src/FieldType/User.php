@@ -1,11 +1,11 @@
 <?php
-namespace WPGraphQLAcf\FieldType;
+namespace WPGraphQL\Acf\FieldType;
 
 use GraphQL\Type\Definition\ResolveInfo;
 use WPGraphQL\AppContext;
 use WPGraphQL\Data\Connection\UserConnectionResolver;
-use WPGraphQLAcf\AcfGraphQLFieldType;
-use WPGraphQLAcf\FieldConfig;
+use WPGraphQL\Acf\AcfGraphQLFieldType;
+use WPGraphQL\Acf\FieldConfig;
 
 class User {
 
@@ -24,14 +24,32 @@ class User {
 
 				$to_type = 'User';
 				$field_config->register_graphql_connections([
-					'toType'  => $to_type,
-					'resolve' => function ( $root, $args, AppContext $context, ResolveInfo $info ) use ( $field_config ) {
+
+					'description'           => $field_config->get_field_description(),
+					'acf_field'             => $field_config->get_acf_field(),
+					'acf_field_group'       => $field_config->get_acf_field_group(),
+					'toType'                => $to_type,
+					'oneToOne'              => false,
+					'allowFieldUnderscores' => true,
+					'resolve'               => function ( $root, $args, AppContext $context, ResolveInfo $info ) use ( $field_config ) {
 
 						$value = $field_config->resolve_field( $root, $args, $context, $info );
 
-						if ( empty( $value ) || ! absint( $value ) ) {
+						if ( empty( $value ) ) {
 							return null;
 						}
+
+						if ( ! is_array( $value ) ) {
+							$value = [ $value ];
+						}
+
+						$value = array_map( static function ( $user ) {
+							if ( is_array( $user ) && isset( $user['ID'] ) ) {
+								return absint( $user['ID'] );
+							}
+							return absint( $user );
+						}, $value );
+
 
 						$resolver = new UserConnectionResolver( $root, $args, $context, $info );
 						return $resolver->set_query_arg( 'include', $value )->set_query_arg( 'orderby', 'include' )->get_connection();

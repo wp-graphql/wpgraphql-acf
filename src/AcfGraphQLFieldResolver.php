@@ -1,5 +1,5 @@
 <?php
-namespace WPGraphQLAcf;
+namespace WPGraphQL\Acf;
 
 /**
  * Handles the resolution of an ACF Field in the GraphQL Schema

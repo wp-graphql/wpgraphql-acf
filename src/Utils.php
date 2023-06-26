@@ -1,5 +1,5 @@
 <?php
-namespace WPGraphQLAcf;
+namespace WPGraphQL\Acf;
 
 use Exception;
 use WPGraphQL\Model\Comment;
@@ -8,7 +8,7 @@ use WPGraphQL\Model\MenuItem;
 use WPGraphQL\Model\Post;
 use WPGraphQL\Model\Term;
 use WPGraphQL\Model\User;
-use WPGraphQLAcf\Model\AcfOptionsPage;
+use WPGraphQL\Acf\Model\AcfOptionsPage;
 
 class Utils {
 
@@ -59,6 +59,15 @@ class Utils {
 		}
 
 		return $id;
+	}
+
+	/**
+	 * Clear the Type Registry for tests
+	 *
+	 * @return void
+	 */
+	public static function clear_field_type_registry(): void {
+		self::$type_registry = null;
 	}
 
 	/**

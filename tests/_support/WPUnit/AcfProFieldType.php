@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\WPGraphQLAcf\WPUnit;
+namespace Tests\WPGraphQL\Acf\WPUnit;
 
 class AcfProFieldType extends \acf_field  {
 	public function __construct( $name ) {
