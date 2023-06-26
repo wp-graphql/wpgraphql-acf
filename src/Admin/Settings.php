@@ -179,7 +179,7 @@ class Settings {
 	 * @return void
 	 */
 	public function register_meta_boxes() {
-		add_meta_box( 'wpgraphql-acf-meta-box', __( 'GraphQL', 'wp-graphql-acf' ), [
+		add_meta_box( 'wp-graphql-acf-meta-box', __( 'GraphQL', 'wp-graphql-acf' ), [
 			$this,
 			'display_graphql_field_group_fields',
 		], [ 'acf-field-group' ] );
@@ -303,7 +303,7 @@ class Settings {
 		<script type="text/javascript">
 			if (typeof acf !== 'undefined') {
 				acf.newPostbox({
-					'id': 'wpgraphql-acf-meta-box',
+					'id': 'wp-graphql-acf-meta-box',
 					'label': <?php echo $this->is_acf6_or_higher ? 'top' : "'left'"; ?>
 				});
 			}

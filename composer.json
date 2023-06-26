@@ -1,5 +1,5 @@
 {
-  "name": "wp-graphql/wpgraphql-acf",
+  "name": "wp-graphql/wp-graphql-acf",
   "description": "Use field groups and fields from Advanced Custom Fields in your WPGraphQL API",
   "type": "wordpress-plugin",
   "license": "GPL-3.0-or-later",

@@ -1,5 +1,17 @@
 # Changelog
 
+## v2.0.0-beta.3.0.0
+
+### New Features
+
+- [#46](https://github.com/wp-graphql/wpgraphql-acf/pull/46): feat: add "graphql_non_null" setting for fields
+- [#54](https://github.com/wp-graphql/wpgraphql-acf/pull/54): fix: change namespace from WPGraphQLAcf to WPGraphQL\ACF
+
+### Chores / Bugfixes
+
+- [#55](https://github.com/wp-graphql/wpgraphql-acf/pull/55): fix: cline fields not resolving properly
+- [#47](https://github.com/wp-graphql/wpgraphql-acf/pull/47): fix: allow inactive field groups to show in the Schema (but prevent their location rules from being set)
+
 ## v2.0.0-beta.2.4.0
 
 ### New Features
