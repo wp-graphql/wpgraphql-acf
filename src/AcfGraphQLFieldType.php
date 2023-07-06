@@ -134,30 +134,16 @@ class AcfGraphQLFieldType {
 			],
 		];
 
-		$graphql_field_name = '';
-
-		// If there's a graphql_field_name value, use it, allowing underscores
-		if ( ! empty( $field['graphql_field_name'] ) ) {
-			$graphql_field_name = \WPGraphQL\Utils\Utils::format_field_name( $field['graphql_field_name'], true );
-
-			// Else, use the field's name, if it's not "new_field" and format it without underscores
-		} elseif ( ! empty( $field['name'] ) && 'new_field' !== $field['name'] ) {
-			$graphql_field_name = \WPGraphQL\Utils\Utils::format_field_name( $field['name'], false );
-		}
-
-
 		$default_admin_settings['graphql_field_name'] = [
 			'label'         => __( 'GraphQL Field Name', 'wp-graphql-acf' ),
 			'instructions'  => __( 'The name of the field in the GraphQL Schema. Should only contain numbers and letters. Must start with a letter. Recommended format is "snakeCase".', 'wp-graphql-acf' ),
 			'name'          => 'graphql_field_name',
 			'type'          => 'text',
 			'ui'            => true,
-			'required'      => true,
+			'required'      => false,
 			// we don't allow underscores if the value is auto formatted
 			'placeholder'   => __( 'newFieldName', 'wp-graphql-acf' ),
 			'default_value' => '',
-			// allow underscores if the user enters the value with underscores
-			'value'         => $graphql_field_name,
 			'conditions'    => [
 				'field'    => 'show_in_graphql',
 				'operator' => '==',

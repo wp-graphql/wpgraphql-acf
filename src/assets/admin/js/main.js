@@ -7,6 +7,7 @@ $j(document).ready(function () {
 	var graphqlFieldSettings = new acf.Model({
 		actions: {
 			'change_field_name': 'updateGraphqlFieldName',
+			'render_field_settings': 'updateGraphqlFieldName',
 		},
 		updateGraphqlFieldName: function( $el ) {
 
@@ -16,16 +17,19 @@ $j(document).ready(function () {
 
 			// when a field is emptied, we'll do nothing
 			if ( '' === $nameField || undefined === $nameField ) {
+				field.prop( 'graphql_field_name', '' );
 				return;
 			}
 
 			if ( undefined === $nameField?.getValue() ) {
+				field.prop( 'graphql_field_name', '' );
 				return;
 			}
 
 			var name = $nameField?.getValue() ?? null;
 
 			if ( '' === name ) {
+				field.prop( 'graphql_field_name', '' );
 				return;
 			}
 
@@ -36,7 +40,7 @@ $j(document).ready(function () {
 				var sanitizedGraphqlFieldName = acf.strCamelCase( acf.strSanitize(name) );
 				field.prop( 'graphql_field_name', sanitizedGraphqlFieldName );
 			}
-		}
+		},
 	})
 
 	var GraphqlLocationManager = new acf.Model({
