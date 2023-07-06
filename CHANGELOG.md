@@ -1,5 +1,11 @@
 # Changelog
 
+## v2.0.0-beta.3.1.0
+
+## Chores / Bugfixes
+
+- [#60](https://github.com/wp-graphql/wpgraphql-acf/pull/60): fix: graphql_field_names were being set incorrectly when adding new fields.
+
 ## v2.0.0-beta.3.0.0
 
 ### New Features
