@@ -407,6 +407,18 @@ class FieldConfig {
 			return $value;
 		}
 
+		if ( 'array' === $acf_field_config['return_format'] && is_array( $value ) ) {
+
+			$value = array_map( static function( $opt ) {
+
+				if ( ! is_array( $opt ) ) {
+					return $opt;
+				}
+
+				return $opt['value'] ?? null;
+			}, $value );
+		}
+
 		if ( isset( $acf_field_config['new_lines'] ) ) {
 			if ( 'wpautop' === $acf_field_config['new_lines'] ) {
 				$value = wpautop( $value );
