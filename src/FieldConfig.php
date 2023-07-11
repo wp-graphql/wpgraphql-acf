@@ -411,7 +411,7 @@ class FieldConfig {
 		// map over the array to get the return values
 		if ( isset( $acf_field_config['return_format'] ) && 'array' === $acf_field_config['return_format'] && is_array( $value ) ) {
 
-			$value = array_map( static function( $opt ) {
+			$value = array_map( static function ( $opt ) {
 
 				if ( ! is_array( $opt ) ) {
 					return $opt;
