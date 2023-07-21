@@ -7,11 +7,9 @@
 
 namespace WPGraphQL\Acf\Admin;
 
-use Exception;
-use GraphQL\Error\Error;
 use WP_Post;
 use WPGraphQL\Acf\AcfGraphQLFieldType;
-use WPGraphQL\Acf\LocationRules;
+use WPGraphQL\Acf\LocationRules\LocationRules;
 use WPGraphQL\Acf\Utils;
 use WPGraphQL\Acf\Registry;
 
@@ -29,12 +27,12 @@ class Settings {
 	protected $is_acf6_or_higher = false;
 
 	/**
-	 * @var Registry
+	 * @var \WPGraphQL\Acf\Registry
 	 */
 	protected $registry;
 
 	/**
-	 * @return Registry
+	 * @return \WPGraphQL\Acf\Registry
 	 */
 	protected function get_registry(): Registry {
 		if ( ! $this->registry instanceof Registry ) {
@@ -189,11 +187,11 @@ class Settings {
 	/**
 	 * Display the GraphQL Settings fields on the ACF Field Group add/edit admin page
 	 *
-	 * @param array|WP_Post $field_group The Field Group being edited
+	 * @param array|\WP_Post $field_group The Field Group being edited
 	 *
 	 * @return void
-	 * @throws Error
-	 * @throws Exception
+	 * @throws \GraphQL\Error\Error
+	 * @throws \Exception
 	 */
 	public function display_graphql_field_group_fields( $field_group ): void {
 
@@ -499,7 +497,7 @@ class Settings {
 	 * @param int    $post_id     The field group id being processed
 	 *
 	 * @return void
-	 * @throws Error
+	 * @throws \GraphQL\Error\Error
 	 */
 	public function wpgraphql_admin_table_columns_html( string $column_name, int $post_id ): void {
 		global $field_group;

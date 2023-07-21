@@ -11,7 +11,7 @@ use WPGraphQL\Acf\ThirdParty;
 class WPGraphQLAcf {
 
 	/**
-	 * @var Settings
+	 * @var \WPGraphQL\Acf\Admin\Settings
 	 */
 	protected $admin_settings;
 
@@ -78,10 +78,10 @@ class WPGraphQLAcf {
 	}
 
 	/**
-	 * @param TypeRegistry $type_registry
+	 * @param \WPGraphQL\Registry\TypeRegistry $type_registry
 	 *
 	 * @return void
-	 * @throws Exception
+	 * @throws \Exception
 	 */
 	public function init_registry( TypeRegistry $type_registry ): void {
 

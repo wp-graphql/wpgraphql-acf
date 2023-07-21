@@ -31,17 +31,17 @@ class FieldConfig {
 	protected $graphql_field_name;
 
 	/**
-	 * @var AcfGraphQLFieldType|null
+	 * @var \WPGraphQL\Acf\AcfGraphQLFieldType|null
 	 */
 	protected $graphql_field_type;
 
 	/**
-	 * @var Registry
+	 * @var \WPGraphQL\Acf\Registry
 	 */
 	protected $registry;
 
 	/**
-	 * @throws Error
+	 * @throws \GraphQL\Error\Error
 	 */
 	public function __construct( array $acf_field, array $acf_field_group, Registry $registry ) {
 
@@ -54,7 +54,7 @@ class FieldConfig {
 	}
 
 	/**
-	 * @return Registry
+	 * @return \WPGraphQL\Acf\Registry
 	 */
 	public function get_registry(): Registry {
 		return $this->registry;
@@ -68,7 +68,7 @@ class FieldConfig {
 	}
 
 	/**
-	 * @return AcfGraphQLFieldType|null
+	 * @return \WPGraphQL\Acf\AcfGraphQLFieldType|null
 	 */
 	public function get_graphql_field_type(): ?AcfGraphQLFieldType {
 		return $this->graphql_field_type;
@@ -95,7 +95,7 @@ class FieldConfig {
 	 * Get the description of the field for the GraphQL Schema
 	 *
 	 * @return string
-	 * @throws Error
+	 * @throws \GraphQL\Error\Error
 	 */
 	public function get_field_description(): string {
 
@@ -118,9 +118,6 @@ class FieldConfig {
 	 * @return array
 	 */
 	public function get_acf_field(): array {
-
-
-
 		return $this->acf_field;
 	}
 
@@ -133,8 +130,8 @@ class FieldConfig {
 
 	/**
 	 * @return array|null
-	 * @throws Error
-	 * @throws Exception
+	 * @throws \GraphQL\Error\Error
+	 * @throws \Exception
 	 */
 	public function get_graphql_field_config():?array {
 
@@ -181,8 +178,6 @@ class FieldConfig {
 			if ( $graphql_field_type instanceof AcfGraphQLFieldType ) {
 				$field_type = $graphql_field_type->get_resolve_type( $this );
 			}
-
-
 
 			if ( empty( $field_type ) ) {
 				$field_type = 'String';
@@ -267,7 +262,13 @@ class FieldConfig {
 			}
 		}
 
-		return $field_config;
+		/**
+		 * Filter the graphql_field_config for an ACF Field
+		 *
+		 * @param array|null                 $field_config   The field config array passed to the schema registration
+		 * @param \WPGraphQL\Acf\FieldConfig $instance       Instance of the FieldConfig class
+		 */
+		return apply_filters( 'wpgraphql_acf_get_graphql_field_config', $field_config, $this );
 	}
 
 	/**
@@ -293,8 +294,8 @@ class FieldConfig {
 	/**
 	 * @param mixed       $root
 	 * @param array       $args
-	 * @param AppContext  $context
-	 * @param ResolveInfo $info
+	 * @param \WPGraphQL\AppContext  $context
+	 * @param \GraphQL\Type\Definition\ResolveInfo $info
 	 *
 	 * @return mixed
 	 */
@@ -363,7 +364,7 @@ class FieldConfig {
 		 * @param array            $acf_field The ACF Field config
 		 * @param bool             $format    Whether to apply formatting to the field
 		 */
-		$value = apply_filters( 'graphql_acf_pre_resolve_acf_field', null, $root, $node_id, $field_config, $should_format_value );
+		$value = apply_filters( 'wpgraphql_acf_pre_resolve_acf_field', null, $root, $node_id, $field_config, $should_format_value );
 
 		// If the filter has returned a value, we can return the value that was returned.
 		if ( null !== $value ) {
@@ -386,7 +387,7 @@ class FieldConfig {
 		 * @param mixed $root The Root node or obect of the field being resolved
 		 * @param mixed $node_id The ID of the node being resolved
 		 */
-		return apply_filters( 'graphql_acf_field_value', $value, $field_config, $root, $node_id );
+		return apply_filters( 'wpgraphql_acf_field_value', $value, $field_config, $root, $node_id );
 
 	}
 
@@ -474,7 +475,7 @@ class FieldConfig {
 	 * @param array $config The Connection Config to use
 	 *
 	 * @return void
-	 * @throws Exception
+	 * @throws \Exception
 	 */
 	public function register_graphql_connections( array $config ): void {
 

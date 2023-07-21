@@ -1,6 +1,6 @@
 <?php
 
-namespace WPGraphQL\Acf;
+namespace WPGraphQL\Acf\LocationRules;
 
 use WPGraphQL\Utils\Utils;
 

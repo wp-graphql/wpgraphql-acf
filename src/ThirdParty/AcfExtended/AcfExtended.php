@@ -33,7 +33,7 @@ class AcfExtended {
 		}
 
 		// ACF Extended Pro
-		add_filter( 'graphql_acf_should_field_group_show_in_graphql', [ $this, 'filter_out_acfe_dynamic_groups' ], 10, 2 );
+		add_filter( 'wpgraphql_acf_should_field_group_show_in_graphql', [ $this, 'filter_out_acfe_dynamic_groups' ], 10, 2 );
 		add_action( 'graphql_register_types', [ $this, 'register_initial_types' ] );
 		add_action( 'graphql_acf_registry_init', [ $this, 'register_field_types' ] );
 
@@ -49,7 +49,7 @@ class AcfExtended {
 		$is_active = class_exists( 'ACFE' ) || defined( 'TESTS_ACF_EXTENDED_IS_ACTIVE' );
 
 		// Filter the response. This is helpful for test environments to mock tests as if the plugin were active
-		return (bool) apply_filters( 'graphql_acf_is_acfe_active', $is_active );
+		return (bool) apply_filters( 'wpgraphql_acf_is_acfe_active', $is_active );
 	}
 
 	/**
@@ -72,7 +72,7 @@ class AcfExtended {
 	 * Register initial types for ACF Extended field types to use
 	 *
 	 * @return void
-	 * @throws Exception
+	 * @throws \Exception
 	 */
 	public function register_initial_types(): void {
 
