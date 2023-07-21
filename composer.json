@@ -30,6 +30,7 @@
     "wp-graphql/wp-graphql-testcase": "~2.3",
     "wp-graphql/wp-graphql": "^1.14",
     "phpunit/phpunit": "^9.5",
+    "slevomat/coding-standard": "^8.9",
     "simpod/php-coveralls-mirror": "^3.0",
     "phpstan/extension-installer": "^1.3"
   },
