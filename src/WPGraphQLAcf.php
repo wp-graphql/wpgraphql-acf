@@ -33,7 +33,7 @@ class WPGraphQLAcf {
 			return;
 		}
 
-		add_action( 'graphql_acf_init', [ $this, 'init_third_party_support' ] );
+		add_action( 'wpgraphql_acf_init', [ $this, 'init_third_party_support' ] );
 		add_action( 'admin_init', [ $this, 'init_admin_settings' ] );
 		add_action( 'after_setup_theme', [ $this, 'cpt_tax_registration' ] );
 		add_action( 'graphql_register_types', [ $this, 'init_registry' ] );
