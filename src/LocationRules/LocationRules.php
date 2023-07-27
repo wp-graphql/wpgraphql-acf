@@ -342,7 +342,7 @@ class LocationRules {
 				// If a built-in location rule could not be matched,
 				// Custom rules (from extensions, etc) can hook in here and apply their
 				// rules to the WPGraphQL Schema
-				do_action( 'graphql_acf_match_location_rule', $field_group_name, $param, $operator, $value, $this );
+				do_action( 'wpgraphql_acf_match_location_rule', $field_group_name, $param, $operator, $value, $this );
 				break;
 
 		}

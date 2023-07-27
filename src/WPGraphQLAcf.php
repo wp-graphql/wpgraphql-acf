@@ -41,7 +41,7 @@ class WPGraphQLAcf {
 		add_filter( 'graphql_data_loaders', [ $this, 'register_loaders' ], 10, 2 );
 		add_filter( 'graphql_resolve_node_type', [ $this, 'resolve_acf_options_page_node' ], 10, 2 );
 
-		do_action( 'graphql_acf_init' );
+		do_action( 'wpgraphql_acf_init' );
 
 	}
 
