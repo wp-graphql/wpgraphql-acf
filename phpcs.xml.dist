@@ -88,6 +88,9 @@
 		<exclude name="PHPCompatibility.Keywords.ForbiddenNamesAsDeclared.objectFound"/>
 		<exclude name="Squiz.PHP.DisallowMultipleAssignments.FoundInControlStructure"/>
 
+		<!-- excluded because we are using namespaced hooks, such as "wpgraphql/acf/$action_name" -->
+		<exclude name="WordPress.NamingConventions.ValidHookName.UseUnderscores"/>
+
 		<!-- Should maybe Add Back Later -->
 		<exclude name="PEAR.Functions.FunctionCallSignature.ContentAfterOpenBracket"/>
 		<exclude name="PEAR.Functions.FunctionCallSignature.CloseBracketLine"/>
