@@ -51,10 +51,10 @@ class FieldTypeRegistry {
 		$this->register_acf_field_types();
 
 		// Initialize the Field Type Registry
-		do_action( 'graphql_acf_registry_init', $this );
+		do_action( 'wpgraphql/acf/registry_init', $this );
 
 		// Initialize the Field Type Registry
-		do_action( 'graphql_acf_register_field_types', $this );
+		do_action( 'wpgraphql/acf/register_field_types', $this );
 	}
 
 
@@ -109,7 +109,7 @@ class FieldTypeRegistry {
 	 * @return array
 	 */
 	public function get_registered_field_types(): array {
-		return apply_filters( 'graphql_acf_get_registered_field_types', $this->registered_field_types );
+		return apply_filters( 'wpgraphql/acf/get_registered_field_types', $this->registered_field_types );
 	}
 
 	/**
@@ -127,7 +127,7 @@ class FieldTypeRegistry {
 	 *
 	 * @param string $acf_field_type The type of field to get the config for
 	 *
-	 * @return AcfGraphQLFieldType|null
+	 * @return \WPGraphQL\Acf\AcfGraphQLFieldType|null
 	 */
 	public function get_field_type( string $acf_field_type ): ?AcfGraphQLFieldType {
 		return $this->registered_field_types[ $acf_field_type ] ?? null;
@@ -139,7 +139,7 @@ class FieldTypeRegistry {
 	 * @param string $acf_field_type The name of the ACF Field Type to map to the GraphQL Schema
 	 * @param array|callable $config Config for mapping the ACF Field Type to the GraphQL Schema
 	 *
-	 * @return AcfGraphQLFieldType
+	 * @return \WPGraphQL\Acf\AcfGraphQLFieldType
 	 */
 	public function register_field_type( string $acf_field_type, $config = [] ): AcfGraphQLFieldType {
 

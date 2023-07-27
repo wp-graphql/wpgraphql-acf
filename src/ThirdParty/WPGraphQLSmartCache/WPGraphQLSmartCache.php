@@ -7,7 +7,7 @@ use WPGraphQL\SmartCache\Cache\Invalidation;
 class WPGraphQLSmartCache {
 
 	/**
-	 * @var Invalidation
+	 * @var \WPGraphQL\SmartCache\Cache\Invalidation
 	 *
 	 * @phpstan-ignore-next-line
 	 */

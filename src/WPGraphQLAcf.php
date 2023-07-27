@@ -3,7 +3,6 @@
 use WPGraphQL\Registry\TypeRegistry;
 
 use WPGraphQL\Acf\Admin\PostTypeRegistration;
-use WPGraphQL\Acf\Admin\Settings;
 use WPGraphQL\Acf\Admin\TaxonomyRegistration;
 use WPGraphQL\Acf\Registry;
 use WPGraphQL\Acf\ThirdParty;
@@ -11,7 +10,7 @@ use WPGraphQL\Acf\ThirdParty;
 class WPGraphQLAcf {
 
 	/**
-	 * @var Settings
+	 * @var \WPGraphQL\Acf\Admin\Settings
 	 */
 	protected $admin_settings;
 
@@ -33,7 +32,7 @@ class WPGraphQLAcf {
 			return;
 		}
 
-		add_action( 'graphql_acf_init', [ $this, 'init_third_party_support' ] );
+		add_action( 'wpgraphql/acf/init', [ $this, 'init_third_party_support' ] );
 		add_action( 'admin_init', [ $this, 'init_admin_settings' ] );
 		add_action( 'after_setup_theme', [ $this, 'cpt_tax_registration' ] );
 		add_action( 'graphql_register_types', [ $this, 'init_registry' ] );
@@ -41,7 +40,7 @@ class WPGraphQLAcf {
 		add_filter( 'graphql_data_loaders', [ $this, 'register_loaders' ], 10, 2 );
 		add_filter( 'graphql_resolve_node_type', [ $this, 'resolve_acf_options_page_node' ], 10, 2 );
 
-		do_action( 'graphql_acf_init' );
+		do_action( 'wpgraphql/acf/init' );
 
 	}
 
@@ -78,10 +77,10 @@ class WPGraphQLAcf {
 	}
 
 	/**
-	 * @param TypeRegistry $type_registry
+	 * @param \WPGraphQL\Registry\TypeRegistry $type_registry
 	 *
 	 * @return void
-	 * @throws Exception
+	 * @throws \Exception
 	 */
 	public function init_registry( TypeRegistry $type_registry ): void {
 
