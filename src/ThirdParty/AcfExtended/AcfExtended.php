@@ -35,7 +35,7 @@ class AcfExtended {
 		// ACF Extended Pro
 		add_filter( 'wpgraphql_acf_should_field_group_show_in_graphql', [ $this, 'filter_out_acfe_dynamic_groups' ], 10, 2 );
 		add_action( 'graphql_register_types', [ $this, 'register_initial_types' ] );
-		add_action( 'graphql_acf_registry_init', [ $this, 'register_field_types' ] );
+		add_action( 'wpgraphql_acf_registry_init', [ $this, 'register_field_types' ] );
 
 	}
 
