@@ -268,7 +268,7 @@ class FieldConfig {
 		 * @param array|null                 $field_config   The field config array passed to the schema registration
 		 * @param \WPGraphQL\Acf\FieldConfig $instance       Instance of the FieldConfig class
 		 */
-		return apply_filters( 'wpgraphql_acf_get_graphql_field_config', $field_config, $this );
+		return apply_filters( 'wpgraphql/acf/get_graphql_field_config', $field_config, $this );
 	}
 
 	/**
@@ -364,7 +364,7 @@ class FieldConfig {
 		 * @param array            $acf_field The ACF Field config
 		 * @param bool             $format    Whether to apply formatting to the field
 		 */
-		$value = apply_filters( 'wpgraphql_acf_pre_resolve_acf_field', null, $root, $node_id, $field_config, $should_format_value );
+		$value = apply_filters( 'wpgraphql/acf/pre_resolve_acf_field', null, $root, $node_id, $field_config, $should_format_value );
 
 		// If the filter has returned a value, we can return the value that was returned.
 		if ( null !== $value ) {
@@ -387,7 +387,7 @@ class FieldConfig {
 		 * @param mixed $root The Root node or obect of the field being resolved
 		 * @param mixed $node_id The ID of the node being resolved
 		 */
-		return apply_filters( 'wpgraphql_acf_field_value', $value, $field_config, $root, $node_id );
+		return apply_filters( 'wpgraphql/acf/field_value', $value, $field_config, $root, $node_id );
 
 	}
 

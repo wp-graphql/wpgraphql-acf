@@ -51,10 +51,10 @@ class FieldTypeRegistry {
 		$this->register_acf_field_types();
 
 		// Initialize the Field Type Registry
-		do_action( 'wpgraphql_acf_registry_init', $this );
+		do_action( 'wpgraphql/acf/registry_init', $this );
 
 		// Initialize the Field Type Registry
-		do_action( 'wpgraphql_acf_register_field_types', $this );
+		do_action( 'wpgraphql/acf/register_field_types', $this );
 	}
 
 
@@ -109,7 +109,7 @@ class FieldTypeRegistry {
 	 * @return array
 	 */
 	public function get_registered_field_types(): array {
-		return apply_filters( 'wpgraphql_acf_get_registered_field_types', $this->registered_field_types );
+		return apply_filters( 'wpgraphql/acf/get_registered_field_types', $this->registered_field_types );
 	}
 
 	/**

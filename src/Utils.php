@@ -27,7 +27,7 @@ class Utils {
 		/**
 		 * If a value is returned from this filter,
 		 */
-		$pre_get_node_acf_id = apply_filters( 'wpgraphql_acf_pre_get_node_acf_id', null, $node );
+		$pre_get_node_acf_id = apply_filters( 'wpgraphql/acf/pre_get_node_acf_id', null, $node );
 
 		if ( null !== $pre_get_node_acf_id ) {
 			return $pre_get_node_acf_id;
@@ -130,7 +130,7 @@ class Utils {
 		 *
 		 * @param array $supported_fields
 		 */
-		return apply_filters( 'wpgraphql_acf_supported_field_types', $registered_field_names );
+		return apply_filters( 'wpgraphql/acf/supported_field_types', $registered_field_names );
 	}
 
 	/**
@@ -264,7 +264,7 @@ class Utils {
 			$should = false;
 		}
 
-		return (bool) apply_filters( 'wpgraphql_acf_should_field_group_show_in_graphql', $should, $acf_field_group );
+		return (bool) apply_filters( 'wpgraphql/acf/should_field_group_show_in_graphql', $should, $acf_field_group );
 
 	}
 

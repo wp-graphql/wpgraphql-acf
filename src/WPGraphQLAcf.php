@@ -3,7 +3,6 @@
 use WPGraphQL\Registry\TypeRegistry;
 
 use WPGraphQL\Acf\Admin\PostTypeRegistration;
-use WPGraphQL\Acf\Admin\Settings;
 use WPGraphQL\Acf\Admin\TaxonomyRegistration;
 use WPGraphQL\Acf\Registry;
 use WPGraphQL\Acf\ThirdParty;
@@ -33,7 +32,7 @@ class WPGraphQLAcf {
 			return;
 		}
 
-		add_action( 'wpgraphql_acf_init', [ $this, 'init_third_party_support' ] );
+		add_action( 'wpgraphql/acf/init', [ $this, 'init_third_party_support' ] );
 		add_action( 'admin_init', [ $this, 'init_admin_settings' ] );
 		add_action( 'after_setup_theme', [ $this, 'cpt_tax_registration' ] );
 		add_action( 'graphql_register_types', [ $this, 'init_registry' ] );
@@ -41,7 +40,7 @@ class WPGraphQLAcf {
 		add_filter( 'graphql_data_loaders', [ $this, 'register_loaders' ], 10, 2 );
 		add_filter( 'graphql_resolve_node_type', [ $this, 'resolve_acf_options_page_node' ], 10, 2 );
 
-		do_action( 'wpgraphql_acf_init' );
+		do_action( 'wpgraphql/acf/init' );
 
 	}
 

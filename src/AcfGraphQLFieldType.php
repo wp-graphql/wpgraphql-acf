@@ -167,7 +167,7 @@ class AcfGraphQLFieldType {
 			],
 		];
 
-		$default_admin_settings = apply_filters( 'wpgraphql_acf_field_type_default_admin_settings', $default_admin_settings );
+		$default_admin_settings = apply_filters( 'wpgraphql/acf/field_type_default_admin_settings', $default_admin_settings );
 
 		// Get the admin fields for the field type
 		$admin_fields = $this->get_admin_fields( $field, $default_admin_settings, $settings );
@@ -179,7 +179,7 @@ class AcfGraphQLFieldType {
 			}
 		}
 
-		return apply_filters( 'wpgraphql_acf_field_type_admin_settings', $admin_fields );
+		return apply_filters( 'wpgraphql/acf/field_type_admin_settings', $admin_fields );
 
 	}
 
@@ -250,7 +250,7 @@ class AcfGraphQLFieldType {
 	 * @return array
 	 */
 	public function get_excluded_admin_field_settings(): array {
-		return apply_filters( 'wpgraphql_acf_excluded_admin_field_settings', $this->excluded_admin_field_settings );
+		return apply_filters( 'wpgraphql/acf/excluded_admin_field_settings', $this->excluded_admin_field_settings );
 	}
 
 	/**
