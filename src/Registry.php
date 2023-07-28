@@ -124,9 +124,6 @@ class Registry {
 					'type'              => 'String',
 					'description'       => __( 'The name of the field group', 'wp-graphql-acf' ),
 					'deprecationReason' => __( 'Use __typename instead', 'wp-graphql-acf' ),
-					'resolve'           => function ( $root, $args, $context, $info ) {
-						return isset( $info->fieldDefinition->config['acf_field_group'] ) ? $this->get_field_group_graphql_type_name( $info->fieldDefinition->config['acf_field_group'] ) : null;
-					},
 				],
 			],
 		] );
@@ -296,7 +293,7 @@ class Registry {
 						$interfaces[ $field['key'] ] = $this->get_field_group_graphql_type_name( acf_get_field_group( $cloned_from['parent'] ) ) . '_Fields';
 					}
 				}
-			}       
+			}
 		}
 
 		$interfaces = array_unique( array_values( $interfaces ) );
@@ -412,6 +409,9 @@ class Registry {
 				// no fields at all, but is marked deprecated as it is not an actual field
 				// of the field group as defined by the ACF Field Group
 				'deprecationReason' => __( 'Use __typename instead', 'wp-graphql-acf' ),
+				'resolve'           => function ( $root, $args, $context, $info ) use ( $acf_field_group ) {
+					return $this->get_field_group_graphql_type_name( $acf_field_group );
+				},
 			],
 		];
 
