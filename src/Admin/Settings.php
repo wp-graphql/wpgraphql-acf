@@ -150,7 +150,6 @@ class Settings {
 			wp_send_json( __( 'No form data.', 'wp-graphql-acf' ) );
 		}
 
-		// @phpstan-ignore-next-line
 		if ( empty( $_POST['nonce'] ) || ! wp_verify_nonce( sanitize_text_field( $_POST['nonce'] ), 'wp_graphql_acf' ) ) {
 			wp_send_json_error();
 		}
