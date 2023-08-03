@@ -98,15 +98,6 @@ class AcfGraphQLFieldType {
 
 		$default_admin_settings = [];
 
-		// If there's a description provided, use it.
-		if ( ! empty( $field['graphql_description'] ) ) {
-			$description = $field['graphql_description'];
-
-			// fallback to the fields instructions
-		} elseif ( ! empty( $field['instructions'] ) ) {
-			$description = $field['instructions'];
-		}
-
 		$default_admin_settings['show_in_graphql'] = [
 			'label'         => __( 'Show in GraphQL', 'wp-graphql-acf' ),
 			'instructions'  => __( 'Whether the field should be queryable via GraphQL. NOTE: Changing this to false for existing field can cause a breaking change to the GraphQL Schema. Proceed with caution.', 'wp-graphql-acf' ),
@@ -126,7 +117,6 @@ class AcfGraphQLFieldType {
 			'ui'            => true,
 			'default_value' => null,
 			'placeholder'   => __( 'Explanation of how this field should be used in the GraphQL Schema', 'wp-graphql-acf' ),
-			'value'         => ! empty( $description ) ? $description : null,
 			'conditions'    => [
 				'field'    => 'show_in_graphql',
 				'operator' => '==',
