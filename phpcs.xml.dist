@@ -9,6 +9,13 @@
 	<config name="minimum_supported_wp_version" value="5.0" />
 
 	<!--
+	Prevent errors caused by WordPress Coding Standards not supporting PHP 8.0+.
+	See: https://github.com/WordPress/WordPress-Coding-Standards/issues/2035
+	See: https://github.com/WordPress/WordPress-Coding-Standards/issues/2035#issuecomment-1325532520
+	-->
+	<ini name="error_reporting" value="E_ALL &#38; ~E_DEPRECATED" />
+
+	<!--
 	Pass some flags to PHPCS:
 	p flag: Show progress of the run.
 	s flag: Show sniff codes in all reports.
@@ -41,9 +48,10 @@
 	<exclude-pattern>*/node_modules/*</exclude-pattern>
 	<exclude-pattern>*/vendor/*</exclude-pattern>
 
+	<!-- This defines custom escapting functions, such as ACF escaping functions -->
 	<rule ref="WordPress.Security.EscapeOutput">
-		<properties>
-			<property type="array" name="customAutoEscapedFunctions">
+    	<properties>
+    		<property name="customAutoEscapedFunctions" type="array">
 				<element value="acf_esc_attr"/>
 				<element value="acf_esc_attr_e"/>
 				<element value="acf_esc_attrs"/>
@@ -51,9 +59,9 @@
 				<element value="acf_esc_atts_e"/>
 				<element value="acf_esc_html"/>
 				<element value="acf_punctify"/>
-			</property>
-		</properties>
-	</rule>
+    		</property>
+    	</properties>
+    </rule>
 
 	<rule ref="WordPress.WP.I18n">
 		<properties>
@@ -79,6 +87,9 @@
 		<!-- Should probably not be added back -->
 		<exclude name="PHPCompatibility.Keywords.ForbiddenNamesAsDeclared.objectFound"/>
 		<exclude name="Squiz.PHP.DisallowMultipleAssignments.FoundInControlStructure"/>
+
+		<!-- excluded because we are using namespaced hooks, such as "wpgraphql/acf/$action_name" -->
+		<exclude name="WordPress.NamingConventions.ValidHookName.UseUnderscores"/>
 
 		<!-- Should maybe Add Back Later -->
 		<exclude name="PEAR.Functions.FunctionCallSignature.ContentAfterOpenBracket"/>
@@ -113,4 +124,7 @@
 
 	<!-- Enforce short array syntax -->
 	<rule ref="Generic.Arrays.DisallowLongArraySyntax"/>
+
+	<!-- Use FQCN for PHPDoc types -->
+	<rule ref="SlevomatCodingStandard.Namespaces.FullyQualifiedClassNameInAnnotation"/>
 </ruleset>

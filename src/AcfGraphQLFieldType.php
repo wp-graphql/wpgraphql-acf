@@ -1,7 +1,6 @@
 <?php
 namespace WPGraphQL\Acf;
 
-use Codeception\PHPUnit\Constraint\Page;
 use GraphQL\Type\Definition\ResolveInfo;
 use WPGraphQL\AppContext;
 use WPGraphQL\Acf\Admin\Settings;
@@ -31,7 +30,7 @@ class AcfGraphQLFieldType {
 	protected $admin_fields = [];
 
 	/**
-	 * @var AcfGraphQLFieldResolver
+	 * @var \WPGraphQL\Acf\AcfGraphQLFieldResolver
 	 */
 	protected $resolver;
 
@@ -90,22 +89,13 @@ class AcfGraphQLFieldType {
 	 * Return Admin Field Settings for configuring GraphQL Behavior.
 	 *
 	 * @param array $field The Instance of the ACF Field the settings are for
-	 * @param Settings $settings The Settings class
+	 * @param \WPGraphQL\Acf\Admin\Settings $settings The Settings class
 	 *
 	 * @return mixed|void
 	 */
 	public function get_admin_field_settings( array $field, Settings $settings ) {
 
 		$default_admin_settings = [];
-
-		// If there's a description provided, use it.
-		if ( ! empty( $field['graphql_description'] ) ) {
-			$description = $field['graphql_description'];
-
-			// fallback to the fields instructions
-		} elseif ( ! empty( $field['instructions'] ) ) {
-			$description = $field['instructions'];
-		}
 
 		$default_admin_settings['show_in_graphql'] = [
 			'label'         => __( 'Show in GraphQL', 'wp-graphql-acf' ),
@@ -126,7 +116,6 @@ class AcfGraphQLFieldType {
 			'ui'            => true,
 			'default_value' => null,
 			'placeholder'   => __( 'Explanation of how this field should be used in the GraphQL Schema', 'wp-graphql-acf' ),
-			'value'         => ! empty( $description ) ? $description : null,
 			'conditions'    => [
 				'field'    => 'show_in_graphql',
 				'operator' => '==',
@@ -168,7 +157,7 @@ class AcfGraphQLFieldType {
 			],
 		];
 
-		$default_admin_settings = apply_filters( 'graphql_acf_field_type_default_admin_settings', $default_admin_settings );
+		$default_admin_settings = apply_filters( 'wpgraphql/acf/field_type_default_admin_settings', $default_admin_settings );
 
 		// Get the admin fields for the field type
 		$admin_fields = $this->get_admin_fields( $field, $default_admin_settings, $settings );
@@ -180,14 +169,14 @@ class AcfGraphQLFieldType {
 			}
 		}
 
-		return apply_filters( 'graphql_acf_field_type_admin_settings', $admin_fields );
+		return apply_filters( 'wpgraphql/acf/field_type_admin_settings', $admin_fields );
 
 	}
 
 	/**
 	 * @param array $acf_field The ACF Field to get the settings for
 	 * @param array $default_admin_settings The default admin settings
-	 * @param Settings $settings Instance of the Settings class
+	 * @param \WPGraphQL\Acf\Admin\Settings $settings Instance of the Settings class
 	 *
 	 * @return array
 	 */
@@ -251,16 +240,16 @@ class AcfGraphQLFieldType {
 	 * @return array
 	 */
 	public function get_excluded_admin_field_settings(): array {
-		return apply_filters( 'graphql_acf_excluded_admin_field_settings', $this->excluded_admin_field_settings );
+		return apply_filters( 'wpgraphql/acf/excluded_admin_field_settings', $this->excluded_admin_field_settings );
 	}
 
 	/**
 	 * @param mixed               $root The value of the previously resolved field in the tree
 	 * @param array               $args The arguments input on the field
-	 * @param AppContext          $context The Context passed through resolution
-	 * @param ResolveInfo         $info Information about the field resolving
-	 * @param AcfGraphQLFieldType $field_type The Type of ACF Field resolving
-	 * @param FieldConfig         $field_config The Config of the ACF Field resolving
+	 * @param \WPGraphQL\AppContext          $context The Context passed through resolution
+	 * @param \GraphQL\Type\Definition\ResolveInfo         $info Information about the field resolving
+	 * @param \WPGraphQL\Acf\AcfGraphQLFieldType $field_type The Type of ACF Field resolving
+	 * @param \WPGraphQL\Acf\FieldConfig         $field_config The Config of the ACF Field resolving
 	 *
 	 * @return array|callable|mixed|null
 	 */

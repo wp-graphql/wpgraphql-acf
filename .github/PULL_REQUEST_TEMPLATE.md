@@ -5,24 +5,17 @@ Thanks for sending a pull request! Please make sure you click the link above to 
 
 -->
 
-What version of WPGraphQL core plugin?
----------------------------------------------------
-…
-
-
-What version of WPGraphQL for ACF plugin?
----------------------------------------------------
-…
-
-
 What does this implement/fix? Explain your changes.
 ---------------------------------------------------
 …
 
 
-What currently open issues does this close or contribute?
+Does this close any currently open issues?
 ------------------------------------------
-…
+<!--
+### Write "closes #{pr number}"
+### see: https://docs.github.com/en/issues/tracking-your-work-with-issues/linking-a-pull-request-to-an-issue#linking-a-pull-request-to-an-issue-using-a-keyword
+-->
 
 
 Any relevant logs, error output, GraphiQL screenshots, etc?

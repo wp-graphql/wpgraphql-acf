@@ -13,7 +13,7 @@ use WPGraphQL\Acf\Model\AcfOptionsPage;
 class Utils {
 
 	/**
-	 * @var null|FieldTypeRegistry
+	 * @var null|\WPGraphQL\Acf\FieldTypeRegistry
 	 */
 	protected static $type_registry;
 
@@ -23,6 +23,16 @@ class Utils {
 	 * @return int|mixed|string
 	 */
 	public static function get_node_acf_id( $node ) {
+
+		/**
+		 * If a value is returned from this filter,
+		 */
+		$pre_get_node_acf_id = apply_filters( 'wpgraphql/acf/pre_get_node_acf_id', null, $node );
+
+		if ( null !== $pre_get_node_acf_id ) {
+			return $pre_get_node_acf_id;
+		}
+
 		if ( is_array( $node ) && isset( $node['node']->ID ) ) {
 			return absint( $node['node']->ID );
 		}
@@ -73,7 +83,7 @@ class Utils {
 	/**
 	 * Return the Field Type Registry instance
 	 *
-	 * @return FieldTypeRegistry
+	 * @return \WPGraphQL\Acf\FieldTypeRegistry
 	 */
 	public static function get_type_registry(): FieldTypeRegistry {
 
@@ -91,7 +101,7 @@ class Utils {
 	 *
 	 * @param string $acf_field_type The name of the ACF Field Type (text, textarea, etc)
 	 *
-	 * @return AcfGraphQLFieldType|null
+	 * @return \WPGraphQL\Acf\AcfGraphQLFieldType|null
 	 */
 	public static function get_graphql_field_type( string $acf_field_type ): ?AcfGraphQLFieldType {
 
@@ -120,14 +130,14 @@ class Utils {
 		 *
 		 * @param array $supported_fields
 		 */
-		return apply_filters( 'wpgraphql_acf_supported_field_types', $registered_field_names );
+		return apply_filters( 'wpgraphql/acf/supported_field_types', $registered_field_names );
 	}
 
 	/**
 	 * Returns all available GraphQL Types
 	 *
 	 * @return array
-	 * @throws Exception
+	 * @throws \Exception
 	 */
 	public static function get_all_graphql_types(): array {
 		$graphql_types = [];
@@ -254,7 +264,7 @@ class Utils {
 			$should = false;
 		}
 
-		return (bool) apply_filters( 'graphql_acf_should_field_group_show_in_graphql', $should, $acf_field_group );
+		return (bool) apply_filters( 'wpgraphql/acf/should_field_group_show_in_graphql', $should, $acf_field_group );
 
 	}
 
