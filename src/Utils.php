@@ -19,10 +19,11 @@ class Utils {
 
 	/**
 	 * @param mixed $node
+	 * @param array $acf_field_config The config of the ACF Field
 	 *
 	 * @return int|mixed|string
 	 */
-	public static function get_node_acf_id( $node ) {
+	public static function get_node_acf_id( $node, array $acf_field_config = [] ) {
 
 		/**
 		 * If a value is returned from this filter,
@@ -172,6 +173,10 @@ class Utils {
 			'AcfOptionsPage'  => [
 				'label'        => __( 'ACF Options Page', 'wp-graphql-acf' ),
 				'plural_label' => __( 'All Options Pages registered by ACF', 'wp-graphql-acf' ),
+			],
+			'AcfBlock'        => [
+				'label'        => __( 'ACF Block', 'wp-graphql-acf' ),
+				'plural_label' => __( 'All Gutenberg Blocks registered by ACF Blocks', 'wp-graphql-acf' ),
 			],
 		];
 

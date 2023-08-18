@@ -91,7 +91,6 @@ class Registry {
 	 */
 	public function get_acf_field_groups(): array {
 
-		// @phpstan-ignore-next-line
 		$all_acf_field_groups = acf_get_field_groups();
 
 		$graphql_field_groups = [];
@@ -125,6 +124,17 @@ class Registry {
 					'type'              => 'String',
 					'description'       => __( 'The name of the field group', 'wp-graphql-acf' ),
 					'deprecationReason' => __( 'Use __typename instead', 'wp-graphql-acf' ),
+				],
+			],
+		] );
+
+		register_graphql_interface_type( 'AcfBlock', [
+			'eagerlyLoadType' => true,
+			'interfaces'      => [ 'EditorBlock' ],
+			'description'     => __( 'Block registered by ACF', 'wp-graphql-acf' ),
+			'fields'          => [
+				'name' => [
+					'type' => 'String',
 				],
 			],
 		] );
@@ -255,6 +265,7 @@ class Registry {
 			],
 		] );
 
+
 	}
 
 	/**
@@ -279,13 +290,12 @@ class Registry {
 			if ( isset( $acf_field_group['sub_fields'] ) ) {
 				$fields = $acf_field_group['sub_fields'];
 			} elseif ( isset( $acf_field_group['ID'] ) ) {
-				// @phpstan-ignore-next-line
 				$fields = acf_get_fields( $acf_field_group );
 			}
 
 			foreach ( $fields as $field ) {
 				if ( ! empty( $field['_clone'] ) && ! empty( $field['__key'] ) ) {
-					// @phpstan-ignore-next-line
+
 					$cloned_from = acf_get_field( $field['__key'] );
 
 					if ( ! empty( $cloned_from ) ) {
@@ -300,6 +310,49 @@ class Registry {
 		$interfaces = array_unique( array_values( $interfaces ) );
 
 		return array_unique( $interfaces );
+
+	}
+
+	/**
+	 * Register ACF Blocks to the Schema
+	 *
+	 * @return void
+	 *
+	 * @throws \GraphQL\Error\Error
+	 */
+	public function register_blocks(): void {
+
+		if ( ! function_exists( 'acf_get_block_types' ) ) {
+			return;
+		}
+
+		$acf_block_types = acf_get_block_types();
+
+		if ( empty( $acf_block_types ) ) {
+			return;
+		}
+
+		$graphql_enabled_acf_blocks = [];
+
+		foreach ( $acf_block_types as $acf_block_type ) {
+			if ( ! $this->should_field_group_show_in_graphql( $acf_block_type ) ) {
+				continue;
+			}
+
+			$type_name = $this->get_field_group_graphql_type_name( $acf_block_type );
+
+			if ( empty( $type_name ) ) {
+				continue;
+			}
+
+			$graphql_enabled_acf_blocks[] = $type_name;
+		}
+
+		if ( empty( $graphql_enabled_acf_blocks ) ) {
+			return;
+		}
+
+		register_graphql_interfaces_to_types( [ 'AcfBlock' ], $graphql_enabled_acf_blocks );
 
 	}
 
@@ -421,7 +474,6 @@ class Registry {
 		if ( isset( $acf_field_group['sub_fields'] ) ) {
 			$fields = $acf_field_group['sub_fields'];
 		} elseif ( isset( $acf_field_group['ID'] ) ) {
-			// @phpstan-ignore-next-line
 			$fields = acf_get_fields( $acf_field_group );
 		}
 

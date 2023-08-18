@@ -305,7 +305,7 @@ class FieldConfig {
 		$field_config = $info->fieldDefinition->config['acf_field'] ?? $this->acf_field;
 
 		$node    = $root['node'] ?? null;
-		$node_id = $node ? Utils::get_node_acf_id( $node ) : null;
+		$node_id = $node ? Utils::get_node_acf_id( $node, $field_config ) : null;
 
 		$field_key = null;
 		$is_cloned = false;
@@ -327,7 +327,6 @@ class FieldConfig {
 			} elseif ( isset( $field_config['cloned_key'] ) ) {
 				$field_key = $field_config['cloned_key'];
 			}
-			// @phpstan-ignore-next-line
 			$field_config = acf_get_field( $field_key );
 		}
 
@@ -371,7 +370,6 @@ class FieldConfig {
 			return $value;
 		}
 
-		// @phpstan-ignore-next-line
 		$value = get_field( $field_key, $node_id, $should_format_value );
 		$value = $this->prepare_acf_field_value( $value, $root, $node_id, $field_config );
 

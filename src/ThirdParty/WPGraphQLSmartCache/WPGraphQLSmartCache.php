@@ -2,8 +2,6 @@
 
 namespace WPGraphQL\Acf\ThirdParty\WPGraphQLSmartCache;
 
-use WPGraphQL\SmartCache\Cache\Invalidation;
-
 class WPGraphQLSmartCache {
 
 	/**

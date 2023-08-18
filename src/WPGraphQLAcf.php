@@ -89,6 +89,7 @@ class WPGraphQLAcf {
 		$registry = new Registry( $type_registry );
 		$registry->register_initial_graphql_types();
 		$registry->register_options_pages();
+		$registry->register_blocks();
 
 		// Get the field groups that should be mapped to the Schema
 		$acf_field_groups = $registry->get_acf_field_groups();
