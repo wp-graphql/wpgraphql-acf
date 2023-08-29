@@ -310,6 +310,7 @@ class FieldConfig {
 		$field_key = null;
 		$is_cloned = false;
 
+		// if the field is cloned
 		if ( ! empty( $field_config['cloned_key'] ) ) {
 			$field_key = $field_config['cloned_key'];
 			$is_cloned = true;
@@ -327,7 +328,10 @@ class FieldConfig {
 			} elseif ( isset( $field_config['cloned_key'] ) ) {
 				$field_key = $field_config['cloned_key'];
 			}
-			$field_config = acf_get_field( $field_key );
+
+			$cloned_field_config = acf_get_field( $field_key );
+			$field_config = ! empty( $cloned_field_config ) ? $cloned_field_config : $field_config;
+
 		}
 
 		$should_format_value = false;
@@ -349,11 +353,6 @@ class FieldConfig {
 			return $this->prepare_acf_field_value( $root[ $field_key ], $node, $node_id, $field_config );
 		}
 
-		// If there's no node_id at this point, we can return null
-		if ( empty( $node_id ) ) {
-			return null;
-		}
-
 		/**
 		 * Filter the field value before resolving.
 		 *
@@ -363,11 +362,26 @@ class FieldConfig {
 		 * @param array            $acf_field The ACF Field config
 		 * @param bool             $format    Whether to apply formatting to the field
 		 */
-		$value = apply_filters( 'wpgraphql/acf/pre_resolve_acf_field', null, $root, $node_id, $field_config, $should_format_value );
+		$pre_value = apply_filters( 'wpgraphql/acf/pre_resolve_acf_field', null, $root, $node_id, $field_config, $should_format_value, $field_key );
 
 		// If the filter has returned a value, we can return the value that was returned.
-		if ( null !== $value ) {
-			return $value;
+		if ( null !== $pre_value ) {
+			return $pre_value;
+		}
+
+		// resolve block field
+		if ( is_array( $node ) && isset( $node['blockName'] ) ) {
+
+			$block_id = $node['clientId'] ?? null;
+			$fields = acf_setup_meta( $node['attrs']['data'], 0, true );
+			acf_reset_meta( $block_id );
+
+			return $fields[ $field_config['name'] ] ?? null;
+		}
+
+		// If there's no node_id at this point, we can return null
+		if ( empty( $node_id ) ) {
+			return null;
 		}
 
 		$value = get_field( $field_key, $node_id, $should_format_value );
