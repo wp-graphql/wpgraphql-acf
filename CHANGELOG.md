@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.0.0-beta.4.1.0
+
+### Chores / Bugfixes
+
+- [#77](https://github.com/wp-graphql/wpgraphql-acf/pull/77): fix: js error when clone fields are added to a field group.
+
 ## v2.0.0-beta.4.0.0
 
 ### Breaking Changes
