@@ -71,7 +71,7 @@
     ],
     "build-app": "@docker-build -a",
     "build-test": "@docker-build -t",
-    "build-plugin": "composer install --no-dev && composer archive -vvv --format=zip --file=\"plugin-build/wp-graphql-acf\" && composer install",
+    "build-plugin": "composer install --no-dev && composer run-script zip && composer install",
     "run-app": "@docker-run -a",
     "run-test": "@docker-run -t",
     "lint": "vendor/bin/phpcs",
@@ -86,26 +86,12 @@
     ],
     "phpstan": [
       "phpstan analyze --ansi --memory-limit=1G"
-    ]
-  },
-  "archive": {
-    "exclude": [
-      "*.yml",
-      "!vendor/",
-      "node_modules/",
-      "!.wordpress-org/",
-      "composer.json",
-      "composer.lock",
-      "c3.php",
-      "docs/",
-      "docker",
-      "phpcs.xml.dist",
-      "phpstan.neon.dist",
-      "phpstan/",
-      "plugin-build",
-      "wp-graphql.zip",
-      "!build",
-      "packages"
+    ],
+    "zip": [
+      "mkdir -p plugin-build/wpgraphql-acf",
+      "rsync -rc --exclude-from=.distignore --exclude=plugin-build . plugin-build/wpgraphql-acf/ --delete --delete-excluded -v",
+      "cd plugin-build ; zip -r wpgraphql-acf.zip wpgraphql-acf",
+      "rm -rf plugin-build/wpgraphql-acf/"
     ]
   }
 }
