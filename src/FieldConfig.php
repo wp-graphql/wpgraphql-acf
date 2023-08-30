@@ -323,8 +323,8 @@ class FieldConfig {
 		if ( $is_cloned ) {
 			if ( isset( $field_config['_name'] ) && ! empty( $node_id ) ) {
 				$field_key = $field_config['_name'];
-			} elseif ( isset( $field_config['_clone'] ) ) {
-				$field_key = $field_config['_clone'];
+			} elseif ( ! empty( $field_config['__key'] ) ) {
+				$field_key = $field_config['__key'];
 			}
 
 			$cloned_field_config = acf_get_field( $field_key );
@@ -371,9 +371,8 @@ class FieldConfig {
 		// resolve block field
 		if ( is_array( $node ) && isset( $node['blockName'] ) ) {
 
-			$block_id = $node['clientId'] ?? null;
 			$fields   = acf_setup_meta( $node['attrs']['data'], 0, true );
-			acf_reset_meta( $block_id );
+			acf_reset_meta();
 
 			return $fields[ $field_config['name'] ] ?? null;
 		}
