@@ -5,6 +5,16 @@ class WPGraphQLContentBlocks {
 
 	public function init(): void {
 
+		if ( ! defined( 'WPGRAPHQL_CONTENT_BLOCKS_DIR' ) ) {
+			return;
+		}
+
+		// Filter the interfaces returned as possible types for ACF Field Groups to be associated with
+		add_filter( 'wpgraphql/acf/get_all_possible_types/interfaces', [ $this, 'add_blocks_as_possible_type' ], 10, 1 );
+
+		// Register the AcfBlock Interface
+		add_action( 'graphql_register_types', [ $this, 'register_acf_block_interface' ] );
+
 		// @see: https://github.com/wpengine/wp-graphql-content-blocks/pull/148
 		add_filter( 'wpgraphql_content_blocks_should_apply_post_type_editor_blocks_interfaces', [ $this, 'filter_editor_block_interfaces' ], 10, 7 );
 
@@ -28,4 +38,41 @@ class WPGraphQLContentBlocks {
 		return $should;
 	}
 
+	/**
+	 * Register the AcfBlock Interface Type, implementing the "EditorBlock" type
+	 *
+	 * @return void
+	 *
+	 * @throws \Exception
+	 */
+	public function register_acf_block_interface(): void {
+
+		register_graphql_interface_type( 'AcfBlock', [
+			'eagerlyLoadType' => true,
+			'interfaces'      => [ 'EditorBlock' ],
+			'description'     => __( 'Block registered by ACF', 'wp-graphql-acf' ),
+			'fields'          => [
+				'name' => [
+					'type' => 'String',
+				],
+			],
+		] );
+
+	}
+
+	/**
+	 * @param array $interfaces The interfaces shown as possible types for ACF Field Groups to be associated with
+	 *
+	 * @return array
+	 */
+	public function add_blocks_as_possible_type( array $interfaces ): array {
+
+		$interfaces['AcfBlock'] = [
+			'label'        => __( 'ACF Block', 'wp-graphql-acf' ),
+			'plural_label' => __( 'All Gutenberg Blocks registered by ACF Blocks', 'wp-graphql-acf' ),
+		];
+
+		return $interfaces;
+
+	}
 }

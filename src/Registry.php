@@ -128,17 +128,6 @@ class Registry {
 			],
 		] );
 
-		register_graphql_interface_type( 'AcfBlock', [
-			'eagerlyLoadType' => true,
-			'interfaces'      => [ 'EditorBlock' ],
-			'description'     => __( 'Block registered by ACF', 'wp-graphql-acf' ),
-			'fields'          => [
-				'name' => [
-					'type' => 'String',
-				],
-			],
-		] );
-
 		register_graphql_interface_type( 'AcfFieldGroupFields', [
 			'description' => __( 'Fields associated with an ACF Field Group', 'wp-graphql-acf' ),
 			'fields'      => [
@@ -283,6 +272,7 @@ class Registry {
 		$interfaces[]     = 'AcfFieldGroup';
 		$interfaces[]     = $fields_interface;
 
+		// Apply Clone Field interfaces if ACF PRO is active
 		if ( defined( 'ACF_PRO' ) ) {
 
 			$fields = [];
@@ -293,15 +283,47 @@ class Registry {
 				$fields = acf_get_fields( $acf_field_group );
 			}
 
+			// Get all the fields that have a __key field.
+			// This helps identify all of the fields that
+			$field_keys = array_map( static function ( $_field ) {
+				return $_field['__key'] ?? null;
+			}, $fields );
+
 			foreach ( $fields as $field ) {
 				if ( ! empty( $field['_clone'] ) && ! empty( $field['__key'] ) ) {
 
+					// get the original field this is a clone of
 					$cloned_from = acf_get_field( $field['__key'] );
 
-					if ( ! empty( $cloned_from ) ) {
+					if ( empty( $cloned_from ) ) {
+						continue;
+					}
+
+					// Get the field group of the original field
+					$cloned_from_field_group = acf_get_field_group( $cloned_from['parent'] );
+
+					if ( empty( $cloned_from_field_group ) ) {
+						continue;
+					}
+
+					// Get all fields from the cloned field group
+					$cloned_from_fields = acf_get_fields( $cloned_from_field_group );
+
+					if ( empty( $cloned_from_fields ) ) {
+						continue;
+					}
+
+					$cloned_from_keys = array_filter( wp_list_pluck( $cloned_from_fields, 'key' ) );
+
+					// Check if _all_ of the fields from the cloned field's field group exist in
+					$diff = array_diff( $cloned_from_keys, $field_keys );
+
+					// If all fields of the cloned field's field group exist on this field group, we should
+					// apply the interface for the cloned field's field group.
+					if ( empty( $diff ) && ! isset( $interfaces[ $cloned_from['parent'] ] ) ) {
 
 						// @phpstan-ignore-next-line
-						$interfaces[ $field['key'] ] = $this->get_field_group_graphql_type_name( acf_get_field_group( $cloned_from['parent'] ) ) . '_Fields';
+						$interfaces[ $cloned_from['parent'] ] = $this->get_field_group_graphql_type_name( acf_get_field_group( $cloned_from['parent'] ) ) . '_Fields';
 					}
 				}
 			}
@@ -488,25 +510,10 @@ class Registry {
 				continue;
 			}
 
-			if ( defined( 'ACF_PRO' ) && isset( $acf_field['_clone'] ) ) {
-				$cloned_fields[ $graphql_field_name ] = $acf_field;
-				continue;
-			}
-
 			$field_config = $this->map_acf_field_to_graphql( $acf_field, $acf_field_group );
 
-			$graphql_fields[ $graphql_field_name ] = $field_config;
-		}
-
-		// If there are cloned fields, pass the cloned field key to the field config for use in resolution
-		if ( defined( 'ACF_PRO' ) && ! empty( $cloned_fields ) ) {
-			foreach ( $cloned_fields as $cloned_field ) {
-				$graphql_field_name = $this->get_graphql_field_name( $cloned_field );
-				if ( ! empty( $graphql_field_name ) ) {
-					$original_key = $graphql_fields[ $graphql_field_name ]['acf_field']['key'] ?? null;
-					$graphql_fields[ $graphql_field_name ]['acf_field']['key_original'] = $original_key;
-					$graphql_fields[ $graphql_field_name ]['acf_field']['cloned_key']   = $cloned_field['key'];
-				}
+			if ( ! isset( $graphql_fields[ $graphql_field_name ] ) ) {
+				$graphql_fields[ $graphql_field_name ] = $field_config;
 			}
 		}
 

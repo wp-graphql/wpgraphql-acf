@@ -174,11 +174,13 @@ class Utils {
 				'label'        => __( 'ACF Options Page', 'wp-graphql-acf' ),
 				'plural_label' => __( 'All Options Pages registered by ACF', 'wp-graphql-acf' ),
 			],
-			'AcfBlock'        => [
-				'label'        => __( 'ACF Block', 'wp-graphql-acf' ),
-				'plural_label' => __( 'All Gutenberg Blocks registered by ACF Blocks', 'wp-graphql-acf' ),
-			],
+
 		];
+
+		/**
+		 * @param array $interfaces Array of Interfaces to include in the possible types that an ACF Field could be associated with
+		 */
+		$interfaces = apply_filters( 'wpgraphql/acf/get_all_possible_types/interfaces', $interfaces );
 
 		foreach ( $interfaces as $interface_name => $config ) {
 

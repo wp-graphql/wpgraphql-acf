@@ -22,7 +22,7 @@ class GalleryFieldTest extends \Tests\WPGraphQL\Acf\WPUnit\AcfFieldTestCase {
 	}
 
 	public function get_expected_field_resolve_type(): ?string {
-		return 'AcfTestGroupTestGalleryToMediaItemConnection';
+		return 'AcfMediaItemConnection';
 	}
 
 	public function get_expected_field_resolve_kind(): ?string {

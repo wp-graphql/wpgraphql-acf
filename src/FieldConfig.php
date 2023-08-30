@@ -301,18 +301,16 @@ class FieldConfig {
 	 */
 	public function resolve_field( $root, array $args, AppContext $context, ResolveInfo $info ) {
 
-		// @todo: Handle options pages??
 		$field_config = $info->fieldDefinition->config['acf_field'] ?? $this->acf_field;
-
-		$node    = $root['node'] ?? null;
-		$node_id = $node ? Utils::get_node_acf_id( $node, $field_config ) : null;
+		$node         = $root['node'] ?? null;
+		$node_id      = $node ? Utils::get_node_acf_id( $node, $field_config ) : null;
 
 		$field_key = null;
 		$is_cloned = false;
 
 		// if the field is cloned
-		if ( ! empty( $field_config['cloned_key'] ) ) {
-			$field_key = $field_config['cloned_key'];
+		if ( ! empty( $field_config['_clone'] ) ) {
+			$field_key = $field_config['_clone'];
 			$is_cloned = true;
 		} elseif ( ! empty( $field_config['key'] ) ) {
 			$field_key = $field_config['key'];
@@ -325,12 +323,12 @@ class FieldConfig {
 		if ( $is_cloned ) {
 			if ( isset( $field_config['_name'] ) && ! empty( $node_id ) ) {
 				$field_key = $field_config['_name'];
-			} elseif ( isset( $field_config['cloned_key'] ) ) {
-				$field_key = $field_config['cloned_key'];
+			} elseif ( isset( $field_config['_clone'] ) ) {
+				$field_key = $field_config['_clone'];
 			}
 
 			$cloned_field_config = acf_get_field( $field_key );
-			$field_config = ! empty( $cloned_field_config ) ? $cloned_field_config : $field_config;
+			$field_config        = ! empty( $cloned_field_config ) ? $cloned_field_config : $field_config;
 
 		}
 
@@ -361,6 +359,7 @@ class FieldConfig {
 		 * @param mixed|string|int $node_id   The ACF ID of the node to resolve the field with
 		 * @param array            $acf_field The ACF Field config
 		 * @param bool             $format    Whether to apply formatting to the field
+		 * @param string           $field_key The key of the field being resolved
 		 */
 		$pre_value = apply_filters( 'wpgraphql/acf/pre_resolve_acf_field', null, $root, $node_id, $field_config, $should_format_value, $field_key );
 
@@ -373,7 +372,7 @@ class FieldConfig {
 		if ( is_array( $node ) && isset( $node['blockName'] ) ) {
 
 			$block_id = $node['clientId'] ?? null;
-			$fields = acf_setup_meta( $node['attrs']['data'], 0, true );
+			$fields   = acf_setup_meta( $node['attrs']['data'], 0, true );
 			acf_reset_meta( $block_id );
 
 			return $fields[ $field_config['name'] ] ?? null;
@@ -445,7 +444,7 @@ class FieldConfig {
 
 		// @todo: This was ported over, but I'm not 💯 sure what this is solving and
 		// why it's only applied on options pages and not other pages 🤔
-		if ( is_array( $root ) && ! ( ! empty( $root['type'] ) && 'options_page' === $root['type'] ) && isset( $acf_field_config['key'] ) && isset( $root[ $acf_field_config['key'] ] ) ) {
+		if ( isset( $acf_field_config['key'], $root[ $acf_field_config['key'] ] ) && is_array( $root ) && ! ( ! empty( $root['type'] ) && 'options_page' === $root['type'] ) ) {
 			$value = $root[ $acf_field_config['key'] ];
 			if ( 'wysiwyg' === $acf_field_config['type'] ) {
 				$value = apply_filters( 'the_content', $value );
@@ -472,15 +471,13 @@ class FieldConfig {
 	}
 
 	/**
-	 * @param string $from_type
 	 * @param string $to_type
-	 * @param string $from_field_name
 	 *
 	 * @return string
 	 */
-	public function get_connection_name( string $from_type, string $to_type, string $from_field_name ): string {
+	public function get_connection_name( string $to_type ): string {
 		// Create connection name using $from_type + To + $to_type + Connection.
-		return \WPGraphQL\Utils\Utils::format_type_name( ucfirst( $from_type ) . ucfirst( $from_field_name ) . 'To' . ucfirst( $to_type ) . 'Connection' );
+		return \WPGraphQL\Utils\Utils::format_type_name( 'Acf' . ucfirst( $to_type ) . 'Connection' );
 	}
 
 	/**
@@ -499,7 +496,7 @@ class FieldConfig {
 			return;
 		}
 
-		$connection_name = $this->get_connection_name( $type_name, $to_type, $this->get_graphql_field_name() );
+		$connection_name = $this->get_connection_name( $to_type );
 
 		$connection_config = array_merge( [
 			'description'           => $this->get_field_description(),

@@ -22,7 +22,7 @@ class RelationshipFieldTest extends \Tests\WPGraphQL\Acf\WPUnit\AcfFieldTestCase
 	}
 
 	public function get_expected_field_resolve_type(): ?string {
-		return 'AcfTestGroupTestRelationshipToContentNodeConnection';
+		return 'AcfContentNodeConnection';
 	}
 
 	public function get_expected_field_resolve_kind(): ?string {

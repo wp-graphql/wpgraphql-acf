@@ -22,9 +22,8 @@ class Image {
 					return null;
 				}
 
-				$type_name       = $field_config->get_graphql_field_group_type_name();
-				$to_type         = 'MediaItem';
-				$connection_name = $field_config->get_connection_name( $type_name, $to_type, $field_config->get_graphql_field_name() );
+				$type_name = $field_config->get_graphql_field_group_type_name();
+				$to_type   = 'MediaItem';
 
 				$field_config->register_graphql_connections( [
 					'description'           => $field_config->get_field_description(),
@@ -33,7 +32,6 @@ class Image {
 					'fromType'              => $type_name,
 					'toType'                => $to_type,
 					'fromFieldName'         => $field_config->get_graphql_field_name(),
-					'connectionTypeName'    => $connection_name,
 					'oneToOne'              => true,
 					'resolve'               => function ( $root, $args, AppContext $context, ResolveInfo $info ) use ( $field_config ) {
 

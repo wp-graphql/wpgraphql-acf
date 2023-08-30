@@ -220,7 +220,6 @@ class PostTypeRegistration {
 	 */
 	public function render_graphql_columns( string $column_name, int $post_id ): void {
 
-		// @phpstan-ignore-next-line
 		$post_type = acf_get_internal_post_type( $post_id, 'acf-post-type' );
 
 		// if there's no post type, bail early
