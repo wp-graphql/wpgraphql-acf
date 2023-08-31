@@ -316,10 +316,11 @@ class WPGraphQLAcfTestCase extends \Tests\WPGraphQL\TestCase\WPGraphQLTestCase {
 	 *
 	 * @param array $acf_field Config array to override the defaults
 	 * @param array $acf_field_group Config array to override the defaults of the field group the field will be registered to
+	 * @param bool  $should_clone_field_only bool Weather to clone only the field instead of the entire field group
 	 *
 	 * @return string
 	 */
-	public function register_cloned_acf_field( array $acf_field = [], array $acf_field_group = [] ): string {
+	public function register_cloned_acf_field( array $acf_field = [], array $acf_field_group = [], bool $should_clone_field_only = false ): string {
 
 		// the field group needs to be unique
 		// for each test
@@ -382,7 +383,7 @@ class WPGraphQLAcfTestCase extends \Tests\WPGraphQL\TestCase\WPGraphQLTestCase {
 			'acfe_save_meta' => 0,
 			// clone the inactive field group
 			'clone' => [
-				0 => $clone_field_group_key
+				0 => true === $should_clone_field_only ? $inactive_field : $clone_field_group_key
 			],
 			'display' => 'seamless',
 			'layout' => 'block',

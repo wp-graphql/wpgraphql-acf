@@ -276,55 +276,53 @@ class Registry {
 		if ( defined( 'ACF_PRO' ) ) {
 
 			$fields = [];
+			$raw_fields = [];
 
 			if ( isset( $acf_field_group['sub_fields'] ) ) {
 				$fields = $acf_field_group['sub_fields'];
 			} elseif ( isset( $acf_field_group['ID'] ) ) {
+
 				$fields = acf_get_fields( $acf_field_group );
+				$raw_fields = array_map( static function( $field ) {
+					return acf_get_raw_field( $field['ID'] );
+				}, $fields );
 			}
 
-			// Get all the fields that have a __key field.
-			// This helps identify all of the fields that
-			$field_keys = array_map( static function ( $_field ) {
-				return $_field['__key'] ?? null;
-			}, $fields );
+			if ( $acf_field_group['name'] === 'layout_with_cloned_group' ) {
+				$something = array_filter( $acf_field_group['sub_fields'], static function( $field ) use ( $acf_field_group ) {
+					return $field['parent_layout'] === $acf_field_group['key'];
+				});
+				wp_send_json( [
+					'$something' => $something,
+					'id' => acf_get_field_post( $acf_field_group['key'] ),
+					'$raw_group' => acf_get_raw_field_group( $acf_field_group['key'] ),
+					'$acf_field_group' => $acf_field_group,
+					'$fields' => $fields,
+					'$raw_fields' => $raw_fields,
+				] );
+			}
 
-			foreach ( $fields as $field ) {
-				if ( ! empty( $field['_clone'] ) && ! empty( $field['__key'] ) ) {
-
-					// get the original field this is a clone of
-					$cloned_from = acf_get_field( $field['__key'] );
-
-					if ( empty( $cloned_from ) ) {
+			$cloned_groups = [];
+			if ( ! empty( $raw_fields ) ) {
+				foreach ( $raw_fields as $raw_field ) {
+					if ( empty( $raw_field['clone'] ) || ! is_array( $raw_field['clone'] ) ) {
 						continue;
 					}
+					foreach ( $raw_field['clone'] as $cloned_field ) {
+						if ( strpos( $cloned_field, 'group_' ) !== 0 ) {
+							continue;
+						}
 
-					// Get the field group of the original field
-					$cloned_from_field_group = acf_get_field_group( $cloned_from['parent'] );
-
-					if ( empty( $cloned_from_field_group ) ) {
-						continue;
+						if ( ! in_array( $cloned_field, $cloned_groups, true ) ) {
+							$cloned_groups[] = $cloned_field;
+						}
 					}
+				}
+			}
 
-					// Get all fields from the cloned field group
-					$cloned_from_fields = acf_get_fields( $cloned_from_field_group );
-
-					if ( empty( $cloned_from_fields ) ) {
-						continue;
-					}
-
-					$cloned_from_keys = array_filter( wp_list_pluck( $cloned_from_fields, 'key' ) );
-
-					// Check if _all_ of the fields from the cloned field's field group exist in
-					$diff = array_diff( $cloned_from_keys, $field_keys );
-
-					// If all fields of the cloned field's field group exist on this field group, we should
-					// apply the interface for the cloned field's field group.
-					if ( empty( $diff ) && ! isset( $interfaces[ $cloned_from['parent'] ] ) ) {
-
-						// @phpstan-ignore-next-line
-						$interfaces[ $cloned_from['parent'] ] = $this->get_field_group_graphql_type_name( acf_get_field_group( $cloned_from['parent'] ) ) . '_Fields';
-					}
+			if ( ! empty( $cloned_groups ) ) {
+				foreach ( $cloned_groups as $cloned_group ) {
+					$interfaces[] = $this->get_field_group_graphql_type_name( acf_get_field_group( $cloned_group ) ) . '_Fields';
 				}
 			}
 		}
