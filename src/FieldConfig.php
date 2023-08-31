@@ -371,7 +371,7 @@ class FieldConfig {
 		// resolve block field
 		if ( is_array( $node ) && isset( $node['blockName'] ) ) {
 
-			$fields   = acf_setup_meta( $node['attrs']['data'], 0, true );
+			$fields = acf_setup_meta( $node['attrs']['data'], 0, true );
 			acf_reset_meta();
 
 			return $fields[ $field_config['name'] ] ?? null;
