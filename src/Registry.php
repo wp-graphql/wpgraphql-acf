@@ -275,31 +275,12 @@ class Registry {
 		// Apply Clone Field interfaces if ACF PRO is active
 		if ( defined( 'ACF_PRO' ) ) {
 
-			$fields = [];
 			$raw_fields = [];
 
-			if ( isset( $acf_field_group['sub_fields'] ) ) {
-				$fields = $acf_field_group['sub_fields'];
-			} elseif ( isset( $acf_field_group['ID'] ) ) {
-
-				$fields = acf_get_fields( $acf_field_group );
-				$raw_fields = array_map( static function( $field ) {
-					return acf_get_raw_field( $field['ID'] );
-				}, $fields );
-			}
-
-			if ( $acf_field_group['name'] === 'layout_with_cloned_group' ) {
-				$something = array_filter( $acf_field_group['sub_fields'], static function( $field ) use ( $acf_field_group ) {
-					return $field['parent_layout'] === $acf_field_group['key'];
-				});
-				wp_send_json( [
-					'$something' => $something,
-					'id' => acf_get_field_post( $acf_field_group['key'] ),
-					'$raw_group' => acf_get_raw_field_group( $acf_field_group['key'] ),
-					'$acf_field_group' => $acf_field_group,
-					'$fields' => $fields,
-					'$raw_fields' => $raw_fields,
-				] );
+			if ( ! empty( $acf_field_group['raw_fields'] ) ) {
+				$raw_fields = $acf_field_group['raw_fields'];
+			} elseif ( ! empty( $acf_field_group['ID'] ) ) {
+				$raw_fields = acf_get_raw_fields( $acf_field_group['ID'] );
 			}
 
 			$cloned_groups = [];
@@ -309,7 +290,7 @@ class Registry {
 						continue;
 					}
 					foreach ( $raw_field['clone'] as $cloned_field ) {
-						if ( strpos( $cloned_field, 'group_' ) !== 0 ) {
+						if ( ! acf_get_field_group( $cloned_field ) ) {
 							continue;
 						}
 
@@ -322,7 +303,11 @@ class Registry {
 
 			if ( ! empty( $cloned_groups ) ) {
 				foreach ( $cloned_groups as $cloned_group ) {
-					$interfaces[] = $this->get_field_group_graphql_type_name( acf_get_field_group( $cloned_group ) ) . '_Fields';
+					$cloned_group = acf_get_field_group( $cloned_group );
+					if ( empty( $cloned_group ) ) {
+						continue;
+					}
+					$interfaces[] = $this->get_field_group_graphql_type_name( $cloned_group ) . '_Fields';
 				}
 			}
 		}

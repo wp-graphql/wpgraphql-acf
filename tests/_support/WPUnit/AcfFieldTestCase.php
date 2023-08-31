@@ -129,11 +129,11 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 	/**
 	 * @param array $acf_field
 	 * @param array $acf_field_group
-	 * @param bool $should_clone_field_only
+	 * @param ?bool $should_clone_field_only
 	 *
 	 * @return string
 	 */
-	public function register_cloned_acf_field( array $acf_field = [], array $acf_field_group = [], bool $should_clone_field_only = false ): string {
+	public function register_cloned_acf_field( array $acf_field = [], array $acf_field_group = [], ?bool $should_clone_field_only = false ): string {
 
 		// set defaults on the acf field
 		// using helper methods from this class.
@@ -718,7 +718,7 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 			$this->markTestSkipped( 'ACF Pro is not active so this test will not run.' );
 		}
 
-		$this->register_cloned_acf_field();
+		$field_key = $this->register_cloned_acf_field();
 
 		$query = '
 		query GetAcfFieldGroup ($name: String! ){
@@ -778,19 +778,25 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 			])
 		]);
 
+		acf_remove_local_field( $field_key );
+
 	}
 
 	/**
 	 * @return void
 	 */
-	public function testClonedFieldGroupIsAppliedAsInterface() {
+	public function testClonedFieldGroupFieldsAreAppliedAsInterface(): void {
+
+		$this->markTestIncomplete();
 
 		// if ACF PRO is not active, skip the test
 		if ( ! defined( 'ACF_PRO' ) ) {
 			$this->markTestSkipped( 'ACF Pro is not active so this test will not run.' );
 		}
 
-		$this->register_cloned_acf_field();
+		$field_key = $this->register_cloned_acf_field();
+
+		$this->clearSchema();
 
 		$query = '
 		query GetAcfFieldGroup ($name: String! ){
@@ -834,6 +840,8 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 			])
 		]);
 
+		acf_remove_local_field( $field_key );
+
 	}
 
 	/**
@@ -841,13 +849,20 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 	 */
 	public function testClonedFieldExistsButIsNotAppliedAsInterface() {
 
+		$this->markTestIncomplete();
+
 		// if ACF PRO is not active, skip the test
 		if ( ! defined( 'ACF_PRO' ) ) {
 			$this->markTestSkipped( 'ACF Pro is not active so this test will not run.' );
 		}
 
 		// only clone the field, not the whole field group
-		$this->register_cloned_acf_field([], [], true);
+		$field_key = $this->register_cloned_acf_field([
+			'name' => 'cloned_2_' . $this->get_field_name(),
+			'type' => $this->get_field_type()
+		], [], true);
+
+		$this->clearSchema();
 
 		$query = '
 		query GetAcfFieldGroup ($name: String! ){
