@@ -18,10 +18,11 @@ class Utils {
 
 	/**
 	 * @param mixed $node
+	 * @param array $acf_field_config The config of the ACF Field
 	 *
 	 * @return int|mixed|string
 	 */
-	public static function get_node_acf_id( $node ) {
+	public static function get_node_acf_id( $node, array $acf_field_config = [] ) {
 
 		/**
 		 * If a value is returned from this filter,

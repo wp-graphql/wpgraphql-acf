@@ -15,11 +15,12 @@ class FlexibleContent {
 			'flexible_content',
 			[
 				'graphql_type' => static function ( FieldConfig $field_config, AcfGraphQLFieldType $acf_field_type ) {
-					$parent_type             = $field_config->get_graphql_field_group_type_name();
-					$field_name              = $field_config->get_graphql_field_name();
-					$layout_interface_prefix = Utils::format_type_name( $parent_type . ' ' . $field_name );
-					$layout_interface_name   = $layout_interface_prefix . '_Layout';
-					$acf_field               = $field_config->get_acf_field();
+					$parent_type               = $field_config->get_graphql_field_group_type_name();
+					$field_name                = $field_config->get_graphql_field_name();
+					$layout_interface_prefix   = Utils::format_type_name( $parent_type . ' ' . $field_name );
+					$layout_interface_name     = $layout_interface_prefix . '_Layout';
+					$acf_field                 = $field_config->get_acf_field();
+					$flex_field_raw_sub_fields = acf_get_raw_fields( $acf_field['key'] );
 
 					if ( ! $field_config->get_registry()->has_registered_field_group( $layout_interface_name ) ) {
 						register_graphql_interface_type(
@@ -57,6 +58,14 @@ class FlexibleContent {
 
 							// Pass that the layout is a flexLayout (compared to a standard field group)
 							$layout['isFlexLayout'] = true;
+
+							$layout['parent']     = $acf_field['key'];
+							$layout['raw_fields'] = array_filter(
+								$flex_field_raw_sub_fields,
+								static function ( $field ) use ( $layout ) {
+									return $field['parent_layout'] === $layout['key'];
+								}
+							);
 
 							// Get interfaces, including cloned field groups, for the layout
 							$interfaces = $field_config->get_registry()->get_field_group_interfaces( $layout );

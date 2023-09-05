@@ -15,6 +15,10 @@ class ThirdParty {
 		// Initialize support for WPGraphQL Smart Cache
 		$smart_cache = new ThirdParty\WPGraphQLSmartCache\WPGraphQLSmartCache();
 		$smart_cache->init();
+
+		// Initialize support for WPGraphQL Content Blocks
+		$content_blocks = new ThirdParty\WPGraphQLContentBlocks\WPGraphQLContentBlocks();
+		$content_blocks->init();
 	}
 
 }

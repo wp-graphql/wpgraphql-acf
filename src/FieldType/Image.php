@@ -22,9 +22,9 @@ class Image {
 						return null;
 					}
 
-					$type_name       = $field_config->get_graphql_field_group_type_name();
-					$to_type         = 'MediaItem';
-					$connection_name = $field_config->get_connection_name( $type_name, $to_type, $field_config->get_graphql_field_name() );
+
+					$type_name = $field_config->get_graphql_field_group_type_name();
+					$to_type   = 'MediaItem';
 
 					$field_config->register_graphql_connections(
 						[
@@ -34,7 +34,6 @@ class Image {
 							'fromType'              => $type_name,
 							'toType'                => $to_type,
 							'fromFieldName'         => $field_config->get_graphql_field_name(),
-							'connectionTypeName'    => $connection_name,
 							'oneToOne'              => true,
 							'resolve'               => static function ( $root, $args, AppContext $context, ResolveInfo $info ) use ( $field_config ) {
 								$value = $field_config->resolve_field( $root, $args, $context, $info );
@@ -45,9 +44,9 @@ class Image {
 
 								$resolver = new PostObjectConnectionResolver( $root, $args, $context, $info, 'attachment' );
 								return $resolver
-									->one_to_one()
-									->set_query_arg( 'p', absint( $value ) )
-									->get_connection();
+								->one_to_one()
+								->set_query_arg( 'p', absint( $value ) )
+								->get_connection();
 							},
 							'allowFieldUnderscores' => true,
 						]

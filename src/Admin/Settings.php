@@ -113,8 +113,11 @@ class Settings {
 			add_action( 'acf/render_field_settings', [ $this, 'add_field_settings' ] );
 		} else {
 
+			// @phpstan-ignore-next-line
+			$acf_field_types = acf_get_field_types();
+
 			// We want to add settings to _all_ field types
-			$acf_field_types = array_keys( acf_get_field_types() );
+			$acf_field_types = is_array( $acf_field_types ) && ! empty( $acf_field_types ) ? array_keys( $acf_field_types ) : [];
 
 			if ( ! empty( $acf_field_types ) ) {
 				array_map(
@@ -212,7 +215,6 @@ class Settings {
 		}
 
 		// Render a field in the Field Group settings to allow for a Field Group to be shown in GraphQL.
-		// @phpstan-ignore-next-line
 		acf_render_field_wrap(
 			[
 				'label'        => __( 'Show in GraphQL', 'wp-graphql-acf' ),
@@ -229,7 +231,6 @@ class Settings {
 		);
 
 		// Render a field in the Field Group settings to set the GraphQL field name for the field group.
-		// @phpstan-ignore-next-line
 		acf_render_field_wrap(
 			[
 				'label'        => __( 'GraphQL Type Name', 'wp-graphql-acf' ),
@@ -246,7 +247,6 @@ class Settings {
 			true
 		);
 
-		// @phpstan-ignore-next-line
 		acf_render_field_wrap(
 			[
 				'label'        => __( 'Manually Set GraphQL Types for Field Group', 'wp-graphql-acf' ),
@@ -264,7 +264,6 @@ class Settings {
 
 		$choices = Utils::get_all_graphql_types();
 
-		// @phpstan-ignore-next-line
 		acf_render_field_wrap(
 			[
 				'label'        => __( 'GraphQL Types to Show the Field Group On', 'wp-graphql-acf' ),
@@ -285,8 +284,6 @@ class Settings {
 		$interfaces            = $this->get_registry()->get_field_group_interfaces( $field_group );
 		$field_group_type_name = $this->get_registry()->get_field_group_graphql_type_name( $field_group );
 
-
-		// @phpstan-ignore-next-line
 		acf_render_field_wrap(
 			[
 				'label'        => __( 'GraphQL Interfaces', 'wp-graphql-acf' ),
@@ -377,7 +374,6 @@ class Settings {
 				// Merge the default field setting with the passed in field setting
 				$setting_field_config = array_merge( $default_config, $admin_field_setting_config );
 
-				// @phpstan-ignore-next-line
 				acf_render_field_setting( $field, $setting_field_config, (bool) $setting_field_config['global'] );
 			}
 		}
@@ -501,25 +497,23 @@ class Settings {
 			echo null;
 		}
 
-		// @phpstan-ignore-next-line
 		$field_group = acf_get_field_group( $post_id );
 
 		if ( empty( $field_group ) ) {
 			echo null;
+			return;
 		}
 
 		switch ( $column_name ) {
 			case 'acf-wpgraphql-type':
 				$type_name = $this->get_registry()->get_field_group_graphql_type_name( $field_group );
 
-				// @phpstan-ignore-next-line
-				echo '<span class="acf-wpgraphql-type">' . acf_esc_html( $type_name ) . '</span>';
+				echo ! empty( $type_name ) ? '<span class="acf-wpgraphql-type">' . acf_esc_html( $type_name ) . '</span>' : '';
 				break;
 			case 'acf-wpgraphql-interfaces':
 				$interfaces = $this->get_registry()->get_field_group_interfaces( $field_group );
 				$html       = Utils::array_list_by_limit( $interfaces, 5 );
 
-				// @phpstan-ignore-next-line
 				echo '<span class="acf-wpgraphql-interfaces">' . acf_esc_html( $html ) . '</span>';
 				break;
 			case 'acf-wpgraphql-locations':
@@ -528,7 +522,6 @@ class Settings {
 				if ( $locations ) {
 					$html = Utils::array_list_by_limit( $locations, 5 );
 
-					// @phpstan-ignore-next-line
 					echo '<span class="acf-wpgraphql-location-types">' . acf_esc_html( $html ) . '</span>';
 				}
 				break;
