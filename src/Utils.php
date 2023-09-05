@@ -169,11 +169,14 @@ class Utils {
 				'label'        => __( 'Page Template', 'wp-graphql-acf' ),
 				'plural_label' => __( 'All Templates Assignable to Content', 'wp-graphql-acf' ),
 			],
-			'AcfOptionsPage'  => [
+		];
+
+		if ( function_exists( 'acf_get_options_pages' ) && ! empty( acf_get_options_pages() ) ) {
+			$interfaces['AcfOptionsPage'] = [
 				'label'        => __( 'ACF Options Page', 'wp-graphql-acf' ),
 				'plural_label' => __( 'All Options Pages registered by ACF', 'wp-graphql-acf' ),
-			],
-		];
+			];
+		}
 
 		foreach ( $interfaces as $interface_name => $config ) {
 
