@@ -33,8 +33,8 @@ $j(document).ready(function () {
 				return;
 			}
 
-			var $graphqlFieldName = field.$setting('graphql_field_name');
-			var graphqlFieldName = acf.getInstance($graphqlFieldName).getValue();
+			var $graphqlFieldName = field?.$setting('graphql_field_name');
+			var graphqlFieldName = acf?.getInstance($graphqlFieldName)?.getValue() ?? '';
 
 			if ( graphqlFieldName === '' ) {
 				var sanitizedGraphqlFieldName = acf.strCamelCase( acf.strSanitize(name) );
