@@ -134,6 +134,24 @@ class Utils {
 	}
 
 	/**
+	 * Returns an array of ACF Options Pages that are set to show in the graphql schema
+	 * @return array
+	 */
+	public static function get_acf_options_pages(): array {
+		$options_pages = [];
+		if ( ! function_exists( 'acf_get_options_pages' ) ) {
+			return $options_pages;
+		}
+		$acf_options_pages = acf_get_options_pages();
+		if ( empty( $acf_options_pages ) || ! is_array( $acf_options_pages ) ) {
+			return $options_pages;
+		}
+		return array_filter( array_map( static function( $option_page ) {
+			return \WPGraphQL\Acf\Utils::should_field_group_show_in_graphql( $option_page ) ? $option_page : null;
+		}, $acf_options_pages ) );
+	}
+
+	/**
 	 * Returns all available GraphQL Types
 	 *
 	 * @return array
@@ -177,6 +195,11 @@ class Utils {
 				'plural_label' => __( 'All Options Pages registered by ACF', 'wp-graphql-acf' ),
 			];
 		}
+
+		/**
+		 * @param array $interfaces Array of Interfaces to include in the possible types that an ACF Field could be associated with
+		 */
+		$interfaces = apply_filters( 'wpgraphql/acf/get_all_possible_types/interfaces', $interfaces );
 
 		foreach ( $interfaces as $interface_name => $config ) {
 

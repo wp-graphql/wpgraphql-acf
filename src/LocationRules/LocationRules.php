@@ -373,7 +373,7 @@ class LocationRules {
 					foreach ( $field_group['location'] as $location_rule_group ) {
 						if ( ! empty( $location_rule_group ) ) {
 
-							foreach ( $location_rule_group as $group => $rule ) {
+							foreach ( $location_rule_group as $rule ) {
 
 								// Determine the and params for the rule group
 								$and_params = wp_list_pluck( $location_rule_group, 'param' );
@@ -938,7 +938,7 @@ class LocationRules {
 	 */
 	public function determine_options_rules( string $field_group_name, string $param, string $operator, string $value ): void {
 
-		if ( ! function_exists( 'acf_get_options_page' ) ) {
+		if ( empty( \WPGraphQL\Acf\Utils::get_acf_options_pages() ) ) {
 			return;
 		}
 
@@ -957,9 +957,9 @@ class LocationRules {
 		if ( '!=' === $operator ) {
 
 			// @phpstan-ignore-next-line
-			$options_pages = acf_get_options_pages();
+			$options_pages = \WPGraphQL\Acf\Utils::get_acf_options_pages();
 
-			if ( empty( $options_pages ) || ! is_array( $options_pages ) ) {
+			if ( empty( $options_pages ) ) {
 				return;
 			}
 

@@ -1,6 +1,7 @@
 <?php
 namespace WPGraphQL\Acf\Data\Loader;
 
+use WPGraphQL\Acf\Utils;
 use WPGraphQL\Data\Loader\AbstractDataLoader;
 
 class AcfOptionsPageLoader extends AbstractDataLoader {
@@ -12,11 +13,11 @@ class AcfOptionsPageLoader extends AbstractDataLoader {
 	 * @throws \Exception
 	 */
 	protected function loadKeys( array $keys ): array {
-		if ( empty( $keys ) || ! function_exists( 'acf_get_options_pages' ) ) {
+		if ( empty( $keys ) ) {
 			return [];
 		}
 
-		$options_pages = acf_get_options_pages();
+		$options_pages = Utils::get_acf_options_pages();
 
 		if ( empty( $options_pages ) ) {
 			return [];
