@@ -86,7 +86,6 @@ class LocationRules {
 	 * @return array
 	 */
 	public function get_rules() {
-
 		if ( empty( $this->mapped_field_groups ) ) {
 			return [];
 		}
@@ -113,7 +112,8 @@ class LocationRules {
 
 			// Loop over the types to unset, find the key of the type in the array, then unset it
 			foreach ( $types as $type ) {
-				if ( ( $key = array_search( $type, $this->mapped_field_groups[ $field_group ], true ) ) !== false ) {
+				$key = array_search( $type, $this->mapped_field_groups[ $field_group ], true );
+				if ( false !== $key ) {
 					unset( $this->mapped_field_groups[ $field_group ][ $key ] );
 				}
 			}
@@ -121,7 +121,6 @@ class LocationRules {
 
 		// Return the mapped field groups, with the unset fields (if any) removed
 		return $this->mapped_field_groups;
-
 	}
 
 	/**
@@ -139,7 +138,6 @@ class LocationRules {
 	 * @return bool
 	 */
 	public function check_for_conflicts( array $and_params, $param, array $allowed_params = [] ): bool {
-
 		if ( empty( $and_params ) ) {
 			return false;
 		}
@@ -152,7 +150,7 @@ class LocationRules {
 		}
 
 		if ( ! empty( $and_params ) ) {
-			foreach ( $and_params as $key => $and_param ) {
+			foreach ( $and_params as $and_param ) {
 				if ( false === array_search( $and_param, $allowed_params, true ) ) {
 					$has_conflict = true;
 				}
@@ -160,7 +158,6 @@ class LocationRules {
 		}
 
 		return $has_conflict;
-
 	}
 
 	/**
@@ -253,11 +250,9 @@ class LocationRules {
 			default:
 				$allowed_and_params = [];
 				break;
-
 		}
 
 		return $this->check_for_conflicts( $and_params, $param, $allowed_and_params );
-
 	}
 
 	/**
@@ -344,9 +339,7 @@ class LocationRules {
 				// rules to the WPGraphQL Schema
 				do_action( 'wpgraphql/acf/match_location_rule', $field_group_name, $param, $operator, $value, $this );
 				break;
-
 		}
-
 	}
 
 	/**
@@ -356,10 +349,8 @@ class LocationRules {
 	 * @return void
 	 */
 	public function determine_location_rules(): void {
-
 		if ( ! empty( $this->acf_field_groups ) ) {
 			foreach ( $this->acf_field_groups as $field_group ) {
-
 				$field_group_name = $field_group['graphql_field_name'] ?? $field_group['title'];
 
 				// If the field group is not active,
@@ -369,10 +360,8 @@ class LocationRules {
 				}
 
 				if ( ! empty( $field_group['location'] ) && is_array( $field_group['location'] ) ) {
-
 					foreach ( $field_group['location'] as $location_rule_group ) {
 						if ( ! empty( $location_rule_group ) ) {
-
 							foreach ( $location_rule_group as $rule ) {
 
 								// Determine the and params for the rule group
@@ -392,14 +381,12 @@ class LocationRules {
 								}
 
 								$this->determine_rules( $field_group_name, $param, $operator, $value );
-
 							}
 						}
 					}
 				}
 			}
 		}
-
 	}
 
 	/**
@@ -408,7 +395,6 @@ class LocationRules {
 	 * @return array
 	 */
 	public function get_graphql_post_template_types(): array {
-
 		$page_templates = [
 			'default' => 'DefaultTemplate',
 		];
@@ -416,14 +402,12 @@ class LocationRules {
 		$registered_page_templates = wp_get_theme()->get_post_templates();
 
 		if ( ! empty( $registered_page_templates ) && is_array( $registered_page_templates ) ) {
-
 			foreach ( $registered_page_templates as $post_type_templates ) {
 				// Post templates are returned as an array of arrays. PHPStan believes they're returned as
 				// an array of strings and believes this will always evaluate to false.
 				// We should ignore the phpstan check here.
 				if ( ! empty( $post_type_templates ) && is_array( $post_type_templates ) ) {
 					foreach ( $post_type_templates as $file => $name ) {
-
 						$name          = ucwords( $name );
 						$replaced_name = preg_replace( '/[^\w]/', '', $name );
 
@@ -468,7 +452,6 @@ class LocationRules {
 
 				// loop over and set all post types
 				foreach ( $allowed_post_types as $allowed_post_type ) {
-
 					$post_type_object = get_post_type_object( $allowed_post_type );
 					$graphql_name     = $post_type_object->graphql_single_name ?? null;
 					if ( ! empty( $graphql_name ) ) {
@@ -485,11 +468,9 @@ class LocationRules {
 		}
 
 		if ( '!=' === $operator ) {
-
 			if ( 'all' !== $value ) {
 				// loop over and set all post types
 				foreach ( $allowed_post_types as $allowed_post_type ) {
-
 					$post_type_object = get_post_type_object( $allowed_post_type );
 					$graphql_name     = $post_type_object->graphql_single_name ?? null;
 					if ( ! empty( $graphql_name ) ) {
@@ -517,7 +498,6 @@ class LocationRules {
 	 * @return void
 	 */
 	public function determine_post_template_rules( string $field_group_name, string $param, string $operator, string $value ): void {
-
 		$templates = $this->get_graphql_post_template_types();
 
 		if ( ! is_array( $templates ) || empty( $templates ) ) {
@@ -533,8 +513,7 @@ class LocationRules {
 		}
 
 		if ( '!=' === $operator ) {
-
-			foreach ( $templates as $name => $template_type ) {
+			foreach ( $templates as $template_type ) {
 				$this->set_graphql_type( $field_group_name, $template_type );
 			}
 
@@ -543,7 +522,6 @@ class LocationRules {
 				$this->unset_graphql_type( $field_group_name, $templates[ $value ] );
 			}
 		}
-
 	}
 
 	/**
@@ -571,14 +549,12 @@ class LocationRules {
 		// It will be added to the Schema for any Post Type that is set to show in GraphQL
 		$allowed_post_types = get_post_types( [ 'show_in_graphql' => true ] );
 		foreach ( $allowed_post_types as $post_type ) {
-
 			$post_type_object = get_post_type_object( $post_type );
 			$graphql_name     = $post_type_object->graphql_single_name ?? null;
 			if ( ! empty( $graphql_name ) ) {
 				$this->set_graphql_type( $field_group_name, $graphql_name );
 			}
 		}
-
 	}
 
 	/**
@@ -592,7 +568,6 @@ class LocationRules {
 	 * @return void
 	 */
 	public function determine_post_format_rules( string $field_group_name, string $param, string $operator, string $value ): void {
-
 		$post_format_taxonomy   = get_taxonomy( 'post_format' );
 		$post_format_post_types = $post_format_taxonomy->object_type ?? [];
 
@@ -613,7 +588,6 @@ class LocationRules {
 				}
 			}
 		}
-
 	}
 
 	/**
@@ -631,7 +605,6 @@ class LocationRules {
 		// If Post Taxonomy is used to qualify a field group location,
 		// It will be added to the Schema for the Post post type
 		$this->set_graphql_type( $field_group_name, 'Post' );
-
 	}
 
 	/**
@@ -651,7 +624,6 @@ class LocationRules {
 		// it is assigned to
 
 		if ( '==' === $operator ) {
-
 			if ( absint( $value ) ) {
 				$post = get_post( absint( $value ) );
 				if ( $post instanceof \WP_Post ) {
@@ -666,7 +638,6 @@ class LocationRules {
 		// If a single post is used as not equal,
 		// the field group should be added to ALL post types in the Schema
 		if ( '!=' === $operator ) {
-
 			$allowed_post_types = get_post_types( [ 'show_in_graphql' => true ] );
 
 			if ( empty( $allowed_post_types ) ) {
@@ -675,7 +646,6 @@ class LocationRules {
 
 			// loop over and set all post types
 			foreach ( $allowed_post_types as $allowed_post_type ) {
-
 				$post_type_object = get_post_type_object( $allowed_post_type );
 				$graphql_name     = $post_type_object->graphql_single_name ?? null;
 				if ( ! empty( $graphql_name ) ) {
@@ -683,7 +653,6 @@ class LocationRules {
 				}
 			}
 		}
-
 	}
 
 	/**
@@ -707,11 +676,12 @@ class LocationRules {
 		// If top_level, parent, or child is set as equal_to or not_equal_to
 		// then the field group should be shown on all hierarchical post types
 		if ( in_array( $value, [ 'top_level', 'parent', 'child' ], true ) ) {
-
-			$hierarchical_post_types = get_post_types( [
-				'show_in_graphql' => true,
-				'hierarchical'    => true,
-			] );
+			$hierarchical_post_types = get_post_types(
+				[
+					'show_in_graphql' => true,
+					'hierarchical'    => true,
+				]
+			);
 
 			if ( empty( $hierarchical_post_types ) ) {
 				return;
@@ -719,7 +689,6 @@ class LocationRules {
 
 			// loop over and set all post types
 			foreach ( $hierarchical_post_types as $allowed_post_type ) {
-
 				$post_type_object = get_post_type_object( $allowed_post_type );
 				$graphql_name     = $post_type_object->graphql_single_name ?? null;
 				if ( ! empty( $graphql_name ) ) {
@@ -727,7 +696,6 @@ class LocationRules {
 				}
 			}
 		}
-
 	}
 
 	/**
@@ -741,7 +709,6 @@ class LocationRules {
 	 * @return void
 	 */
 	public function determine_taxonomy_rules( string $field_group_name, string $param, string $operator, string $value ): void {
-
 		$allowed_taxonomies = get_taxonomies( [ 'show_in_graphql' => true ] );
 
 		if ( empty( $allowed_taxonomies ) ) {
@@ -755,7 +722,6 @@ class LocationRules {
 
 				// loop over and set all post types
 				foreach ( $allowed_taxonomies as $allowed_taxonomy ) {
-
 					$tax_object   = get_taxonomy( $allowed_taxonomy );
 					$graphql_name = $tax_object->graphql_single_name ?? null;
 					if ( ! empty( $graphql_name ) ) {
@@ -774,12 +740,10 @@ class LocationRules {
 		}
 
 		if ( '!=' === $operator ) {
-
 			if ( 'all' !== $value ) {
 
 				// loop over and set all post types
 				foreach ( $allowed_taxonomies as $allowed_taxonomy ) {
-
 					$tax_object   = get_taxonomy( $allowed_taxonomy );
 					$graphql_name = $tax_object->graphql_single_name ?? null;
 					if ( ! empty( $graphql_name ) ) {
@@ -794,7 +758,6 @@ class LocationRules {
 				}
 			}
 		}
-
 	}
 
 	/**
@@ -808,7 +771,6 @@ class LocationRules {
 	 * @return void
 	 */
 	public function determine_attachment_rules( string $field_group_name, string $param, string $operator, string $value ): void {
-
 		if ( '==' === $operator ) {
 			$this->set_graphql_type( $field_group_name, 'MediaItem' );
 		}
@@ -816,7 +778,6 @@ class LocationRules {
 		if ( '!=' === $operator && 'all' === $value ) {
 			$this->unset_graphql_type( $field_group_name, 'MediaItem' );
 		}
-
 	}
 
 	/**
@@ -830,7 +791,6 @@ class LocationRules {
 	 * @return void
 	 */
 	public function determine_comment_rules( string $field_group_name, string $param, string $operator, string $value ): void {
-
 		if ( '==' === $operator ) {
 			$this->set_graphql_type( $field_group_name, 'Comment' );
 		}
@@ -847,7 +807,6 @@ class LocationRules {
 				$this->set_graphql_type( $field_group_name, 'Comment' );
 			}
 		}
-
 	}
 
 	/**
@@ -861,7 +820,6 @@ class LocationRules {
 	 * @return void
 	 */
 	public function determine_nav_menu_rules( string $field_group_name, string $param, string $operator, string $value ): void {
-
 		if ( '==' === $operator ) {
 			$this->set_graphql_type( $field_group_name, 'Menu' );
 		}
@@ -878,7 +836,6 @@ class LocationRules {
 				$this->set_graphql_type( $field_group_name, 'Menu' );
 			}
 		}
-
 	}
 
 	/**
@@ -892,7 +849,6 @@ class LocationRules {
 	 * @return void
 	 */
 	public function determine_nav_menu_item_item_rules( string $field_group_name, string $param, string $operator, string $value ): void {
-
 		if ( '==' === $operator ) {
 			$this->set_graphql_type( $field_group_name, 'MenuItem' );
 		}
@@ -909,7 +865,6 @@ class LocationRules {
 				$this->set_graphql_type( $field_group_name, 'MenuItem' );
 			}
 		}
-
 	}
 
 	/**
@@ -937,7 +892,6 @@ class LocationRules {
 	 * @return void
 	 */
 	public function determine_options_rules( string $field_group_name, string $param, string $operator, string $value ): void {
-
 		$options_pages = \WPGraphQL\Acf\Utils::get_acf_options_pages();
 
 		if ( empty( $options_pages ) ) {
@@ -977,7 +931,6 @@ class LocationRules {
 			$type_name = isset( $options_page['graphql_field_name'] ) ? Utils::format_type_name( $options_page['graphql_field_name'] ) : Utils::format_type_name( $options_page['menu_slug'] );
 			$this->unset_graphql_type( $field_group_name, $type_name );
 		}
-
 	}
 
 }

@@ -38,7 +38,6 @@ class PostTypeRegistration {
 
 		// Enqueue the scripts for the CPT registration screen to help with setting default values / validation
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_admin_scripts' ], 10, 1 );
-
 	}
 
 	/**
@@ -132,7 +131,6 @@ class PostTypeRegistration {
 			'div',
 			'field'
 		);
-
 	}
 
 	/**
@@ -189,7 +187,8 @@ class PostTypeRegistration {
 			return;
 		}
 
-		wp_enqueue_script( 'graphql-acf-post-type',
+		wp_enqueue_script(
+			'graphql-acf-post-type',
 			plugins_url( '/assets/admin/js/post-type-settings.js', __DIR__ ),
 			[
 				'acf-internal-post-type',
@@ -197,7 +196,6 @@ class PostTypeRegistration {
 			WPGRAPHQL_FOR_ACF_VERSION,
 			true
 		);
-
 	}
 
 	/**
@@ -243,7 +241,6 @@ class PostTypeRegistration {
 				break;
 			default:
 		}
-
 	}
 
 }

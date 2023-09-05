@@ -22,22 +22,30 @@ class AcfeLanguages {
 			return null;
 		}
 
-		return array_filter( array_map( static function ( $language ) {
-			return acfe_get_language( $language );
-		}, $languages ) );
+		return array_filter(
+			array_map(
+				static function ( $language ) {
+					return acfe_get_language( $language );
+				},
+				$languages 
+			) 
+		);
 	}
 
 	/**
 	 * @return void
 	 */
 	public static function register_field_type(): void {
-		register_graphql_acf_field_type( 'acfe_languages', [
-			'graphql_type' => [ 'list_of' => 'ACFE_Language' ],
-			'resolve'      => function ( $root, $args, $context, $info, $field_type, $field_config ) {
-				$value = $field_config->resolve_field( $root, $args, $context, $info );
-				return self::resolve_languages( $value );
-			},
-		]);
+		register_graphql_acf_field_type(
+			'acfe_languages',
+			[
+				'graphql_type' => [ 'list_of' => 'ACFE_Language' ],
+				'resolve'      => static function ( $root, $args, $context, $info, $field_type, $field_config ) {
+					$value = $field_config->resolve_field( $root, $args, $context, $info );
+					return self::resolve_languages( $value );
+				},
+			]
+		);
 	}
 
 }

@@ -58,7 +58,6 @@ class AcfGraphQLFieldType {
 	 * @return void
 	 */
 	public function set_config( $config = [] ): void {
-
 		if ( is_array( $config ) ) {
 			$this->config = $config;
 		} elseif ( is_callable( $config ) ) {
@@ -77,7 +76,6 @@ class AcfGraphQLFieldType {
 	 * @return mixed
 	 */
 	public function get_config( ?string $setting_name = null ) {
-
 		if ( empty( $setting_name ) || ! is_array( $this->config ) ) {
 			return $this->config;
 		}
@@ -94,7 +92,6 @@ class AcfGraphQLFieldType {
 	 * @return mixed|void
 	 */
 	public function get_admin_field_settings( array $field, Settings $settings ) {
-
 		$default_admin_settings = [];
 
 		$default_admin_settings['show_in_graphql'] = [
@@ -170,7 +167,6 @@ class AcfGraphQLFieldType {
 		}
 
 		return apply_filters( 'wpgraphql/acf/field_type_admin_settings', $admin_fields );
-
 	}
 
 	/**
@@ -181,7 +177,6 @@ class AcfGraphQLFieldType {
 	 * @return array
 	 */
 	public function get_admin_fields( array $acf_field, array $default_admin_settings, Settings $settings ): array {
-
 		if ( ! empty( $this->admin_fields ) ) {
 			return $this->admin_fields;
 		}
@@ -222,10 +217,11 @@ class AcfGraphQLFieldType {
 	 * @return void
 	 */
 	protected function set_excluded_admin_field_settings():void {
-
 		$this->excluded_admin_field_settings = [];
 
-		if ( empty( $excluded_admin_fields = $this->get_config( 'exclude_admin_fields' ) ) ) {
+		$excluded_admin_fields = $this->get_config( 'exclude_admin_fields' );
+
+		if ( empty( $excluded_admin_fields ) ) {
 			return;
 		}
 
@@ -253,8 +249,7 @@ class AcfGraphQLFieldType {
 	 *
 	 * @return array|callable|mixed|null
 	 */
-	public function get_resolver( $root, array $args, AppContext $context, ResolveInfo $info, AcfGraphQLFieldType $field_type, FieldConfig $field_config ) {
-
+	public function get_resolver( $root, array $args, AppContext $context, ResolveInfo $info, self $field_type, FieldConfig $field_config ) {
 		$acf_field = $field_config->get_acf_field();
 
 		$resolver = $field_config->resolve_field( $root, $args, $context, $info );
@@ -262,7 +257,6 @@ class AcfGraphQLFieldType {
 		if ( isset( $acf_field['graphql_resolver'] ) ) {
 			$resolver = $acf_field['graphql_resolver'];
 		} elseif ( ! empty( $this->get_config( 'resolve' ) ) ) {
-
 			if ( is_callable( $this->get_config( 'resolve' ) ) ) {
 				$resolver = $this->get_config( 'resolve' )( $root, $args, $context, $info, $field_type, $field_config );
 			} else {
@@ -271,7 +265,6 @@ class AcfGraphQLFieldType {
 		}
 
 		return $resolver;
-
 	}
 
 	/**
@@ -280,7 +273,6 @@ class AcfGraphQLFieldType {
 	 * @return array|string
 	 */
 	public function get_resolve_type( FieldConfig $field_config ) {
-
 		$acf_field = $field_config->get_acf_field();
 
 		$resolve_type = 'String';
@@ -288,7 +280,6 @@ class AcfGraphQLFieldType {
 		if ( isset( $acf_field['graphql_resolve_type'] ) ) {
 			$resolve_type = $acf_field['graphql_resolve_type'];
 		} elseif ( ! empty( $this->get_config( 'graphql_type' ) ) ) {
-
 			if ( is_callable( $this->get_config( 'graphql_type' ) ) ) {
 				$resolve_type = $this->get_config( 'graphql_type' )( $field_config, $this );
 			} else {

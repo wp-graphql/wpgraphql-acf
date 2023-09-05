@@ -37,7 +37,6 @@ class TaxonomyRegistration {
 
 		// Enqueue the scripts for the CPT registration screen to help with setting default values / validation
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_admin_scripts' ], 10, 1 );
-
 	}
 
 	/**
@@ -129,7 +128,6 @@ class TaxonomyRegistration {
 			'div',
 			'field'
 		);
-
 	}
 
 	/**
@@ -174,7 +172,6 @@ class TaxonomyRegistration {
 	 * @return void
 	 */
 	public function enqueue_admin_scripts( string $screen ): void {
-
 		global $post;
 
 		// if the screen is not a new post / edit post screen, do nothing
@@ -187,7 +184,8 @@ class TaxonomyRegistration {
 			return;
 		}
 
-		wp_enqueue_script( 'graphql-acf-taxonomy',
+		wp_enqueue_script(
+			'graphql-acf-taxonomy',
 			plugins_url( '/assets/admin/js/taxonomy-settings.js', __DIR__ ),
 			[
 				'acf-internal-post-type',
@@ -195,7 +193,6 @@ class TaxonomyRegistration {
 			WPGRAPHQL_FOR_ACF_VERSION,
 			true
 		);
-
 	}
 
 	/**
@@ -241,7 +238,6 @@ class TaxonomyRegistration {
 				break;
 			default:
 		}
-
 	}
 
 }
