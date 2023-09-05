@@ -1,4 +1,4 @@
-=== WPGraphQL for Advanced Custom Fields ===
+=== WPGraphQL ACF ===
 Contributors: jasonbahl, wpgraphql
 Tags: GraphQL, ACF, Advanced Custom Fields, API, NextJS, Faust, Headless, Decoupled, React, Vue, Svelte, Vue, Apollo, JSON, REST
 Requires at least: 6.0
