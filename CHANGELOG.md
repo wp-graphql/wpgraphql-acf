@@ -1,10 +1,16 @@
 # Changelog
 
-## 2.0.0-beta.4.1.0
+## 2.0.0-beta.5.0.0
+
+### New Features
+
+- [#81](https://github.com/wp-graphql/wpgraphql-acf/pull/81): feat: 🚀 ACF Blocks Support. Query ACF Blocks using WPGraphQL!! 🚀 (when [WPGraphQL Content Blocks v1.2.0+](https://github.com/wpengine/wp-graphql-content-blocks/releases/) is active)
 
 ### Chores / Bugfixes
 
 - [#77](https://github.com/wp-graphql/wpgraphql-acf/pull/77): fix: js error when clone fields are added to a field group.
+- [#80](https://github.com/wp-graphql/wpgraphql-acf/pull/81): ci: put the files in a subfolder when build zip in github
+
 
 ## v2.0.0-beta.4.0.0
 
