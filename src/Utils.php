@@ -135,7 +135,8 @@ class Utils {
 
 	/**
 	 * Returns an array of ACF Options Pages that are set to show in the graphql schema
-	 * @return array
+	 *
+	 * @return array [<array>]
 	 */
 	public static function get_acf_options_pages(): array {
 		$options_pages = [];
@@ -146,7 +147,7 @@ class Utils {
 		if ( empty( $acf_options_pages ) || ! is_array( $acf_options_pages ) ) {
 			return $options_pages;
 		}
-		return array_filter( array_map( static function( $option_page ) {
+		return array_filter( array_map( static function ( $option_page ) {
 			return \WPGraphQL\Acf\Utils::should_field_group_show_in_graphql( $option_page ) ? $option_page : null;
 		}, $acf_options_pages ) );
 	}

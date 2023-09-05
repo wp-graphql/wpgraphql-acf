@@ -938,12 +938,15 @@ class LocationRules {
 	 */
 	public function determine_options_rules( string $field_group_name, string $param, string $operator, string $value ): void {
 
-		if ( empty( \WPGraphQL\Acf\Utils::get_acf_options_pages() ) ) {
+		$options_pages = \WPGraphQL\Acf\Utils::get_acf_options_pages();
+
+		if ( empty( $options_pages ) ) {
 			return;
 		}
 
 		if ( '==' === $operator ) {
 
+			// @phpstan-ignore-next-line
 			$options_page = acf_get_options_page( $value );
 
 			if ( empty( $options_page ) || ! \WPGraphQL\Acf\Utils::should_field_group_show_in_graphql( $options_page ) ) {
@@ -956,13 +959,6 @@ class LocationRules {
 
 		if ( '!=' === $operator ) {
 
-			// @phpstan-ignore-next-line
-			$options_pages = \WPGraphQL\Acf\Utils::get_acf_options_pages();
-
-			if ( empty( $options_pages ) ) {
-				return;
-			}
-
 			// Show all options pages
 			foreach ( $options_pages as $options_page ) {
 				if ( ! isset( $options_page['show_in_graphql'] ) || false === (bool) $options_page['show_in_graphql'] ) {
@@ -973,6 +969,7 @@ class LocationRules {
 			}
 
 			// Get the options page to unset
+			// @phpstan-ignore-next-line
 			$options_page = acf_get_options_page( $value );
 			if ( ! isset( $options_page['show_in_graphql'] ) || false === $options_page['show_in_graphql'] ) {
 				return;

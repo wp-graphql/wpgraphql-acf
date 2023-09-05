@@ -310,7 +310,9 @@ class Registry {
 	 */
 	public function register_options_pages():void {
 
-		if ( empty( \WPGraphQL\Acf\Utils::get_acf_options_pages() ) ) {
+		$graphql_options_pages = \WPGraphQL\Acf\Utils::get_acf_options_pages();
+
+		if ( empty( $graphql_options_pages ) ) {
 			return;
 		}
 
@@ -332,12 +334,6 @@ class Registry {
 				],
 			],
 		] );
-
-		$graphql_options_pages = \WPGraphQL\Acf\Utils::get_acf_options_pages();
-
-		if ( empty( $graphql_options_pages ) ) {
-			return;
-		}
 
 		foreach ( $graphql_options_pages as $graphql_options_page ) {
 			if ( ! $this->should_field_group_show_in_graphql( $graphql_options_page ) ) {
