@@ -100,7 +100,6 @@ class FieldTypeRegistry {
 		Url::register_field_type();
 		User::register_field_type();
 		Wysiwyg::register_field_type();
-
 	}
 
 	/**
@@ -142,7 +141,6 @@ class FieldTypeRegistry {
 	 * @return \WPGraphQL\Acf\AcfGraphQLFieldType
 	 */
 	public function register_field_type( string $acf_field_type, $config = [] ): AcfGraphQLFieldType {
-
 		if ( isset( $this->registered_field_types[ $acf_field_type ] ) ) {
 			return $this->registered_field_types[ $acf_field_type ];
 		}
@@ -150,7 +148,6 @@ class FieldTypeRegistry {
 		$this->registered_field_types[ $acf_field_type ] = new AcfGraphQLFieldType( $acf_field_type, $config );
 
 		return $this->registered_field_types[ $acf_field_type ];
-
 	}
 
 }

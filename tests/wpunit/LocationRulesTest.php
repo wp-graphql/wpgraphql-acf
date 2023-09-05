@@ -537,6 +537,74 @@ class LocationRulesTest extends \Tests\WPGraphQL\Acf\WPUnit\WPGraphQLAcfTestCase
 
 	}
 
+	public function testNoErrorIfFieldGroupIsAssignedToOrphanedOptionsPage() {
+
+		if ( ! defined( 'ACF_PRO' ) ) {
+			$this->markTestSkipped( 'Only test for ACF Pro' );
+		}
+
+		$interfaces = [];
+
+		add_filter( 'wpgraphql/acf/get_all_possible_types/interfaces', function( $default_interfaces ) use ( &$interfaces ) {
+			$interfaces = $default_interfaces;
+			return $default_interfaces;
+		} );
+
+		$options_pages = acf_get_options_pages();
+
+		// Register an ACF Field Group to an orphaned options page location
+		$this->register_acf_field_group([
+			'key' => 'orphanedOptionsPage',
+			'location'              => [
+				[
+					[
+						'param'    => 'options_page',
+						'operator' => '==',
+						'value'    => 'non_existing_page',
+					],
+				],
+			],
+			'show_in_graphql'       => 1,
+			'graphql_field_name'    => 'orphanedOptionsPageTest',
+		]);
+
+		$all_graphql_types = \WPGraphQL\Acf\Utils::get_all_graphql_types();
+
+		codecept_debug( [
+			'$interfaces' => $interfaces,
+		]);
+
+		$this->assertTrue( ! array_key_exists( 'AcfOptionsPage', $interfaces ) );
+
+		// Assert there is no options page
+		$this->assertTrue( empty( $options_pages ) );
+
+		// Assert that we get an array of graphql_types even if options pages aren't registered
+		$this->assertTrue( is_array( $all_graphql_types ) && ! empty( $all_graphql_types ) );
+
+		acf_add_options_page(array(
+			'page_title'    => __('Theme General Settings'),
+			'menu_title'    => __('Theme Settings'),
+			'menu_slug'     => 'theme-general-settings',
+			'capability'    => 'edit_posts',
+			'redirect'      => false,
+			'graphql_single_name'
+		));
+
+		$this->clearSchema();
+		$options_pages = acf_get_options_pages();
+		$all_graphql_types = \WPGraphQL\Acf\Utils::get_all_graphql_types();
+
+		$this->assertTrue( array_key_exists( 'AcfOptionsPage', $interfaces ) );
+
+		// Assert there is no options page
+		$this->assertTrue( ! empty( $options_pages ) );
+
+		// Assert that we get an array of graphql_types even if options pages aren't registered
+		$this->assertTrue( is_array( $all_graphql_types ) && ! empty( $all_graphql_types ) );
+
+	}
+
 //	public function testFieldGroupAssignedToAcfOptionsPageShowsInSchema() {
 //
 //		$this->markTestIncomplete();
