@@ -902,7 +902,6 @@ class LocationRules {
 				return;
 			}
 
-			// Show all options pages
 			foreach ( $acf_blocks as $acf_block ) {
 				if ( ! isset( $acf_block['show_in_graphql'] ) || false === (bool) $acf_block['show_in_graphql'] ) {
 					continue;
@@ -911,7 +910,6 @@ class LocationRules {
 				$this->set_graphql_type( $field_group_name, $type_name );
 			}
 
-			// Get the options page to unset
 			$acf_block = acf_get_block_type( $value );
 			if ( ! isset( $acf_block['show_in_graphql'] ) || false === $acf_block['show_in_graphql'] ) {
 				return;
@@ -956,7 +954,13 @@ class LocationRules {
 				if ( ! isset( $options_page['show_in_graphql'] ) || false === (bool) $options_page['show_in_graphql'] ) {
 					continue;
 				}
-				$type_name = isset( $options_page['graphql_field_name'] ) ? Utils::format_type_name( $options_page['graphql_field_name'] ) : Utils::format_type_name( $options_page['menu_slug'] );
+
+				if ( ! empty( $options_page['graphql_single_name'] ) ) {
+					$type_name = Utils::format_type_name( $options_page['graphql_single_name'] );
+				} else {
+					$type_name = isset( $options_page['graphql_type_name'] ) ? Utils::format_type_name( $options_page['graphql_type_name'] ) : Utils::format_type_name( $options_page['menu_slug'] );
+				}
+
 				$this->set_graphql_type( $field_group_name, $type_name );
 			}
 
@@ -965,7 +969,11 @@ class LocationRules {
 			if ( ! isset( $options_page['show_in_graphql'] ) || false === $options_page['show_in_graphql'] ) {
 				return;
 			}
-			$type_name = isset( $options_page['graphql_field_name'] ) ? Utils::format_type_name( $options_page['graphql_field_name'] ) : Utils::format_type_name( $options_page['menu_slug'] );
+			if ( ! empty( $options_page['graphql_single_name'] ) ) {
+				$type_name = Utils::format_type_name( $options_page['graphql_single_name'] );
+			} else {
+				$type_name = isset( $options_page['graphql_type_name'] ) ? Utils::format_type_name( $options_page['graphql_type_name'] ) : Utils::format_type_name( $options_page['menu_slug'] );
+			}
 			$this->unset_graphql_type( $field_group_name, $type_name );
 		}
 	}

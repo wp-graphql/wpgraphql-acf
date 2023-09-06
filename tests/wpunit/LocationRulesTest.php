@@ -588,7 +588,7 @@ class LocationRulesTest extends \Tests\WPGraphQL\Acf\WPUnit\WPGraphQLAcfTestCase
 			'menu_slug'     => 'theme-general-settings',
 			'capability'    => 'edit_posts',
 			'redirect'      => false,
-			'graphql_single_name'
+			'show_in_graphql' => 1
 		));
 
 		$this->clearSchema();
