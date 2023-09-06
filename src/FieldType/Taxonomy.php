@@ -37,9 +37,12 @@ class Taxonomy {
 								return null;
 							}
 							if ( ! empty( $value ) && is_array( $value ) ) {
-								$value = array_map(static function ( $id ) {
-									return absint( $id );
-								}, $value );
+								$value = array_map(
+									static function ( $id ) {
+										return absint( $id );
+									},
+									$value 
+								);
 							}
 
 							$resolver = new TermObjectConnectionResolver( $root, $args, $context, $info );
