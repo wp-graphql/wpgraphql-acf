@@ -2,6 +2,7 @@
 namespace WPGraphQL\Acf\FieldType;
 
 use WPGraphQL\AppContext;
+use WPGraphQL\Data\Connection\PostObjectConnectionResolver;
 use WPGraphQL\Data\Connection\TermObjectConnectionResolver;
 use WPGraphQL\Acf\AcfGraphQLFieldType;
 use WPGraphQL\Acf\FieldConfig;
@@ -12,44 +13,58 @@ class Taxonomy {
 	 * @return void
 	 */
 	public static function register_field_type(): void {
-		register_graphql_acf_field_type(
-			'taxonomy',
-			[
-				'exclude_admin_fields' => [ 'graphql_non_null' ],
-				'graphql_type'         => static function ( FieldConfig $field_config, AcfGraphQLFieldType $acf_field_type ) {
-					$connection_config = [
-						'toType'  => 'TermNode',
-						'resolve' => static function ( $root, $args, AppContext $context, $info ) use ( $field_config ) {
-							$value = $field_config->resolve_field( $root, $args, $context, $info );
 
-							if ( empty( $value ) || ! is_array( $value ) ) {
-								return null;
-							}
+		register_graphql_acf_field_type( 'taxonomy', [
+			'exclude_admin_fields' => [ 'graphql_non_null' ],
+			'graphql_type'         => function ( FieldConfig $field_config, AcfGraphQLFieldType $acf_field_type ) {
+				$type = 'TermNode';
+				
+				$acf_field = $field_config->get_acf_field();
+				if ( isset( $acf_field['taxonomy'] ) ) {
+					$tax_object = get_taxonomy( $acf_field['taxonomy'] );
+					if ( isset( $tax_object->graphql_single_name ) ) {
+						$type = $tax_object->graphql_single_name;
+						graphql_debug( var_export($type, true), [ 'type' => 'ARGS_BREAKPOINT' ] );
+					}
+				}
 
-							$value = array_map(
-								static function ( $id ) {
-									return absint( $id );
-								},
-								$value 
-							);
 
-							$resolver = new TermObjectConnectionResolver( $root, $args, $context, $info );
-							return $resolver
+				$connection_config = [
+					'toType'  => $type,
+					'resolve' => static function ( $root, $args, AppContext $context, $info ) use ( $field_config ) {
+						$value = $field_config->resolve_field( $root, $args, $context, $info );
+
+
+						
+						if ( empty( $value )) {
+							return null;
+						}
+						if ( ! empty( $value ) && is_array( $value ) ) {
+							$value = array_map(static function ( $id ) {
+								return absint( $id );
+							}, $value );
+						}
+
+
+
+
+						$resolver = new TermObjectConnectionResolver( $root, $args, $context, $info );
+						return $resolver
 							// Set the query to include only the IDs passed in from the field
 							// and orderby the ids
 							->set_query_arg( 'include', $value )
 							->set_query_arg( 'orderby', 'include' )
 							->get_connection();
-						},
-					];
+					},
+				];
 
-					$field_config->register_graphql_connections( $connection_config );
+				$field_config->register_graphql_connections( $connection_config );
 
-					// Return null because registering a connection adds it to the Schema for us
-					return 'connection';
-				},
-			] 
-		);
+				// Return null because registering a connection adds it to the Schema for us
+				return 'connection';
+			},
+		] );
+
 	}
 
 }
