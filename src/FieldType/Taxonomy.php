@@ -25,7 +25,6 @@ class Taxonomy {
 						$tax_object = get_taxonomy( $acf_field['taxonomy'] );
 						if ( isset( $tax_object->graphql_single_name ) ) {
 							$type = $tax_object->graphql_single_name;
-							graphql_debug( var_export($type, true), [ 'type' => 'ARGS_BREAKPOINT' ] );
 						}
 					}
 
