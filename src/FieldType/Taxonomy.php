@@ -17,17 +17,6 @@ class Taxonomy {
 			[
 				'exclude_admin_fields' => [ 'graphql_non_null' ],
 				'graphql_type'         => static function ( FieldConfig $field_config, AcfGraphQLFieldType $acf_field_type ) {
-					$type = 'TermNode';
-				
-					$acf_field = $field_config->get_acf_field();
-
-					if ( isset( $acf_field['taxonomy'] ) ) {
-						$tax_object = get_taxonomy( $acf_field['taxonomy'] );
-						if ( isset( $tax_object->graphql_single_name ) ) {
-							$type = $tax_object->graphql_single_name;
-						}
-					}
-
 					$connection_config = [
 						'toType'  => 'TermNode',
 						'resolve' => static function ( $root, $args, AppContext $context, $info ) use ( $field_config ) {
