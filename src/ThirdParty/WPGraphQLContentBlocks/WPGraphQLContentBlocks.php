@@ -3,8 +3,16 @@ namespace WPGraphQL\Acf\ThirdParty\WPGraphQLContentBlocks;
 
 class WPGraphQLContentBlocks {
 
+	/**
+	 * Initialize support for WPGraphQL Content Blocks
+	 *
+	 * @return void
+	 */
 	public function init(): void {
-		if ( ! defined( 'WPGRAPHQL_CONTENT_BLOCKS_DIR' ) ) {
+
+		// If WPGraphQL Content Blocks is not active, or is active with a version prior to 1.2.0, don't
+		// instantiate this functionality
+		if ( ! defined( 'WPGRAPHQL_CONTENT_BLOCKS_VERSION' ) || version_compare( WPGRAPHQL_CONTENT_BLOCKS_VERSION, '1.2.0', 'lt' ) ) {
 			return;
 		}
 
@@ -16,6 +24,7 @@ class WPGraphQLContentBlocks {
 
 		// @see: https://github.com/wpengine/wp-graphql-content-blocks/pull/148
 		add_filter( 'wpgraphql_content_blocks_should_apply_post_type_editor_blocks_interfaces', [ $this, 'filter_editor_block_interfaces' ], 10, 7 );
+
 	}
 
 	/**
@@ -55,7 +64,7 @@ class WPGraphQLContentBlocks {
 						'type' => 'String',
 					],
 				],
-			] 
+			]
 		);
 	}
 
