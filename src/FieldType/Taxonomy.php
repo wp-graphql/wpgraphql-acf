@@ -25,7 +25,7 @@ class Taxonomy {
 							if ( empty( $value )) {
 								return null;
 							}
-							if ( ! empty( $value ) && is_array( $value ) ) {
+							if ( is_array( $value ) ) {
 								$value = array_map(
 									static function ( $id ) {
 										return absint( $id );
