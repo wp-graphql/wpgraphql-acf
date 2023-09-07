@@ -22,7 +22,7 @@ class Taxonomy {
 						'resolve' => static function ( $root, $args, AppContext $context, $info ) use ( $field_config ) {
 							$value = $field_config->resolve_field( $root, $args, $context, $info );
 
-							if ( empty( $value )) {
+							if ( empty( $value ) ) {
 								return null;
 							}
 							if ( is_array( $value ) ) {
