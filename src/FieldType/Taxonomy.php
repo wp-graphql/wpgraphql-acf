@@ -22,16 +22,17 @@ class Taxonomy {
 						'resolve' => static function ( $root, $args, AppContext $context, $info ) use ( $field_config ) {
 							$value = $field_config->resolve_field( $root, $args, $context, $info );
 
-							if ( empty( $value ) || ! is_array( $value ) ) {
+							if ( empty( $value ) ) {
 								return null;
 							}
-
-							$value = array_map(
-								static function ( $id ) {
-									return absint( $id );
-								},
-								$value 
-							);
+							if ( is_array( $value ) ) {
+								$value = array_map(
+									static function ( $id ) {
+										return absint( $id );
+									},
+									$value 
+								);
+							}
 
 							$resolver = new TermObjectConnectionResolver( $root, $args, $context, $info );
 							return $resolver
