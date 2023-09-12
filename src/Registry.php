@@ -40,6 +40,11 @@ class Registry {
 			// @phpstan-ignore-next-line
 			$this->type_registry = \WPGraphQL::get_type_registry();
 		}
+
+		/**
+		 * @param \WPGraphQL\Acf\Registry $registry The WPGraphQL for ACF Registry
+		 */
+		do_action( 'wpgraphql/acf/type_registry/init', $this );
 	}
 
 	/**
@@ -268,6 +273,7 @@ class Registry {
 	 * @throws \GraphQL\Error\Error
 	 */
 	public function get_field_group_interfaces( array $acf_field_group ): array {
+
 		$fields_interface = $this->get_field_group_graphql_type_name( $acf_field_group ) . '_Fields';
 		$interfaces       = isset( $acf_field_group['interfaces'] ) && is_array( $acf_field_group['interfaces'] ) ? $acf_field_group['interfaces'] : [];
 		$interfaces[]     = 'AcfFieldGroup';
@@ -275,6 +281,7 @@ class Registry {
 
 		// Apply Clone Field interfaces if ACF PRO is active
 		if ( defined( 'ACF_PRO' ) ) {
+
 			$raw_fields = [];
 
 			if ( ! empty( $acf_field_group['raw_fields'] ) ) {
@@ -315,47 +322,7 @@ class Registry {
 		$interfaces = array_unique( array_values( $interfaces ) );
 
 		return array_unique( $interfaces );
-	}
 
-	/**
-	 * Register ACF Blocks to the Schema
-	 *
-	 * @return void
-	 *
-	 * @throws \GraphQL\Error\Error
-	 */
-	public function register_blocks(): void {
-		if ( ! function_exists( 'acf_get_block_types' ) ) {
-			return;
-		}
-
-		$acf_block_types = acf_get_block_types();
-
-		if ( empty( $acf_block_types ) ) {
-			return;
-		}
-
-		$graphql_enabled_acf_blocks = [];
-
-		foreach ( $acf_block_types as $acf_block_type ) {
-			if ( ! $this->should_field_group_show_in_graphql( $acf_block_type ) ) {
-				continue;
-			}
-
-			$type_name = $this->get_field_group_graphql_type_name( $acf_block_type );
-
-			if ( empty( $type_name ) ) {
-				continue;
-			}
-
-			$graphql_enabled_acf_blocks[] = $type_name;
-		}
-
-		if ( empty( $graphql_enabled_acf_blocks ) ) {
-			return;
-		}
-
-		register_graphql_interfaces_to_types( [ 'AcfBlock' ], $graphql_enabled_acf_blocks );
 	}
 
 	/**
@@ -457,6 +424,17 @@ class Registry {
 	 */
 	public function get_fields_for_field_group( array $acf_field_group ): array {
 
+		$raw_fields     = ! empty( $acf_field_group['ID'] ) ? acf_get_raw_fields( $acf_field_group['ID'] ) : [];
+		$_cloned_fields = [];
+		foreach ( $raw_fields as $raw_field ) {
+			if ( ! empty( $raw_field['clone'] ) && is_array( $raw_field['clone'] )  ) {
+				foreach ( $raw_field['clone'] as $raw_field_clone_key ) {
+					$_cloned_fields[] = $raw_field_clone_key;
+				}
+			}
+		}
+
+
 		// Set the default field for each field group
 		$graphql_fields = [
 			'fieldGroupName' => [
@@ -481,6 +459,9 @@ class Registry {
 			$fields = acf_get_fields( $acf_field_group );
 		}
 
+		// Track cloned fields so that their keys can be passed down in the field config for use in resolvers
+		$cloned_fields = [];
+
 		foreach ( $fields as $acf_field ) {
 			$graphql_field_name = $this->get_graphql_field_name( $acf_field );
 
@@ -488,10 +469,29 @@ class Registry {
 				continue;
 			}
 
-			$field_config = $this->map_acf_field_to_graphql( $acf_field, $acf_field_group );
+			if ( defined( 'ACF_PRO' ) && ! empty( $acf_field['_clone'] ) && ! empty( $acf_field['__key'] ) ) {
 
-			if ( ! isset( $graphql_fields[ $graphql_field_name ] ) ) {
-				$graphql_fields[ $graphql_field_name ] = $field_config;
+				$cloned_fields[ $graphql_field_name ] = $acf_field;
+
+				// if the clone field is not in the array of cloned fields
+				if ( ! in_array( $acf_field['__key'] , $_cloned_fields, true ) ) {
+					continue;
+				}
+
+			}
+
+			$field_config = $this->map_acf_field_to_graphql( $acf_field, $acf_field_group );
+			$graphql_fields[ $graphql_field_name ] = $field_config;
+		}
+
+		// If there are cloned fields, pass the cloned field key to the field config for use in resolution
+		if ( defined( 'ACF_PRO' ) && ! empty( $cloned_fields ) ) {
+			foreach ( $cloned_fields as $cloned_field ) {
+				$graphql_field_name = $this->get_graphql_field_name( $cloned_field );
+				if ( ! empty( $graphql_field_name ) ) {
+					$original_key = $graphql_fields[ $graphql_field_name ]['acf_field']['key'] ?? null;
+					$graphql_fields[ $graphql_field_name ]['acf_field']['__key']   = $cloned_field['key'];
+				}
 			}
 		}
 
@@ -545,7 +545,7 @@ class Registry {
 
 		if ( empty( $name ) ) {
 			graphql_debug(
-				// translators: %s is the name of the ACF Field or Field Group
+			// translators: %s is the name of the ACF Field or Field Group
 				sprintf( __( 'The graphql field name "%s" is not a valid name and cannot be added to the GraphQL Schema', 'wp-graphql-acf' ), $name ),
 				[
 					'field_group' => $field_group,

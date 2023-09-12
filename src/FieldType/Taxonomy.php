@@ -31,7 +31,7 @@ class Taxonomy {
 							}
 
 							$value = array_map(
-								static function ( $id ) {
+								static function( $id ) {
 									return absint( $id );
 								},
 								$value

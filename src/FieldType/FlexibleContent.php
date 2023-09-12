@@ -15,11 +15,12 @@ class FlexibleContent {
 			'flexible_content',
 			[
 				'graphql_type' => static function ( FieldConfig $field_config, AcfGraphQLFieldType $acf_field_type ) {
-					$parent_type               = $field_config->get_graphql_field_group_type_name();
+					$acf_field                 = $field_config->get_acf_field();
+					$parent_type               = $field_config->get_parent_graphql_type_name( $acf_field );
 					$field_name                = $field_config->get_graphql_field_name();
 					$layout_interface_prefix   = Utils::format_type_name( $parent_type . ' ' . $field_name );
 					$layout_interface_name     = $layout_interface_prefix . '_Layout';
-					$acf_field                 = $field_config->get_acf_field();
+
 					$flex_field_raw_sub_fields = acf_get_raw_fields( $acf_field['key'] );
 
 					if ( ! $field_config->get_registry()->has_registered_field_group( $layout_interface_name ) ) {
@@ -92,7 +93,8 @@ class FlexibleContent {
 
 					return [ 'list_of' => $layout_interface_name ];
 				},
-			]
+			],
+
 		);
 	}
 
