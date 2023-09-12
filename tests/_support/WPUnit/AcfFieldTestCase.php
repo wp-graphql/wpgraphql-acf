@@ -127,12 +127,13 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 	}
 
 	/**
-	 * @param array $acf_field
-	 * @param array $acf_field_group
+	 * @param array $acf_field Config array to override the defaults
+	 * @param array $acf_field_group Config array to override the defaults of the field group the field will be registered to
+	 * @param bool  $should_clone_field_only bool Weather to clone only the field instead of the entire field group
 	 *
 	 * @return string
 	 */
-	public function register_cloned_acf_field( array $acf_field = [], array $acf_field_group = [] ): string {
+	public function register_cloned_acf_field( array $acf_field = [], array $acf_field_group = [], $should_clone_field_only = false ): string {
 
 		// set defaults on the acf field
 		// using helper methods from this class.
@@ -144,7 +145,7 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 			'type' => $this->get_field_type()
 		], $acf_field );
 
-		return parent::register_cloned_acf_field( $acf_field, $acf_field_group );
+		return parent::register_cloned_acf_field( $acf_field, $acf_field_group, $should_clone_field_only );
 	}
 
 
@@ -789,7 +790,11 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 			$this->markTestSkipped( 'ACF Pro is not active so this test will not run.' );
 		}
 
-		$this->register_cloned_acf_field();
+		$clone_key = $this->register_cloned_acf_field();
+
+		codecept_debug( [
+			'cloned_field' => acf_get_field( $clone_key ),
+		]);
 
 		$query = '
 		query GetAcfFieldGroup ($name: String! ){

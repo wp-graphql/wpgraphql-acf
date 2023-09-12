@@ -395,6 +395,13 @@ class WPGraphQLAcfTestCase extends \Tests\WPGraphQL\TestCase\WPGraphQLTestCase {
 			'acfe_clone_modal_size' => 'large',
 		], $acf_field_group );
 
+		$all_field_groups = acf_get_field_groups();
+
+		codecept_debug( [
+			'$all_field_groups' => $all_field_groups,
+			'all_cloned_Fields' => acf_get_fields( $clone_field_group_key )
+		]);
+
 		return $inactive_field;
 	}
 
