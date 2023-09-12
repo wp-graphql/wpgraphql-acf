@@ -22,15 +22,19 @@ class Taxonomy {
 						'resolve' => static function ( $root, $args, AppContext $context, $info ) use ( $field_config ) {
 							$value = $field_config->resolve_field( $root, $args, $context, $info );
 
-							if ( empty( $value ) || ! is_array( $value ) ) {
+							if ( empty( $value ) ) {
 								return null;
+							}
+
+							if ( ! is_array( $value ) ) {
+								$value[] = $value;
 							}
 
 							$value = array_map(
 								static function ( $id ) {
 									return absint( $id );
 								},
-								$value 
+								$value
 							);
 
 							$resolver = new TermObjectConnectionResolver( $root, $args, $context, $info );
@@ -48,7 +52,7 @@ class Taxonomy {
 					// Return null because registering a connection adds it to the Schema for us
 					return 'connection';
 				},
-			] 
+			]
 		);
 	}
 

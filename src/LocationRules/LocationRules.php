@@ -332,9 +332,6 @@ class LocationRules {
 			case 'options_page':
 				$this->determine_options_rules( $field_group_name, $param, $operator, $value );
 				break;
-			case 'block':
-				$this->determine_block_rules( $field_group_name, $param, $operator, $value );
-				break;
 			default:
 				// If a built-in location rule could not be matched,
 				// Custom rules (from extensions, etc) can hook in here and apply their
@@ -880,45 +877,7 @@ class LocationRules {
 	 * @return void
 	 */
 	public function determine_block_rules( string $field_group_name, string $param, string $operator, string $value ): void {
-		if ( ! function_exists( 'acf_get_block_types' ) ) {
-			return;
-		}
-
-		if ( '==' === $operator ) {
-			$acf_block = acf_get_block_type( $value );
-
-			if ( empty( $acf_block ) || ! \WPGraphQL\Acf\Utils::should_field_group_show_in_graphql( $acf_block ) ) {
-				return;
-			}
-
-			$type_name = \WPGraphQL\Acf\Utils::get_field_group_name( $acf_block );
-			$this->set_graphql_type( $field_group_name, $type_name );
-		}
-
-		if ( '!=' === $operator ) {
-			$acf_blocks = acf_get_block_types();
-
-			if ( empty( $acf_blocks ) || ! is_array( $acf_blocks ) ) {
-				return;
-			}
-
-			// Show all options pages
-			foreach ( $acf_blocks as $acf_block ) {
-				if ( ! isset( $acf_block['show_in_graphql'] ) || false === (bool) $acf_block['show_in_graphql'] ) {
-					continue;
-				}
-				$type_name = isset( $acf_block['graphql_field_name'] ) ? Utils::format_type_name( $acf_block['graphql_field_name'] ) : Utils::format_type_name( $acf_block['name'] );
-				$this->set_graphql_type( $field_group_name, $type_name );
-			}
-
-			// Get the options page to unset
-			$acf_block = acf_get_block_type( $value );
-			if ( ! isset( $acf_block['show_in_graphql'] ) || false === $acf_block['show_in_graphql'] ) {
-				return;
-			}
-			$type_name = isset( $acf_block['graphql_field_name'] ) ? Utils::format_type_name( $acf_block['graphql_field_name'] ) : Utils::format_type_name( $acf_block['name'] );
-			$this->unset_graphql_type( $field_group_name, $type_name );
-		}
+		// @todo: ACF Blocks are not formally supported by WPGraphQL / WPGraphQL for ACF. More to come in the future!
 	}
 
 	/**
@@ -956,7 +915,13 @@ class LocationRules {
 				if ( ! isset( $options_page['show_in_graphql'] ) || false === (bool) $options_page['show_in_graphql'] ) {
 					continue;
 				}
-				$type_name = isset( $options_page['graphql_field_name'] ) ? Utils::format_type_name( $options_page['graphql_field_name'] ) : Utils::format_type_name( $options_page['menu_slug'] );
+
+				if ( ! empty( $options_page['graphql_single_name'] ) ) {
+					$type_name = Utils::format_type_name( $options_page['graphql_single_name'] );
+				} else {
+					$type_name = isset( $options_page['graphql_type_name'] ) ? Utils::format_type_name( $options_page['graphql_type_name'] ) : Utils::format_type_name( $options_page['menu_slug'] );
+				}
+
 				$this->set_graphql_type( $field_group_name, $type_name );
 			}
 
@@ -965,7 +930,13 @@ class LocationRules {
 			if ( ! isset( $options_page['show_in_graphql'] ) || false === $options_page['show_in_graphql'] ) {
 				return;
 			}
-			$type_name = isset( $options_page['graphql_field_name'] ) ? Utils::format_type_name( $options_page['graphql_field_name'] ) : Utils::format_type_name( $options_page['menu_slug'] );
+
+			if ( ! empty( $options_page['graphql_single_name'] ) ) {
+				$type_name = Utils::format_type_name( $options_page['graphql_single_name'] );
+			} else {
+				$type_name = isset( $options_page['graphql_type_name'] ) ? Utils::format_type_name( $options_page['graphql_type_name'] ) : Utils::format_type_name( $options_page['menu_slug'] );
+			}
+
 			$this->unset_graphql_type( $field_group_name, $type_name );
 		}
 	}

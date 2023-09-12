@@ -500,7 +500,6 @@ class Settings {
 		$field_group = acf_get_field_group( $post_id );
 
 		if ( empty( $field_group ) ) {
-			echo null;
 			return;
 		}
 

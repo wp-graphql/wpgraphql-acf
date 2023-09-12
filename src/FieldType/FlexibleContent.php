@@ -27,7 +27,7 @@ class FlexibleContent {
 							$layout_interface_name,
 							[
 								'eagerlyLoadType' => true,
-								// translators: %1$s is the name of the flexible field containing layouts. %2$s is the name of the field group the flexible content field belongs to.
+								// translators: the %1$s is the name of the Flex Field Layout and the %2$s is the name of the field.
 								'description'     => sprintf( __( 'Layout of the "%1$s" Field of the "%2$s" Field Group Field', 'wp-graphql-acf' ), $field_name, $parent_type ),
 								'fields'          => [
 									'fieldGroupName' => [
@@ -63,7 +63,7 @@ class FlexibleContent {
 							$layout['raw_fields'] = array_filter(
 								$flex_field_raw_sub_fields,
 								static function ( $field ) use ( $layout ) {
-									return $field['parent_layout'] === $layout['key'];
+									return isset( $field['parent_layout'] ) && $field['parent_layout'] === $layout['key'] ? $layout : null;
 								}
 							);
 

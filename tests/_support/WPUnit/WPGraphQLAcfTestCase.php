@@ -175,7 +175,7 @@ class WPGraphQLAcfTestCase extends \Tests\WPGraphQL\TestCase\WPGraphQLTestCase {
 			$key = uniqid( '', false );
 		}
 
-		return uniqid( 'group_' . $key , false );
+		return uniqid( 'group_clone_' . $key , false );
 	}
 
 	/**
@@ -277,7 +277,7 @@ class WPGraphQLAcfTestCase extends \Tests\WPGraphQL\TestCase\WPGraphQLTestCase {
 	public function register_acf_field( array $acf_field = [], array $acf_field_group = [] ): string {
 
 		$field_group_key = $this->register_acf_field_group( $acf_field_group );
-		$key = uniqid( 'field_',false );
+		$key = uniqid( 'acf_test',true );
 
 		$config = array_merge( [
 			'parent'            => $field_group_key,
@@ -316,11 +316,10 @@ class WPGraphQLAcfTestCase extends \Tests\WPGraphQL\TestCase\WPGraphQLTestCase {
 	 *
 	 * @param array $acf_field Config array to override the defaults
 	 * @param array $acf_field_group Config array to override the defaults of the field group the field will be registered to
-	 * @param bool  $should_clone_field_only bool Weather to clone only the field instead of the entire field group
 	 *
 	 * @return string
 	 */
-	public function register_cloned_acf_field( array $acf_field = [], array $acf_field_group = [], bool $should_clone_field_only = false ): string {
+	public function register_cloned_acf_field( array $acf_field = [], array $acf_field_group = [] ): string {
 
 		// the field group needs to be unique
 		// for each test
@@ -368,15 +367,8 @@ class WPGraphQLAcfTestCase extends \Tests\WPGraphQL\TestCase\WPGraphQLTestCase {
 		// register a field to the active field group
 		// - type: clone
 		// - clone: [ 'group_' . $inactive_field_group_key ]
-		$clone = [];
-
-		if ( $should_clone_field_only ) {
-			$clone[] = $inactive_field;
-		} else {
-			$clone[] = $clone_field_group_key;
-		}
-
 		$this->register_acf_field([
+			'key' => uniqid( 'clone', false ),
 			'type' => 'clone',
 			'name' => 'cloned_fields',
 			'instructions' => '',
@@ -389,7 +381,9 @@ class WPGraphQLAcfTestCase extends \Tests\WPGraphQL\TestCase\WPGraphQLTestCase {
 			),
 			'acfe_save_meta' => 0,
 			// clone the inactive field group
-			'clone' => $clone,
+			'clone' => [
+				0 => $clone_field_group_key
+			],
 			'display' => 'seamless',
 			'layout' => 'block',
 			'prefix_label' => 0,
@@ -400,13 +394,6 @@ class WPGraphQLAcfTestCase extends \Tests\WPGraphQL\TestCase\WPGraphQLTestCase {
 			'acfe_clone_modal_button' => '',
 			'acfe_clone_modal_size' => 'large',
 		], $acf_field_group );
-
-		codecept_debug( [
-			'$inactive_field' => $inactive_field,
-			'$clone_field_group_key' => $clone_field_group_key,
-			'$cloned_group' => acf_get_field_group( $clone_field_group_key ),
-			'$cloned_field' => acf_get_field( $inactive_field ),
-		]);
 
 		return $inactive_field;
 	}

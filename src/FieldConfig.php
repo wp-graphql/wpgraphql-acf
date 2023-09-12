@@ -39,6 +39,11 @@ class FieldConfig {
 	protected $registry;
 
 	/**
+	 * @var string
+	 */
+	protected $graphql_parent_type_name;
+
+	/**
 	 * @throws \GraphQL\Error\Error
 	 */
 	public function __construct( array $acf_field, array $acf_field_group, Registry $registry ) {
@@ -301,14 +306,13 @@ class FieldConfig {
 	public function resolve_field( $root, array $args, AppContext $context, ResolveInfo $info ) {
 		$field_config = $info->fieldDefinition->config['acf_field'] ?? $this->acf_field;
 		$node         = $root['node'] ?? null;
-		$node_id      = $node ? Utils::get_node_acf_id( $node, $field_config ) : null;
+		$node_id      = $node ? Utils::get_node_acf_id( $node ) : null;
 
 		$field_key = null;
 		$is_cloned = false;
 
-		// if the field is cloned
-		if ( ! empty( $field_config['_clone'] ) ) {
-			$field_key = $field_config['_clone'];
+		if ( ! empty( $field_config['__key'] ) ) {
+			$field_key = $field_config['__key'];
 			$is_cloned = true;
 		} elseif ( ! empty( $field_config['key'] ) ) {
 			$field_key = $field_config['key'];
@@ -324,7 +328,6 @@ class FieldConfig {
 			} elseif ( ! empty( $field_config['__key'] ) ) {
 				$field_key = $field_config['__key'];
 			}
-
 			$cloned_field_config = acf_get_field( $field_key );
 			$field_config        = ! empty( $cloned_field_config ) ? $cloned_field_config : $field_config;
 		}
@@ -367,10 +370,10 @@ class FieldConfig {
 
 		// resolve block field
 		if ( is_array( $node ) && isset( $node['blockName'] ) ) {
-			$fields = acf_setup_meta( $node['attrs']['data'], 0, true );
+			acf_prepare_block( $node['attrs'] );
+			$value = get_field( $field_config['name'] );
 			acf_reset_meta();
-
-			return $fields[ $field_config['name'] ] ?? null;
+			return $value ?? null;
 		}
 
 		// If there's no node_id at this point, we can return null
@@ -472,7 +475,6 @@ class FieldConfig {
 	 * @return string
 	 */
 	public function get_connection_name( string $to_type ): string {
-		// Create connection name using $from_type + To + $to_type + Connection.
 		return \WPGraphQL\Utils\Utils::format_type_name( 'Acf' . ucfirst( $to_type ) . 'Connection' );
 	}
 

@@ -25,13 +25,13 @@ class Repeater {
 					$field_config->get_registry()->register_acf_field_groups_to_graphql(
 						[
 							$sub_field_group,
-						] 
+						]
 					);
 
 					return [ 'list_of' => $type_name ];
 				},
 
-			] 
+			]
 		);
 	}
 
