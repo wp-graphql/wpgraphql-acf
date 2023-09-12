@@ -1,62 +1,49 @@
 <?php
 namespace WPGraphQL\Acf\ThirdParty\WPGraphQLContentBlocks;
 
+use WPGraphQL\Acf\Registry;
+
+
 class WPGraphQLContentBlocks {
 
+	/**
+	 * @return void
+	 */
 	public function init(): void {
-		if ( ! defined( 'WPGRAPHQL_CONTENT_BLOCKS_DIR' ) ) {
+
+		// Bail if WPGraphQL Content Blocks is not active at 1.2.0 or later.
+		if ( ! defined( 'WPGRAPHQL_CONTENT_BLOCKS_VERSION' ) || version_compare( WPGRAPHQL_CONTENT_BLOCKS_VERSION, '1.2.0', 'lt' ) ) {
 			return;
 		}
 
 		// Filter the interfaces returned as possible types for ACF Field Groups to be associated with
 		add_filter( 'wpgraphql/acf/get_all_possible_types/interfaces', [ $this, 'add_blocks_as_possible_type' ], 10, 1 );
 
-		// Register the AcfBlock Interface
-		add_action( 'graphql_register_types', [ $this, 'register_acf_block_interface' ] );
-
+		// This filter was introduced in WPGraphQL Content Blocks 1.2.0
 		// @see: https://github.com/wpengine/wp-graphql-content-blocks/pull/148
 		add_filter( 'wpgraphql_content_blocks_should_apply_post_type_editor_blocks_interfaces', [ $this, 'filter_editor_block_interfaces' ], 10, 7 );
+
+		// Register Block Types
+		add_action( 'wpgraphql/acf/type_registry/init', [ $this, 'register_types' ], 10, 1 );
 	}
 
 	/**
-	 * @param bool $should Whether the Block should apply the ${PostTypeName}EditorBlock Interface
-	 * @param string $block_name The name of the block Interfaces are being applied to
-	 * @param \WP_Block_Editor_Context $block_editor_context The Block Editor Context
-	 * @param \WP_Post_Type $post_type The Post Type the block could be connected with
-	 * @param array $all_registered_blocks All blocks registered to Gutenberg
-	 * @param array $supported_blocks_for_post_type_context The blocks supported for the context, after "allowed_blocks_all" filter is applied
-	 * @param array $block_and_graphql_enabled_post_types Post Types that support Gutenberg and WPGraphQL
+	 * @param bool                     $should                                 Whether to apply the ${PostType}EditorBlock Interface. If the filter returns false, the default
+	 *                                                                         logic will not execute and the ${PostType}EditorBlock will not be applied.
+	 * @param string                   $block_name                             The name of the block Interfaces will be applied to
+	 * @param \WP_Block_Editor_Context $block_editor_context                   The context of the Block Editor
+	 * @param \WP_Post_Type            $post_type                              The Post Type an Interface might be applied to the block for
+	 * @param array                    $all_registered_blocks                  Array of all registered blocks
+	 * @param array|bool               $supported_blocks_for_post_type_context Array of all supported blocks for the context
+	 * @param array                    $block_and_graphql_enabled_post_types   Array of Post Types that have block editor and GraphQL support
 	 *
 	 * @return bool
 	 */
-	public function filter_editor_block_interfaces( bool $should, $block_name, $block_editor_context, $post_type, $all_registered_blocks, $supported_blocks_for_post_type_context, $block_and_graphql_enabled_post_types ) {
+	public function filter_editor_block_interfaces( bool $should, string $block_name, \WP_Block_Editor_Context $block_editor_context, \WP_Post_Type $post_type, array $all_registered_blocks, $supported_blocks_for_post_type_context, array $block_and_graphql_enabled_post_types ): bool {
 		if ( ! empty( $all_registered_blocks[ $block_name ]->post_types ) && ! in_array( $post_type->name, $all_registered_blocks[ $block_name ]->post_types, true ) ) {
 			return false;
 		}
 		return $should;
-	}
-
-	/**
-	 * Register the AcfBlock Interface Type, implementing the "EditorBlock" type
-	 *
-	 * @return void
-	 *
-	 * @throws \Exception
-	 */
-	public function register_acf_block_interface(): void {
-		register_graphql_interface_type(
-			'AcfBlock',
-			[
-				'eagerlyLoadType' => true,
-				'interfaces'      => [ 'EditorBlock' ],
-				'description'     => __( 'Block registered by ACF', 'wp-graphql-acf' ),
-				'fields'          => [
-					'name' => [
-						'type' => 'String',
-					],
-				],
-			] 
-		);
 	}
 
 	/**
@@ -72,4 +59,62 @@ class WPGraphQLContentBlocks {
 
 		return $interfaces;
 	}
+
+	/**
+	 * Register ACF Blocks to the Schema
+	 *
+	 * @param \WPGraphQL\Acf\Registry $registry The WPGraphQL for ACF Registry
+	 *
+	 * @return void
+	 * @throws \Exception
+	 */
+	public function register_types( Registry $registry ): void {
+		if ( ! function_exists( 'acf_get_block_types' ) ) {
+			return;
+		}
+
+		register_graphql_interface_type(
+			'AcfBlock',
+			[
+				'eagerlyLoadType' => true,
+				'interfaces'      => [ 'EditorBlock' ],
+				'description'     => __( 'Block registered by ACF', 'wp-graphql-acf' ),
+				'fields'          => [
+					'name' => [
+						'type' => 'String',
+					],
+				],
+			]
+		);
+
+		$acf_block_types = acf_get_block_types();
+
+		if ( empty( $acf_block_types ) ) {
+			return;
+		}
+
+		$graphql_enabled_acf_blocks = [];
+
+		foreach ( $acf_block_types as $acf_block_type ) {
+			if ( ! $registry->should_field_group_show_in_graphql( $acf_block_type ) ) {
+				continue;
+			}
+
+			$type_name = $registry->get_field_group_graphql_type_name( $acf_block_type );
+
+			if ( empty( $type_name ) ) {
+				continue;
+			}
+
+			$graphql_enabled_acf_blocks[] = $type_name;
+		}
+
+		if ( empty( $graphql_enabled_acf_blocks ) ) {
+			return;
+		}
+
+		register_graphql_interfaces_to_types( [ 'AcfBlock' ], $graphql_enabled_acf_blocks );
+	}
+
+
 }

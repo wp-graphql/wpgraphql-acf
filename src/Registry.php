@@ -470,11 +470,17 @@ class Registry {
 
 				// if the clone field is not in the array of cloned fields
 				if ( ! in_array( $acf_field['__key'], $_cloned_fields, true ) ) {
-					continue;
+					$cloned_from = $acf_field;
+					$acf_field   = acf_get_field( $acf_field['__key'] );
+					if ( empty( $acf_field ) ) {
+						continue;
+					}
+					$acf_field['__key'] = $cloned_from['key'];
 				}
 			}
 
-			$field_config                          = $this->map_acf_field_to_graphql( $acf_field, $acf_field_group );
+			$field_config = $this->map_acf_field_to_graphql( $acf_field, $acf_field_group );
+
 			$graphql_fields[ $graphql_field_name ] = $field_config;
 		}
 
@@ -482,7 +488,7 @@ class Registry {
 		if ( defined( 'ACF_PRO' ) && ! empty( $cloned_fields ) ) {
 			foreach ( $cloned_fields as $cloned_field ) {
 				$graphql_field_name = $this->get_graphql_field_name( $cloned_field );
-				if ( ! empty( $graphql_field_name ) ) {
+				if ( isset( $graphql_fields[ $graphql_field_name ] ) ) {
 					$graphql_fields[ $graphql_field_name ]['acf_field']['__key'] = $cloned_field['key'];
 				}
 			}
@@ -639,6 +645,8 @@ class Registry {
 			$locations  = $this->get_graphql_locations_for_field_group( $acf_field_group, $acf_field_groups );
 			$fields     = $this->get_fields_for_field_group( $acf_field_group );
 			$interfaces = $this->get_field_group_interfaces( $acf_field_group );
+
+
 
 			// If there's no fields or type name, we can't register the type to the Schema
 			if ( empty( $fields ) || empty( $type_name ) ) {

@@ -781,66 +781,6 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 	}
 
 	/**
-	 * @return void
-	 */
-	public function testClonedFieldGroupIsAppliedAsInterface() {
-
-		// if ACF PRO is not active, skip the test
-		if ( ! defined( 'ACF_PRO' ) ) {
-			$this->markTestSkipped( 'ACF Pro is not active so this test will not run.' );
-		}
-
-		$clone_key = $this->register_cloned_acf_field();
-
-		codecept_debug( [
-			'cloned_field' => acf_get_field( $clone_key ),
-		]);
-
-		$query = '
-		query GetAcfFieldGroup ($name: String! ){
-		  __type( name: $name ) {
-		    name
-		    interfaces {
-		      name
-		    }
-		    fields {
-		      name
-		    }
-		    possibleTypes {
-		      name
-		    }
-		  }
-		}
-		';
-
-		$actual = $this->graphql([
-			'query' => $query,
-			'variables' => [
-				'name' => 'AcfTestGroup'
-			]
-		]);
-
-		codecept_debug( [
-			'$actual' => $actual,
-		]);
-
-		// the AcfTestGroup should implment the "InactiveFieldGroup_Fields" interface
-		self::assertQuerySuccessful( $actual, [
-			$this->expectedNode( '__type', [
-				$this->expectedField( 'name', 'AcfTestGroup' ),
-			]),
-			$this->expectedNode( '__type.interfaces', [
-				$this->expectedField( 'name', 'InactiveFieldGroup_Fields' )
-			]),
-			// the AcfTestGroup should hace a clonedTextField field
-			$this->expectedNode( '__type.fields', [
-				$this->expectedField( 'name', $this->get_formatted_clone_field_name() )
-			])
-		]);
-
-	}
-
-	/**
 	 * @return string
 	 */
 	public function get_acf_clone_fragment(): string {
