@@ -182,7 +182,7 @@ class OptionsPageTest extends \Tests\WPGraphQL\Acf\WPUnit\WPGraphQLAcfTestCase {
 				'menu_slug'  => 'custom-graphql-name',
 				'capability' => 'edit_posts',
 				// options pages will show in the Schema unless set to false
-				'graphql_field_name'   => 'MyCustomOptionsName',
+				'graphql_type_name'   => 'MyCustomOptionsName',
 			]
 		);
 
@@ -255,7 +255,7 @@ class OptionsPageTest extends \Tests\WPGraphQL\Acf\WPUnit\WPGraphQLAcfTestCase {
 				'menu_slug'  => 'options-page-node',
 				'capability' => 'edit_posts',
 				// options pages will show in the Schema unless set to false
-				'graphql_field_name'   => 'OptionsPageNode',
+				'graphql_type_name'   => 'OptionsPageNode',
 			]
 		);
 

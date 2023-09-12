@@ -138,9 +138,11 @@ class Utils {
 			return $options_pages;
 		}
 		$acf_options_pages = acf_get_options_pages();
+
 		if ( empty( $acf_options_pages ) || ! is_array( $acf_options_pages ) ) {
 			return $options_pages;
 		}
+
 		return array_filter(
 			array_map(
 				static function ( $option_page ) {
@@ -274,7 +276,6 @@ class Utils {
 	public static function should_field_group_show_in_graphql( array $acf_field_group ): bool {
 		$should = true;
 
-
 		$show_in_rest = $acf_field_group['show_in_rest'] ?? false;
 
 
@@ -308,6 +309,8 @@ class Utils {
 		if ( ! empty( $field_group['graphql_field_name'] ) ) {
 			$field_group_name = $field_group['graphql_field_name'];
 			$field_group_name = preg_replace( '/[^0-9a-zA-Z_\s]/i', '', $field_group_name );
+		} elseif ( ! empty( $field_group['graphql_type_name'] ) ) {
+			$field_group_name = \WPGraphQL\Utils\Utils::format_field_name( $field_group['graphql_type_name'], true );
 		} else {
 			if ( ! empty( $field_group['name'] ) ) {
 				$field_group_name = $field_group['name'];

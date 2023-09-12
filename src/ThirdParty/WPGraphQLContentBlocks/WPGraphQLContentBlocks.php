@@ -7,11 +7,14 @@ use WPGraphQL\Acf\Registry;
 class WPGraphQLContentBlocks {
 
 	/**
+	 * Initialize support for WPGraphQL Content Blocks
+	 *
 	 * @return void
 	 */
 	public function init(): void {
 
-		// Bail if WPGraphQL Content Blocks is not active at 1.2.0 or later.
+		// If WPGraphQL Content Blocks is not active, or is active with a version prior to 1.2.0, don't
+		// instantiate this functionality
 		if ( ! defined( 'WPGRAPHQL_CONTENT_BLOCKS_VERSION' ) || version_compare( WPGRAPHQL_CONTENT_BLOCKS_VERSION, '1.2.0', 'lt' ) ) {
 			return;
 		}
