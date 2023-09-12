@@ -84,7 +84,6 @@ class FieldConfig {
 	 * @throws \GraphQL\Error\Error
 	 */
 	public function get_parent_graphql_type_name( array $acf_field, ?string $prepend = '' ): string {
-
 		$type_name = '';
 
 		if ( ! empty( $acf_field['parent'] ) ) {
@@ -93,8 +92,7 @@ class FieldConfig {
 			if ( ! empty( $parent_field ) ) {
 				$type_name = $this->registry->get_field_group_graphql_type_name( $parent_field );
 				$type_name = $this->get_parent_graphql_type_name( $parent_field, $type_name );
-
-			} else if ( ! empty( $parent_group ) ) {
+			} elseif ( ! empty( $parent_group ) ) {
 				$type_name = $this->registry->get_field_group_graphql_type_name( $parent_group );
 				$type_name = $this->get_parent_graphql_type_name( $parent_group, $type_name );
 			} else {
@@ -399,11 +397,10 @@ class FieldConfig {
 
 		// resolve block field
 		if ( is_array( $node ) && isset( $node['blockName'] ) ) {
-
 			acf_prepare_block( $node['attrs'] );
 			$value = get_field( $field_config['name'] );
 			acf_reset_meta();
-			return $value  ?? null;
+			return $value ?? null;
 		}
 
 		// If there's no node_id at this point, we can return null

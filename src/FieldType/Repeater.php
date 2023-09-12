@@ -20,7 +20,7 @@ class Repeater {
 					$field_name      = $field_config->get_graphql_field_name();
 					$type_name       = Utils::format_type_name( $parent_type . ' ' . $field_name );
 
-					$sub_field_group['graphql_type_name'] = $type_name;
+					$sub_field_group['graphql_type_name']  = $type_name;
 					$sub_field_group['graphql_field_name'] = $type_name;
 
 

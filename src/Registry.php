@@ -273,7 +273,6 @@ class Registry {
 	 * @throws \GraphQL\Error\Error
 	 */
 	public function get_field_group_interfaces( array $acf_field_group ): array {
-
 		$fields_interface = $this->get_field_group_graphql_type_name( $acf_field_group ) . '_Fields';
 		$interfaces       = isset( $acf_field_group['interfaces'] ) && is_array( $acf_field_group['interfaces'] ) ? $acf_field_group['interfaces'] : [];
 		$interfaces[]     = 'AcfFieldGroup';
@@ -281,7 +280,6 @@ class Registry {
 
 		// Apply Clone Field interfaces if ACF PRO is active
 		if ( defined( 'ACF_PRO' ) ) {
-
 			$raw_fields = [];
 
 			if ( ! empty( $acf_field_group['raw_fields'] ) ) {
@@ -322,7 +320,6 @@ class Registry {
 		$interfaces = array_unique( array_values( $interfaces ) );
 
 		return array_unique( $interfaces );
-
 	}
 
 	/**
@@ -423,11 +420,10 @@ class Registry {
 	 * @throws \GraphQL\Error\Error
 	 */
 	public function get_fields_for_field_group( array $acf_field_group ): array {
-
 		$raw_fields     = ! empty( $acf_field_group['ID'] ) ? acf_get_raw_fields( $acf_field_group['ID'] ) : [];
 		$_cloned_fields = [];
 		foreach ( $raw_fields as $raw_field ) {
-			if ( ! empty( $raw_field['clone'] ) && is_array( $raw_field['clone'] )  ) {
+			if ( ! empty( $raw_field['clone'] ) && is_array( $raw_field['clone'] ) ) {
 				foreach ( $raw_field['clone'] as $raw_field_clone_key ) {
 					$_cloned_fields[] = $raw_field_clone_key;
 				}
@@ -470,17 +466,15 @@ class Registry {
 			}
 
 			if ( defined( 'ACF_PRO' ) && ! empty( $acf_field['_clone'] ) && ! empty( $acf_field['__key'] ) ) {
-
 				$cloned_fields[ $graphql_field_name ] = $acf_field;
 
 				// if the clone field is not in the array of cloned fields
-				if ( ! in_array( $acf_field['__key'] , $_cloned_fields, true ) ) {
+				if ( ! in_array( $acf_field['__key'], $_cloned_fields, true ) ) {
 					continue;
 				}
-
 			}
 
-			$field_config = $this->map_acf_field_to_graphql( $acf_field, $acf_field_group );
+			$field_config                          = $this->map_acf_field_to_graphql( $acf_field, $acf_field_group );
 			$graphql_fields[ $graphql_field_name ] = $field_config;
 		}
 
@@ -489,8 +483,7 @@ class Registry {
 			foreach ( $cloned_fields as $cloned_field ) {
 				$graphql_field_name = $this->get_graphql_field_name( $cloned_field );
 				if ( ! empty( $graphql_field_name ) ) {
-					$original_key = $graphql_fields[ $graphql_field_name ]['acf_field']['key'] ?? null;
-					$graphql_fields[ $graphql_field_name ]['acf_field']['__key']   = $cloned_field['key'];
+					$graphql_fields[ $graphql_field_name ]['acf_field']['__key'] = $cloned_field['key'];
 				}
 			}
 		}
