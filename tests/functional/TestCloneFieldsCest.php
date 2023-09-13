@@ -20,7 +20,7 @@ class TestCloneFieldsCest {
 	public function testClonedFieldGroupAppliedAsInterface( FunctionalTester $I ) {
 
 		if ( ! isset( $_ENV['ACF_PRO'] ) || true !== (bool) $_ENV['ACF_PRO'] ) {
-			$I->markTestSkipped( sprintf( 'Version "%s" does not include the ability to register custom post types, so we do not need to test the extensions of the feature', $this->acf_plugin_version ) );
+			$I->markTestSkipped( 'Skipping test. ACF Pro is required for clone fields' );
 		}
 
 		$I->wantTo( 'Test Cloned Field Groups are applied as Interface' );
@@ -71,7 +71,7 @@ class TestCloneFieldsCest {
 	public function testClonedFieldIndividuallyDoesNotApplyClonedGroupAsInterface( FunctionalTester $I ) {
 
 		if ( ! isset( $_ENV['ACF_PRO'] ) || true !== (bool) $_ENV['ACF_PRO'] ) {
-			$I->markTestSkipped( sprintf( 'Version "%s" does not include the ability to register custom post types, so we do not need to test the extensions of the feature', $this->acf_plugin_version ) );
+			$I->markTestSkipped( 'Skipping test. ACF Pro is required for clone fields' );
 		}
 
 		$I->wantTo( 'Test Cloning Individual Fields Does Not Apply the cloned Fields group as an Interface' );
