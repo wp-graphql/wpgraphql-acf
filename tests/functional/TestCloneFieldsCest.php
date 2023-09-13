@@ -2,6 +2,8 @@
 
 class TestCloneFieldsCest {
 
+	public $acf_plugin_version;
+
 	public function _before( FunctionalTester $I, \Codeception\Scenario $scenario ) {
 
 		$inactive_group = 'tests-inactive-group-for-cloning.json';
@@ -10,9 +12,16 @@ class TestCloneFieldsCest {
 		$pro_fields = 'tests-acf-pro-kitchen-sink.json';
 		$I->importJson( $pro_fields );
 
+		$this->acf_plugin_version = $_ENV['ACF_VERSION'] ?? 'latest';
+
+
 	}
 
 	public function testClonedFieldGroupAppliedAsInterface( FunctionalTester $I ) {
+
+		if ( ! isset( $_ENV['ACF_PRO'] ) || true !== (bool) $_ENV['ACF_PRO'] ) {
+			$I->markTestSkipped( sprintf( 'Version "%s" does not include the ability to register custom post types, so we do not need to test the extensions of the feature', $this->acf_plugin_version ) );
+		}
 
 		$I->wantTo( 'Test Cloned Field Groups are applied as Interface' );
 
@@ -60,6 +69,10 @@ class TestCloneFieldsCest {
 	}
 
 	public function testClonedFieldIndividuallyDoesNotApplyClonedGroupAsInterface( FunctionalTester $I ) {
+
+		if ( ! isset( $_ENV['ACF_PRO'] ) || true !== (bool) $_ENV['ACF_PRO'] ) {
+			$I->markTestSkipped( sprintf( 'Version "%s" does not include the ability to register custom post types, so we do not need to test the extensions of the feature', $this->acf_plugin_version ) );
+		}
 
 		$I->wantTo( 'Test Cloning Individual Fields Does Not Apply the cloned Fields group as an Interface' );
 

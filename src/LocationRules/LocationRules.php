@@ -877,7 +877,6 @@ class LocationRules {
 	 * @return void
 	 */
 	public function determine_block_rules( string $field_group_name, string $param, string $operator, string $value ): void {
-
 		if ( ! function_exists( 'acf_get_block_types' ) ) {
 			return;
 		}
