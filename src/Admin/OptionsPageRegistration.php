@@ -97,7 +97,7 @@ class OptionsPageRegistration {
 			$graphql_type_name = ! empty( $acf_ui_options_page['page_title'] ) ? Utils::format_field_name( $acf_ui_options_page['page_title'], true ) : '';
 		}
 
-		$graphql_type_name = Utils::format_field_name( $graphql_type_name, true );
+		$graphql_type_name = ucfirst( Utils::format_field_name( $graphql_type_name, true ) );
 
 		acf_render_field_wrap(
 			[
