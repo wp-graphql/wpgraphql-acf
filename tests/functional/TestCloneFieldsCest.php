@@ -30,6 +30,9 @@ class TestCloneFieldsCest {
 			    interfaces {
 			      name
 			    }
+			    fields {
+			      name
+			    }
 			  }
 			}
 			',
