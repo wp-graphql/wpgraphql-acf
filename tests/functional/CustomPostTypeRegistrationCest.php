@@ -17,6 +17,7 @@ class CustomPostTypeRegistrationCest {
 
 	}
 
+
 	public function testPostTypeCanBeRegisteredToShowInGraphql( FunctionalTester $I ) {
 
 		$I->amOnPage( '/wp-admin/edit.php?post_type=acf-post-type' );

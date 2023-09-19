@@ -719,6 +719,7 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 		}
 
 		$this->register_cloned_acf_field();
+		$this->register_cloned_acf_field();
 
 		$query = '
 		query GetAcfFieldGroup ($name: String! ){

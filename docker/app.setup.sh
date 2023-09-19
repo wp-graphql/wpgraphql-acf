@@ -8,6 +8,7 @@ PLUGINS_DIR=${PLUGINS_DIR-.}
 ACF_LICENSE_KEY=${ACF_LICENSE_KEY-.}
 ACF_VERSION=${ACF_VERSION-"latest"}
 ACF_PRO=${ACF_PRO-false}
+WPGRAPHQL_CONTENT_BLOCKS_VERSION=${WPGRAPHQL_CONTENT_BLOCKS_VERSION-"latest"}
 
 # Export the plugin slug for use when running the codeception tests
 # (The slug is different for Free and Pro)
@@ -117,6 +118,19 @@ else
     	fi
 
 fi
+
+# Get latest release version of WPGraphQL Content Blocks
+echo "Get latest version of WPGraphQL Content Blocks"
+
+echo "WPGRAPHQL_CONTENT_BLOCKS_VERSION: ${WPGRAPHQL_CONTENT_BLOCKS_VERSION}"
+
+# if
+if [[ -z ${WPGRAPHQL_CONTENT_BLOCKS_VERSION} || "${WPGRAPHQL_CONTENT_BLOCKS_VERSION}" == "latest" ]]; then
+  WPGRAPHQL_CONTENT_BLOCKS_VERSION=$(curl --location --request GET "https://api.github.com/repos/wpengine/wp-graphql-content-blocks/releases/latest" | jq '.tag_name' | tr -d '"' )
+fi
+
+echo "Installing WPGraphQL Content Blocks ${WPGRAPHQL_CONTENT_BLOCKS_VERSION}"
+wp plugin install "https://github.com/wpengine/wp-graphql-content-blocks/releases/download/${WPGRAPHQL_CONTENT_BLOCKS_VERSION}/wp-graphql-content-blocks.zip" --allow-root
 
 ## List the plugins that were activated to ensure ACF Free or Pro was properly activated
 wp plugin list --allow-root

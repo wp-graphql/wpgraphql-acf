@@ -18,6 +18,7 @@ class CustomTaxonomyRegistrationCest {
 
 	}
 
+
 	public function testTaxonomyCanBeRegisteredToShowInGraphql( FunctionalTester $I ) {
 
 		$I->amOnPage( '/wp-admin/edit.php?post_type=acf-taxonomy' );
