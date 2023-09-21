@@ -24,6 +24,13 @@ class TextAreaFieldTest extends \Tests\WPGraphQL\Acf\WPUnit\AcfFieldTestCase {
 	}
 
 	/**
+	 * @return mixed|string|null
+	 */
+	public function get_block_data_to_store() {
+		return $this->get_data_to_store();
+	}
+
+	/**
 	 * @return string
 	 */
 	public function get_acf_clone_fragment():string {

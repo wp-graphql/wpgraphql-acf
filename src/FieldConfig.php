@@ -373,23 +373,29 @@ class FieldConfig {
 				$value = $fields[ $field_config['name'] ] ?? null;
 			} else if ( ! empty( $node['attrs'] ) ) {
 				acf_prepare_block( $node['attrs'] );
-				$value = get_field( $field_config['name'] );
+				$value = get_field( $field_config['name'], false, $should_format_value );
 				acf_reset_meta();
 			}
-
-			return $value ?? null;
 		}
 
 		// If there's no node_id at this point, we can return null
-		if ( empty( $node_id ) ) {
+		if ( empty( $value ) && empty( $node_id ) ) {
 			return null;
 		}
 
-		$value = get_field( $field_key, $node_id, $should_format_value );
-		$value = $this->prepare_acf_field_value( $value, $root, $node_id, $field_config );
-
+		// if a value hasn't been set yet, use the get_field() function to get the value
 		if ( empty( $value ) ) {
-			$value = null;
+			$value = get_field( $field_key, $node_id, $should_format_value );
+		}
+
+		// Prepare the value for response
+		$prepared_value = $this->prepare_acf_field_value( $value, $root, $node_id, $field_config );
+
+
+
+		// Empty values are set to null
+		if ( empty( $prepared_value ) ) {
+			$prepared_value = null;
 		}
 
 		/**
@@ -400,7 +406,7 @@ class FieldConfig {
 		 * @param mixed $root The Root node or obect of the field being resolved
 		 * @param mixed $node_id The ID of the node being resolved
 		 */
-		return apply_filters( 'wpgraphql/acf/field_value', $value, $field_config, $root, $node_id );
+		return apply_filters( 'wpgraphql/acf/field_value', $prepared_value, $field_config, $root, $node_id );
 	}
 
 	/**
@@ -445,11 +451,8 @@ class FieldConfig {
 
 		// @todo: This was ported over, but I'm not 💯 sure what this is solving and
 		// why it's only applied on options pages and not other pages 🤔
-		if ( isset( $acf_field_config['key'], $root[ $acf_field_config['key'] ] ) && is_array( $root ) && ! ( ! empty( $root['type'] ) && 'options_page' === $root['type'] ) ) {
-			$value = $root[ $acf_field_config['key'] ];
-			if ( 'wysiwyg' === $acf_field_config['type'] ) {
-				$value = apply_filters( 'the_content', $value );
-			}
+		if ( 'wysiwyg' === $acf_field_config['type'] ) {
+			$value = apply_filters( 'the_content', $value );
 		}
 
 		if ( ! empty( $acf_field_config['type'] ) && in_array(
@@ -513,7 +516,9 @@ class FieldConfig {
 			$config
 		);
 
-		if ( $this->registry->has_registered_field_group( $connection_name ) ) {
+		$connection_key = $this->get_graphql_field_name() . ':' . $type_name  . ':' . $to_type;
+
+		if ( $this->registry->has_registered_field_group( $connection_key ) ) {
 			return;
 		}
 
@@ -523,7 +528,7 @@ class FieldConfig {
 		// Register the connection to the Field Group Fields Interface
 		register_graphql_connection( array_merge( $connection_config, [ 'fromType' => $type_name . '_Fields' ] ) );
 
-		$this->registry->register_field_group( $connection_name, $connection_config );
+		$this->registry->register_field_group( $connection_key, $connection_config );
 
 	}
 

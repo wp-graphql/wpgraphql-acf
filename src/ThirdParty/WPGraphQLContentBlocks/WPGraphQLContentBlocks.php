@@ -13,9 +13,8 @@ class WPGraphQLContentBlocks {
 	 */
 	public function init(): void {
 
-		// If WPGraphQL Content Blocks is not active, or is active with a version prior to 1.2.0, don't
-		// instantiate this functionality
-		if ( ! defined( 'WPGRAPHQL_CONTENT_BLOCKS_VERSION' ) || version_compare( WPGRAPHQL_CONTENT_BLOCKS_VERSION, '1.2.0', 'lt' ) ) {
+		// If WPGraphQL Content Blocks is not active, bail
+		if ( ! defined( 'WPGRAPHQL_CONTENT_BLOCKS_DIR' ) ) {
 			return;
 		}
 

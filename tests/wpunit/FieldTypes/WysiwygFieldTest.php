@@ -28,6 +28,22 @@ class WysiwygFieldTest extends \Tests\WPGraphQL\Acf\WPUnit\AcfFieldTestCase {
 		return 'some text';
 	}
 
+	public function get_block_query_fragment() {
+		return '
+		fragment BlockQueryFragment on AcfTestGroup {
+		  testWysiwyg
+		}
+		';
+	}
+
+	public function get_block_data_to_store() {
+		return $this->get_data_to_store();
+	}
+
+	public function get_expected_block_fragment_response() {
+		return wpautop( $this->get_data_to_store() );
+	}
+
 	public function get_expected_fragment_response() {
 		return wpautop( $this->get_data_to_store() );
 	}

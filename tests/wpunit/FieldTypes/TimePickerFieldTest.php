@@ -24,12 +24,21 @@ class TimePickerFieldTest extends \Tests\WPGraphQL\Acf\WPUnit\AcfFieldTestCase {
 		return 'String';
 	}
 
+	public function get_data_to_store() {
+		return "00:34:00";
+	}
+
+
+	public function get_block_data_to_store() {
+		return $this->get_data_to_store();
+	}
+
 	public function get_expected_clone_value(): string {
 		return '12:34 am';
 	}
 
 	public function get_clone_value_to_save(): string {
-		return "00:34:00";
+		return $this->get_data_to_store();
 	}
 
 	public function get_acf_clone_fragment(): string {
