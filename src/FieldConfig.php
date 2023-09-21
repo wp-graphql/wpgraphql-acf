@@ -257,37 +257,6 @@ class FieldConfig {
 					};
 					break;
 
-				case 'relationship':
-					$this->register_graphql_connections(
-						[
-							'toType'  => 'ContentNode',
-							'resolve' => function ( $root, $args, AppContext $context, $info ) {
-								$value = $this->resolve_field( $root, $args, $context, $info );
-
-								if ( empty( $value ) || ! is_array( $value ) ) {
-									return null;
-								}
-
-								$value = array_map(
-									static function ( $id ) {
-										return absint( $id );
-									},
-									$value
-								);
-
-								$resolver = new PostObjectConnectionResolver( $root, $args, $context, $info, 'any' );
-								return $resolver
-								// the relationship field doesn't require related things to be published
-								// so we set the status to "any"
-								->set_query_arg( 'post_status', 'any' )
-								->set_query_arg( 'post__in', $value )
-								->set_query_arg( 'orderby', 'post__in' )
-								->get_connection();
-							},
-						]
-					);
-					$field_config = null;
-					break;
 				default:
 					$field_config['type'] = $field_type;
 					break;
@@ -397,9 +366,17 @@ class FieldConfig {
 
 		// resolve block field
 		if ( is_array( $node ) && isset( $node['blockName'] ) ) {
-			acf_prepare_block( $node['attrs'] );
-			$value = get_field( $field_config['name'] );
-			acf_reset_meta();
+
+			if ( ! empty( $node['attrs']['data'] ) ) {
+				$fields = acf_setup_meta( $node['attrs']['data'], 0, true );
+				acf_prepare_block( $node['attrs'] );
+				$value = $fields[ $field_config['name'] ] ?? null;
+			} else if ( ! empty( $node['attrs'] ) ) {
+				acf_prepare_block( $node['attrs'] );
+				$value = get_field( $field_config['name'] );
+				acf_reset_meta();
+			}
+
 			return $value ?? null;
 		}
 
@@ -536,11 +513,18 @@ class FieldConfig {
 			$config
 		);
 
+		if ( $this->registry->has_registered_field_group( $connection_name ) ) {
+			return;
+		}
+
 		// Register the connection to the Field Group Type
-		register_graphql_connection( $connection_config );
+		 register_graphql_connection( $connection_config );
 
 		// Register the connection to the Field Group Fields Interface
 		register_graphql_connection( array_merge( $connection_config, [ 'fromType' => $type_name . '_Fields' ] ) );
+
+		$this->registry->register_field_group( $connection_name, $connection_config );
+
 	}
 
 }
