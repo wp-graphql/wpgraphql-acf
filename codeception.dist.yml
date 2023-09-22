@@ -76,11 +76,11 @@ modules:
         - '%ACF_EXTENDED_PLUGIN_SLUG%'
         - wp-graphql/wp-graphql.php
         - wp-graphql-acf/wp-graphql-acf.php
-        - '%WPGRAPHQL_CONTENT_BLOCKS_PLUGIN_SLUG%'
+        - wp-graphql-content-blocks/wp-graphql-content-blocks.php
       activatePlugins:
         - '%ACF_PLUGIN_SLUG%'
         - '%ACF_EXTENDED_PLUGIN_SLUG%'
         - wp-graphql/wp-graphql.php
         - wp-graphql-acf/wp-graphql-acf.php
-        - '%WPGRAPHQL_CONTENT_BLOCKS_PLUGIN_SLUG%'
+        - wp-graphql-content-blocks/wp-graphql-content-blocks.php
       configFile: 'tests/_data/config.php'
