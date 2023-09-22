@@ -306,12 +306,7 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 			'post_content' => $content
 		]);
 
-		codecept_debug( [
-			'$actual' => $actual,
-			'$acf_field_key' => $acf_field_key,
-			'$content' => $content,
-			'parsed' => parse_blocks( $content )
-		]);
+
 
 		$fragment = $this->get_block_query_fragment();
 
