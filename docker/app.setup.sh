@@ -8,11 +8,11 @@ PLUGINS_DIR=${PLUGINS_DIR-.}
 ACF_LICENSE_KEY=${ACF_LICENSE_KEY-.}
 ACF_VERSION=${ACF_VERSION-"latest"}
 ACF_PRO=${ACF_PRO-false}
-WPGRAPHQL_CONTENT_BLOCKS=${WPGRAPHQL_CONTENT_BLOCKS-true}
-WPGRAPHQL_CONTENT_BLOCKS_VERSION=${WPGRAPHQL_CONTENT_BLOCKS_VERSION-"latest"}
-
-// fallback to hello.php as a hack. dont love this, but we have to pass a slug.
-export WPGRAPHQL_CONTENT_BLOCKS_PLUGIN_SLUG=${WPGRAPHQL_CONTENT_BLOCKS_PLUGIN_SLUG-'wp-graphql-content-blocks/wp-graphql-content-blocks.php'}
+#WPGRAPHQL_CONTENT_BLOCKS=${WPGRAPHQL_CONTENT_BLOCKS-true}
+#WPGRAPHQL_CONTENT_BLOCKS_VERSION=${WPGRAPHQL_CONTENT_BLOCKS_VERSION-"latest"}
+#
+#// fallback to hello.php as a hack. dont love this, but we have to pass a slug.
+#export WPGRAPHQL_CONTENT_BLOCKS_PLUGIN_SLUG=${WPGRAPHQL_CONTENT_BLOCKS_PLUGIN_SLUG-'wp-graphql-content-blocks/wp-graphql-content-blocks.php'}
 
 # Export the plugin slug for use when running the codeception tests
 # (The slug is different for Free and Pro)
@@ -124,27 +124,27 @@ else
 
 fi
 
-echo "WPGRAPHQL_CONTENT_BLOCKS: ${WPGRAPHQL_CONTENT_BLOCKS}"
-
-# If WPGraphQL Content Blocks should be tested against
-if [[ 'true' = "${WPGRAPHQL_CONTENT_BLOCKS}" ]]; then
-
-	WPGRAPHQL_CONTENT_BLOCKS_PLUGIN_SLUG='wp-graphql-content-blocks/wp-graphql-content-blocks.php';
-
-	if [[ -z ${WPGRAPHQL_CONTENT_BLOCKS_VERSION} || "${WPGRAPHQL_CONTENT_BLOCKS_VERSION}" == "latest" ]]; then
-	  # Get latest release version of WPGraphQL Content Blocks
-	  echo "Getting the latest version of WPGraphQL Content Blocks"
-	  WPGRAPHQL_CONTENT_BLOCKS_VERSION=$(curl --location --request GET "https://api.github.com/repos/wpengine/wp-graphql-content-blocks/releases/latest" | jq '.tag_name' | tr -d '"' )
-	fi
-
-	echo "Installing WPGraphQL Content Blocks ${WPGRAPHQL_CONTENT_BLOCKS_VERSION}"
-    wp plugin install "https://github.com/wpengine/wp-graphql-content-blocks/releases/download/${WPGRAPHQL_CONTENT_BLOCKS_VERSION}/wp-graphql-content-blocks.zip" --allow-root --activate
-
-## If WPGRAPHQL_CONTENT_BLOCKS is not true, skip installing it
-else
-	echo "Skipping installing WPGraphQL Content Blocks"
-	WPGRAPHQL_CONTENT_BLOCKS_PLUGIN_SLUG='wp-graphql-content-blocks/wp-graphql-content-blocks.php';
-fi
+#echo "WPGRAPHQL_CONTENT_BLOCKS: ${WPGRAPHQL_CONTENT_BLOCKS}"
+#
+## If WPGraphQL Content Blocks should be tested against
+#if [[ 'true' = "${WPGRAPHQL_CONTENT_BLOCKS}" ]]; then
+#
+#	WPGRAPHQL_CONTENT_BLOCKS_PLUGIN_SLUG='wp-graphql-content-blocks/wp-graphql-content-blocks.php';
+#
+#	if [[ -z ${WPGRAPHQL_CONTENT_BLOCKS_VERSION} || "${WPGRAPHQL_CONTENT_BLOCKS_VERSION}" == "latest" ]]; then
+#	  # Get latest release version of WPGraphQL Content Blocks
+#	  echo "Getting the latest version of WPGraphQL Content Blocks"
+#	  WPGRAPHQL_CONTENT_BLOCKS_VERSION=$(curl --location --request GET "https://api.github.com/repos/wpengine/wp-graphql-content-blocks/releases/latest" | jq '.tag_name' | tr -d '"' )
+#	fi
+#
+#	echo "Installing WPGraphQL Content Blocks ${WPGRAPHQL_CONTENT_BLOCKS_VERSION}"
+#    wp plugin install "https://github.com/wpengine/wp-graphql-content-blocks/releases/download/${WPGRAPHQL_CONTENT_BLOCKS_VERSION}/wp-graphql-content-blocks.zip" --allow-root --activate
+#
+### If WPGRAPHQL_CONTENT_BLOCKS is not true, skip installing it
+#else
+#	echo "Skipping installing WPGraphQL Content Blocks"
+#	WPGRAPHQL_CONTENT_BLOCKS_PLUGIN_SLUG='wp-graphql-content-blocks/wp-graphql-content-blocks.php';
+#fi
 
 ## List the plugins that were activated to ensure ACF Free or Pro was properly activated
 wp plugin list --allow-root
