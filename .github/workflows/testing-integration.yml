@@ -22,7 +22,6 @@ jobs:
         wordpress: [ '6.2', '6.1' ]
         acf_pro: [ true, false ]
         acf_version: [ 5.12.4, 6.1.8 ]
-        wpgraphql_content_blocks: [ true, false ]
         include:
           - php: '8.1'
             wordpress: '6.1'
@@ -77,7 +76,6 @@ jobs:
             -e ACF_PRO=${{matrix.acf_pro }} \
             -e ACF_LICENSE_KEY=${{secrets.ACF_LICENSE_KEY}} \
             -e ACF_VERSION=${{matrix.acf_version}} \
-            -e WPGRAPHQL_CONTENT_BLOCKS=${{matrix.wpgraphql_content_blocks}} \
             -e ACF_EXTENDED_LICENSE_KEY=${{secrets.ACF_EXTENDED_LICENSE_KEY}} \
             testing
 
