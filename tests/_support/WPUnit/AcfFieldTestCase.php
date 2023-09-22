@@ -393,7 +393,7 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 	public function testFieldShowsInSchemaWithExpectedResolveType() {
 
 		// if ACF PRO is not active, skip the test
-		if ( ! defined( 'ACF_PRO' ) ) {
+		if ( ! defined( 'ACF_PRO' ) || ! defined( 'ACF_MAJOR_VERSION' ) || version_compare( 'ACF_MAJOR_VERSION', '6.0', 'lt' ) ) {
 			$this->markTestSkipped( 'ACF Pro is not active so this test will not run.' );
 		}
 
