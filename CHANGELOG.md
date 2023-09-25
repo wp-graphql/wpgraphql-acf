@@ -2,14 +2,19 @@
 
 ## 2.0.0-beta.5.0.0
 
+[read more](https://github.com/wp-graphql/wpgraphql-acf/releases/tag/v2.0.0-beta.5.0.0)
+
 ### New Features
 
 - [#81](https://github.com/wp-graphql/wpgraphql-acf/pull/81): feat: 🚀 ACF Blocks Support. Query ACF Blocks using WPGraphQL!! 🚀 (when [WPGraphQL Content Blocks v1.2.0+](https://github.com/wpengine/wp-graphql-content-blocks/releases/) is active)
+- feat: ACF Options UI support. ACF Pro v6.2 has a new Options Page UI and now you can register those options pages to show in graphql from the UI.
 
 ### Chores / Bugfixes
 
 - [#77](https://github.com/wp-graphql/wpgraphql-acf/pull/77): fix: js error when clone fields are added to a field group.
 - [#80](https://github.com/wp-graphql/wpgraphql-acf/pull/81): ci: put the files in a subfolder when build zip in github
+- fix: cloning an individual field applied the entire cloned field's group as an interface to the clonee field group.
+- [#85](https://github.com/wp-graphql/wpgraphql-acf/pull/85): fix: TermNodes returning null when not array and fix type being set to generic TermNode in Taxonomy field
 
 
 ## v2.0.0-beta.4.0.0
