@@ -4,7 +4,6 @@ namespace WPGraphQL\Acf;
 
 use GraphQL\Type\Definition\ResolveInfo;
 use WPGraphQL\AppContext;
-use WPGraphQL\Data\Connection\PostObjectConnectionResolver;
 
 class FieldConfig {
 
@@ -366,12 +365,11 @@ class FieldConfig {
 
 		// resolve block field
 		if ( is_array( $node ) && isset( $node['blockName'] ) ) {
-
 			if ( ! empty( $node['attrs']['data'] ) ) {
 				$fields = acf_setup_meta( $node['attrs']['data'], 0, true );
 				acf_prepare_block( $node['attrs'] );
 				$value = $fields[ $field_config['name'] ] ?? null;
-			} else if ( ! empty( $node['attrs'] ) ) {
+			} elseif ( ! empty( $node['attrs'] ) ) {
 				acf_prepare_block( $node['attrs'] );
 				$value = get_field( $field_config['name'], false, $should_format_value );
 				acf_reset_meta();
@@ -516,20 +514,19 @@ class FieldConfig {
 			$config
 		);
 
-		$connection_key = $this->get_graphql_field_name() . ':' . $type_name  . ':' . $to_type;
+		$connection_key = $this->get_graphql_field_name() . ':' . $type_name . ':' . $to_type;
 
 		if ( $this->registry->has_registered_field_group( $connection_key ) ) {
 			return;
 		}
 
 		// Register the connection to the Field Group Type
-		 register_graphql_connection( $connection_config );
+		register_graphql_connection( $connection_config );
 
 		// Register the connection to the Field Group Fields Interface
 		register_graphql_connection( array_merge( $connection_config, [ 'fromType' => $type_name . '_Fields' ] ) );
 
 		$this->registry->register_field_group( $connection_key, $connection_config );
-
 	}
 
 }
