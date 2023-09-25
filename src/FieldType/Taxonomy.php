@@ -25,14 +25,17 @@ class Taxonomy {
 							if ( empty( $value ) ) {
 								return null;
 							}
-							if ( is_array( $value ) ) {
-								$value = array_map(
-									static function ( $id ) {
-										return absint( $id );
-									},
-									$value 
-								);
+
+							if ( ! is_array( $value ) ) {
+								$value[] = $value;
 							}
+
+							$value = array_map(
+								static function ( $id ) {
+									return absint( $id );
+								},
+								$value
+							);
 
 							$resolver = new TermObjectConnectionResolver( $root, $args, $context, $info );
 							return $resolver
@@ -49,7 +52,7 @@ class Taxonomy {
 					// Return null because registering a connection adds it to the Schema for us
 					return 'connection';
 				},
-			] 
+			]
 		);
 	}
 

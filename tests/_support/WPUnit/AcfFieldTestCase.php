@@ -12,6 +12,9 @@ use WPGraphQL\Utils\Utils;
  */
 abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 
+	/**
+	 * @var string
+	 */
 	public $acf_plugin_version;
 
 	/**
@@ -44,6 +47,27 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 	 */
 	public function get_data_to_store() {
 		return 'text value...';
+	}
+
+	/**
+	 * Override this in the testing class to test the field against blocks
+	 *
+	 * @return null
+	 */
+	public function get_block_data_to_store() {
+		return null;
+	}
+
+	/**
+	 * Override this with the block query fragment to test against for a field
+	 * @return null
+	 */
+	public function get_block_query_fragment() {
+		return null;
+	}
+
+	public function get_expected_block_fragment_response() {
+		return null;
 	}
 
 	/***
@@ -127,13 +151,13 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 	}
 
 	/**
-	 * @param array $acf_field
-	 * @param array $acf_field_group
-	 * @param ?bool $should_clone_field_only
+	 * @param array $acf_field Config array to override the defaults
+	 * @param array $acf_field_group Config array to override the defaults of the field group the field will be registered to
+	 * @param bool  $should_clone_field_only bool Weather to clone only the field instead of the entire field group
 	 *
 	 * @return string
 	 */
-	public function register_cloned_acf_field( array $acf_field = [], array $acf_field_group = [], ?bool $should_clone_field_only = false ): string {
+	public function register_cloned_acf_field( array $acf_field = [], array $acf_field_group = [], $should_clone_field_only = false ): string {
 
 		// set defaults on the acf field
 		// using helper methods from this class.
@@ -169,6 +193,162 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 		return [
 			$this->expectedField( 'post.acfTestGroup.' . $this->get_formatted_clone_field_name(), $this->get_expected_fragment_response() ),
 		];
+	}
+
+	// Test that the field can be queried on an ACF Block
+	public function testFieldOnAcfBlock() {
+
+		// if ACF PRO is not active, skip the test
+		if ( ! defined( 'ACF_PRO' ) ) {
+			$this->markTestSkipped( 'ACF Pro is not active so this test will not run.' );
+		}
+
+		// If WPGraphQL Content Blocks couldn't be activated, skip
+		if ( ! defined( 'WPGRAPHQL_CONTENT_BLOCKS_DIR' ) ) {
+			$this->markTestSkipped( 'This test is skipped when WPGraphQL Content Blocks is not active' );
+		}
+
+		// register ACF Block
+		acf_register_block_type([
+			'name' => 'test_block',
+			'title' => 'Test Block',
+			'post_types' => [ 'post' ],
+		]);
+
+		// register Field + Field Group to Block
+		$acf_field_key = $this->register_acf_field([], [
+			'location' => [
+				[
+					[
+						'param' => 'block',
+						'operator' => '==',
+						'value' => 'acf/test-block',
+					]
+				]
+			],
+			'graphql_types' => [ 'AcfTestBlock' ],
+		]);
+
+		// assert the block shows in the schema as expected
+		$query = '
+		query GetType( $name: String! ) {
+		  __type( name: $name ) {
+		    fields {
+		      name
+		    }
+		    interfaces {
+		      name
+		    }
+		  }
+		}
+		';
+
+		$actual = $this->graphql( [
+			'query' => $query,
+			'variables' => [
+				'name' => 'AcfTestBlock',
+			]
+		]);
+
+		codecept_debug( [
+			'$actual' => $actual,
+		]);
+
+		// Assert that the AcfBlock is in the Schema
+		// Assert the field group shows on the block as expected
+		self::assertQuerySuccessful( $actual, [
+			$this->expectedNode( '__type.fields', [
+				'name' => Utils::format_field_name( 'AcfTestGroup' ),
+			]),
+			$this->expectedNode( '__type.interfaces', [
+				'name' => 'AcfBlock',
+			]),
+			// Should implement the With${FieldGroup} Interface
+			$this->expectedNode( '__type.interfaces', [
+				'name' => 'WithAcfAcfTestGroup',
+			])
+		]);
+
+		$actual = $this->graphql( [
+			'query' => $query,
+			'variables' => [
+				'name' => 'AcfTestGroup',
+			]
+		]);
+
+
+		if ( empty( $this->get_block_query_fragment() ) ) {
+			$this->markTestIncomplete( 'No block query fragment defined' );
+		}
+
+		if ( empty( $this->get_expected_block_fragment_response() ) ) {
+			$this->markTestIncomplete( 'No expected block fragment response defined' );
+		}
+
+		if ( empty( $this->get_block_data_to_store() ) ) {
+			$this->markTestIncomplete( 'No block data to store defined' );
+		}
+
+		// Save post with content including the block + field(s)
+		$content = '
+		<!-- wp:paragraph -->
+		<p>Test paragraph</p>
+		<!-- /wp:paragraph -->
+
+		<!-- wp:acf/test-block {"name":"acf/test-block","data":{"'. $this->get_field_name() . '":"' . $this->get_block_data_to_store()  .'","_' . $this->get_field_name() . '":"'. $acf_field_key . '"},"align":"","mode":"edit"} /-->
+		';
+
+
+		$post = $this->factory()->post->create([
+			'post_type' => 'post',
+			'post_status' => 'publish',
+			'post_author' => $this->admin,
+			'post_content' => $content
+		]);
+
+
+
+		$fragment = $this->get_block_query_fragment();
+
+		// query for the post + editorBlocks + specific block
+		$query = '
+		query GetPost($id:ID!){
+		  post( id:$id idType: DATABASE_ID ) {
+		    databaseId
+		    ...on NodeWithEditorBlocks {
+		      editorBlocks {
+		        __typename
+		        ...on WithAcfAcfTestGroup {
+		          acfTestGroup {
+			        ...BlockQueryFragment
+			      }
+		        }
+		      }
+		    }
+		  }
+		}
+		' . $fragment;
+
+		$actual = $this->graphql([
+			'query' => $query,
+			'variables' => [
+				'id' => $post,
+			],
+		]);
+
+		// assert the data is returned as expected
+		self::assertQuerySuccessful( $actual, [
+			$this->expectedField( 'post.databaseId', $post ),
+			$this->expectedNode( 'post.editorBlocks', [
+				'__typename' => 'AcfTestBlock',
+				'acfTestGroup' => [
+					$this->get_formatted_field_name() => $this->get_expected_block_fragment_response()
+				],
+			])
+		] );
+
+
+
 	}
 
 
@@ -213,7 +393,7 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 	public function testFieldShowsInSchemaWithExpectedResolveType() {
 
 		// if ACF PRO is not active, skip the test
-		if ( ! defined( 'ACF_PRO' ) ) {
+		if ( ! defined( 'ACF_PRO' ) || ! defined( 'ACF_MAJOR_VERSION' ) || version_compare( 'ACF_MAJOR_VERSION', '6.0', 'lt' ) ) {
 			$this->markTestSkipped( 'ACF Pro is not active so this test will not run.' );
 		}
 
@@ -718,7 +898,7 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 			$this->markTestSkipped( 'ACF Pro is not active so this test will not run.' );
 		}
 
-		$field_key = $this->register_cloned_acf_field();
+		$this->register_cloned_acf_field();
 
 		$query = '
 		query GetAcfFieldGroup ($name: String! ){
@@ -778,137 +958,7 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 			])
 		]);
 
-		acf_remove_local_field( $field_key );
-
 	}
-
-	/**
-	 * @return void
-	 */
-	public function testClonedFieldGroupFieldsAreAppliedAsInterface(): void {
-
-		$this->markTestIncomplete();
-
-		// if ACF PRO is not active, skip the test
-		if ( ! defined( 'ACF_PRO' ) ) {
-			$this->markTestSkipped( 'ACF Pro is not active so this test will not run.' );
-		}
-
-		$field_key = $this->register_cloned_acf_field();
-
-		$this->clearSchema();
-
-		$query = '
-		query GetAcfFieldGroup ($name: String! ){
-		  __type( name: $name ) {
-		    name
-		    interfaces {
-		      name
-		    }
-		    fields {
-		      name
-		    }
-		    possibleTypes {
-		      name
-		    }
-		  }
-		}
-		';
-
-		$actual = $this->graphql([
-			'query' => $query,
-			'variables' => [
-				'name' => 'AcfTestGroup'
-			]
-		]);
-
-		codecept_debug( [
-			'$actual' => $actual,
-		]);
-
-		// the AcfTestGroup should implment the "InactiveFieldGroup_Fields" interface
-		self::assertQuerySuccessful( $actual, [
-			$this->expectedNode( '__type', [
-				$this->expectedField( 'name', 'AcfTestGroup' ),
-			]),
-			$this->expectedNode( '__type.interfaces', [
-				$this->expectedField( 'name', 'InactiveFieldGroup_Fields' )
-			]),
-			// the AcfTestGroup should hace a clonedTextField field
-			$this->expectedNode( '__type.fields', [
-				$this->expectedField( 'name', $this->get_formatted_clone_field_name() )
-			])
-		]);
-
-		acf_remove_local_field( $field_key );
-
-	}
-
-	/**
-	 * @return void
-	 */
-	public function testClonedFieldExistsButIsNotAppliedAsInterface() {
-
-		$this->markTestIncomplete();
-
-		// if ACF PRO is not active, skip the test
-		if ( ! defined( 'ACF_PRO' ) ) {
-			$this->markTestSkipped( 'ACF Pro is not active so this test will not run.' );
-		}
-
-		// only clone the field, not the whole field group
-		$field_key = $this->register_cloned_acf_field([
-			'name' => 'cloned_2_' . $this->get_field_name(),
-			'type' => $this->get_field_type()
-		], [], true);
-
-		$this->clearSchema();
-
-		$query = '
-		query GetAcfFieldGroup ($name: String! ){
-		  __type( name: $name ) {
-		    name
-		    interfaces {
-		      name
-		    }
-		    fields {
-		      name
-		    }
-		    possibleTypes {
-		      name
-		    }
-		  }
-		}
-		';
-
-		$actual = $this->graphql([
-			'query' => $query,
-			'variables' => [
-				'name' => 'AcfTestGroup'
-			]
-		]);
-
-		codecept_debug( [
-			'$actual' => $actual,
-		]);
-
-		// the AcfTestGroup should implment the "InactiveFieldGroup_Fields" interface
-		self::assertQuerySuccessful( $actual, [
-			$this->expectedNode( '__type', [
-				$this->expectedField( 'name', 'AcfTestGroup' ),
-			]),
-			$this->not()->expectedNode( '__type.interfaces', [
-				$this->expectedField( 'name', 'InactiveFieldGroup_Fields' )
-			]),
-			// the AcfTestGroup should hace a clonedTextField field
-			$this->expectedNode( '__type.fields', [
-				$this->expectedField( 'name', $this->get_formatted_clone_field_name() )
-			])
-		]);
-
-	}
-
-
 
 	/**
 	 * @return string

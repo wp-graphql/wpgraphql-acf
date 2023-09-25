@@ -50,6 +50,13 @@ class TextFieldTest extends \Tests\WPGraphQL\Acf\WPUnit\AcfFieldTestCase {
 	}
 
 	/**
+	 * @return mixed|string|null
+	 */
+	public function get_block_data_to_store() {
+		return $this->get_data_to_store();
+	}
+
+	/**
 	 * Register a text field
 	 * update value for the text field
 	 * query for the

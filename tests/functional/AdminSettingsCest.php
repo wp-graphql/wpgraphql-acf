@@ -4,20 +4,11 @@ class AdminSettingsCest
 {
 
     public function _before( FunctionalTester $I ) {
+
         // Import the json file Save and see the selection after form submit
         $json_file = 'acf-export-2023-01-26.json';
         $I->importJson( $json_file );
     }
-
-	public function _after( FunctionalTester $I ) {
-
-		// Cleanup the imported field group
-		$I->loginAsAdmin();
-		$I->amOnPage('/wp-admin/edit.php?post_type=acf-field-group');
-		$I->checkOption( '//tbody/tr/th[@class="check-column"]/input[@type="checkbox"]' );
-		$I->selectOption( '#bulk-action-selector-bottom', 'trash' );
-		$I->click( '#doaction2' );
-	}
 
     public function seeCustomFieldsFieldGroupWpgraphqlHeadersTest( FunctionalTester $I ) {
         $I->loginAsAdmin();

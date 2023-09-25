@@ -4,7 +4,6 @@ namespace WPGraphQL\Acf;
 
 use GraphQL\Type\Definition\ResolveInfo;
 use WPGraphQL\AppContext;
-use WPGraphQL\Data\Connection\PostObjectConnectionResolver;
 
 class FieldConfig {
 
@@ -39,6 +38,11 @@ class FieldConfig {
 	protected $registry;
 
 	/**
+	 * @var string
+	 */
+	protected $graphql_parent_type_name;
+
+	/**
 	 * @throws \GraphQL\Error\Error
 	 */
 	public function __construct( array $acf_field, array $acf_field_group, Registry $registry ) {
@@ -69,6 +73,33 @@ class FieldConfig {
 	 */
 	public function get_graphql_field_type(): ?AcfGraphQLFieldType {
 		return $this->graphql_field_type;
+	}
+
+	/**
+	 * @param array       $acf_field
+	 * @param string|null $prepend
+	 *
+	 * @return string
+	 * @throws \GraphQL\Error\Error
+	 */
+	public function get_parent_graphql_type_name( array $acf_field, ?string $prepend = '' ): string {
+		$type_name = '';
+
+		if ( ! empty( $acf_field['parent'] ) ) {
+			$parent_field = acf_get_field( $acf_field['parent'] );
+			$parent_group = acf_get_field_group( $acf_field['parent'] );
+			if ( ! empty( $parent_field ) ) {
+				$type_name = $this->registry->get_field_group_graphql_type_name( $parent_field );
+				$type_name = $this->get_parent_graphql_type_name( $parent_field, $type_name );
+			} elseif ( ! empty( $parent_group ) ) {
+				$type_name = $this->registry->get_field_group_graphql_type_name( $parent_group );
+				$type_name = $this->get_parent_graphql_type_name( $parent_group, $type_name );
+			} else {
+				$type_name = $this->get_parent_graphql_type_name( $acf_field, '' );
+			}
+		}
+
+		return $type_name . $prepend;
 	}
 
 	/**
@@ -225,37 +256,6 @@ class FieldConfig {
 					};
 					break;
 
-				case 'relationship':
-					$this->register_graphql_connections(
-						[
-							'toType'  => 'ContentNode',
-							'resolve' => function ( $root, $args, AppContext $context, $info ) {
-								$value = $this->resolve_field( $root, $args, $context, $info );
-
-								if ( empty( $value ) || ! is_array( $value ) ) {
-									return null;
-								}
-
-								$value = array_map(
-									static function ( $id ) {
-										return absint( $id );
-									},
-									$value
-								);
-
-								$resolver = new PostObjectConnectionResolver( $root, $args, $context, $info, 'any' );
-								return $resolver
-								// the relationship field doesn't require related things to be published
-								// so we set the status to "any"
-								->set_query_arg( 'post_status', 'any' )
-								->set_query_arg( 'post__in', $value )
-								->set_query_arg( 'orderby', 'post__in' )
-								->get_connection();
-							},
-						]
-					);
-					$field_config = null;
-					break;
 				default:
 					$field_config['type'] = $field_type;
 					break;
@@ -301,14 +301,13 @@ class FieldConfig {
 	public function resolve_field( $root, array $args, AppContext $context, ResolveInfo $info ) {
 		$field_config = $info->fieldDefinition->config['acf_field'] ?? $this->acf_field;
 		$node         = $root['node'] ?? null;
-		$node_id      = $node ? Utils::get_node_acf_id( $node, $field_config ) : null;
+		$node_id      = $node ? Utils::get_node_acf_id( $node ) : null;
 
 		$field_key = null;
 		$is_cloned = false;
 
-		// if the field is cloned
-		if ( ! empty( $field_config['_clone'] ) ) {
-			$field_key = $field_config['_clone'];
+		if ( ! empty( $field_config['__key'] ) ) {
+			$field_key = $field_config['__key'];
 			$is_cloned = true;
 		} elseif ( ! empty( $field_config['key'] ) ) {
 			$field_key = $field_config['key'];
@@ -324,7 +323,6 @@ class FieldConfig {
 			} elseif ( ! empty( $field_config['__key'] ) ) {
 				$field_key = $field_config['__key'];
 			}
-
 			$cloned_field_config = acf_get_field( $field_key );
 			$field_config        = ! empty( $cloned_field_config ) ? $cloned_field_config : $field_config;
 		}
@@ -367,22 +365,35 @@ class FieldConfig {
 
 		// resolve block field
 		if ( is_array( $node ) && isset( $node['blockName'] ) ) {
-			$fields = acf_setup_meta( $node['attrs']['data'], 0, true );
-			acf_reset_meta();
-
-			return $fields[ $field_config['name'] ] ?? null;
+			if ( ! empty( $node['attrs']['data'] ) ) {
+				$fields = acf_setup_meta( $node['attrs']['data'], 0, true );
+				acf_prepare_block( $node['attrs'] );
+				$value = $fields[ $field_config['name'] ] ?? null;
+			} elseif ( ! empty( $node['attrs'] ) ) {
+				acf_prepare_block( $node['attrs'] );
+				$value = get_field( $field_config['name'], false, $should_format_value );
+				acf_reset_meta();
+			}
 		}
 
 		// If there's no node_id at this point, we can return null
-		if ( empty( $node_id ) ) {
+		if ( empty( $value ) && empty( $node_id ) ) {
 			return null;
 		}
 
-		$value = get_field( $field_key, $node_id, $should_format_value );
-		$value = $this->prepare_acf_field_value( $value, $root, $node_id, $field_config );
-
+		// if a value hasn't been set yet, use the get_field() function to get the value
 		if ( empty( $value ) ) {
-			$value = null;
+			$value = get_field( $field_key, $node_id, $should_format_value );
+		}
+
+		// Prepare the value for response
+		$prepared_value = $this->prepare_acf_field_value( $value, $root, $node_id, $field_config );
+
+
+
+		// Empty values are set to null
+		if ( empty( $prepared_value ) ) {
+			$prepared_value = null;
 		}
 
 		/**
@@ -393,7 +404,7 @@ class FieldConfig {
 		 * @param mixed $root The Root node or obect of the field being resolved
 		 * @param mixed $node_id The ID of the node being resolved
 		 */
-		return apply_filters( 'wpgraphql/acf/field_value', $value, $field_config, $root, $node_id );
+		return apply_filters( 'wpgraphql/acf/field_value', $prepared_value, $field_config, $root, $node_id );
 	}
 
 	/**
@@ -438,11 +449,8 @@ class FieldConfig {
 
 		// @todo: This was ported over, but I'm not 💯 sure what this is solving and
 		// why it's only applied on options pages and not other pages 🤔
-		if ( isset( $acf_field_config['key'], $root[ $acf_field_config['key'] ] ) && is_array( $root ) && ! ( ! empty( $root['type'] ) && 'options_page' === $root['type'] ) ) {
-			$value = $root[ $acf_field_config['key'] ];
-			if ( 'wysiwyg' === $acf_field_config['type'] ) {
-				$value = apply_filters( 'the_content', $value );
-			}
+		if ( 'wysiwyg' === $acf_field_config['type'] ) {
+			$value = apply_filters( 'the_content', $value );
 		}
 
 		if ( ! empty( $acf_field_config['type'] ) && in_array(
@@ -472,7 +480,6 @@ class FieldConfig {
 	 * @return string
 	 */
 	public function get_connection_name( string $to_type ): string {
-		// Create connection name using $from_type + To + $to_type + Connection.
 		return \WPGraphQL\Utils\Utils::format_type_name( 'Acf' . ucfirst( $to_type ) . 'Connection' );
 	}
 
@@ -507,11 +514,19 @@ class FieldConfig {
 			$config
 		);
 
+		$connection_key = $this->get_graphql_field_name() . ':' . $type_name . ':' . $to_type;
+
+		if ( $this->registry->has_registered_field_group( $connection_key ) ) {
+			return;
+		}
+
 		// Register the connection to the Field Group Type
 		register_graphql_connection( $connection_config );
 
 		// Register the connection to the Field Group Fields Interface
 		register_graphql_connection( array_merge( $connection_config, [ 'fromType' => $type_name . '_Fields' ] ) );
+
+		$this->registry->register_field_group( $connection_key, $connection_config );
 	}
 
 }

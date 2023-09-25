@@ -4,6 +4,7 @@ use WPGraphQL\Registry\TypeRegistry;
 
 use WPGraphQL\Acf\Admin\PostTypeRegistration;
 use WPGraphQL\Acf\Admin\TaxonomyRegistration;
+use WPGraphQL\Acf\Admin\OptionsPageRegistration;
 use WPGraphQL\Acf\Registry;
 use WPGraphQL\Acf\ThirdParty;
 
@@ -34,7 +35,7 @@ class WPGraphQLAcf {
 
 		add_action( 'wpgraphql/acf/init', [ $this, 'init_third_party_support' ] );
 		add_action( 'admin_init', [ $this, 'init_admin_settings' ] );
-		add_action( 'after_setup_theme', [ $this, 'cpt_tax_registration' ] );
+		add_action( 'after_setup_theme', [ $this, 'acf_internal_post_type_support' ] );
 		add_action( 'graphql_register_types', [ $this, 'init_registry' ] );
 
 		add_filter( 'graphql_data_loaders', [ $this, 'register_loaders' ], 10, 2 );
@@ -65,12 +66,15 @@ class WPGraphQLAcf {
 	 *
 	 * @return void
 	 */
-	public function cpt_tax_registration(): void {
+	public function acf_internal_post_type_support(): void {
 		$taxonomy_registration_screen = new TaxonomyRegistration();
 		$taxonomy_registration_screen->init();
 
 		$cpt_registration_screen = new PostTypeRegistration();
 		$cpt_registration_screen->init();
+
+		$options_page_registration_screen = new OptionsPageRegistration();
+		$options_page_registration_screen->init();
 	}
 
 	/**
@@ -86,7 +90,6 @@ class WPGraphQLAcf {
 		$registry = new Registry( $type_registry );
 		$registry->register_initial_graphql_types();
 		$registry->register_options_pages();
-		$registry->register_blocks();
 
 		// Get the field groups that should be mapped to the Schema
 		$acf_field_groups = $registry->get_acf_field_groups();

@@ -15,11 +15,12 @@ class FlexibleContent {
 			'flexible_content',
 			[
 				'graphql_type' => static function ( FieldConfig $field_config, AcfGraphQLFieldType $acf_field_type ) {
-					$parent_type               = $field_config->get_graphql_field_group_type_name();
-					$field_name                = $field_config->get_graphql_field_name();
-					$layout_interface_prefix   = Utils::format_type_name( $parent_type . ' ' . $field_name );
-					$layout_interface_name     = $layout_interface_prefix . '_Layout';
-					$acf_field                 = $field_config->get_acf_field();
+					$acf_field               = $field_config->get_acf_field();
+					$parent_type             = $field_config->get_parent_graphql_type_name( $acf_field );
+					$field_name              = $field_config->get_graphql_field_name();
+					$layout_interface_prefix = Utils::format_type_name( $parent_type . ' ' . $field_name );
+					$layout_interface_name   = $layout_interface_prefix . '_Layout';
+
 					$flex_field_raw_sub_fields = acf_get_raw_fields( $acf_field['key'] );
 
 					if ( ! $field_config->get_registry()->has_registered_field_group( $layout_interface_name ) ) {
@@ -27,7 +28,7 @@ class FlexibleContent {
 							$layout_interface_name,
 							[
 								'eagerlyLoadType' => true,
-								// translators: %1$s is the name of the flexible field containing layouts. %2$s is the name of the field group the flexible content field belongs to.
+								// translators: the %1$s is the name of the Flex Field Layout and the %2$s is the name of the field.
 								'description'     => sprintf( __( 'Layout of the "%1$s" Field of the "%2$s" Field Group Field', 'wp-graphql-acf' ), $field_name, $parent_type ),
 								'fields'          => [
 									'fieldGroupName' => [
@@ -63,7 +64,7 @@ class FlexibleContent {
 							$layout['raw_fields'] = array_filter(
 								$flex_field_raw_sub_fields,
 								static function ( $field ) use ( $layout ) {
-									return $field['parent_layout'] === $layout['key'];
+									return isset( $field['parent_layout'] ) && $field['parent_layout'] === $layout['key'] ? $layout : null;
 								}
 							);
 

@@ -75,7 +75,7 @@ jobs:
             -e SKIP_TESTS_CLEANUP=${{ matrix.coverage }} \
             -e ACF_PRO=${{matrix.acf_pro }} \
             -e ACF_LICENSE_KEY=${{secrets.ACF_LICENSE_KEY}} \
-            -e ACF_VERSION=${{matrix.ACF_VERSION}} \
+            -e ACF_VERSION=${{matrix.acf_version}} \
             -e ACF_EXTENDED_LICENSE_KEY=${{secrets.ACF_EXTENDED_LICENSE_KEY}} \
             testing
 
