@@ -12,7 +12,7 @@ ACF_PRO=${ACF_PRO-false}
 #WPGRAPHQL_CONTENT_BLOCKS_VERSION=${WPGRAPHQL_CONTENT_BLOCKS_VERSION-"latest"}
 #
 #// fallback to hello.php as a hack. dont love this, but we have to pass a slug.
-#export WPGRAPHQL_CONTENT_BLOCKS_PLUGIN_SLUG=${WPGRAPHQL_CONTENT_BLOCKS_PLUGIN_SLUG-'wp-graphql-content-blocks/wp-graphql-content-blocks.php'}
+export WPGRAPHQL_CONTENT_BLOCKS_PLUGIN_SLUG=${WPGRAPHQL_CONTENT_BLOCKS_PLUGIN_SLUG-'hello.php'}
 
 # Export the plugin slug for use when running the codeception tests
 # (The slug is different for Free and Pro)
@@ -143,7 +143,8 @@ if [[ 'true' = "${WPGRAPHQL_CONTENT_BLOCKS}" ]]; then
 ## If WPGRAPHQL_CONTENT_BLOCKS is not true, skip installing it
 else
 	echo "Skipping installing WPGraphQL Content Blocks"
-	WPGRAPHQL_CONTENT_BLOCKS_PLUGIN_SLUG='wp-graphql-content-blocks/wp-graphql-content-blocks.php';
+	wp plugin activate "hello" --allow-root
+	WPGRAPHQL_CONTENT_BLOCKS_PLUGIN_SLUG='hello.php';
 fi
 
 ## List the plugins that were activated to ensure ACF Free or Pro was properly activated
