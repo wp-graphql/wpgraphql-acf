@@ -21,11 +21,13 @@ jobs:
         php: [ '8.1', '8.0' ]
         wordpress: [ '6.2', '6.1' ]
         acf_pro: [ true, false ]
+        wpgraphql_content_blocks: [ false ]
         acf_version: [ 5.12.4, 6.1.8 ]
         include:
           - php: '8.1'
             wordpress: '6.1'
             acf_pro: true
+            wpgraphql_content_blocks: true
             coverage: 1
           - php: '8.1'
             wordpress: '5.9'
@@ -78,6 +80,7 @@ jobs:
             -e ACF_LICENSE_KEY=${{secrets.ACF_LICENSE_KEY}} \
             -e ACF_VERSION=${{matrix.acf_version}} \
             -e ACF_EXTENDED_LICENSE_KEY=${{secrets.ACF_EXTENDED_LICENSE_KEY}} \
+            -e WPGRAPHQL_CONTENT_BLOCKS=${{matrix.wpgraphql_content_blocks}} \
             testing
 
       - name: Push Codecoverage to Coveralls.io
