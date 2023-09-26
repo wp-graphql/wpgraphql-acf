@@ -34,7 +34,7 @@ jobs:
           - php: '7.3'
             wordpress: '5.9'
       fail-fast: false
-    name: WordPress ${{ matrix.wordpress }}, PHP ${{ matrix.php }}, ACF ${{matrix.acf_version}}, ACF & ACF EXTENDED PRO ${{matrix.acf_pro}}
+    name: WordPress ${{ matrix.wordpress }}, PHP ${{ matrix.php }}, ACF ${{matrix.acf_version}}, ACF & ACF EXTENDED PRO ${{matrix.acf_pro}}, WPGRAPHQL Content Blocks ${{matrix.acf_pro}}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -61,6 +61,7 @@ jobs:
         env:
           PHP_VERSION: ${{ matrix.php }}
           WP_VERSION: ${{ matrix.wordpress }}
+        # NOTE: We test against WPGraphQL Content Blocks if ACF Pro is active
         run: |
           docker-compose build \
             --build-arg WP_VERSION=${{ matrix.wordpress }} \
