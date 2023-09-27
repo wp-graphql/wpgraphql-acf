@@ -35,6 +35,22 @@ class AcfeImageSelectorFieldTest extends \Tests\WPGraphQL\Acf\WPUnit\AcfeFieldTe
 		];
 	}
 
+	public function get_block_query_fragment() {
+		return '
+		fragment BlockQueryFragment on AcfTestGroup {
+		  testAcfeImageSelector
+		}
+		';
+	}
+
+	public function get_block_data_to_store() {
+		return [ '2' ];
+	}
+
+	public function get_expected_block_fragment_response() {
+		return [ '2' ];
+	}
+
 	public function testFieldExists(): void {
 		$field_types = acf_get_field_types();
 		if ( class_exists('ACFE_Pro') ) {

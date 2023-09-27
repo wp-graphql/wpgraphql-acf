@@ -35,6 +35,28 @@ class AcfeImageSizesFieldTest extends \Tests\WPGraphQL\Acf\WPUnit\AcfeFieldTestC
 		];
 	}
 
+	public function get_block_query_fragment() {
+		return '
+		fragment BlockQueryFragment on AcfTestGroup {
+		  testAcfeImageSizes {
+		    name
+		  }
+		}
+		';
+	}
+
+	public function get_block_data_to_store() {
+		return 'thumbnail';
+	}
+
+	public function get_expected_block_fragment_response() {
+		return [
+			[
+				'name' => 'thumbnail'
+			]
+		];
+	}
+
 	public function testFieldExists(): void {
 		$field_types = acf_get_field_types();
 		if ( class_exists('ACFE_Pro') ) {

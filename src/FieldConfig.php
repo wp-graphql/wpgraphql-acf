@@ -295,11 +295,14 @@ class FieldConfig {
 	 * @param array       $args
 	 * @param \WPGraphQL\AppContext  $context
 	 * @param \GraphQL\Type\Definition\ResolveInfo $info
+	 * @param array $acf_field The ACF Field to resolve for
 	 *
 	 * @return mixed
 	 */
-	public function resolve_field( $root, array $args, AppContext $context, ResolveInfo $info ) {
+	public function resolve_field( $root, array $args, AppContext $context, ResolveInfo $info, $acf_field = [] ) {
 		$field_config = $info->fieldDefinition->config['acf_field'] ?? $this->acf_field;
+		// merge the field config and the acf_field passed in
+		$field_config = array_merge( $field_config, $acf_field );
 		$node         = $root['node'] ?? null;
 		$node_id      = $node ? Utils::get_node_acf_id( $node ) : null;
 

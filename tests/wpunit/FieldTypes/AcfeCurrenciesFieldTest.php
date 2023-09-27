@@ -35,6 +35,30 @@ class AcfeCurrenciesFieldTest extends \Tests\WPGraphQL\Acf\WPUnit\AcfeFieldTestC
 		];
 	}
 
+	public function get_block_query_fragment() {
+		return '
+		fragment BlockQueryFragment on AcfTestGroup {
+		  testAcfeCurrencies {
+		     __typename
+            name
+		  }
+		}
+		';
+	}
+
+	public function get_block_data_to_store() {
+		return [ 'LRD' ];
+	}
+
+	public function get_expected_block_fragment_response() {
+		return [
+			[
+				'__typename' => 'ACFE_Currency',
+				'name' => 'Liberian dollar',
+			]
+		];
+	}
+
 	public function testFieldExists(): void {
 		$field_types = acf_get_field_types();
 		if ( class_exists('ACFE_Pro') ) {
