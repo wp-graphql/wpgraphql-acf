@@ -70,4 +70,35 @@ class AcfeTaxonomyTermsFieldTest extends \Tests\WPGraphQL\Acf\WPUnit\AcfeFieldTe
 		';
 	}
 
+	public function get_block_query_fragment() {
+		return '
+		fragment BlockQueryFragment on AcfTestGroup {
+		  testAcfeTaxonomyTerms {
+		    __typename
+		    name
+		  }
+		}
+		';
+	}
+
+	public function get_block_data_to_store() {
+		return [
+			$this->category->term_id,
+			$this->tag->term_id,
+		];
+	}
+
+	public function get_expected_block_fragment_response() {
+		return [
+			[
+				'__typename' => 'Category',
+				'name' => $this->category->name,
+			],
+			[
+				'__typename' => 'Tag',
+				'name' => $this->tag->name,
+			],
+		];
+	}
+
 }

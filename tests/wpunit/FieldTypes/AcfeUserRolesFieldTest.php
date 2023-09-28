@@ -59,4 +59,28 @@ class AcfeUserRolesFieldTest extends \Tests\WPGraphQL\Acf\WPUnit\AcfeFieldTestCa
 		}
 		';
 	}
+
+	public function get_block_query_fragment() {
+		return '
+		fragment BlockQueryFragment on AcfTestGroup {
+		  testAcfeUserRoles {
+		    __typename
+		    name
+		  }
+		}
+		';
+	}
+
+	public function get_block_data_to_store() {
+		return [
+			'editor',
+			'administrator'
+		];
+	}
+
+	// User roles are not public, so this will return an empty array
+	// @todo: test against auth request too?
+	public function get_expected_block_fragment_response() {
+		return [];
+	}
 }

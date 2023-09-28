@@ -54,8 +54,8 @@ class AcfeDateRangePickerFieldTest extends \Tests\WPGraphQL\Acf\WPUnit\AcfeField
 
 	public function get_expected_block_fragment_response() {
 		return [
-			'startDate' => '2023-09-27T00:00:00',
-			'endDate' => '2023-09-29T00:00:00',
+			'startDate' => '2023-09-27T00:00:00+00:00',
+			'endDate' => '2023-09-29T00:00:00+00:00',
 		];
 	}
 

@@ -35,6 +35,37 @@ class AcfeTaxonomiesFieldTest extends \Tests\WPGraphQL\Acf\WPUnit\AcfeFieldTestC
 		];
 	}
 
+	public function get_block_query_fragment() {
+		return '
+		fragment BlockQueryFragment on AcfTestGroup {
+		  testAcfeTaxonomies {
+		    __typename
+		    name
+		  }
+		}
+		';
+	}
+
+	public function get_block_data_to_store() {
+		return [
+			'category',
+			'post_tag'
+		];
+	}
+
+	public function get_expected_block_fragment_response() {
+		return [
+			[
+				'__typename' => 'Taxonomy',
+				'name' => 'category',
+			],
+			[
+				'__typename' => 'Taxonomy',
+				'name' => 'post_tag',
+			],
+		];
+	}
+
 	public function testFieldExists(): void {
 		$field_types = acf_get_field_types();
 		$this->assertTrue( array_key_exists( $this->get_field_type(), $field_types ) );

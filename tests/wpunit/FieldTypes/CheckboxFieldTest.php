@@ -59,5 +59,20 @@ class CheckboxFieldTest extends \Tests\WPGraphQL\Acf\WPUnit\AcfFieldTestCase {
 		';
 	}
 
+	public function get_block_query_fragment() {
+		return '
+		fragment BlockQueryFragment on AcfTestGroup {
+		  testCheckbox
+		}
+		';
+	}
+
+	public function get_block_data_to_store() {
+		return [ 'one', 2 ];
+	}
+
+	public function get_expected_block_fragment_response() {
+		return [ 'one', '2' ];
+	}
 
 }
