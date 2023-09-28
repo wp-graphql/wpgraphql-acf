@@ -14,7 +14,7 @@ class DateTimePicker {
 			'date_time_picker',
 			[
 				'graphql_type' => 'String',
-				'resolve' => function( $root, $args, $context, $info, $field_type, FieldConfig $field_config ) {
+				'resolve'      => static function ( $root, $args, $context, $info, $field_type, FieldConfig $field_config ) {
 					$value = $field_config->resolve_field( $root, $args, $context, $info );
 
 					if ( empty( $value ) ) {
@@ -30,8 +30,14 @@ class DateTimePicker {
 						return $value;
 					}
 
-					return \DateTime::createFromFormat( $return_format, $value )->format( DateTimeInterface::RFC3339 );
-				}
+					$date_time = \DateTime::createFromFormat( $return_format, $value );
+
+					if ( empty( $date_time ) ) {
+						return null;
+					}
+
+					return $date_time->format( DateTimeInterface::RFC3339 );
+				},
 			]
 		);
 	}
