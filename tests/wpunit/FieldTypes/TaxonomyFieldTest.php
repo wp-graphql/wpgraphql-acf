@@ -59,4 +59,35 @@ class TaxonomyFieldTest extends \Tests\WPGraphQL\Acf\WPUnit\AcfFieldTestCase {
 		];
 	}
 
+	public function get_block_query_fragment() {
+		return '
+		fragment BlockQueryFragment on AcfTestGroup {
+		  testTaxonomy {
+		    nodes {
+		      __typename
+		      databaseId
+		    }
+		  }
+		}
+		';
+	}
+
+	public function get_block_data_to_store() {
+		return [ $this->category->term_id, $this->tag->term_id ];
+	}
+
+	public function get_expected_block_fragment_response() {
+		return [
+			'nodes' => [
+				[
+					'__typename' => 'Category',
+					'databaseId' => $this->category->term_id,
+				],
+				[
+					'__typename' => 'Tag',
+					'databaseId' => $this->tag->term_id,
+				],
+			]
+		];
+	}
 }

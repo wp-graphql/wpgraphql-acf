@@ -59,4 +59,34 @@ class LinkFieldTest extends \Tests\WPGraphQL\Acf\WPUnit\AcfFieldTestCase {
 		];
 	}
 
+	public function get_block_query_fragment() {
+		return '
+		fragment BlockQueryFragment on AcfTestGroup {
+		  testLink {
+		    __typename
+		    title
+		    url
+		    target
+	      }
+		}
+		';
+	}
+
+	public function get_block_data_to_store() {
+		return [
+			'__typename' => 'AcfLink',
+			'title' => 'test',
+			'url' => 'https://example.com/test',
+			'target' => "_blank",
+		];
+	}
+
+	public function get_expected_block_fragment_response() {
+		return [
+			'__typename' => 'AcfLink',
+			'title' => 'test',
+			'url' => 'https://example.com/test',
+			'target' => "_blank",
+		];
+	}
 }

@@ -29,7 +29,7 @@ class AcfeDateRangePicker {
 					if ( ! empty( $end_date ) ) {
 						$_end_date = \DateTime::createFromFormat( 'Ymd|', $end_date );
 						if ( ! empty( $_end_date ) ) {
-							$start_date = $_end_date->format( \DateTimeInterface::RFC3339 );
+							$end_date = $_end_date->format( \DateTimeInterface::RFC3339 );
 						}
 					}
 
