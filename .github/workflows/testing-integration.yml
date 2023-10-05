@@ -52,7 +52,9 @@ jobs:
           extensions: json, mbstring, zip, unzip
 
       - name: Install dependencies
-        run: composer install
+        uses: ramsey/composer-install@v2
+        with:
+          composer-options: "--no-dev"
 
       - name: Copy environment files
         run: |
