@@ -45,10 +45,11 @@ jobs:
       - name: 🔎 Check IP
         run: curl https://api.ipify.org
 
-      - name: Install PHP
+      - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
+          tools: composer:v2
           extensions: json, mbstring, zip, unzip
 
       - name: Install dependencies
