@@ -39,7 +39,7 @@ jobs:
     name: WordPress ${{ matrix.wordpress }}, PHP ${{ matrix.php }}, ACF ${{matrix.acf_version}}, ACF & ACF EXTENDED PRO ${{matrix.acf_pro}}, WPGRAPHQL Content Blocks ${{matrix.wpgraphql_content_blocks}}
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
         # This is used in case the IP gets blocked by one of the services used to download the pro plugins
       - name: 🔎 Check IP
