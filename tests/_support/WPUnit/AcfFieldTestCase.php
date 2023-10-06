@@ -59,9 +59,11 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 	}
 
 	/**
+	 * @param string $acf_field_key
+	 * @param string $acf_field_name
 	 * @return array
 	 */
-	public function get_extra_block_data_to_store( $acf_field_key ): array {
+	public function get_extra_block_data_to_store( $acf_field_key = '', $acf_field_name = '' ): array {
 			return [];
 	}
 
@@ -302,7 +304,7 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 			'data' => array_merge( [
 				$this->get_field_name() => $this->get_block_data_to_store(),
 				'_' . $this->get_field_name() => $acf_field_key,
-			], $this->get_extra_block_data_to_store( $acf_field_key ) ),
+			], $this->get_extra_block_data_to_store( $acf_field_key, $this->get_field_name() ) ),
 			'align' => '',
 			'mode' => 'edit'
 		] );
@@ -314,6 +316,8 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 
 		<!-- wp:acf/test-block '. $encoded_block_data .' /-->
 		';
+
+		codecept_debug( [ 'html_block_content' => $content ]);
 
 
 		$post = $this->factory()->post->create([

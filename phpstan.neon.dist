@@ -21,6 +21,8 @@ parameters:
         - activation.php
         - deactivation.php
         - src/
+    scanFiles:
+        - vendor/axepress/wp-graphql-stubs/wp-graphql-stubs.php
     excludePaths:
       analyseAndScan:
         - */node_modules/*

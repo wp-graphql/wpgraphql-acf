@@ -43,7 +43,7 @@ class AcfeDateRangePickerFieldTest extends \Tests\WPGraphQL\Acf\WPUnit\AcfeField
 		return false;
 	}
 
-	public function get_extra_block_data_to_store( $acf_field_key ): array {
+	public function get_extra_block_data_to_store( $acf_field_key = '', $acf_field_name = '' ): array {
 		return [
 			$this->get_field_name() . '_start' => '20230927',
 			'_' . $this->get_field_name() . '_start' => $acf_field_key,

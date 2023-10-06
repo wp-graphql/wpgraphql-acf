@@ -37,17 +37,22 @@ class Gallery {
 							'resolve'               => static function ( $root, $args, AppContext $context, $info ) use ( $field_config ) {
 								$value = $field_config->resolve_field( $root, $args, $context, $info );
 
+								$value = array_filter( $value );
 
-								if ( empty( $value ) || ! is_array( $value ) ) {
-									return null;
+								if ( empty( $value ) ) {
+									$field_name = $field_config->get_acf_field()['name'] ?? null;
+
+									if ( ! empty( $root[ $field_name ] ) ) {
+										$value = wp_list_pluck( $root[ $field_name ], 'ID' );
+									}
 								}
 
-								$value = array_map(
+								$value = is_array( $value ) ? array_map(
 									static function ( $id ) {
 										return absint( $id );
 									},
 									$value
-								);
+								) : $value;
 
 								$resolver = new PostObjectConnectionResolver( $root, $args, $context, $info, 'attachment' );
 								return $resolver

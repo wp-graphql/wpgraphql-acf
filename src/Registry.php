@@ -37,7 +37,6 @@ class Registry {
 		if ( $type_registry instanceof TypeRegistry ) {
 			$this->type_registry = $type_registry;
 		} else {
-			// @phpstan-ignore-next-line
 			$this->type_registry = \WPGraphQL::get_type_registry();
 		}
 
