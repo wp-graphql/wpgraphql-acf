@@ -29,6 +29,22 @@ class AcfeCodeEditorFieldTest extends \Tests\WPGraphQL\Acf\WPUnit\AcfeFieldTestC
 		return '<div>some html</div>';
 	}
 
+	public function get_block_query_fragment() {
+		return '
+		fragment BlockQueryFragment on AcfTestGroup {
+		  testAcfeCodeEditor
+		}
+		';
+	}
+
+	public function get_block_data_to_store() {
+		return $this->get_data_to_store();
+	}
+
+	public function get_expected_block_fragment_response() {
+		return $this->get_block_data_to_store();
+	}
+
 	public function get_acf_clone_fragment():string {
 		return '
 		fragment AcfTestGroupFragment on AcfTestGroup {

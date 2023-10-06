@@ -26,7 +26,7 @@ class DateTimePickerFieldTest extends \Tests\WPGraphQL\Acf\WPUnit\AcfFieldTestCa
 	}
 
 	public function get_expected_clone_value(): string {
-		return '22/06/2023 12:09 am';
+		return '2023-06-22T00:09:00+00:00';
 	}
 
 	public function get_clone_value_to_save(): string {
@@ -39,5 +39,21 @@ class DateTimePickerFieldTest extends \Tests\WPGraphQL\Acf\WPUnit\AcfFieldTestCa
 			clonedTestDateTimePicker
 		}
 		';
+	}
+
+	public function get_block_query_fragment() {
+		return '
+		fragment BlockQueryFragment on AcfTestGroup {
+		  testDateTimePicker
+		}
+		';
+	}
+
+	public function get_block_data_to_store() {
+		return '2023-09-28 01:02:03';
+	}
+
+	public function get_expected_block_fragment_response() {
+		return '2023-09-28T01:02:00+00:00';
 	}
 }

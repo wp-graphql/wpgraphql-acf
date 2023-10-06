@@ -35,6 +35,30 @@ class AcfeCountriesFieldTest extends \Tests\WPGraphQL\Acf\WPUnit\AcfeFieldTestCa
 		];
 	}
 
+	public function get_block_query_fragment() {
+		return '
+		fragment BlockQueryFragment on AcfTestGroup {
+		  testAcfeCountries {
+		     __typename
+            name
+		  }
+		}
+		';
+	}
+
+	public function get_block_data_to_store() {
+		return [ 'td' ];
+	}
+
+	public function get_expected_block_fragment_response() {
+		return [
+			[
+				'__typename' => 'ACFE_Country',
+				'name' => 'Chad',
+			]
+		];
+	}
+
 	public function testFieldExists(): void {
 		$field_types = acf_get_field_types();
 		if ( class_exists('ACFE_Pro') ) {

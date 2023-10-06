@@ -78,6 +78,16 @@ class WPGraphQLAcfTestCase extends \Tests\WPGraphQL\TestCase\WPGraphQLTestCase {
 	public $test_image;
 
 	/**
+	 * @var \WP_Post
+	 */
+	public $imageId;
+
+	/**
+	 * @var \WP_Post
+	 */
+	public $fileId;
+
+	/**
 	 * @return void
 	 */
 	public function setUp(): void {
@@ -92,7 +102,7 @@ class WPGraphQLAcfTestCase extends \Tests\WPGraphQL\TestCase\WPGraphQLTestCase {
 		// whether the tests are being run with ACF pro or not
 		$this->is_acf_pro = in_array( 'advanced-custom-fields-pro/acf.php', $active_plugins, true );
 
-		$this->test_image = dirname( __FILE__, 2 ) . '/_data/images/test.png';
+		$this->test_image = dirname( __FILE__, 3 ) . '/_data/images/test.png';
 
 		// create users for use within tests
 		$this->admin = self::factory()->user->create_and_get( [ 'role' => 'administrator' ] );
@@ -101,6 +111,8 @@ class WPGraphQLAcfTestCase extends \Tests\WPGraphQL\TestCase\WPGraphQLTestCase {
 
 		$this->category = self::factory()->category->create_and_get([ 'name' => 'Test Category' ] );
 		$this->tag = self::factory()->tag->create_and_get([ 'name' => 'Test Tag' ] );
+
+
 
 		$this->published_post = self::factory()->post->create_and_get([
 			'post_type' => 'post',
@@ -129,6 +141,10 @@ class WPGraphQLAcfTestCase extends \Tests\WPGraphQL\TestCase\WPGraphQLTestCase {
 			'comment_approved' => true,
 			'user_id' => $this->author->ID,
 		]);
+
+		$this->fileId = self::factory()->attachment->create_upload_object( $this->test_image, 0 );
+
+		$this->imageId = self::factory()->attachment->create_upload_object( $this->test_image, $this->published_post->ID );
 
 		$this->menu_location_name = 'test-location';
 		add_theme_support( 'nav_menus' );

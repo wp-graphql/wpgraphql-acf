@@ -21,11 +21,13 @@ jobs:
         php: [ '8.1', '8.0' ]
         wordpress: [ '6.2', '6.1' ]
         acf_pro: [ true, false ]
+        wpgraphql_content_blocks: [ false ]
         acf_version: [ 5.12.4, 6.1.8 ]
         include:
           - php: '8.1'
             wordpress: '6.1'
             acf_pro: true
+            wpgraphql_content_blocks: true
             coverage: 1
           - php: '8.1'
             wordpress: '5.9'
@@ -34,23 +36,26 @@ jobs:
           - php: '7.3'
             wordpress: '5.9'
       fail-fast: false
-    name: WordPress ${{ matrix.wordpress }}, PHP ${{ matrix.php }}, ACF ${{matrix.acf_version}}, ACF & ACF EXTENDED PRO ${{matrix.acf_pro}}
+    name: WordPress ${{ matrix.wordpress }}, PHP ${{ matrix.php }}, ACF ${{matrix.acf_version}}, ACF & ACF EXTENDED PRO ${{matrix.acf_pro}}, WPGRAPHQL Content Blocks ${{matrix.wpgraphql_content_blocks}}
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
         # This is used in case the IP gets blocked by one of the services used to download the pro plugins
       - name: 🔎 Check IP
         run: curl https://api.ipify.org
 
-      - name: Install PHP
+      - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
+          tools: composer:v2
           extensions: json, mbstring, zip, unzip
 
       - name: Install dependencies
-        run: composer install
+        uses: ramsey/composer-install@v2
+        with:
+          composer-options: "--no-dev"
 
       - name: Copy environment files
         run: |
@@ -61,6 +66,7 @@ jobs:
         env:
           PHP_VERSION: ${{ matrix.php }}
           WP_VERSION: ${{ matrix.wordpress }}
+        # NOTE: We test against WPGraphQL Content Blocks if ACF Pro is active
         run: |
           docker-compose build \
             --build-arg WP_VERSION=${{ matrix.wordpress }} \
@@ -77,6 +83,7 @@ jobs:
             -e ACF_LICENSE_KEY=${{secrets.ACF_LICENSE_KEY}} \
             -e ACF_VERSION=${{matrix.acf_version}} \
             -e ACF_EXTENDED_LICENSE_KEY=${{secrets.ACF_EXTENDED_LICENSE_KEY}} \
+            -e WPGRAPHQL_CONTENT_BLOCKS=${{matrix.wpgraphql_content_blocks}} \
             testing
 
       - name: Push Codecoverage to Coveralls.io

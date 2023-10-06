@@ -32,8 +32,32 @@ class UserFieldTest extends \Tests\WPGraphQL\Acf\WPUnit\AcfFieldTestCase {
 		return $this->admin->ID;
 	}
 
+	public function get_block_query_fragment() {
+		return '
+		fragment BlockQueryFragment on AcfTestGroup {
+		  testUser {
+		    nodes {
+		      __typename
+		      databaseId
+		    }
+		  }
+		}
+		';
+	}
+
 	public function get_block_data_to_store() {
-		return $this->get_data_to_store();
+		return $this->admin->ID;
+	}
+
+	public function get_expected_block_fragment_response() {
+		return [
+			'nodes' => [
+				[
+					'__typename' => 'User',
+					'databaseId' => $this->admin->ID
+				]
+			]
+		];
 	}
 
 	public function get_clone_value_to_save() {

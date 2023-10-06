@@ -41,4 +41,20 @@ class EmailFieldTest extends \Tests\WPGraphQL\Acf\WPUnit\AcfFieldTestCase {
 		return 'test@example.com';
 	}
 
+	public function get_block_query_fragment() {
+		return '
+		fragment BlockQueryFragment on AcfTestGroup {
+		  testEmail
+		}
+		';
+	}
+
+	public function get_block_data_to_store() {
+		return 'test@example.com';
+	}
+
+	public function get_expected_block_fragment_response() {
+		return 'test@example.com';
+	}
+
 }

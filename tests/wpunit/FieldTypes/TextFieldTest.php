@@ -49,11 +49,20 @@ class TextFieldTest extends \Tests\WPGraphQL\Acf\WPUnit\AcfFieldTestCase {
 		return 'String';
 	}
 
-	/**
-	 * @return mixed|string|null
-	 */
+	public function get_block_query_fragment() {
+		return '
+		fragment BlockQueryFragment on AcfTestGroup {
+		  testText
+		}
+		';
+	}
+
 	public function get_block_data_to_store() {
-		return $this->get_data_to_store();
+		return 'text value...';
+	}
+
+	public function get_expected_block_fragment_response() {
+		return $this->get_block_data_to_store();
 	}
 
 	/**

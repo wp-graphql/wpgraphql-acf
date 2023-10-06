@@ -236,7 +236,7 @@ class AcfExtended {
 						},
 					],
 				],
-			] 
+			]
 		);
 
 		register_graphql_interface_type(

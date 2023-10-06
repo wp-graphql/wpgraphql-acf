@@ -25,6 +25,22 @@ class AcfePhoneNumberFieldTest extends \Tests\WPGraphQL\Acf\WPUnit\AcfeFieldTest
 		return 'String';
 	}
 
+	public function get_block_query_fragment() {
+		return '
+		fragment BlockQueryFragment on AcfTestGroup {
+		  testAcfePhoneNumber
+		}
+		';
+	}
+
+	public function get_block_data_to_store() {
+		return '+1234567890';
+	}
+
+	public function get_expected_block_fragment_response() {
+		return '+1234567890';
+	}
+
 	public function testFieldExists(): void {
 		$field_types = acf_get_field_types();
 		if ( class_exists('ACFE_Pro') ) {

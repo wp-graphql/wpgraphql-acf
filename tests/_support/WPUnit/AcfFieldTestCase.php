@@ -59,6 +59,13 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 	}
 
 	/**
+	 * @return array
+	 */
+	public function get_extra_block_data_to_store( $acf_field_key ): array {
+			return [];
+	}
+
+	/**
 	 * Override this with the block query fragment to test against for a field
 	 * @return null
 	 */
@@ -277,25 +284,35 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 		]);
 
 
-		if ( empty( $this->get_block_query_fragment() ) ) {
+		if ( null === $this->get_block_query_fragment() ) {
 			$this->markTestIncomplete( 'No block query fragment defined' );
 		}
 
-		if ( empty( $this->get_expected_block_fragment_response() ) ) {
+		if ( null === $this->get_expected_block_fragment_response() ) {
 			$this->markTestIncomplete( 'No expected block fragment response defined' );
 		}
 
-		if ( empty( $this->get_block_data_to_store() ) ) {
+		if ( null === $this->get_block_data_to_store() ) {
 			$this->markTestIncomplete( 'No block data to store defined' );
 		}
 
-		// Save post with content including the block + field(s)
+
+		$encoded_block_data = wp_json_encode( [
+			'name' => "acf/test-block",
+			'data' => array_merge( [
+				$this->get_field_name() => $this->get_block_data_to_store(),
+				'_' . $this->get_field_name() => $acf_field_key,
+			], $this->get_extra_block_data_to_store( $acf_field_key ) ),
+			'align' => '',
+			'mode' => 'edit'
+		] );
+
 		$content = '
 		<!-- wp:paragraph -->
 		<p>Test paragraph</p>
 		<!-- /wp:paragraph -->
 
-		<!-- wp:acf/test-block {"name":"acf/test-block","data":{"'. $this->get_field_name() . '":"' . $this->get_block_data_to_store()  .'","_' . $this->get_field_name() . '":"'. $acf_field_key . '"},"align":"","mode":"edit"} /-->
+		<!-- wp:acf/test-block '. $encoded_block_data .' /-->
 		';
 
 
@@ -305,8 +322,6 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 			'post_author' => $this->admin,
 			'post_content' => $content
 		]);
-
-
 
 		$fragment = $this->get_block_query_fragment();
 
@@ -334,6 +349,10 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 			'variables' => [
 				'id' => $post,
 			],
+		]);
+
+		codecept_debug([
+			'$content' => $content,
 		]);
 
 		// assert the data is returned as expected
@@ -393,8 +412,12 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 	public function testFieldShowsInSchemaWithExpectedResolveType() {
 
 		// if ACF PRO is not active, skip the test
-		if ( ! defined( 'ACF_PRO' ) || ! defined( 'ACF_MAJOR_VERSION' ) || version_compare( 'ACF_MAJOR_VERSION', '6.0', 'lt' ) ) {
+		if ( ! defined( 'ACF_PRO' ) || ! defined( 'ACF_MAJOR_VERSION' ) ) {
 			$this->markTestSkipped( 'ACF Pro is not active so this test will not run.' );
+		}
+
+		if ( version_compare( ACF_MAJOR_VERSION, '6', '<' ) ) {
+			$this->markTestSkipped( sprintf( 'ACF Pro v%s is less than required v6.0 for this test to run.', ACF_MAJOR_VERSION ) );
 		}
 
 		if ( 'undefined' === $this->get_expected_field_resolve_type() ) {
