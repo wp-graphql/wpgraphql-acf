@@ -39,6 +39,14 @@ class File {
 							'resolve'               => static function ( $root, $args, AppContext $context, ResolveInfo $info ) use ( $field_config ) {
 								$value = $field_config->resolve_field( $root, $args, $context, $info );
 
+								if ( is_object( $value ) && isset( $value->ID ) ) {
+									$value = $value->ID;
+								}
+
+								if ( is_array( $value ) && isset( $value['ID'] ) ) {
+									$value = $value['ID'];
+								}
+
 								if ( empty( $value ) || ! absint( $value ) ) {
 									return null;
 								}
