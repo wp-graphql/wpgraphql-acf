@@ -305,9 +305,9 @@ class FieldConfig {
 		$field_config = array_merge( $field_config, $acf_field );
 		$node         = $root['node'] ?? null;
 		$node_id      = $node ? Utils::get_node_acf_id( $node ) : null;
-
-		$field_key = null;
-		$is_cloned = false;
+		$return_value = null;
+		$field_key    = null;
+		$is_cloned    = false;
 
 		if ( ! empty( $field_config['__key'] ) ) {
 			$field_key = $field_config['__key'];
@@ -349,6 +349,10 @@ class FieldConfig {
 			return $this->prepare_acf_field_value( $root[ $field_key ], $node, $node_id, $field_config );
 		}
 
+		if ( ! empty( $root[ $field_config['name'] ] ) ) {
+			return $this->prepare_acf_field_value( $root[ $field_config['name'] ], $node, $node_id, $field_config );
+		}
+
 		/**
 		 * Filter the field value before resolving.
 		 *
@@ -366,34 +370,48 @@ class FieldConfig {
 			return $pre_value;
 		}
 
+		$parent_field_name = null;
+		if ( ! empty( $field_config['parent'] ) ) {
+			$parent_field = acf_get_field( $field_config['parent'] );
+			if ( ! empty( $parent_field['name'] ) ) {
+				$parent_field_name = $parent_field['name'];
+			}
+		}
+
 		// resolve block field
 		if ( is_array( $node ) && isset( $node['blockName'] ) ) {
-			if ( ! empty( $node['attrs']['data'] ) ) {
-				$fields = acf_setup_meta( $node['attrs']['data'], 0, true );
+			if ( isset( $node['attrs']['data'] ) ) {
+				acf_setup_meta( $node['attrs']['data'], acf_get_block_id( $node['attrs']['data'] ), true );
 				acf_prepare_block( $node['attrs'] );
-				$value = $fields[ $field_config['name'] ] ?? null;
-			} elseif ( ! empty( $node['attrs'] ) ) {
+				$return_value = get_field( $field_config['name'] );
+
+				if ( empty( $return_value ) && isset( $node['attrs']['data'][ $field_config['name'] ] ) ) {
+					$return_value = $node['attrs']['data'][ $field_config['name'] ];
+				}
+
+				if ( empty( $return_value ) && ( ! empty( $parent_field_name ) && ! empty( $node['attrs']['data'][ $parent_field_name . '_' . $field_config['name'] ] ) ) ) {
+					$return_value = $node['attrs']['data'][ $parent_field_name . '_' . $field_config['name'] ];
+				}
+			} elseif ( isset( $node['attrs'] ) ) {
 				acf_prepare_block( $node['attrs'] );
-				$value = get_field( $field_config['name'], false, $should_format_value );
+				$return_value = get_field( $field_config['name'], false, $should_format_value );
 				acf_reset_meta();
 			}
 		}
 
 		// If there's no node_id at this point, we can return null
-		if ( empty( $value ) && empty( $node_id ) ) {
+		if ( empty( $return_value ) && empty( $node_id ) ) {
 			return null;
 		}
 
 		// if a value hasn't been set yet, use the get_field() function to get the value
-		if ( empty( $value ) ) {
-			$value = get_field( $field_key, $node_id, $should_format_value );
+		if ( empty( $return_value ) ) {
+			$return_value = get_field( $field_key, $node_id, $should_format_value );
 		}
 
+
 		// Prepare the value for response
-		$prepared_value = $this->prepare_acf_field_value( $value, $root, $node_id, $field_config );
-
-
-
+		$prepared_value = $this->prepare_acf_field_value( $return_value, $root, $node_id, $field_config );
 		// Empty values are set to null
 		if ( empty( $prepared_value ) ) {
 			$prepared_value = null;

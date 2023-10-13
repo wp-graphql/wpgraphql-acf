@@ -292,8 +292,9 @@ class WPGraphQLAcfTestCase extends \Tests\WPGraphQL\TestCase\WPGraphQLTestCase {
 	 */
 	public function register_acf_field( array $acf_field = [], array $acf_field_group = [] ): string {
 
+
 		$field_group_key = $this->register_acf_field_group( $acf_field_group );
-		$key = uniqid( 'acf_test',true );
+		$key =  $acf_field['key'] ?? uniqid( 'acf_test',true );
 
 		$config = array_merge( [
 			'parent'            => $field_group_key,

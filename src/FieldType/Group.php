@@ -1,6 +1,7 @@
 <?php
 namespace WPGraphQL\Acf\FieldType;
 
+use WPGraphQL\AppContext;
 use WPGraphQL\Utils\Utils;
 use WPGraphQL\Acf\AcfGraphQLFieldType;
 use WPGraphQL\Acf\FieldConfig;
@@ -23,6 +24,7 @@ class Group {
 
 					$sub_field_group['graphql_type_name']  = $type_name;
 					$sub_field_group['graphql_field_name'] = $type_name;
+					$sub_field_group['parent']             = $sub_field_group['key'];
 
 					$field_config->get_registry()->register_acf_field_groups_to_graphql(
 						[
@@ -31,6 +33,18 @@ class Group {
 					);
 
 					return $type_name;
+				},
+				'resolve'      => static function ( $root, $args, AppContext $context, $info, $field_type, FieldConfig $field_config ) {
+					$value = $field_config->resolve_field( $root, $args, $context, $info );
+
+					if ( ! empty( $value ) ) {
+						return $value;
+					}
+
+					$root['value']           = $value;
+					$root['acf_field_group'] = $field_config->get_acf_field();
+
+					return $root;
 				},
 			]
 		);
