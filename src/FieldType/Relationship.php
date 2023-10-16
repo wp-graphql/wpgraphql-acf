@@ -30,7 +30,7 @@ class Relationship {
 								static function ( $id ) {
 									return absint( $id );
 								},
-								$value 
+								$value
 							);
 
 							$resolver = new PostObjectConnectionResolver( $root, $args, $context, $info, 'any' );
