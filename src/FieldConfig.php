@@ -381,9 +381,10 @@ class FieldConfig {
 		// resolve block field
 		if ( is_array( $node ) && isset( $node['blockName'] ) ) {
 			if ( isset( $node['attrs']['data'] ) ) {
-				acf_setup_meta( $node['attrs']['data'], acf_get_block_id( $node['attrs']['data'] ), true );
+				$block_id = acf_get_block_id( $node['attrs']['data'] );
+				acf_setup_meta( $node['attrs']['data'], $block_id, true );
 				acf_prepare_block( $node['attrs'] );
-				$return_value = get_field( $field_config['name'] );
+				$return_value = get_field( $field_config['name'], $block_id, $should_format_value );
 
 				if ( empty( $return_value ) && isset( $node['attrs']['data'][ $field_config['name'] ] ) ) {
 					$return_value = $node['attrs']['data'][ $field_config['name'] ];

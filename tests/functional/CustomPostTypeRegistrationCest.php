@@ -85,8 +85,8 @@ class CustomPostTypeRegistrationCest {
 		$I->click( 'Generate PHP' );
 		$I->seeElement( '//textarea[@id="acf-export-textarea"]');
 		$I->see( "'show_in_graphql' => true", '//textarea[@id="acf-export-textarea"]');
-		$I->see( "'graphql_single_name' => 'testType'", '//textarea[@id="acf-export-textarea"]');
-		$I->see( "'graphql_plural_name' => 'testTypes'", '//textarea[@id="acf-export-textarea"]');
+		$I->see( "'graphql_single_name' => 'testSingleName'", '//textarea[@id="acf-export-textarea"]');
+		$I->see( "'graphql_plural_name' => 'testPluralName'", '//textarea[@id="acf-export-textarea"]');
 
 	}
 

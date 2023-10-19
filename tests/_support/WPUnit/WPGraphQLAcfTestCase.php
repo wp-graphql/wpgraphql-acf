@@ -252,9 +252,11 @@ class WPGraphQLAcfTestCase extends \Tests\WPGraphQL\TestCase\WPGraphQLTestCase {
 	 */
 	public function register_acf_field_group( array $acf_field_group = [] ) {
 
+		$field_group_key = $acf_field_group['key'] ?? $this->get_acf_field_group_key();
+
 		// merge the defaults with the passed in options
 		$config = array_merge( [
-			'key'                   => $this->get_acf_field_group_key(),
+			'key'                   => $field_group_key,
 			'title'                 => 'ACF Test Group',
 			'fields'                => [],
 			'location'              => [
@@ -294,7 +296,7 @@ class WPGraphQLAcfTestCase extends \Tests\WPGraphQL\TestCase\WPGraphQLTestCase {
 
 
 		$field_group_key = $this->register_acf_field_group( $acf_field_group );
-		$key =  $acf_field['key'] ?? uniqid( 'acf_test',true );
+		$key = $acf_field['key'] ?? uniqid( 'acf_test', true );
 
 		$config = array_merge( [
 			'parent'            => $field_group_key,

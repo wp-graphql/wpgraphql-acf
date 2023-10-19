@@ -135,11 +135,13 @@ class TaxonomyRegistration {
 	public function add_taxonomy_registration_fields( array $args, array $taxonomy ): array {
 
 		// respect the show_in_graphql value. If not set, use the value of $args['public'] to determine if the post type should be shown in graphql
-		$args['show_in_graphql'] = isset( $args['show_in_graphql'] ) ? (bool) $args['show_in_graphql'] : true === $args['public'];
+		$args['show_in_graphql'] = isset( $taxonomy['show_in_graphql'] ) ? (bool) $taxonomy['show_in_graphql'] : true === $args['public'];
 
 		$graphql_single_name = '';
 
-		if ( isset( $args['graphql_single_name'] ) ) {
+		if ( isset( $taxonomy['graphql_single_name'] ) ) {
+			$graphql_single_name = $taxonomy['graphql_single_name'];
+		} elseif ( isset( $args['graphql_single_name'] ) ) {
 			$graphql_single_name = $args['graphql_single_name'];
 		} elseif ( isset( $args['labels']['singular_name'] ) ) {
 			$graphql_single_name = Utils::format_field_name( $args['labels']['singular_name'], true );
@@ -150,7 +152,9 @@ class TaxonomyRegistration {
 
 		$graphql_plural_name = '';
 
-		if ( isset( $args['graphql_plural_name'] ) ) {
+		if ( isset( $taxonomy['graphql_plural_name'] ) ) {
+			$graphql_plural_name = $taxonomy['graphql_plural_name'];
+		} elseif ( isset( $args['graphql_plural_name'] ) ) {
 			$graphql_plural_name = $args['graphql_plural_name'];
 		} elseif ( isset( $args['labels']['name'] ) ) {
 			$graphql_plural_name = Utils::format_field_name( $args['labels']['name'], true );
