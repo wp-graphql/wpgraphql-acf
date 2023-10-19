@@ -63,7 +63,7 @@ class LocationRules {
 	 * @return void
 	 */
 	public function set_graphql_type( string $field_group_name, string $graphql_type_name ): void {
-		$this->mapped_field_groups[ Utils::format_field_name( $field_group_name, true ) ][] = Utils::format_type_name( $graphql_type_name );
+		$this->mapped_field_groups[ Utils::format_field_name( $field_group_name, true ) ][] = ucfirst( Utils::format_field_name( $graphql_type_name, true ) );
 	}
 
 	/**
@@ -76,7 +76,7 @@ class LocationRules {
 	 * @return void
 	 */
 	public function unset_graphql_type( string $field_group_name, string $graphql_type_name ): void {
-		$this->unset_types[ Utils::format_field_name( $field_group_name, true ) ][] = Utils::format_type_name( $graphql_type_name );
+		$this->unset_types[ Utils::format_field_name( $field_group_name, true ) ][] = ucfirst( Utils::format_field_name( $graphql_type_name, true ) );
 	}
 
 	/**
@@ -323,6 +323,9 @@ class LocationRules {
 			case 'widget':
 				// @todo: Widgets are not currently supported in WPGraphQL
 				break;
+			case 'block':
+				$this->determine_block_rules( $field_group_name, $param, $operator, $value );
+				break;
 			case 'nav_menu':
 				$this->determine_nav_menu_rules( $field_group_name, $param, $operator, $value );
 				break;
@@ -398,29 +401,11 @@ class LocationRules {
 			'default' => 'DefaultTemplate',
 		];
 
-		$registered_page_templates = wp_get_theme()->get_post_templates();
-
-		if ( ! empty( $registered_page_templates ) && is_array( $registered_page_templates ) ) {
-			foreach ( $registered_page_templates as $post_type_templates ) {
-				// Post templates are returned as an array of arrays. PHPStan believes they're returned as
-				// an array of strings and believes this will always evaluate to false.
-				// We should ignore the phpstan check here.
-				if ( ! empty( $post_type_templates ) && is_array( $post_type_templates ) ) {
-					foreach ( $post_type_templates as $file => $name ) {
-						$name          = ucwords( $name );
-						$replaced_name = preg_replace( '/[^\w]/', '', $name );
-
-						if ( ! empty( $replaced_name ) ) {
-							$name = $replaced_name;
-						}
-
-						if ( preg_match( '/^\d/', $name ) || false === strpos( strtolower( $name ), 'template' ) ) {
-							$name = 'Template_' . $name;
-						}
-
-						$page_templates[ $file ] = $name;
-					}
-				}
+		$allowed_post_types = \WPGraphQL::get_allowed_post_types();
+		foreach ( $allowed_post_types as $post_type ) {
+			$post_type_templates = wp_get_theme()->get_page_templates( null, $post_type );
+			foreach ( $post_type_templates as $file => $name ) {
+				$page_templates[ $file ] = Utils::format_type_name_for_wp_template( $name, $file );
 			}
 		}
 
@@ -499,16 +484,13 @@ class LocationRules {
 	public function determine_post_template_rules( string $field_group_name, string $param, string $operator, string $value ): void {
 		$templates = $this->get_graphql_post_template_types();
 
-		if ( ! is_array( $templates ) || empty( $templates ) ) {
+		if ( empty( $templates ) ) {
 			return;
 		}
 
-		if ( '==' === $operator ) {
-
-			// If the template is available in GraphQL, set it
-			if ( isset( $templates[ $value ] ) ) {
-				$this->set_graphql_type( $field_group_name, $templates[ $value ] );
-			}
+		// If the template is available in GraphQL, set it
+		if ( ( '==' === $operator ) && isset( $templates[ $value ] ) ) {
+			$this->set_graphql_type( $field_group_name, $templates[ $value ] );
 		}
 
 		if ( '!=' === $operator ) {

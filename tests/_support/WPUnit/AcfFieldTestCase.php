@@ -298,13 +298,15 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 			$this->markTestIncomplete( 'No block data to store defined' );
 		}
 
+		$extra_data = $this->get_extra_block_data_to_store( $acf_field_key, $this->get_field_name() );
 
+		$extra_data = ( ! empty( $extra_data ) ) ? $extra_data : [];
 		$encoded_block_data = wp_json_encode( [
 			'name' => "acf/test-block",
 			'data' => array_merge( [
 				$this->get_field_name() => $this->get_block_data_to_store(),
 				'_' . $this->get_field_name() => $acf_field_key,
-			], $this->get_extra_block_data_to_store( $acf_field_key, $this->get_field_name() ) ),
+			], $extra_data ),
 			'align' => '',
 			'mode' => 'edit'
 		] );
@@ -319,8 +321,7 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 
 		codecept_debug( [ 'html_block_content' => $content ]);
 
-
-		$post = $this->factory()->post->create([
+		$post = self::factory()->post->create([
 			'post_type' => 'post',
 			'post_status' => 'publish',
 			'post_author' => $this->admin,
@@ -357,6 +358,7 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 
 		codecept_debug([
 			'$content' => $content,
+			'$parsed_blocks' => parse_blocks( $content ),
 		]);
 
 		// assert the data is returned as expected
@@ -370,7 +372,7 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 			])
 		] );
 
-
+		wp_delete_post( $post, true );
 
 	}
 

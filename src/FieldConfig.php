@@ -291,6 +291,37 @@ class FieldConfig {
 	}
 
 	/**
+	 * @param string $selector
+	 * @param string|null $parent_field_name
+	 * @param string|int|null $post_id
+	 * @param bool $should_format
+	 *
+	 *
+	 *
+	 * @return false|mixed
+	 */
+	protected function get_field( string $selector, ?string $parent_field_name = null, $post_id = null, bool $should_format = false ) {
+
+		if ( ! empty( $parent_field_name ) ) {
+			$value = get_sub_field( $selector, $should_format );
+		} else {
+			$value = get_field( $selector, $post_id, $should_format );
+		}
+
+		codecept_debug( [
+			'get_field' => [
+				'$selector'          => $selector,
+				'$parent_field_name' => $parent_field_name,
+				'$value'             => $value,
+				'$should_format'     => $should_format,
+			]
+		]);
+
+		return $value;
+
+	}
+
+	/**
 	 * @param mixed       $root
 	 * @param array       $args
 	 * @param \WPGraphQL\AppContext  $context
@@ -378,12 +409,26 @@ class FieldConfig {
 			}
 		}
 
+
 		// resolve block field
 		if ( is_array( $node ) && isset( $node['blockName'] ) ) {
 			if ( isset( $node['attrs']['data'] ) ) {
-				acf_setup_meta( $node['attrs']['data'], acf_get_block_id( $node['attrs']['data'] ), true );
-				acf_prepare_block( $node['attrs'] );
-				$return_value = get_field( $field_config['name'] );
+				$block_id = acf_get_block_id( $node['attrs']['data'] );
+				acf_setup_meta( $node['attrs']['data'], $block_id, false );
+//				$block = acf_prepare_block( $node['attrs'] );
+
+				$return_value = $this->get_field( $field_config['name'], $parent_field_name, $block_id, $should_format_value );
+				codecept_debug( [
+					'AAA' => [
+						'selector' => $field_config['name'],
+						'$parent_field_name' => $parent_field_name,
+						'block' => $node,
+						'blockId' => $block_id,
+						'$should_format_value' => $should_format_value,
+						'$return_value' => $return_value,
+					]
+				]);
+				acf_reset_meta( $block_id );
 
 				if ( empty( $return_value ) && isset( $node['attrs']['data'][ $field_config['name'] ] ) ) {
 					$return_value = $node['attrs']['data'][ $field_config['name'] ];
@@ -394,7 +439,8 @@ class FieldConfig {
 				}
 			} elseif ( isset( $node['attrs'] ) ) {
 				acf_prepare_block( $node['attrs'] );
-				$return_value = get_field( $field_config['name'], false, $should_format_value );
+				codecept_debug( 'BBB' );
+				$return_value = $this->get_field( $field_config['name'], $parent_field_name, null, $should_format_value );
 				acf_reset_meta();
 			}
 		}
@@ -406,7 +452,8 @@ class FieldConfig {
 
 		// if a value hasn't been set yet, use the get_field() function to get the value
 		if ( empty( $return_value ) ) {
-			$return_value = get_field( $field_key, $node_id, $should_format_value );
+			codecept_debug( 'CCC' );
+			$return_value = $this->get_field( $field_key, $parent_field_name, $node_id, $should_format_value );
 		}
 
 

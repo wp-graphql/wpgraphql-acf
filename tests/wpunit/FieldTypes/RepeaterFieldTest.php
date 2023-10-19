@@ -29,7 +29,8 @@ class RepeaterFieldTest extends \Tests\WPGraphQL\Acf\WPUnit\AcfFieldTestCase {
 	 */
 	public function register_acf_field( array $acf_field = [], array $acf_field_group = [] ): string {
 
-		$repeater_key = uniqid( 'field_repeater_',false );
+
+		$repeater_key = uniqid( 'field_',false );
 
 		// set defaults on the acf field
 		// using helper methods from this class.
@@ -42,7 +43,7 @@ class RepeaterFieldTest extends \Tests\WPGraphQL\Acf\WPUnit\AcfFieldTestCase {
 			'key' => $repeater_key,
 			'sub_fields' => [
 				[
-					'key' => 'field_test_nested_text',
+					'key' => 'field_nested_text',
 					'label' => 'Nested Text Field',
 					'name' => 'nested_text',
 					'aria-label' => '',
@@ -84,7 +85,7 @@ class RepeaterFieldTest extends \Tests\WPGraphQL\Acf\WPUnit\AcfFieldTestCase {
 	public function get_expected_field_resolve_type(): ?string {
 		return null;
 	}
-	
+
 	public function get_block_query_fragment() {
 		return '
 		fragment BlockQueryFragment on AcfTestGroup {
@@ -102,7 +103,7 @@ class RepeaterFieldTest extends \Tests\WPGraphQL\Acf\WPUnit\AcfFieldTestCase {
 	public function get_extra_block_data_to_store( $acf_field_key = '', $acf_field_name = '' ): array {
 		return [
 			'test_repeater_0_nested_text' => 'nested text field value...',
-			'_test_repeater_0_nested_text' => 'field_test_nested_text'
+			'_test_repeater_0_nested_text' => 'field_nested_text'
 		];
 	}
 
