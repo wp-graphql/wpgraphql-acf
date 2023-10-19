@@ -337,10 +337,10 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 		$extra_data = ( ! empty( $extra_data ) ) ? $extra_data : [];
 		$encoded_block_data = wp_json_encode( [
 			'name' => "acf/test-block",
-			'data' => array_merge( [
+			'data' => array_merge( $extra_data, [
 				$this->get_field_name() => $this->get_block_data_to_store(),
 				'_' . $this->get_field_name() => $acf_field_key,
-			], $extra_data ),
+			] ),
 			'align' => '',
 			'mode' => 'edit'
 		] );

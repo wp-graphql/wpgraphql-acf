@@ -29,7 +29,6 @@ class PostTypeRegistration {
 		// this is a polyfill for tests to pass
 		add_filter( 'acf/post_type_args', [ $this, 'add_cpt_registration_fields' ], 10, 2 );
 
-
 		// Add tha GraphQL Tab to the ACF Post Type registration screen
 		add_filter( 'acf/post_type/additional_settings_tabs', [ $this, 'add_tabs' ] );
 
@@ -138,11 +137,13 @@ class PostTypeRegistration {
 	public function add_cpt_registration_fields( array $args, array $post_type ): array {
 
 		// respect the show_in_graphql value. If not set, use the value of $args['public'] to determine if the post type should be shown in graphql
-		$args['show_in_graphql'] = isset( $args['show_in_graphql'] ) ? (bool) $args['show_in_graphql'] : true === $args['public'];
+		$args['show_in_graphql'] = isset( $post_type['show_in_graphql'] ) ? (bool) $post_type['show_in_graphql'] : true === $args['public'];
 
 		$graphql_single_name = '';
 
-		if ( isset( $args['graphql_single_name'] ) ) {
+		if ( isset( $post_type['graphql_single_name'] ) ) {
+			$graphql_single_name = $post_type['graphql_single_name'];
+		} elseif ( isset( $args['graphql_single_name'] ) ) {
 			$graphql_single_name = $args['graphql_single_name'];
 		} elseif ( isset( $args['labels']['singular_name'] ) ) {
 			$graphql_single_name = Utils::format_field_name( $args['labels']['singular_name'], true );
@@ -153,7 +154,9 @@ class PostTypeRegistration {
 
 		$graphql_plural_name = '';
 
-		if ( isset( $args['graphql_plural_name'] ) ) {
+		if ( isset( $post_type['graphql_plural_name'] ) ) {
+			$graphql_plural_name = $post_type['graphql_plural_name'];
+		} elseif ( isset( $args['graphql_plural_name'] ) ) {
 			$graphql_plural_name = $args['graphql_plural_name'];
 		} elseif ( isset( $args['labels']['name'] ) ) {
 			$graphql_plural_name = Utils::format_field_name( $args['labels']['name'], true );
