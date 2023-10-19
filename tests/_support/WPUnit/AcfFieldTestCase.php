@@ -24,7 +24,6 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 		$this->acf_plugin_version = $_ENV['ACF_VERSION'] ?? 'latest';
 		$this->clearSchema();
 		\WPGraphQL\Acf\Utils::clear_field_type_registry();
-		do_action( 'acf/init ');
 		parent::setUp();
 	}
 
@@ -34,6 +33,33 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 	public function tearDown(): void {
 		$this->clearSchema();
 		parent::tearDown();
+	}
+
+	/**
+	 * Flush specific acf store caches.
+	 *
+	 * @global array Array of ACF_Data objects.
+	 */
+	protected function reset_acf_stores() {
+		global $acf_stores;
+
+		$resettable_stores = array(
+			'fields',
+			'field-groups',
+			'values',
+			'local-fields', // maybe?
+			'local-groups', // maybe?
+		);
+
+		foreach ( $acf_stores as $name => $acf_store ) {
+			if ( ! in_array( $name, $resettable_stores, true ) ) {
+				continue;
+			}
+
+			if ( is_a( $acf_store, \ACF_Data::class ) ) {
+				$acf_store->reset();
+			}
+		}
 	}
 
 	/**
@@ -205,6 +231,14 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 	}
 
 	// Test that the field can be queried on an ACF Block
+
+	/**
+	 * @runTestsInSeparateProcesses
+     *
+	 * @preserveGlobalState disabled
+	 *
+	 * @return void
+	 */
 	public function testFieldOnAcfBlock() {
 
 		// if ACF PRO is not active, skip the test

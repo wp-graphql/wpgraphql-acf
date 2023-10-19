@@ -33,33 +33,6 @@ class Repeater {
 
 					return [ 'list_of' => $type_name ];
 				},
-				'resolve'      => static function ( $root, $args, AppContext $context, $info, $field_type, FieldConfig $field_config ) {
-					$value = $field_config->resolve_field( $root, $args, $context, $info );
-//
-					codecept_debug( [
-						'$repeater_value' => $value,
-					]);
-
-//					acf_setup_meta( $root['node']['attrs']['data'] );
-//
-//					$root['value']           = $value;
-//					$root['acf_field_group'] = $field_config->get_acf_field();
-//
-//					$manual_value = get_field( $field_config->get_acf_field()['name'] );
-//
-////					wp_send_json( [
-////						'$value' => $value,
-////						'$manual_value' => $manual_value,
-////					]);
-////
-////					codecept_debug( [
-////						'$repeater_value' => $value,
-////						'$get_field_value' => get_field( 'test_repeater' ),
-////					]);
-
-					return $value;
-				},
-
 			]
 		);
 	}
