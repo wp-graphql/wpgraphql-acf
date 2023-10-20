@@ -1,7 +1,6 @@
 <?php
 namespace WPGraphQL\Acf\FieldType;
 
-use WPGraphQL\AppContext;
 use WPGraphQL\Utils\Utils;
 use WPGraphQL\Acf\AcfGraphQLFieldType;
 use WPGraphQL\Acf\FieldConfig;

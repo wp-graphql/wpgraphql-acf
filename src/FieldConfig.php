@@ -297,12 +297,9 @@ class FieldConfig {
 	 * @param string|int|null $post_id
 	 * @param bool $should_format
 	 *
-	 *
-	 *
 	 * @return false|mixed
 	 */
 	protected function get_field( string $selector, ?string $parent_field_name = null, $post_id = null, bool $should_format = false ) {
-
 		if ( ! empty( $parent_field_name ) ) {
 			$value = get_sub_field( $selector, $should_format );
 		} else {
@@ -310,7 +307,6 @@ class FieldConfig {
 		}
 
 		return $value;
-
 	}
 
 	/**
@@ -404,10 +400,9 @@ class FieldConfig {
 
 		// resolve block field
 		if ( is_array( $node ) && isset( $node['blockName'] ) && isset( $node['attrs'] ) ) {
-
-			$block       = acf_prepare_block( $node['attrs'] );
-			$block_id    = acf_get_block_id( $node['attrs'] );
-			$block_id    = acf_ensure_block_id_prefix( $block_id );
+			$block    = acf_prepare_block( $node['attrs'] );
+			$block_id = acf_get_block_id( $node['attrs'] );
+			$block_id = acf_ensure_block_id_prefix( $block_id );
 			acf_setup_meta( $block['data'], $block_id, true );
 
 			$return_value = $this->get_field( $field_config['name'], $parent_field_name, $block_id, $should_format_value );
