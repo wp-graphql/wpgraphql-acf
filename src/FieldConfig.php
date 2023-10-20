@@ -285,9 +285,28 @@ class FieldConfig {
 		$types_to_format = [
 			'select',
 			'wysiwyg',
+			'repeater',
 		];
 
 		return in_array( $field_type, $types_to_format, true );
+	}
+
+	/**
+	 * @param string $selector
+	 * @param string|null $parent_field_name
+	 * @param string|int|null $post_id
+	 * @param bool $should_format
+	 *
+	 * @return false|mixed
+	 */
+	protected function get_field( string $selector, ?string $parent_field_name = null, $post_id = null, bool $should_format = false ) {
+		if ( ! empty( $parent_field_name ) ) {
+			$value = get_sub_field( $selector, $should_format );
+		} else {
+			$value = get_field( $selector, $post_id, $should_format );
+		}
+
+		return $value;
 	}
 
 	/**
@@ -378,25 +397,23 @@ class FieldConfig {
 			}
 		}
 
+
 		// resolve block field
-		if ( is_array( $node ) && isset( $node['blockName'] ) ) {
-			if ( isset( $node['attrs']['data'] ) ) {
-				$block_id = acf_get_block_id( $node['attrs']['data'] );
-				acf_setup_meta( $node['attrs']['data'], $block_id, true );
-				acf_prepare_block( $node['attrs'] );
-				$return_value = get_field( $field_config['name'], $block_id, $should_format_value );
+		if ( is_array( $node ) && isset( $node['blockName'] ) && isset( $node['attrs'] ) ) {
+			$block    = acf_prepare_block( $node['attrs'] );
+			$block_id = acf_get_block_id( $node['attrs'] );
+			$block_id = acf_ensure_block_id_prefix( $block_id );
+			acf_setup_meta( $block['data'], $block_id, true );
 
-				if ( empty( $return_value ) && isset( $node['attrs']['data'][ $field_config['name'] ] ) ) {
-					$return_value = $node['attrs']['data'][ $field_config['name'] ];
-				}
+			$return_value = $this->get_field( $field_config['name'], $parent_field_name, $block_id, $should_format_value );
+			acf_reset_meta( $block_id );
 
-				if ( empty( $return_value ) && ( ! empty( $parent_field_name ) && ! empty( $node['attrs']['data'][ $parent_field_name . '_' . $field_config['name'] ] ) ) ) {
-					$return_value = $node['attrs']['data'][ $parent_field_name . '_' . $field_config['name'] ];
-				}
-			} elseif ( isset( $node['attrs'] ) ) {
-				acf_prepare_block( $node['attrs'] );
-				$return_value = get_field( $field_config['name'], false, $should_format_value );
-				acf_reset_meta();
+			if ( empty( $return_value ) && isset( $node['attrs']['data'][ $field_config['name'] ] ) ) {
+				$return_value = $node['attrs']['data'][ $field_config['name'] ];
+			}
+
+			if ( empty( $return_value ) && ( ! empty( $parent_field_name ) && ! empty( $node['attrs']['data'][ $parent_field_name . '_' . $field_config['name'] ] ) ) ) {
+				$return_value = $node['attrs']['data'][ $parent_field_name . '_' . $field_config['name'] ];
 			}
 		}
 
@@ -407,7 +424,7 @@ class FieldConfig {
 
 		// if a value hasn't been set yet, use the get_field() function to get the value
 		if ( empty( $return_value ) ) {
-			$return_value = get_field( $field_key, $node_id, $should_format_value );
+			$return_value = $this->get_field( $field_key, $parent_field_name, $node_id, $should_format_value );
 		}
 
 

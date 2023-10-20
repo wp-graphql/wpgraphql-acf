@@ -47,6 +47,7 @@ $j(document).ready(function () {
 		id: 'graphqlLocationManager',
 		wait: 'ready',
 		events: {
+			'render_field_settings': 'onChangeRemoveRule',
 			'click .add-location-rule': 'onClickAddRule',
 			'click .add-location-group': 'onClickAddGroup',
 			'click .remove-location-rule': 'onClickRemoveRule',
@@ -56,7 +57,19 @@ $j(document).ready(function () {
 		},
 		requestPending: false,
 		initialize: function () {
-			this.$el = $j('#acf-field-group-locations');
+
+
+			// ACF with settings tabs
+			var el = $j('#acf-field-group-options');
+
+			// ACF with settings tabs
+			if ( ! el.length ) {
+				// ACF before settings tabs existed
+				el = $j('#acf-field-group-locations');
+			}
+
+
+			this.$el = el;
 			this.getGraphqlTypes();
 		},
 
@@ -176,21 +189,6 @@ $j(document).ready(function () {
 				possibleTypesCheckboxes.prop('checked', $j(this).is(":checked"));
 			})
 
-			// Listen for changes to the checkboxes that implement the Interface
-			possibleTypesCheckboxes.change(function () {
-
-				// Set the checked state of the Interface checkbox
-				if (!$j(this).is(":checked") && interfaceCheckbox.is(":checked")) {
-					interfaceCheckbox.prop("checked", false);
-				}
-
-				// Set the state of the Implementing checkboxes
-				if ($j(possibleTypesCheckboxes).not(":checked").length === 0) {
-					interfaceCheckbox.prop("checked", true);
-				}
-
-			})
-
 		});
 
 	}
@@ -286,7 +284,6 @@ $j(document).ready(function () {
 	}
 
 	function getGraphqlTypesFromLocationRules() {
-
 		var showInGraphQLCheckbox = $j('#acf_field_group-show_in_graphql');
 		var form = $j('#post');
 		var formInputs = $j('#post :input');
@@ -343,5 +340,6 @@ $j(document).ready(function () {
 	setGraphqlFieldVisibility();
 	setGraphqlFieldName();
 	graphqlMapTypesFromLocations();
+
 
 });

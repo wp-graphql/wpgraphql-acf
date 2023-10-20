@@ -37,6 +37,10 @@ class Gallery {
 							'resolve'               => static function ( $root, $args, AppContext $context, $info ) use ( $field_config ) {
 								$value = $field_config->resolve_field( $root, $args, $context, $info );
 
+								if ( empty( $value ) ) {
+									return null;
+								}
+
 								$value = array_filter( $value );
 
 								if ( empty( $value ) ) {

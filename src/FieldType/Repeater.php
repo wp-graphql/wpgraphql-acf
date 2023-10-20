@@ -31,7 +31,6 @@ class Repeater {
 
 					return [ 'list_of' => $type_name ];
 				},
-
 			]
 		);
 	}
