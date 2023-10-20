@@ -1,5 +1,14 @@
 # Changelog
 
+## 2.0.0-beta.5.1.0
+
+### Chores / Bugfixes
+
+- [#102](https://github.com/wp-graphql/wpgraphql-acf/pull/102): fix: ACF Field Group Location Rules -> GraphQL Schema mapping bugs
+- [#100](https://github.com/wp-graphql/wpgraphql-acf/pull/100): fix: bug with CPTUI Imports, post type/taxonomy graphql_single_name not being respected
+- [#99](https://github.com/wp-graphql/wpgraphql-acf/pull/99): fix: Repeater, Group, File field not resolving properly when used as a field on ACF Blocks
+
+
 ## 2.0.0-beta.5.0.0
 
 [read more](https://github.com/wp-graphql/wpgraphql-acf/releases/tag/v2.0.0-beta.5.0.0)
