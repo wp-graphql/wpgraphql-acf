@@ -403,16 +403,7 @@ class FieldConfig {
 
 
 		// resolve block field
-<<<<<<< HEAD
 		if ( is_array( $node ) && isset( $node['blockName'] ) && isset( $node['attrs'] ) ) {
-=======
-		if ( is_array( $node ) && isset( $node['blockName'] ) ) {
-			if ( isset( $node['attrs']['data'] ) ) {
-				$block_id = acf_get_block_id( $node['attrs']['data'] );
-				acf_setup_meta( $node['attrs']['data'], $block_id, true );
-				acf_prepare_block( $node['attrs'] );
-				$return_value = get_field( $field_config['name'], $block_id, $should_format_value );
->>>>>>> fix/#96-bug-with-cptui-imports
 
 			$block       = acf_prepare_block( $node['attrs'] );
 			$block_id    = acf_get_block_id( $node['attrs'] );

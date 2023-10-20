@@ -47,6 +47,7 @@ $j(document).ready(function () {
 		id: 'graphqlLocationManager',
 		wait: 'ready',
 		events: {
+			'render_field_settings': 'onChangeRemoveRule',
 			'click .add-location-rule': 'onClickAddRule',
 			'click .add-location-group': 'onClickAddGroup',
 			'click .remove-location-rule': 'onClickRemoveRule',
@@ -56,7 +57,19 @@ $j(document).ready(function () {
 		},
 		requestPending: false,
 		initialize: function () {
-			this.$el = $j('#acf-field-group-locations');
+
+
+			// ACF with settings tabs
+			var el = $j('#acf-field-group-options');
+
+			// ACF with settings tabs
+			if ( ! el.length ) {
+				// ACF before settings tabs existed
+				el = $j('#acf-field-group-locations');
+			}
+
+
+			this.$el = el;
 			this.getGraphqlTypes();
 		},
 
@@ -176,21 +189,6 @@ $j(document).ready(function () {
 				possibleTypesCheckboxes.prop('checked', $j(this).is(":checked"));
 			})
 
-			// Listen for changes to the checkboxes that implement the Interface
-			possibleTypesCheckboxes.change(function () {
-
-				// Set the checked state of the Interface checkbox
-				if (!$j(this).is(":checked") && interfaceCheckbox.is(":checked")) {
-					interfaceCheckbox.prop("checked", false);
-				}
-
-				// Set the state of the Implementing checkboxes
-				if ($j(possibleTypesCheckboxes).not(":checked").length === 0) {
-					interfaceCheckbox.prop("checked", true);
-				}
-
-			})
-
 		});
 
 	}
@@ -286,9 +284,6 @@ $j(document).ready(function () {
 	}
 
 	function getGraphqlTypesFromLocationRules() {
-
-		console.log( 'getGraphqlTypesFromLocationRule' )
-
 		var showInGraphQLCheckbox = $j('#acf_field_group-show_in_graphql');
 		var form = $j('#post');
 		var formInputs = $j('#post :input');
@@ -299,18 +294,14 @@ $j(document).ready(function () {
 		// If Manual Type selection is checked,
 		// Don't attempt to get GraphQL Types from the location rules
 		if (manualMapTypes.is(':checked')) {
-			console.log( 'manualMapTypes is checked')
 			return;
 		}
 
 		if ( ! showInGraphQLCheckbox.is(':checked') ) {
-			console.log( 'show in graphql is NOT checked')
 			return;
 		}
 
 		if ( 'pending' !== form.attr('data-request-pending') ) {
-
-			console.log( 'fetching data...' );
 
 			// Start the request
 			form.attr('data-request-pending', 'pending' );
@@ -322,8 +313,6 @@ $j(document).ready(function () {
 				nonce: wp_graphql_acf.nonce
 			}, function (res) {
 				var types = res && res['graphql_types'] ? res['graphql_types'] : [];
-
-				console.log( { types } );
 
 				checkboxes.each(function (i, el) {
 					var checkbox = $j(this);
