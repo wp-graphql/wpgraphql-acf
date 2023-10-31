@@ -544,8 +544,9 @@ class PostObjectFieldsTest extends \Codeception\TestCase\WPTestCase {
 			'name' => 'oembed_field',
 		]);
 
-		$expected = 'https://twitter.com/wpgraphql/status/1115652591705190400';
-		update_field( 'oembed_field', $expected, $this->post_id );
+		$input = 'https://twitter.com/wpgraphql/status/1115652591705190400';
+		update_field( 'oembed_field', $input, $this->post_id );
+		$expected = wp_oembed_get( $input, [ 'width' => 550 ] );
 
 		$query = '
 		query GET_POST_WITH_ACF_FIELD( $postId: Int! ) {
