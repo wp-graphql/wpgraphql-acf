@@ -286,7 +286,7 @@ class FieldConfig {
 			'select',
 			'wysiwyg',
 			'repeater',
-			'oembed'
+			'oembed',
 		];
 
 		return in_array( $field_type, $types_to_format, true );
