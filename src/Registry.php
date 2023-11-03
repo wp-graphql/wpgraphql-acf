@@ -645,8 +645,6 @@ class Registry {
 			$fields     = $this->get_fields_for_field_group( $acf_field_group );
 			$interfaces = $this->get_field_group_interfaces( $acf_field_group );
 
-
-
 			// If there's no fields or type name, we can't register the type to the Schema
 			if ( empty( $fields ) || empty( $type_name ) ) {
 				continue;
@@ -733,7 +731,8 @@ class Registry {
 						'kind'            => 'object',
 						'eagerlyLoadType' => empty( $locations ),
 						'name'            => $type_name,
-						'description'     => sprintf( __( 'Added by WPGraphQL for ACF Redux', 'wp-graphql-acf' ), $type_name ),
+						// translators: %s us the name of the ACF Field Group
+						'description'     => sprintf( __( 'The "%s" Field Group. Added to the Schema by "WPGraphQL for ACF".', 'wp-graphql-acf' ), $type_name ),
 						'interfaces'      => [ $type_name . '_Fields' ],
 						'fields'          => $fields,
 						'locations'       => $locations,
