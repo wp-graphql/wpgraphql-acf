@@ -17,6 +17,10 @@ class OembedFieldTest extends \Tests\WPGraphQL\Acf\WPUnit\AcfFieldTestCase {
 		parent::tearDown();
 	}
 
+	public function get_clone_value_to_save(): string {
+		return 'https://twitter.com/wpgraphql/status/1115652591705190400';
+	}
+
 	public function get_field_type(): string {
 		return 'oembed';
 	}
@@ -31,6 +35,11 @@ class OembedFieldTest extends \Tests\WPGraphQL\Acf\WPUnit\AcfFieldTestCase {
 		  ' . $this->get_formatted_clone_field_name() . '
 		}
 		';
+	}
+
+	public function get_expected_clone_value() {
+		return wp_oembed_get( $this->get_clone_value_to_save(), [ 'width' => 550 ] );
+
 	}
 
 }

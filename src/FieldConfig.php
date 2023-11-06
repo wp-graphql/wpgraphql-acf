@@ -286,6 +286,7 @@ class FieldConfig {
 			'select',
 			'wysiwyg',
 			'repeater',
+			'oembed',
 		];
 
 		return in_array( $field_type, $types_to_format, true );
@@ -440,7 +441,7 @@ class FieldConfig {
 		 *
 		 * @param mixed $value
 		 * @param array $field_config The ACF Field Config for the field being resolved
-		 * @param mixed $root The Root node or obect of the field being resolved
+		 * @param mixed $root The Root node or object of the field being resolved
 		 * @param mixed $node_id The ID of the node being resolved
 		 */
 		return apply_filters( 'wpgraphql/acf/field_value', $prepared_value, $field_config, $root, $node_id );
