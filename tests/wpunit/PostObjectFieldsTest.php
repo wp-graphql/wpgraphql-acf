@@ -913,7 +913,7 @@ class PostObjectFieldsTest extends \Codeception\TestCase\WPTestCase {
 		    title
 		    postFields {
 		      postObjectField {
-		        node {
+		        nodes {
 		          __typename
 		          ...on Post {
 		            postId
@@ -940,7 +940,7 @@ class PostObjectFieldsTest extends \Codeception\TestCase\WPTestCase {
 		$this->assertSame( [
 			'__typename' => 'Post',
 			'postId' => $post_id,
-		], $actual['data']['post']['postFields']['postObjectField']['node'] );
+		], $actual['data']['post']['postFields']['postObjectField']['nodes'][0] );
 
 	}
 
@@ -966,7 +966,7 @@ class PostObjectFieldsTest extends \Codeception\TestCase\WPTestCase {
 		    title
 		    postFields {
 		      postObjectField {
-		        node {
+		        nodes {
 		          __typename
 		          ...on Post {
 		            postId
@@ -993,7 +993,7 @@ class PostObjectFieldsTest extends \Codeception\TestCase\WPTestCase {
 		$this->assertSame( [
 			'__typename' => 'Page',
 			'pageId' => $page_id,
-		], $actual['data']['post']['postFields']['postObjectField']['node'] );
+		], $actual['data']['post']['postFields']['postObjectField']['nodes'][0] );
 
 	}
 
@@ -1023,7 +1023,7 @@ class PostObjectFieldsTest extends \Codeception\TestCase\WPTestCase {
 		    title
 		    postFields {
 		      pageLinkField {
-		        node {
+		        nodes {
 		          __typename
 		          ...on Post {
 		            postId
@@ -1047,7 +1047,7 @@ class PostObjectFieldsTest extends \Codeception\TestCase\WPTestCase {
 		$this->assertSame( [
 			'__typename' => 'Post',
 			'postId' => $id,
-		], $actual['data']['post']['postFields']['pageLinkField']['node'] );
+		], $actual['data']['post']['postFields']['pageLinkField']['nodes'][0] );
 
 	}
 
