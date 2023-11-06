@@ -273,7 +273,17 @@ class AcfGraphQLFieldType {
 	 * @return array|string
 	 */
 	public function get_resolve_type( FieldConfig $field_config ) {
+
 		$acf_field = $field_config->get_acf_field();
+
+		/**
+		 * If external code has filtered this to return anything other than null, use the filtered type instead of the default
+		 */
+		$pre_get_resolve_type = apply_filters( 'wpgraphql/acf/graphql_field_type/resolve_type', null, $field_config, $acf_field );
+
+		if ( null !== $pre_get_resolve_type ) {
+			return $pre_get_resolve_type;
+		}
 
 		$resolve_type = 'String';
 
