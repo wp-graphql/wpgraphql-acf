@@ -1,5 +1,6 @@
 <?php
 
+use GraphQL\Type\Definition\ResolveInfo;
 use WPGraphQL\Registry\TypeRegistry;
 
 use WPGraphQL\Acf\Admin\PostTypeRegistration;
@@ -40,6 +41,11 @@ class WPGraphQLAcf {
 
 		add_filter( 'graphql_data_loaders', [ $this, 'register_loaders' ], 10, 2 );
 		add_filter( 'graphql_resolve_node_type', [ $this, 'resolve_acf_options_page_node' ], 10, 2 );
+		/**
+		 * This filters any field that returns the `ContentTemplate` type
+		 * to pass the source node down to the template for added context
+		 */
+		add_filter( 'graphql_resolve_field', [ $this, 'page_template_resolver' ], 10, 9 );
 
 		do_action( 'wpgraphql/acf/init' );
 	}
@@ -209,6 +215,34 @@ class WPGraphQLAcf {
 		foreach ( $messages as $message ) {
 			graphql_debug( $prefix . ' because ' . $message );
 		}
+	}
+
+		/**
+		 * Add the $source node as the "node" passed to the resolver so ACF Fields assigned to Templates can resolve
+		 * using the $source node as the object to get meta from.
+		 *
+		 * @param mixed           $result         The result of the field resolution
+		 * @param mixed           $source         The source passed down the Resolve Tree
+		 * @param array           $args           The args for the field
+		 * @param \WPGraphQL\AppContext $context The AppContext passed down the ResolveTree
+		 * @param \GraphQL\Type\Definition\ResolveInfo $info The ResolveInfo passed down the ResolveTree
+		 * @param string          $type_name      The name of the type the fields belong to
+		 * @param string          $field_key      The name of the field
+		 * @param \GraphQL\Type\Definition\FieldDefinition $field The Field Definition for the resolving field
+		 * @param mixed           $field_resolver The default field resolver
+		 *
+		 * @return mixed
+		 */
+	public function page_template_resolver( $result, $source, $args, \WPGraphQL\AppContext $context, ResolveInfo $info, string $type_name, string $field_key, \GraphQL\Type\Definition\FieldDefinition $field, $field_resolver ) {
+		if ( strtolower( 'ContentTemplate' ) !== strtolower( $info->returnType ) ) {
+			return $result;
+		}
+
+		if ( is_array( $result ) && ! isset( $result['node'] ) && ! empty( $source ) ) {
+			$result['node'] = $source;
+		}
+
+		return $result;
 	}
 
 }
