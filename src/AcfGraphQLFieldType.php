@@ -58,14 +58,23 @@ class AcfGraphQLFieldType {
 	 * @return void
 	 */
 	public function set_config( $config = [] ): void {
-		if ( is_array( $config ) ) {
-			$this->config = $config;
-		} elseif ( is_callable( $config ) ) {
-			$_config = $config( $this->get_acf_field_type(), $this );
-			if ( is_array( $_config ) ) {
-				$this->config = $_config;
-			}
+		$_config = [];
+
+		if ( is_callable( $config ) ) {
+			$config = $config( $this->get_acf_field_type(), $this );
 		}
+
+		if ( is_array( $config ) ) {
+			$_config = $config;
+		}
+
+		/**
+		 * Filter the config before setting it on the class
+		 *
+		 * @param array $_config The Config passed to the AcfGraphQLFieldType
+		 * @param \WPGraphQL\Acf\AcfGraphQLFieldType $acf_graphql_field_type The AcfGraphQLFieldType instance
+		 */
+		$this->config = apply_filters( 'wpgraphql/acf/field_type_config', $_config, $this );
 	}
 
 	/**
@@ -252,6 +261,24 @@ class AcfGraphQLFieldType {
 	public function get_resolver( $root, array $args, AppContext $context, ResolveInfo $info, self $field_type, FieldConfig $field_config ) {
 		$acf_field = $field_config->get_acf_field();
 
+		/**
+		 * If external code has filtered this to return anything other than null, use the filtered type instead of the default
+		 *
+		 * @param mixed                                $null         Filtered value. If filtered to anything other than null, use the filter response instead of the default logic below
+		 * @param mixed                                $root         The value of the previously resolved field in the tree
+		 * @param array                                $args         The arguments input on the field
+		 * @param \WPGraphQL\AppContext                $context      The Context passed through resolution
+		 * @param \GraphQL\Type\Definition\ResolveInfo $info         Information about the field resolving
+		 * @param \WPGraphQL\Acf\AcfGraphQLFieldType   $field_type   The Type of ACF Field resolving
+		 * @param \WPGraphQL\Acf\FieldConfig           $field_config The Config of the ACF Field resolving
+		 * @param array                                $acf_field    The ACF Field config
+		 */
+		$pre_get_resolver = apply_filters( 'wpgraphql/acf/field_type_resolver', null, $root, $args, $context, $info, $field_type, $field_config, $acf_field );
+
+		if ( null !== $pre_get_resolver ) {
+			return $pre_get_resolver;
+		}
+
 		$resolver = $field_config->resolve_field( $root, $args, $context, $info );
 
 		if ( isset( $acf_field['graphql_resolver'] ) ) {
@@ -274,6 +301,15 @@ class AcfGraphQLFieldType {
 	 */
 	public function get_resolve_type( FieldConfig $field_config ) {
 		$acf_field = $field_config->get_acf_field();
+
+		/**
+		 * If external code has filtered this to return anything other than null, use the filtered type instead of the default
+		 */
+		$pre_get_resolve_type = apply_filters( 'wpgraphql/acf/field_type_resolve_type', null, $field_config, $acf_field );
+
+		if ( null !== $pre_get_resolve_type ) {
+			return $pre_get_resolve_type;
+		}
 
 		$resolve_type = 'String';
 
