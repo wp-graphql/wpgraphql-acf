@@ -11,30 +11,30 @@ class Relationship {
 	/**
 	 * @param array                         $admin_fields Admin Fields to display in the GraphQL Tab when configuring an ACF Field within a Field Group
 	 * @param array                         $field The
-	 * @param                               $config
+	 * @param array                         $config
 	 * @param \WPGraphQL\Acf\Admin\Settings $settings
 	 *
 	 * @return mixed
 	 */
 	public static function get_admin_fields( $admin_fields, $field, $config, \WPGraphQL\Acf\Admin\Settings $settings ) {
 		$admin_fields[] = [
-			'type'         => 'select',
-			'name'         => 'graphql_connection_type',
-			'label'        => __( 'GraphQL Connection Type', 'wp-graphql-acf' ),
-			'choices'      => [
-				'one_to_one' => __( 'One to One Connection', 'wp-graphql-acf' ),
+			'type'          => 'select',
+			'name'          => 'graphql_connection_type',
+			'label'         => __( 'GraphQL Connection Type', 'wp-graphql-acf' ),
+			'choices'       => [
+				'one_to_one'  => __( 'One to One Connection', 'wp-graphql-acf' ),
 				'one_to_many' => __( 'One to Many Connection', 'wp-graphql-acf' ),
 			],
 			'default_value' => 'one_to_many',
-			'instructions' => __( 'Select whether the field should be presented in the schema as a standard GraphQL "Connection" that can return 0, 1 or more nodes, or a "One to One" connection that can return exactly 0 or 1 node. Changing this field will change the GraphQL Schema and could cause breaking changes.', 'wp-graphql-acf' ),
-			'conditions'   => [],
+			'instructions'  => __( 'Select whether the field should be presented in the schema as a standard GraphQL "Connection" that can return 0, 1 or more nodes, or a "One to One" connection that can return exactly 0 or 1 node. Changing this field will change the GraphQL Schema and could cause breaking changes.', 'wp-graphql-acf' ),
+			'conditions'    => [],
 		];
 		return $admin_fields;
 	}
 
 	/**
-	 * @param FieldConfig         $field_config
-	 * @param AcfGraphQLFieldType $acf_field_type
+	 * @param \WPGraphQL\Acf\FieldConfig         $field_config
+	 * @param \WPGraphQL\Acf\AcfGraphQLFieldType $acf_field_type
 	 *
 	 * @return string
 	 * @throws \Exception
@@ -43,13 +43,12 @@ class Relationship {
 		$acf_field = $field_config->get_acf_field();
 
 		$connection_type = $acf_field['graphql_connection_type'] ?? 'one_to_many';
-		$is_one_to_one = $connection_type === 'one_to_one';
+		$is_one_to_one   = 'one_to_one' === $connection_type;
 
 		$connection_config = [
-			'toType'  => 'ContentNode',
+			'toType'   => 'ContentNode',
 			'oneToOne' => $is_one_to_one,
-			'resolve' => static function ( $root, $args, AppContext $context, $info ) use ( $field_config, $is_one_to_one ) {
-
+			'resolve'  => static function ( $root, $args, AppContext $context, $info ) use ( $field_config, $is_one_to_one ) {
 				$value = $field_config->resolve_field( $root, $args, $context, $info );
 
 				$ids = [];
@@ -62,15 +61,6 @@ class Relationship {
 					$ids[] = $value;
 				} else {
 					$ids = $value;
-				}
-
-				codecept_debug( [
-					'$value' => $value,
-					'$ids' => $ids,
-				]);
-
-				if ( empty( $ids ) ) {
-					return null;
 				}
 
 				$ids = array_map(
@@ -112,7 +102,7 @@ class Relationship {
 			'relationship',
 			[
 				'exclude_admin_fields' => [ 'graphql_non_null' ],
-				'admin_fields'         => static function( $admin_fields, $field, $config, \WPGraphQL\Acf\Admin\Settings $settings ): array {
+				'admin_fields'         => static function ( $admin_fields, $field, $config, \WPGraphQL\Acf\Admin\Settings $settings ): array {
 					return self::get_admin_fields( $admin_fields, $field, $config, $settings );
 				},
 				'graphql_type'         => static function ( FieldConfig $field_config, AcfGraphQLFieldType $acf_field_type ) {

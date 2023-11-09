@@ -1,8 +1,6 @@
 <?php
 namespace WPGraphQL\Acf\FieldType;
 
-use WPGraphQL\AppContext;
-use WPGraphQL\Data\Connection\PostObjectConnectionResolver;
 use WPGraphQL\Acf\AcfGraphQLFieldType;
 use WPGraphQL\Acf\FieldConfig;
 
@@ -16,7 +14,7 @@ class PostObject {
 			'post_object',
 			[
 				'exclude_admin_fields' => [ 'graphql_non_null' ],
-				'admin_fields'         => static function( $admin_fields, $field, $config, \WPGraphQL\Acf\Admin\Settings $settings ): array {
+				'admin_fields'         => static function ( $admin_fields, $field, $config, \WPGraphQL\Acf\Admin\Settings $settings ): array {
 					return Relationship::get_admin_fields( $admin_fields, $field, $config, $settings );
 				},
 				'graphql_type'         => static function ( FieldConfig $field_config, AcfGraphQLFieldType $acf_field_type ) {
