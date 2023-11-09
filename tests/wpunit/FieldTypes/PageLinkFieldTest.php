@@ -22,7 +22,7 @@ class PageLinkFieldTest extends \Tests\WPGraphQL\Acf\WPUnit\AcfFieldTestCase {
 	}
 
 	public function get_expected_field_resolve_type(): ?string {
-		return 'AcfTestGroupTestPageLinkToSingleContentNodeConnectionEdge';
+		return 'AcfContentNodeConnection';
 	}
 
 	public function get_expected_field_resolve_kind(): ?string {
@@ -43,7 +43,7 @@ class PageLinkFieldTest extends \Tests\WPGraphQL\Acf\WPUnit\AcfFieldTestCase {
 		return '
 		fragment AcfTestGroupFragment on AcfTestGroup {
 			clonedTestPageLink {
-			  node {
+			  nodes {
 			     __typename
 			     databaseId
 			  }
@@ -57,9 +57,11 @@ class PageLinkFieldTest extends \Tests\WPGraphQL\Acf\WPUnit\AcfFieldTestCase {
 	 */
 	public function get_expected_clone_value(): array {
 		return [
-			'node' => [
-				'__typename' => 'Post',
-				'databaseId' => $this->published_post->ID,
+			'nodes' => [
+				[
+					'__typename' => 'Post',
+					'databaseId' => $this->published_post->ID,
+				]
 			]
 		];
 	}

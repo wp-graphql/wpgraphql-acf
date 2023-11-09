@@ -16,50 +16,11 @@ class PostObject {
 			'post_object',
 			[
 				'exclude_admin_fields' => [ 'graphql_non_null' ],
+				'admin_fields'         => static function( $admin_fields, $field, $config, \WPGraphQL\Acf\Admin\Settings $settings ): array {
+					return Relationship::get_admin_fields( $admin_fields, $field, $config, $settings );
+				},
 				'graphql_type'         => static function ( FieldConfig $field_config, AcfGraphQLFieldType $acf_field_type ) {
-					$connection_config = [
-						'toType'  => 'ContentNode',
-						'resolve' => static function ( $root, $args, AppContext $context, $info ) use ( $field_config ) {
-							$value = $field_config->resolve_field( $root, $args, $context, $info );
-
-							$ids = [];
-
-							if ( empty( $value ) ) {
-								return null;
-							}
-
-							if ( is_array( $value ) ) {
-								$ids = $value;
-							}
-
-							if ( is_object( $value ) && isset( $value->ID ) ) {
-								$ids[] = $value->ID;
-							}
-
-							$ids = array_map(
-								static function ( $id ) {
-									if ( is_object( $id ) && isset( $id->ID ) ) {
-										$id = $id->ID;
-									}
-									return absint( $id );
-								},
-								$ids
-							);
-
-							$resolver = new PostObjectConnectionResolver( $root, $args, $context, $info, 'any' );
-							return $resolver
-							// the relationship field doesn't require related things to be published
-							// so we set the status to "any"
-							->set_query_arg( 'post_status', 'any' )
-							->set_query_arg( 'post__in', $ids )
-							->set_query_arg( 'orderby', 'post__in' )
-							->get_connection();
-						},
-					];
-
-					$field_config->register_graphql_connections( $connection_config );
-
-					return 'connection';
+					return Relationship::get_graphql_type( $field_config, $acf_field_type );
 				},
 			]
 		);
