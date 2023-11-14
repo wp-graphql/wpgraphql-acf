@@ -63,18 +63,20 @@ class Relationship {
 					$ids = $value;
 				}
 
-				$ids = array_filter( array_map(
-					static function ( $id ) {
-						if ( is_object( $id ) && isset( $id->ID ) ) {
-							$id = $id->ID;
-						}
-						// filter out values that are not IDs
-						// this means that external urls or urls to things like
-						// archive links will not resolve.
-						return absint( $id ) ?: null;
-					},
-					$ids
-				) );
+				$ids = array_filter(
+					array_map(
+						static function ( $id ) {
+							if ( is_object( $id ) && isset( $id->ID ) ) {
+								$id = $id->ID;
+							}
+							// filter out values that are not IDs
+							// this means that external urls or urls to things like
+							// archive links will not resolve.
+							return absint( $id ) ?: null;
+						},
+						$ids
+					) 
+				);
 
 				$resolver = new PostObjectConnectionResolver( $root, $args, $context, $info, 'any' );
 
