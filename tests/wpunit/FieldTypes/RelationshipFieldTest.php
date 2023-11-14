@@ -30,10 +30,10 @@ class RelationshipFieldTest extends \Tests\WPGraphQL\Acf\WPUnit\AcfFieldTestCase
 	}
 
 	/**
-	 * @return array
+	 * @return int
 	 */
-	public function get_clone_value_to_save(): array {
-		return [ $this->published_post->ID ];
+	public function get_clone_value_to_save(): int {
+		return $this->published_post->ID;
 	}
 
 	/**
@@ -80,7 +80,7 @@ class RelationshipFieldTest extends \Tests\WPGraphQL\Acf\WPUnit\AcfFieldTestCase
 	}
 
 	public function get_block_data_to_store() {
-		return [ $this->published_post->ID ];
+		return $this->published_post->ID;
 	}
 
 	public function get_expected_block_fragment_response() {

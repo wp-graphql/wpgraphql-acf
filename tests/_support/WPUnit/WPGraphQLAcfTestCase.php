@@ -112,8 +112,6 @@ class WPGraphQLAcfTestCase extends \Tests\WPGraphQL\TestCase\WPGraphQLTestCase {
 		$this->category = self::factory()->category->create_and_get([ 'name' => 'Test Category' ] );
 		$this->tag = self::factory()->tag->create_and_get([ 'name' => 'Test Tag' ] );
 
-
-
 		$this->published_post = self::factory()->post->create_and_get([
 			'post_type' => 'post',
 			'post_status' => 'publish',
@@ -206,6 +204,9 @@ class WPGraphQLAcfTestCase extends \Tests\WPGraphQL\TestCase\WPGraphQLTestCase {
 		// delete posts
 		wp_delete_post( $this->published_post->ID, true );
 		wp_delete_post( $this->published_page->ID, true );
+
+		wp_delete_post( $this->fileId, true );
+		wp_delete_post( $this->imageId, true );
 
 		// Delete comments
 		wp_delete_comment( (int) $this->comment_on_post->comment_post_ID, true );

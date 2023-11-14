@@ -24,7 +24,7 @@ class Wysiwyg {
 
 					return $value;
 				},
-			] 
+			]
 		);
 	}
 

@@ -914,7 +914,7 @@ class PostObjectFieldsTest extends \Codeception\TestCase\WPTestCase {
 		    title
 		    postFields {
 		      postObjectField {
-		        node {
+		        nodes {
 		          __typename
 		          ...on Post {
 		            postId
@@ -941,7 +941,7 @@ class PostObjectFieldsTest extends \Codeception\TestCase\WPTestCase {
 		$this->assertSame( [
 			'__typename' => 'Post',
 			'postId' => $post_id,
-		], $actual['data']['post']['postFields']['postObjectField']['node'] );
+		], $actual['data']['post']['postFields']['postObjectField']['nodes'][0] );
 
 	}
 
@@ -967,7 +967,7 @@ class PostObjectFieldsTest extends \Codeception\TestCase\WPTestCase {
 		    title
 		    postFields {
 		      postObjectField {
-		        node {
+		        nodes {
 		          __typename
 		          ...on Post {
 		            postId
@@ -994,7 +994,7 @@ class PostObjectFieldsTest extends \Codeception\TestCase\WPTestCase {
 		$this->assertSame( [
 			'__typename' => 'Page',
 			'pageId' => $page_id,
-		], $actual['data']['post']['postFields']['postObjectField']['node'] );
+		], $actual['data']['post']['postFields']['postObjectField']['nodes'][0] );
 
 	}
 
@@ -1024,7 +1024,7 @@ class PostObjectFieldsTest extends \Codeception\TestCase\WPTestCase {
 		    title
 		    postFields {
 		      pageLinkField {
-		        node {
+		        nodes {
 		          __typename
 		          ...on Post {
 		            postId
@@ -1048,7 +1048,7 @@ class PostObjectFieldsTest extends \Codeception\TestCase\WPTestCase {
 		$this->assertSame( [
 			'__typename' => 'Post',
 			'postId' => $id,
-		], $actual['data']['post']['postFields']['pageLinkField']['node'] );
+		], $actual['data']['post']['postFields']['pageLinkField']['nodes'][0] );
 
 	}
 
@@ -1325,23 +1325,23 @@ class PostObjectFieldsTest extends \Codeception\TestCase\WPTestCase {
 
 		$this->register_acf_field([
 			'type' => 'relationship',
-			'name' => 'relationship_field',
-			'post_type'          => [
-				'post',
-				'page',
-				'attachment'
-			],
+			'name' => 'relationship_field'
 		]);
 
-		$post_id = $this->post_id;
-		$page_id = $this->factory()->post->create([
+		$post_id = self::factory()->post->create([
+			'post_type' => 'post',
+			'post_status' => 'publish',
+			'post_title' => 'Test Post',
+		]);
+
+		$page_id = self::factory()->post->create([
 			'post_type' => 'page',
 			'post_status' => 'publish',
 			'post_title' => 'Test Page',
 		]);
 
 		$filename      = ( $this->test_image );
-		$img_id = $this->factory()->attachment->create_upload_object( $filename );
+		$img_id = self::factory()->attachment->create_upload_object( $filename );
 
 		update_field( 'relationship_field', [ $post_id, $page_id, $img_id ], $this->post_id );
 
@@ -1393,6 +1393,10 @@ class PostObjectFieldsTest extends \Codeception\TestCase\WPTestCase {
 				'mediaItemId' => $img_id,
 			]
 		], $actual['data']['postBy']['postFields']['relationshipField']['nodes'] );
+
+		wp_delete_post( $img_id, true );
+		wp_delete_post( $page_id, true );
+		wp_delete_post( $post_id, true );
 
 	}
 
