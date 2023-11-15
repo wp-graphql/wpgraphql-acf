@@ -1,5 +1,18 @@
 # Changelog
 
+## 2.0.0-beta.6.0.0
+
+### New Features
+
+- [#114](https://github.com/wp-graphql/wpgraphql-acf/pull/114): feat: add pre filter for resolve type
+
+### Chores / Bugfixes
+
+- [#111](https://github.com/wp-graphql/wpgraphql-acf/pull/111): fix: oembed field type returns embed instead of URL entered to the field
+- [#112](https://github.com/wp-graphql/wpgraphql-acf/pull/112): fix: field groups on page templates not resolving
+- [#116](https://github.com/wp-graphql/wpgraphql-acf/pull/116): fix: error when querying `post_object`, `relationship` or `page_link` field nested on a `repeater` or `flexible_content` field
+- [#122](https://github.com/wp-graphql/wpgraphql-acf/pull/122): ci: update tests to run against WordPress 6.4
+
 ## 2.0.0-beta.5.1.0
 
 ### Chores / Bugfixes
