@@ -286,6 +286,7 @@ class FieldConfig {
 			'select',
 			'wysiwyg',
 			'repeater',
+			'flexible_content',
 			'oembed',
 		];
 
