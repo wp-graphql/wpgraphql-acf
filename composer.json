@@ -73,7 +73,13 @@
     ],
     "build-app": "@docker-build -a",
     "build-test": "@docker-build -t",
-    "build-plugin": "composer install --no-dev && composer run-script zip && composer install",
+    "build-plugin": [
+      "composer install --no-dev",
+      "rm ./vendor/appsero/client/src/Updater.php",
+      "cp ./build/Updater.php ./vendor/appsero/client/src/",
+      "composer run-script zip",
+      "composer install"
+    ],
     "run-app": "@docker-run -a",
     "run-test": "@docker-run -t",
     "lint": "vendor/bin/phpcs",
