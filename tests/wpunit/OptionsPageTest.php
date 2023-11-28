@@ -203,17 +203,6 @@ class OptionsPageTest extends \Tests\WPGraphQL\Acf\WPUnit\WPGraphQLAcfTestCase {
 
 		$this->assertSame( $expected_value, $get_field );
 
-		$this->registerOptionsPage(
-			[
-				'page_title' => 'CustomGraphqlName',
-				'menu_title' => __( 'Custom GraphQL Name' ),
-				'menu_slug'  => 'custom-graphql-name',
-				'capability' => 'edit_posts',
-				'post_id'   => 'custom-graphql-name',
-				// options pages will show in the Schema unless set to false
-				'graphql_type_name'   => 'MyCustomOptionsName',
-			]
-		);
 
 		$this->register_acf_field( [], [
 			'graphql_field_name' => 'OptionsFields',
