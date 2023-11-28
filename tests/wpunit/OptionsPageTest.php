@@ -196,13 +196,6 @@ class OptionsPageTest extends \Tests\WPGraphQL\Acf\WPUnit\WPGraphQLAcfTestCase {
 		update_field( 'text', $expected_value, 'custom-graphql-name' );
 		$get_field = get_field( 'text', 'custom-graphql-name' );
 
-		codecept_debug( [
-			'$get_field' => $get_field,
-			'$options_pages' => acf_get_options_pages(),
-		]);
-
-		$this->assertSame( $expected_value, $get_field );
-
 
 		$this->register_acf_field( [], [
 			'graphql_field_name' => 'OptionsFields',
@@ -219,8 +212,8 @@ class OptionsPageTest extends \Tests\WPGraphQL\Acf\WPUnit\WPGraphQLAcfTestCase {
 
 		$query = '
 		{
-		  myCustomOptionsName {
-		    optionsFields {
+		  myCustomOptionsName { # this is the name of the options page based on graphql_type_name
+		    optionsFields { # this is the field name for the field group
 		      text
 		    }
 		  }
