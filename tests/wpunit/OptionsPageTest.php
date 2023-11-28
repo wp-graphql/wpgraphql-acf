@@ -189,14 +189,6 @@ class OptionsPageTest extends \Tests\WPGraphQL\Acf\WPUnit\WPGraphQLAcfTestCase {
 			]
 		);
 
-		$expected_value = 'test value';
-
-		// Save a value to the ACF Option Field
-		// see: https://www.advancedcustomfields.com/resources/update_field/#update-a-value-from-different-objects
-		update_field( 'text', $expected_value, 'custom-graphql-name' );
-		$get_field = get_field( 'text', 'custom-graphql-name' );
-
-
 		$this->register_acf_field( [], [
 			'graphql_field_name' => 'OptionsFields',
 			'location' => [
@@ -209,6 +201,14 @@ class OptionsPageTest extends \Tests\WPGraphQL\Acf\WPUnit\WPGraphQLAcfTestCase {
 				],
 			],
 		]);
+
+		$expected_value = 'test value';
+
+		// Save a value to the ACF Option Field
+		// see: https://www.advancedcustomfields.com/resources/update_field/#update-a-value-from-different-objects
+		update_field( 'text', $expected_value, 'custom-graphql-name' );
+		$get_field = get_field( 'text', 'custom-graphql-name' );
+
 
 		$query = '
 		{
