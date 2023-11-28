@@ -356,6 +356,7 @@ class Registry {
 		);
 
 		foreach ( $graphql_options_pages as $graphql_options_page ) {
+			$graphql_options_page['is_options_page'] = true;
 			if ( ! $this->should_field_group_show_in_graphql( $graphql_options_page ) ) {
 				continue;
 			}
