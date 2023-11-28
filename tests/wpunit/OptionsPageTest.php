@@ -2,8 +2,8 @@
 
 class OptionsPageTest extends \Tests\WPGraphQL\Acf\WPUnit\WPGraphQLAcfTestCase {
 
-
 	public function setUp():void {
+
 		if ( ! function_exists( 'acf_add_options_page' ) ) {
 			$this->markTestSkipped( 'ACF Options Pages are not available in this test environment' );
 		}
@@ -15,13 +15,14 @@ class OptionsPageTest extends \Tests\WPGraphQL\Acf\WPUnit\WPGraphQLAcfTestCase {
 		parent::tearDown();
 	}
 
-	public function registerOptionsPage( $title = 'My Options Page', $config = [] ) {
 
+
+	public function registerOptionsPage( $config = [] ) {
 
 		// register options page
 		acf_add_options_page(
 			array_merge( [
-				'page_title' => $title,
+				'page_title' => 'My Options Page',
 				'menu_title' => __( 'My Options Page' ),
 				'menu_slug'  => 'my-options-page',
 				'capability' => 'edit_posts',
@@ -35,15 +36,7 @@ class OptionsPageTest extends \Tests\WPGraphQL\Acf\WPUnit\WPGraphQLAcfTestCase {
 
 		$this->registerOptionsPage();
 
-		$expected_value = uniqid( 'test', true );
-
-		// Save a value to the ACF Option Field
-		// see: https://www.advancedcustomfields.com/resources/update_field/#update-a-value-from-different-objects
-		if ( function_exists( 'update_field' ) ) {
-			update_field( 'text', $expected_value, 'option' );
-		}
-
-		$this->register_acf_field( [], [
+		$field_key = $this->register_acf_field( [], [
 			'graphql_field_name' => 'OptionsFields',
 			'location' => [
 				[
@@ -55,6 +48,16 @@ class OptionsPageTest extends \Tests\WPGraphQL\Acf\WPUnit\WPGraphQLAcfTestCase {
 				],
 			],
 		]);
+
+		$expected_value = uniqid( 'test', true );
+
+		// Save a value to the ACF Option Field
+		// see: https://www.advancedcustomfields.com/resources/update_field/#update-a-value-from-different-objects
+		if ( function_exists( 'update_field' ) ) {
+			update_field( $field_key, $expected_value, 'options' );
+		}
+
+
 
 		$query = '
 		{
@@ -103,7 +106,7 @@ class OptionsPageTest extends \Tests\WPGraphQL\Acf\WPUnit\WPGraphQLAcfTestCase {
 	 */
 	public function testOptionsPageNotInSchemaIfShowInGraphqlIsFalse() {
 
-		acf_add_options_page(
+		$this->registerOptionsPage(
 			[
 				'page_title' => 'ShowInGraphQLFalse',
 				'menu_title' => __( 'Show in GraphQL False' ),
@@ -175,26 +178,20 @@ class OptionsPageTest extends \Tests\WPGraphQL\Acf\WPUnit\WPGraphQLAcfTestCase {
 
 	// - options page shows with different name if "graphql_field_name" is set
 	public function testOptionsPageRespectsGraphqlFieldName() {
-		acf_add_options_page(
+
+		$this->registerOptionsPage(
 			[
 				'page_title' => 'CustomGraphqlName',
-				'menu_title' => __( 'Show in GraphQL False' ),
+				'menu_title' => __( 'Custom GraphQL Name' ),
 				'menu_slug'  => 'custom-graphql-name',
 				'capability' => 'edit_posts',
+				'post_id'   => 'custom-graphql-name',
 				// options pages will show in the Schema unless set to false
 				'graphql_type_name'   => 'MyCustomOptionsName',
 			]
 		);
 
-		$expected_value = uniqid( 'test', true );
-
-		// Save a value to the ACF Option Field
-		// see: https://www.advancedcustomfields.com/resources/update_field/#update-a-value-from-different-objects
-		if ( function_exists( 'update_field' ) ) {
-			update_field( 'text', $expected_value, 'option' );
-		}
-
-		$this->register_acf_field( [], [
+		$acf_field = $this->register_acf_field( [], [
 			'graphql_field_name' => 'OptionsFields',
 			'location' => [
 				[
@@ -207,10 +204,21 @@ class OptionsPageTest extends \Tests\WPGraphQL\Acf\WPUnit\WPGraphQLAcfTestCase {
 			],
 		]);
 
+		$expected_value = 'test value';
+
+		// Save a value to the ACF Option Field
+		// see: https://www.advancedcustomfields.com/resources/update_field/#update-a-value-from-different-objects
+		if ( ! function_exists( 'update_field' ) ) {
+			$this->markTestSkipped( 'update_field not available...' );
+		}
+
+		// update the field using the field key of the registered field
+		update_field( $acf_field, $expected_value, 'custom-graphql-name' );
+
 		$query = '
 		{
-		  myCustomOptionsName {
-		    optionsFields {
+		  myCustomOptionsName { # this is the name of the options page based on graphql_type_name
+		    optionsFields { # this is the field name for the field group
 		      text
 		    }
 		  }
@@ -219,6 +227,12 @@ class OptionsPageTest extends \Tests\WPGraphQL\Acf\WPUnit\WPGraphQLAcfTestCase {
 
 		$actual = $this->graphql([
 			'query' => $query,
+		]);
+
+		codecept_debug( [
+			'$get_field' => get_field( 'text', 'custom-graphql-name' ),
+			'options_pages' => acf_get_options_pages(),
+			'$acf_field' => $acf_field,
 		]);
 
 		self::assertQuerySuccessful( $actual, [
@@ -248,7 +262,7 @@ class OptionsPageTest extends \Tests\WPGraphQL\Acf\WPUnit\WPGraphQLAcfTestCase {
 
 	public function testQueryOptionsPageAsNode() {
 
-		acf_add_options_page(
+		$this->registerOptionsPage(
 			[
 				'page_title' => 'OptionsPageNode',
 				'menu_title' => __( 'Options Page Node' ),

@@ -53,7 +53,7 @@ class AcfOptionsPage extends Model {
 				'id'        => function () {
 					return Relay::toGlobalId( 'acf_options_page', $this->data['menu_slug'] );
 				},
-				'acfId'     => 'options',
+				'acfId'     => $this->data['post_id'] ?? 'options',
 			];
 		}
 	}

@@ -56,11 +56,11 @@ class Utils {
 				// @phpstan-ignore-next-line
 				$id = 'comment_' . absint( $node->databaseId );
 				break;
-			case is_array( $node ) && isset( $node['post_id'] ) && 'options' === $node['post_id']:
-				$id = $node['post_id'];
-				break;
 			case $node instanceof AcfOptionsPage:
 				$id = $node->acfId;
+				break;
+			case is_array( $node ) && isset( $node['post_id'] ):
+				$id = $node['post_id'];
 				break;
 			default:
 				$id = 0;
@@ -282,7 +282,7 @@ class Utils {
 		// if the field group was configured with no "show_in_graphql" value, default to the "show_in_rest" value
 		// to determine if the group should be available in an API
 		if (
-			( isset( $acf_field_group['post_id'] ) && 'options' !== $acf_field_group['post_id'] ) &&
+			( isset( $acf_field_group['is_options_page'] ) && false === $acf_field_group['is_options_page'] ) &&
 			! isset( $acf_field_group['show_in_graphql'] ) ) {
 			$acf_field_group['show_in_graphql'] = $show_in_rest ?? false;
 		}
