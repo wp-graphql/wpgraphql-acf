@@ -287,33 +287,33 @@ class Registry {
 				$raw_fields = acf_get_raw_fields( $acf_field_group['ID'] );
 			}
 
-			$cloned_groups = [];
-			if ( ! empty( $raw_fields ) ) {
-				foreach ( $raw_fields as $raw_field ) {
-					if ( empty( $raw_field['clone'] ) || ! is_array( $raw_field['clone'] ) ) {
-						continue;
-					}
-					foreach ( $raw_field['clone'] as $cloned_field ) {
-						if ( ! acf_get_field_group( $cloned_field ) ) {
-							continue;
-						}
-
-						if ( ! in_array( $cloned_field, $cloned_groups, true ) ) {
-							$cloned_groups[] = $cloned_field;
-						}
-					}
-				}
-			}
-
-			if ( ! empty( $cloned_groups ) ) {
-				foreach ( $cloned_groups as $cloned_group ) {
-					$cloned_group = acf_get_field_group( $cloned_group );
-					if ( empty( $cloned_group ) ) {
-						continue;
-					}
-					$interfaces[] = $this->get_field_group_graphql_type_name( $cloned_group ) . '_Fields';
-				}
-			}
+//			$cloned_groups = [];
+//			if ( ! empty( $raw_fields ) ) {
+//				foreach ( $raw_fields as $raw_field ) {
+//					if ( empty( $raw_field['clone'] ) || ! is_array( $raw_field['clone'] ) ) {
+//						continue;
+//					}
+//					foreach ( $raw_field['clone'] as $cloned_field ) {
+//						if ( ! acf_get_field_group( $cloned_field ) ) {
+//							continue;
+//						}
+//
+//						if ( ! in_array( $cloned_field, $cloned_groups, true ) ) {
+//							$cloned_groups[] = $cloned_field;
+//						}
+//					}
+//				}
+//			}
+//
+//			if ( ! empty( $cloned_groups ) ) {
+//				foreach ( $cloned_groups as $cloned_group ) {
+//					$cloned_group = acf_get_field_group( $cloned_group );
+//					if ( empty( $cloned_group ) ) {
+//						continue;
+//					}
+//					// $interfaces[] = $this->get_field_group_graphql_type_name( $cloned_group ) . '_Fields';
+//				}
+//			}
 		}
 
 		$interfaces = array_unique( array_values( $interfaces ) );
@@ -465,34 +465,41 @@ class Registry {
 				continue;
 			}
 
-			if ( defined( 'ACF_PRO' ) && ! empty( $acf_field['_clone'] ) && ! empty( $acf_field['__key'] ) ) {
-				$cloned_fields[ $graphql_field_name ] = $acf_field;
-
-				// if the clone field is not in the array of cloned fields
-				if ( ! in_array( $acf_field['__key'], $_cloned_fields, true ) ) {
-					$cloned_from = $acf_field;
-					$acf_field   = acf_get_field( $acf_field['__key'] );
-					if ( empty( $acf_field ) ) {
-						continue;
-					}
-					$acf_field['__key'] = $cloned_from['key'];
-				}
-			}
+//			if ( defined( 'ACF_PRO' ) && ! empty( $acf_field['_clone'] ) && ! empty( $acf_field['__key'] ) ) {
+//				$cloned_fields[ $graphql_field_name ] = $acf_field;
+//
+//				// if the clone field is not in the array of cloned fields
+//				if ( ! in_array( $acf_field['__key'], $_cloned_fields, true ) ) {
+//					$cloned_from = $acf_field;
+//					$acf_field   = acf_get_field( $acf_field['__key'] );
+//					if ( empty( $acf_field ) ) {
+//						continue;
+//					}
+//					$acf_field['__key'] = $cloned_from['key'];
+//				}
+//			}
 
 			$field_config = $this->map_acf_field_to_graphql( $acf_field, $acf_field_group );
 
 			$graphql_fields[ $graphql_field_name ] = $field_config;
 		}
 
-		// If there are cloned fields, pass the cloned field key to the field config for use in resolution
-		if ( defined( 'ACF_PRO' ) && ! empty( $cloned_fields ) ) {
-			foreach ( $cloned_fields as $cloned_field ) {
-				$graphql_field_name = $this->get_graphql_field_name( $cloned_field );
-				if ( isset( $graphql_fields[ $graphql_field_name ] ) ) {
-					$graphql_fields[ $graphql_field_name ]['acf_field']['__key'] = $cloned_field['key'];
-				}
-			}
-		}
+//		if ( 'customContent' === $acf_field_group['graphql_field_name'] ) {
+//			wp_send_json( [
+//				'$fields' => $fields,
+//				'$graphql_fields' => $graphql_fields,
+//			]);
+//		}
+
+//		// If there are cloned fields, pass the cloned field key to the field config for use in resolution
+//		if ( defined( 'ACF_PRO' ) && ! empty( $cloned_fields ) ) {
+//			foreach ( $cloned_fields as $cloned_field ) {
+//				$graphql_field_name = $this->get_graphql_field_name( $cloned_field );
+//				if ( isset( $graphql_fields[ $graphql_field_name ] ) ) {
+//					$graphql_fields[ $graphql_field_name ]['acf_field']['__key'] = $cloned_field['key'];
+//				}
+//			}
+//		}
 
 		return $graphql_fields;
 	}

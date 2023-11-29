@@ -327,6 +327,14 @@ class AcfGraphQLFieldType {
 			return $resolve_type;
 		}
 
+//		if ( [ 'list_of' => 'AcfProKitchenSinkFlexibleContentClonedRepeater' ] === $resolve_type ) {
+////			wp_send_json( [
+////				'$resolve_type' => $resolve_type,
+////			]);
+//
+//			// register_graphql_interfaces_to_types( ['InactiveGroupForCloningClonedRepeater'], [ 'AcfProKitchenSinkFlexibleContentClonedRepeater' ]);
+//		}
+
 		// If the ACF Field is set to "graphql_non_null", map it to the schema as non_null
 		if ( isset( $acf_field['graphql_non_null'] ) && true === (bool) $acf_field['graphql_non_null'] ) {
 			$resolve_type = [ 'non_null' => $resolve_type ];

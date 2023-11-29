@@ -73,6 +73,26 @@ class FlexibleContent {
 
 							// Add the layout interface name as an interface. This is the type that is returned as a list of for accessing all layouts of the flex field
 							$interfaces[]                 = $layout_interface_name;
+
+
+							if ( ! empty( $acf_field['_clone'] ) && ! empty( $acf_field['__key'] ) ) {
+								$cloned_from                    = acf_get_field( $acf_field['__key'] );
+								$cloned_parent_type             = $field_config->get_parent_graphql_type_name( $cloned_from );
+								$cloned_field_name              = $field_config->get_registry()->get_graphql_field_name( $cloned_from );
+								$cloned_layout_interface_prefix = Utils::format_type_name( $cloned_parent_type . ' ' . $cloned_field_name );
+								$cloned_layout_interface_name   = $cloned_layout_interface_prefix . '_Layout';
+//								wp_send_json( [
+//									'$parent_type' => $parent_type,
+//									'$field_name' => $field_name,
+//									'$acf_field' => $acf_field,
+//									'$cloned_from' => $cloned_from,
+//									'$cloned_parent_type' => $cloned_parent_type,
+//									'$cloned_layout_interface_name' => $cloned_layout_interface_name
+//								]);
+
+								$interfaces[] = $cloned_layout_interface_name;
+							}
+
 							$layout['eagerlyLoadType']    = true;
 							$layout['graphql_field_name'] = $layout_name;
 							$layout['fields']             = [

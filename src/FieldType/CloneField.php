@@ -1,6 +1,9 @@
 <?php
 namespace WPGraphQL\Acf\FieldType;
 
+use WPGraphQL\Acf\AcfGraphQLFieldType;
+use WPGraphQL\Acf\FieldConfig;
+
 class CloneField {
 
 	/**
@@ -10,7 +13,6 @@ class CloneField {
 		register_graphql_acf_field_type(
 			'clone',
 			[
-
 				// The clone field adds its own settings field to display
 				'admin_fields' => static function ( $default_admin_settings, $field, $config, \WPGraphQL\Acf\Admin\Settings $settings ) {
 
