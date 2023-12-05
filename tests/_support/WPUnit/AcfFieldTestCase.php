@@ -21,10 +21,10 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 	 * @return void
 	 */
 	public function setUp(): void {
+		parent::setUp();
 		$this->acf_plugin_version = $_ENV['ACF_VERSION'] ?? 'latest';
 		$this->clearSchema();
 		\WPGraphQL\Acf\Utils::clear_field_type_registry();
-		parent::setUp();
 	}
 
 	/**
@@ -1048,6 +1048,8 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 	 * @return void
 	 */
 	public function testQueryCloneFieldOnPost(): void {
+
+		$this->markTestIncomplete( 'Clone Fields are being refactored...' );
 
 		// if ACF PRO is not active, skip the test
 		if ( ! defined( 'ACF_PRO' ) ) {

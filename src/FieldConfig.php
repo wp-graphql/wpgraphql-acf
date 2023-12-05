@@ -15,6 +15,11 @@ class FieldConfig {
 	/**
 	 * @var array
 	 */
+	protected $raw_field;
+
+	/**
+	 * @var array
+	 */
 	protected $acf_field_group;
 
 	/**
@@ -46,12 +51,13 @@ class FieldConfig {
 	 * @throws \GraphQL\Error\Error
 	 */
 	public function __construct( array $acf_field, array $acf_field_group, Registry $registry ) {
-		$this->acf_field                     = $acf_field;
+		$this->raw_field                     = $acf_field;
+		$this->acf_field                     = ! empty( $acf_field['key'] ) && acf_get_field( $acf_field['key'] ) ? acf_get_field( $acf_field['key'] ) : $acf_field;
 		$this->acf_field_group               = $acf_field_group;
 		$this->registry                      = $registry;
 		$this->graphql_field_group_type_name = $this->registry->get_field_group_graphql_type_name( $this->acf_field_group );
 		$this->graphql_field_name            = $this->registry->get_graphql_field_name( $this->acf_field );
-		$this->graphql_field_type            = Utils::get_graphql_field_type( $this->acf_field['type'] );
+		$this->graphql_field_type            = Utils::get_graphql_field_type( $this->raw_field['type'] );
 	}
 
 	/**
@@ -137,7 +143,11 @@ class FieldConfig {
 		} else {
 			// Fallback description
 			// translators: %s is the name of the ACF Field Group
-			$description = sprintf( __( 'Field added to the schema as part of the "%s" Field Group', 'wp-graphql-acf' ), $this->registry->get_field_group_graphql_type_name( $this->acf_field_group ) );
+			$description = sprintf(
+				__( 'Field of the "%1$s" Field Type added to the schema as part of the "%2$s" Field Group', 'wp-graphql-acf' ),
+				$this->acf_field['type'] ?? '',
+				$this->registry->get_field_group_graphql_type_name( $this->acf_field_group )
+			);
 		}
 
 		return $description;
@@ -148,6 +158,13 @@ class FieldConfig {
 	 */
 	public function get_acf_field(): array {
 		return $this->acf_field;
+	}
+
+	/**
+	 * @return array
+	 */
+	public function get_raw_acf_field(): array {
+		return $this->raw_field;
 	}
 
 	/**
