@@ -37,7 +37,6 @@ class CloneField {
 
 					if ( ! empty( $cloned_groups ) && false === (bool) $sub_field_group['prefix_name'] ) {
 						$parent_group = acf_get_field_group( $sub_field_group['parent'] );
-						$parent_group_type_name = $field_config->get_registry()->get_field_group_graphql_type_name( $parent_group );
 						$cloned_group_interfaces = [];
 						foreach( $cloned_groups as $cloned_group ) {
 							$cloned_group_interfaces[] = $field_config->get_registry()->get_field_group_graphql_type_name( $cloned_group ) . '_Fields';
@@ -53,7 +52,8 @@ class CloneField {
 
 					}
 
-					if ( ! empty( $cloned_group_interfaces ) ) {
+					if ( ! empty( $cloned_group_interfaces ) && ! empty( $parent_group ) ) {
+						$parent_group_type_name = $field_config->get_registry()->get_field_group_graphql_type_name( $parent_group );
 						register_graphql_interfaces_to_types( $cloned_group_interfaces, [ $parent_group_type_name ] );
 						return 'connection';
 					}
