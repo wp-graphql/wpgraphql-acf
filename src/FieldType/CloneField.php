@@ -3,7 +3,6 @@ namespace WPGraphQL\Acf\FieldType;
 
 use WPGraphQL\Acf\AcfGraphQLFieldType;
 use WPGraphQL\Acf\FieldConfig;
-use WPGraphQL\AppContext;
 use WPGraphQL\Utils\Utils;
 
 class CloneField {
@@ -16,8 +15,7 @@ class CloneField {
 			'clone',
 			[
 				'graphql_type' => static function ( FieldConfig $field_config, AcfGraphQLFieldType $acf_field_type ) {
-
-					$sub_field_group = $field_config->get_acf_field();
+					$sub_field_group = $field_config->get_raw_acf_field();
 					$parent_type     = $field_config->get_parent_graphql_type_name( $sub_field_group );
 					$field_name      = $field_config->get_graphql_field_name();
 
@@ -35,28 +33,47 @@ class CloneField {
 						}
 					}
 
-					if ( ! empty( $cloned_groups ) && false === (bool) $sub_field_group['prefix_name'] ) {
-						$parent_group = acf_get_field_group( $sub_field_group['parent'] );
-						$cloned_group_interfaces = [];
-						foreach( $cloned_groups as $cloned_group ) {
+					$cloned_group_interfaces = [];
+
+					if ( ! empty( $cloned_groups ) ) {
+						foreach ( $cloned_groups as $cloned_group ) {
 							$cloned_group_interfaces[] = $field_config->get_registry()->get_field_group_graphql_type_name( $cloned_group ) . '_Fields';
 						}
-//						wp_send_json( [
-//							'$clone' =>  $sub_field_group['clone'],
-//							'$cloned_groups' => $cloned_groups,
-//							'$cloned_group_interfaces' => $cloned_group_interfaces,
-//							'parent_field_group' => $parent_group,
-//							'$sub_field_group' => $sub_field_group,
-//							'$parent_graphql_type_name' => $parent_group_type_name
-//						] );
-
 					}
 
-					if ( ! empty( $cloned_group_interfaces ) && ! empty( $parent_group ) ) {
-						$parent_group_type_name = $field_config->get_registry()->get_field_group_graphql_type_name( $parent_group );
-						register_graphql_interfaces_to_types( $cloned_group_interfaces, [ $parent_group_type_name ] );
-						return 'connection';
+					if ( ! empty( $cloned_group_interfaces ) ) {
+
+						// If a clone field clones all fields from another field group,
+						// but has "prefix_name" false, implement the Interface on the parent group
+						if ( false === (bool) $sub_field_group['prefix_name'] ) {
+							$parent_group = acf_get_field_group( $sub_field_group['parent'] );
+
+							if ( empty( $parent_group ) ) {
+								$parent_field = acf_get_field( $sub_field_group['parent'] );
+								$parent_group = ! empty( $parent_field ) ? acf_get_field_group( $parent_field['parent'] ) : false;
+							}
+
+							if ( ! empty( $parent_group ) ) {
+								$parent_group_type_name = $field_config->get_registry()->get_field_group_graphql_type_name( $parent_group );
+
+								if ( isset( $sub_field_group['isFlexLayoutField'] ) && true === (bool) $sub_field_group['isFlexLayoutField'] ) {
+									$parent_type_name = $field_config->get_registry()->get_field_group_graphql_type_name( $sub_field_group['parent_layout_group'] ) ?? $type_name;
+									register_graphql_interfaces_to_types( $cloned_group_interfaces, [ $parent_type_name ] );
+								} else {
+									register_graphql_interfaces_to_types( $cloned_group_interfaces, [ $parent_group_type_name ] );
+								}
+								return 'connection';
+							}
+							// If "prefix_name" is true, nest the cloned field group within another GraphQL object type to avoid
+							// collisions with multiple instances of the field group being cloned
+						} else {
+							if ( ! empty( $type_name ) ) {
+								// Register the cloned group interfaces to the type representing the cloned fields
+								register_graphql_interfaces_to_types( $cloned_group_interfaces, [ $type_name ] );
+							}
+						}
 					}
+
 
 					$sub_field_group['graphql_type_name']  = $type_name;
 					$sub_field_group['graphql_field_name'] = $type_name;
@@ -69,12 +86,6 @@ class CloneField {
 					);
 
 					return $type_name;
-				},
-				'resolve'      => static function ( $root, $args, AppContext $context, $info, $field_type, FieldConfig $field_config ) {
-					$value = $field_config->resolve_field( $root, $args, $context, $info );
-					$root['value']           = $value;
-					$root['acf_field_group'] = $field_config->get_acf_field_group();
-					return $root;
 				},
 				// The clone field adds its own settings field to display
 				'admin_fields' => static function ( $default_admin_settings, $field, $config, \WPGraphQL\Acf\Admin\Settings $settings ) {
