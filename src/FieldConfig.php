@@ -235,6 +235,12 @@ class FieldConfig {
 				return null;
 			}
 
+			// if the field type returns a NULL type,
+			// bail and prevent the field from being directly mapped to the Schema
+			if ( 'NULL' === $field_type ) {
+				return null;
+			}
+
 			switch ( $this->acf_field['type'] ) {
 				case 'color_picker':
 				case 'number':
