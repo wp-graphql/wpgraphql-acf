@@ -87,7 +87,7 @@ class TestCloneFieldsCest {
 			}
 			',
 			'variables' => [
-				'type' => 'AcfProKitchenSinkFlexibleContentLayoutWithClonedGroup'
+				'type' => 'AcfProKitchenSinkFlexibleContentLayoutWithClonedGroupLayout'
 			]
 		]));
 

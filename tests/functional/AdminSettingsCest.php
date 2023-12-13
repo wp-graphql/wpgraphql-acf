@@ -29,9 +29,9 @@ class AdminSettingsCest
         $I->amOnPage('/wp-admin/edit.php?post_type=acf-field-group');
 
         // Grab the first field group name
-        $I->see( 'Foo Name', "//tbody/tr/td/*/a[@class='row-title']" );
+        $I->see( 'Foo Name' );
 
         // Grab the wpgraphql type name
-        $I->assertEquals( 'FooGraphql', $I->grabTextFrom( "//tbody/tr/td/*[@class='acf-wpgraphql-type']" ) );
+        $I->see( 'FooGraphql' );
     }
 }

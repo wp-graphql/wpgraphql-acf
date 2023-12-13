@@ -91,7 +91,9 @@ class FieldConfig {
 	public function get_parent_graphql_type_name( array $acf_field, ?string $prepend = '' ): string {
 		$type_name = '';
 
-		if ( ! empty( $acf_field['parent'] ) ) {
+		if ( ! empty( $acf_field['parent_layout_group'] ) ) {
+			$type_name = $this->registry->get_field_group_graphql_type_name( $acf_field['parent_layout_group'] );
+		} elseif ( ! empty( $acf_field['parent'] ) ) {
 			$parent_field = acf_get_field( $acf_field['parent'] );
 			$parent_group = acf_get_field_group( $acf_field['parent'] );
 			if ( ! empty( $parent_field ) ) {
