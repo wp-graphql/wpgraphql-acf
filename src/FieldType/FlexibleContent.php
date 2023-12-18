@@ -49,6 +49,12 @@ class FlexibleContent {
 					}
 
 					$layouts = [];
+
+					// If there are no layouts, return a NULL type
+					if ( empty( $acf_field['layouts'] ) ) {
+						return 'NULL';
+					}
+
 					foreach ( $acf_field['layouts'] as $layout ) {
 						$layout_type_name              = Utils::format_type_name( $layout_interface_prefix . ' ' . $field_config->get_registry()->get_field_group_graphql_type_name( $layout ) ) . 'Layout';
 						$layout['interfaces']          = [ $layout_interface_name ];
