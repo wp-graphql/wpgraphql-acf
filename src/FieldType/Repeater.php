@@ -22,6 +22,16 @@ class Repeater {
 
 					$sub_field_group['graphql_type_name']  = $type_name;
 					$sub_field_group['graphql_field_name'] = $type_name;
+					$sub_field_group['locations']          = null;
+
+					if ( ! empty( $sub_field_group['__key'] ) ) {
+						$cloned_from   = acf_get_field( $sub_field_group['__key'] );
+						$cloned_parent = ! empty( $cloned_from ) ? $field_config->get_parent_graphql_type_name( $cloned_from ) : null;
+						if ( ! empty( $cloned_parent ) ) {
+							$type_name = Utils::format_type_name( $cloned_parent . ' ' . $field_name );
+						}
+					}
+
 
 					$field_config->get_registry()->register_acf_field_groups_to_graphql(
 						[
