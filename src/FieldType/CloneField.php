@@ -48,18 +48,8 @@ class CloneField {
 						if ( ! $prefix_name ) {
 							register_graphql_interfaces_to_types( $cloned_group_interfaces, [ $parent_type ] );
 						} else {
-							$sub_field_group['graphql_type_name']  = $type_name;
-							$sub_field_group['graphql_field_name'] = $type_name;
-							$sub_field_group['parent']             = $sub_field_group['key'];
-							$sub_field_group['sub_fields']         = $cloned_fields;
-							$field_config->get_registry()->register_acf_field_groups_to_graphql(
-								[
-									$sub_field_group,
-								]
-							);
-
+							$type_name = self::register_prefixed_clone_field_type( $type_name, $sub_field_group, $cloned_fields, $field_config );
 							register_graphql_interfaces_to_types( $cloned_group_interfaces, [ $type_name ] );
-
 							return $type_name;
 						}
 					}
@@ -83,17 +73,7 @@ class CloneField {
 							// Register a new Object Type with the cloned fields, and return
 							// the new type.
 						} else {
-							$sub_field_group['graphql_type_name']  = $type_name;
-							$sub_field_group['graphql_field_name'] = $type_name;
-							$sub_field_group['parent']             = $sub_field_group['key'];
-							$sub_field_group['sub_fields']         = $cloned_fields;
-
-							$field_config->get_registry()->register_acf_field_groups_to_graphql(
-								[
-									$sub_field_group,
-								]
-							);
-							return $type_name;
+							return self::register_prefixed_clone_field_type( $type_name, $sub_field_group, $cloned_fields, $field_config );
 						}
 					}
 					// Bail by returning a NULL type
@@ -114,5 +94,28 @@ class CloneField {
 				},
 			]
 		);
+	}
+
+	/**
+	 * @param string      $type_name The name of the GraphQL Type representing the prefixed clone field
+	 * @param array       $sub_field_group  The Field Group representing the cloned field
+	 * @param array       $cloned_fields The cloned fields to be registered to the Cloned Field Type
+	 * @param \WPGraphQL\Acf\FieldConfig $field_config The ACF Field Config
+	 *
+	 * @return string
+	 * @throws \Exception
+	 */
+	public static function register_prefixed_clone_field_type( string $type_name, array $sub_field_group, array $cloned_fields, FieldConfig $field_config ): string {
+		$sub_field_group['graphql_type_name']  = $type_name;
+		$sub_field_group['graphql_field_name'] = $type_name;
+		$sub_field_group['parent']             = $sub_field_group['key'];
+		$sub_field_group['sub_fields']         = $cloned_fields;
+
+		$field_config->get_registry()->register_acf_field_groups_to_graphql(
+			[
+				$sub_field_group,
+			]
+		);
+		return $type_name;
 	}
 }

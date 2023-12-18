@@ -52,7 +52,6 @@ class FlexibleContent {
 
 					// If there are no layouts, return a NULL type
 					if ( ! empty( $acf_field['layouts'] ) ) {
-
 						foreach ( $acf_field['layouts'] as $layout ) {
 							$layout_type_name              = Utils::format_type_name( $layout_interface_prefix . ' ' . $field_config->get_registry()->get_field_group_graphql_type_name( $layout ) ) . 'Layout';
 							$layout['interfaces']          = [ $layout_interface_name ];
@@ -63,7 +62,7 @@ class FlexibleContent {
 
 							$sub_fields = array_filter(
 								array_map(
-									static function( $field ) use ( $layout ) {
+									static function ( $field ) use ( $layout ) {
 										$field['graphql_types']       = [];
 										$field['parent_layout_group'] = $layout;
 										$field['isFlexLayoutField']   = true;
@@ -78,7 +77,6 @@ class FlexibleContent {
 
 							$layouts[] = $layout;
 						}
-
 					}
 
 					if ( ! empty( $layouts ) ) {
