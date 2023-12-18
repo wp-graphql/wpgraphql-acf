@@ -29,6 +29,7 @@ class Repeater {
 						$cloned_parent = ! empty( $cloned_from ) ? $field_config->get_parent_graphql_type_name( $cloned_from ) : null;
 						if ( ! empty( $cloned_parent ) ) {
 							$type_name = Utils::format_type_name( $cloned_parent . ' ' . $field_name );
+							return [ 'list_of' => $type_name ];
 						}
 					}
 

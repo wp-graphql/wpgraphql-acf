@@ -51,33 +51,34 @@ class FlexibleContent {
 					$layouts = [];
 
 					// If there are no layouts, return a NULL type
-					if ( empty( $acf_field['layouts'] ) ) {
-						return 'NULL';
-					}
+					if ( ! empty( $acf_field['layouts'] ) ) {
 
-					foreach ( $acf_field['layouts'] as $layout ) {
-						$layout_type_name              = Utils::format_type_name( $layout_interface_prefix . ' ' . $field_config->get_registry()->get_field_group_graphql_type_name( $layout ) ) . 'Layout';
-						$layout['interfaces']          = [ $layout_interface_name ];
-						$layout['eagerlyLoadType']     = true;
-						$layout['isFlexLayout']        = true;
-						$layout['parent_layout_group'] = $layout;
-						$layout['graphql_type_name']   = $layout_type_name;
+						foreach ( $acf_field['layouts'] as $layout ) {
+							$layout_type_name              = Utils::format_type_name( $layout_interface_prefix . ' ' . $field_config->get_registry()->get_field_group_graphql_type_name( $layout ) ) . 'Layout';
+							$layout['interfaces']          = [ $layout_interface_name ];
+							$layout['eagerlyLoadType']     = true;
+							$layout['isFlexLayout']        = true;
+							$layout['parent_layout_group'] = $layout;
+							$layout['graphql_type_name']   = $layout_type_name;
 
-						$sub_fields = array_filter(
-							array_map(
-								static function ( $field ) use ( $layout ) {
-									$field['graphql_types']       = [];
-									$field['parent_layout_group'] = $layout;
-									$field['isFlexLayoutField']   = true;
-									return isset( $field['parent_layout'] ) && $layout['key'] === $field['parent_layout'] ? $field : null;
-								},
-								acf_get_raw_fields( $layout['key'] )
-							)
-						);
+							$sub_fields = array_filter(
+								array_map(
+									static function( $field ) use ( $layout ) {
+										$field['graphql_types']       = [];
+										$field['parent_layout_group'] = $layout;
+										$field['isFlexLayoutField']   = true;
 
-						$layout['sub_fields'] = array_merge( $sub_fields, $layout['sub_fields'] );
+										return isset( $field['parent_layout'] ) && $layout['key'] === $field['parent_layout'] ? $field : null;
+									},
+									acf_get_raw_fields( $layout['key'] )
+								)
+							);
 
-						$layouts[] = $layout;
+							$layout['sub_fields'] = array_merge( $sub_fields, $layout['sub_fields'] );
+
+							$layouts[] = $layout;
+						}
+
 					}
 
 					if ( ! empty( $layouts ) ) {
