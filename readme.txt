@@ -1,4 +1,4 @@
-=== WPGraphQL ACF ===
+=== WPGraphQL for ACF ===
 Contributors: jasonbahl, wpgraphql
 Tags: GraphQL, ACF, API, NextJS, Faust, Headless, Decoupled, React, Vue, Svelte, JSON, REST
 Requires at least: 6.0
@@ -8,7 +8,7 @@ Stable Tag: 2.0.0
 License: GPL-3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
-Integrate ACF with GraphQL for powerful querying.
+WPGraphQL for ACF seamlessly integrates Advanced Custom Fields with WPGraphQL.
 
 === Description ===
 

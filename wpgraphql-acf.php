@@ -1,11 +1,11 @@
 <?php
 /**
- * Plugin Name: WPGraphQL ACF
- * Description: Re-imagining the WPGraphQL for ACF plugin
+ * Plugin Name: WPGraphQL for ACF
+ * Description: WPGraphQL for ACF seamlessly integrates Advanced Custom Fields with WPGraphQL.
  * Author: WPGraphQL, Jason Bahl
  * Author URI: https://www.wpgraphql.com
  * Version: 2.0.0-beta.6.0.0
- * Text Domain: wp-graphql-acf
+ * Text Domain: wpgraphql-acf
  * Requires PHP: 7.3
  * Requires at least: 5.9
  * Tested up to: 6.2
