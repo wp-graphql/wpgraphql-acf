@@ -15,6 +15,11 @@ class FieldConfig {
 	/**
 	 * @var array
 	 */
+	protected $raw_field;
+
+	/**
+	 * @var array
+	 */
 	protected $acf_field_group;
 
 	/**
@@ -46,12 +51,13 @@ class FieldConfig {
 	 * @throws \GraphQL\Error\Error
 	 */
 	public function __construct( array $acf_field, array $acf_field_group, Registry $registry ) {
-		$this->acf_field                     = $acf_field;
+		$this->raw_field                     = $acf_field;
+		$this->acf_field                     = ! empty( $acf_field['key'] ) && acf_get_field( $acf_field['key'] ) ? acf_get_field( $acf_field['key'] ) : $acf_field;
 		$this->acf_field_group               = $acf_field_group;
 		$this->registry                      = $registry;
 		$this->graphql_field_group_type_name = $this->registry->get_field_group_graphql_type_name( $this->acf_field_group );
 		$this->graphql_field_name            = $this->registry->get_graphql_field_name( $this->acf_field );
-		$this->graphql_field_type            = Utils::get_graphql_field_type( $this->acf_field['type'] );
+		$this->graphql_field_type            = Utils::get_graphql_field_type( $this->raw_field['type'] );
 	}
 
 	/**
@@ -85,7 +91,9 @@ class FieldConfig {
 	public function get_parent_graphql_type_name( array $acf_field, ?string $prepend = '' ): string {
 		$type_name = '';
 
-		if ( ! empty( $acf_field['parent'] ) ) {
+		if ( ! empty( $acf_field['parent_layout_group'] ) ) {
+			$type_name = $this->registry->get_field_group_graphql_type_name( $acf_field['parent_layout_group'] );
+		} elseif ( ! empty( $acf_field['parent'] ) ) {
 			$parent_field = acf_get_field( $acf_field['parent'] );
 			$parent_group = acf_get_field_group( $acf_field['parent'] );
 			if ( ! empty( $parent_field ) ) {
@@ -137,7 +145,12 @@ class FieldConfig {
 		} else {
 			// Fallback description
 			// translators: %s is the name of the ACF Field Group
-			$description = sprintf( __( 'Field added to the schema as part of the "%s" Field Group', 'wp-graphql-acf' ), $this->registry->get_field_group_graphql_type_name( $this->acf_field_group ) );
+			$description = sprintf(
+				// translators: %1$s is the ACF Field Type and %2$s is the name of the ACF Field Group
+				__( 'Field of the "%1$s" Field Type added to the schema as part of the "%2$s" Field Group', 'wp-graphql-acf' ),
+				$this->acf_field['type'] ?? '',
+				$this->registry->get_field_group_graphql_type_name( $this->acf_field_group )
+			);
 		}
 
 		return $description;
@@ -148,6 +161,13 @@ class FieldConfig {
 	 */
 	public function get_acf_field(): array {
 		return $this->acf_field;
+	}
+
+	/**
+	 * @return array
+	 */
+	public function get_raw_acf_field(): array {
+		return $this->raw_field;
 	}
 
 	/**
@@ -214,6 +234,12 @@ class FieldConfig {
 			// bail and let the connection handle registration to the schema
 			// and resolution
 			if ( 'connection' === $field_type ) {
+				return null;
+			}
+
+			// if the field type returns a NULL type,
+			// bail and prevent the field from being directly mapped to the Schema
+			if ( 'NULL' === $field_type ) {
 				return null;
 			}
 
@@ -288,6 +314,7 @@ class FieldConfig {
 			'repeater',
 			'flexible_content',
 			'oembed',
+			'clone',
 		];
 
 		return in_array( $field_type, $types_to_format, true );
@@ -347,9 +374,8 @@ class FieldConfig {
 			} elseif ( ! empty( $field_config['__key'] ) ) {
 				$field_key = $field_config['__key'];
 			}
-			$cloned_field_config = acf_get_field( $field_key );
-			$field_config        = ! empty( $cloned_field_config ) ? $cloned_field_config : $field_config;
 		}
+
 
 		$should_format_value = false;
 
@@ -362,7 +388,7 @@ class FieldConfig {
 		}
 
 		// if the field_config is empty or not an array, set it as an empty array as a fallback
-		$field_config = ! empty( $field_config ) && is_array( $field_config ) ? $field_config : [];
+		$field_config = ! empty( $field_config ) ? $field_config : [];
 
 		// If the root being passed down already has a value
 		// for the field key, let's use it to resolve
@@ -391,6 +417,7 @@ class FieldConfig {
 			return $pre_value;
 		}
 
+		$parent_field      = null;
 		$parent_field_name = null;
 		if ( ! empty( $field_config['parent'] ) ) {
 			$parent_field = acf_get_field( $field_config['parent'] );
@@ -419,6 +446,8 @@ class FieldConfig {
 			}
 		}
 
+
+
 		// If there's no node_id at this point, we can return null
 		if ( empty( $return_value ) && empty( $node_id ) ) {
 			return null;
@@ -428,7 +457,6 @@ class FieldConfig {
 		if ( empty( $return_value ) ) {
 			$return_value = $this->get_field( $field_key, $parent_field_name, $node_id, $should_format_value );
 		}
-
 
 		// Prepare the value for response
 		$prepared_value = $this->prepare_acf_field_value( $return_value, $root, $node_id, $field_config );

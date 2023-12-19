@@ -21,8 +21,6 @@ class FlexibleContent {
 					$layout_interface_prefix = Utils::format_type_name( $parent_type . ' ' . $field_name );
 					$layout_interface_name   = $layout_interface_prefix . '_Layout';
 
-					$flex_field_raw_sub_fields = acf_get_raw_fields( $acf_field['key'] );
-
 					if ( ! $field_config->get_registry()->has_registered_field_group( $layout_interface_name ) ) {
 						register_graphql_interface_type(
 							$layout_interface_name,
@@ -33,13 +31,16 @@ class FlexibleContent {
 								'fields'          => [
 									'fieldGroupName' => [
 										'type'        => 'String',
+										'resolve'     => static function ( $object ) use ( $layout_interface_prefix ) {
+											$layout = $object['acf_fc_layout'] ?? null;
+											return Utils::format_type_name( $layout_interface_prefix . ' ' . $layout ) . 'Layout';
+										},
 										'description' => __( 'The name of the ACF Flex Field Layout', 'wp-graphql-acf' ),
-										'deprecationReason' => __( 'Use __typename instead', 'wp-graphql-acf' ),
 									],
 								],
 								'resolveType'     => static function ( $object ) use ( $layout_interface_prefix ) {
 									$layout = $object['acf_fc_layout'] ?? null;
-									return Utils::format_type_name( $layout_interface_prefix . ' ' . $layout );
+									return Utils::format_type_name( $layout_interface_prefix . ' ' . $layout ) . 'Layout';
 								},
 							]
 						);
@@ -48,42 +49,33 @@ class FlexibleContent {
 					}
 
 					$layouts = [];
+
+					// If there are no layouts, return a NULL type
 					if ( ! empty( $acf_field['layouts'] ) ) {
 						foreach ( $acf_field['layouts'] as $layout ) {
+							$layout_type_name              = Utils::format_type_name( $layout_interface_prefix . ' ' . $field_config->get_registry()->get_field_group_graphql_type_name( $layout ) ) . 'Layout';
+							$layout['interfaces']          = [ $layout_interface_name ];
+							$layout['eagerlyLoadType']     = true;
+							$layout['isFlexLayout']        = true;
+							$layout['parent_layout_group'] = $layout;
+							$layout['graphql_type_name']   = $layout_type_name;
 
-							// Format the name of the group using the layout prefix + the layout name
-							$layout_name = Utils::format_type_name( $layout_interface_prefix . ' ' . $field_config->get_registry()->get_field_group_graphql_type_name( $layout ) );
+							$sub_fields = array_filter(
+								array_map(
+									static function ( $field ) use ( $layout ) {
+										$field['graphql_types']       = [];
+										$field['parent_layout_group'] = $layout;
+										$field['isFlexLayoutField']   = true;
 
-							// set the graphql_field_name using the $layout_name
-							$layout['graphql_field_name'] = $layout_name;
-
-							// Pass that the layout is a flexLayout (compared to a standard field group)
-							$layout['isFlexLayout'] = true;
-
-							$layout['parent']     = $acf_field['key'];
-							$layout['raw_fields'] = array_filter(
-								$flex_field_raw_sub_fields,
-								static function ( $field ) use ( $layout ) {
-									return isset( $field['parent_layout'] ) && $field['parent_layout'] === $layout['key'] ? $layout : null;
-								}
+										return isset( $field['parent_layout'] ) && $layout['key'] === $field['parent_layout'] ? $field : null;
+									},
+									acf_get_raw_fields( $layout['key'] )
+								)
 							);
 
-							// Get interfaces, including cloned field groups, for the layout
-							$interfaces = $field_config->get_registry()->get_field_group_interfaces( $layout );
+							$layout['sub_fields'] = array_merge( $sub_fields, $layout['sub_fields'] );
 
-							// Add the layout interface name as an interface. This is the type that is returned as a list of for accessing all layouts of the flex field
-							$interfaces[]                 = $layout_interface_name;
-							$layout['eagerlyLoadType']    = true;
-							$layout['graphql_field_name'] = $layout_name;
-							$layout['fields']             = [
-								'fieldGroupName' => [
-									'type'              => 'String',
-									'description'       => __( 'The name of the ACF Flex Field Layout', 'wp-graphql-acf' ),
-									'deprecationReason' => __( 'Use __typename instead', 'wp-graphql-acf' ),
-								],
-							];
-							$layout['interfaces']         = $interfaces;
-							$layouts[ $layout_name ]      = $layout;
+							$layouts[] = $layout;
 						}
 					}
 
