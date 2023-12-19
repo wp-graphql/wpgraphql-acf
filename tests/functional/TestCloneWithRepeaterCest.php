@@ -137,6 +137,44 @@ class TestCloneFieldsCest {
 		$I->assertNull( $field['type']['ofType']['name'] );
 		$I->assertSame( 'PlantsCloneRoots', $field['type']['name'] );
 
+		$query = '
+		query GetPageWithPlants($databaseId: ID!) {
+		  page(id:$databaseId idType:DATABASE_ID) {
+		    id
+		    title
+		    ...on WithAcfPlants {
+		      plants {
+		        name
+		        clonedRepeater {
+		          notClonedRepeater {
+		            anotherName
+		          }
+		        }
+		        notClonedRepeater {
+		          anotherName
+		        }
+		      }
+		    }
+		  }
+		}
+		';
+
+		$I->haveHttpHeader( 'Content-Type', 'application/json' );
+		$I->sendPost( '/graphql', json_encode([
+			'query' => $query,
+			'variables' => [
+				'databaseId' => 0
+			]
+		]));
+
+		$I->seeResponseCodeIs( 200 );
+		$I->seeResponseIsJson();
+		$response = $I->grabResponse();
+		$response = json_decode( $response, true );
+
+		// Validate that the query above was valid, returned data, and no errors
+		$I->assertNotEmpty( $response['data'] );
+		$I->assertArrayNotHasKey( 'errors', $response );
 	}
 
 	public function findField( $name, $fields ) {
