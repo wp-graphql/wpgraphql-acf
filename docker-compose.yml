@@ -7,9 +7,9 @@ services:
     build:
       context: .
       dockerfile: docker/Dockerfile
-    image: wp-graphql-acf:latest-wp${WP_VERSION}-php${PHP_VERSION}
+    image: wpgraphql-acf:latest-wp${WP_VERSION}-php${PHP_VERSION}
     volumes:
-      - '.:/var/www/html/wp-content/plugins/wp-graphql-acf'
+      - '.:/var/www/html/wp-content/plugins/wpgraphql-acf'
       - './.log/app:/var/log/apache2'
     env_file:
       - .env
@@ -35,11 +35,11 @@ services:
     build:
       context: .
       dockerfile: docker/Dockerfile.testing
-    image: wp-graphql-acf-testing:latest-wp${WP_VERSION}-php${PHP_VERSION}
+    image: wpgraphql-acf-testing:latest-wp${WP_VERSION}-php${PHP_VERSION}
     volumes:
-      - '.:/var/www/html/wp-content/plugins/wp-graphql-acf'
+      - '.:/var/www/html/wp-content/plugins/wpgraphql-acf'
       - './.log/testing:/var/log/apache2'
-      - './codeception.dist.yml:/var/www/html/wp-content/plugins/wp-graphql-acf/codeception.yml'
+      - './codeception.dist.yml:/var/www/html/wp-content/plugins/wpgraphql-acf/codeception.yml'
     env_file:
       - .env.testing
     environment:

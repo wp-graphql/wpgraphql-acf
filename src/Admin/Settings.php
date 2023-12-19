@@ -2,7 +2,7 @@
 /**
  * ACF extension for WP-GraphQL
  *
- * @package wp-graphql-acf
+ * @package wpgraphql-acf
  */
 
 namespace WPGraphQL\Acf\Admin;
@@ -189,7 +189,7 @@ class Settings {
 	 */
 	public function register_meta_boxes(): void {
 		add_meta_box(
-			'wp-graphql-acf-meta-box',
+			'wpgraphql-acf-meta-box',
 			__( 'GraphQL', 'wpgraphql-acf' ),
 			[
 				$this,
@@ -311,7 +311,7 @@ class Settings {
 		<script type="text/javascript">
 			if (typeof acf !== 'undefined') {
 				acf.newPostbox({
-					'id': 'wp-graphql-acf-meta-box',
+					'id': 'wpgraphql-acf-meta-box',
 					'label': <?php echo $this->is_acf6_or_higher ? 'top' : "'left'"; ?>
 				});
 			}
