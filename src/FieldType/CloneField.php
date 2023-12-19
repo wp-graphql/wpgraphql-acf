@@ -86,8 +86,8 @@ class CloneField {
 					return [
 						'graphql_clone_field' => [
 							'type'         => 'message',
-							'label'        => __( 'GraphQL Settings for Clone Fields', 'wp-graphql-acf' ),
-							'instructions' => __( 'Clone Fields will inherit their GraphQL settings from the field(s) being cloned. If all Fields from a Field Group are cloned, an Interface representing the cloned field Group will be applied to this field group.', 'wp-graphql-acf' ),
+							'label'        => __( 'GraphQL Settings for Clone Fields', 'wpgraphql-acf' ),
+							'instructions' => __( 'Clone Fields will inherit their GraphQL settings from the field(s) being cloned. If all Fields from a Field Group are cloned, an Interface representing the cloned field Group will be applied to this field group.', 'wpgraphql-acf' ),
 							'conditions'   => [],
 						],
 					];

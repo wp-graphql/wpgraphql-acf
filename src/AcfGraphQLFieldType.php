@@ -104,8 +104,8 @@ class AcfGraphQLFieldType {
 		$default_admin_settings = [];
 
 		$default_admin_settings['show_in_graphql'] = [
-			'label'         => __( 'Show in GraphQL', 'wp-graphql-acf' ),
-			'instructions'  => __( 'Whether the field should be queryable via GraphQL. NOTE: Changing this to false for existing field can cause a breaking change to the GraphQL Schema. Proceed with caution.', 'wp-graphql-acf' ),
+			'label'         => __( 'Show in GraphQL', 'wpgraphql-acf' ),
+			'instructions'  => __( 'Whether the field should be queryable via GraphQL. NOTE: Changing this to false for existing field can cause a breaking change to the GraphQL Schema. Proceed with caution.', 'wpgraphql-acf' ),
 			'name'          => 'show_in_graphql',
 			'type'          => 'true_false',
 			'ui'            => 1,
@@ -115,13 +115,13 @@ class AcfGraphQLFieldType {
 		];
 
 		$default_admin_settings['graphql_description'] = [
-			'label'         => __( 'GraphQL Description', 'wp-graphql-acf' ),
-			'instructions'  => __( 'The description of the field, shown in the GraphQL Schema. Should not include any special characters.', 'wp-graphql-acf' ),
+			'label'         => __( 'GraphQL Description', 'wpgraphql-acf' ),
+			'instructions'  => __( 'The description of the field, shown in the GraphQL Schema. Should not include any special characters.', 'wpgraphql-acf' ),
 			'name'          => 'graphql_description',
 			'type'          => 'text',
 			'ui'            => true,
 			'default_value' => null,
-			'placeholder'   => __( 'Explanation of how this field should be used in the GraphQL Schema', 'wp-graphql-acf' ),
+			'placeholder'   => __( 'Explanation of how this field should be used in the GraphQL Schema', 'wpgraphql-acf' ),
 			'conditions'    => [
 				'field'    => 'show_in_graphql',
 				'operator' => '==',
@@ -130,14 +130,14 @@ class AcfGraphQLFieldType {
 		];
 
 		$default_admin_settings['graphql_field_name'] = [
-			'label'         => __( 'GraphQL Field Name', 'wp-graphql-acf' ),
-			'instructions'  => __( 'The name of the field in the GraphQL Schema. Should only contain numbers and letters. Must start with a letter. Recommended format is "snakeCase".', 'wp-graphql-acf' ),
+			'label'         => __( 'GraphQL Field Name', 'wpgraphql-acf' ),
+			'instructions'  => __( 'The name of the field in the GraphQL Schema. Should only contain numbers and letters. Must start with a letter. Recommended format is "snakeCase".', 'wpgraphql-acf' ),
 			'name'          => 'graphql_field_name',
 			'type'          => 'text',
 			'ui'            => true,
 			'required'      => false,
 			// we don't allow underscores if the value is auto formatted
-			'placeholder'   => __( 'newFieldName', 'wp-graphql-acf' ),
+			'placeholder'   => __( 'newFieldName', 'wpgraphql-acf' ),
 			'default_value' => '',
 			'conditions'    => [
 				'field'    => 'show_in_graphql',
@@ -147,8 +147,8 @@ class AcfGraphQLFieldType {
 		];
 
 		$default_admin_settings['graphql_non_null'] = [
-			'label'         => __( 'GraphQL Non-Null', 'wp-graphql-acf' ),
-			'instructions'  => __( 'Whether the field should be Non-Null in the GraphQL Schema. <br/><br/><strong>Use with caution.</strong> Only check this if you can guarantee there will be data stored for this field on all objects that have this field. i.e. the field should be required and should have data entered for all previous entries with this field. Unchecking this, if already checked, is considered a breaking change to the GraphQL Schema.', 'wp-graphql-acf' ),
+			'label'         => __( 'GraphQL Non-Null', 'wpgraphql-acf' ),
+			'instructions'  => __( 'Whether the field should be Non-Null in the GraphQL Schema. <br/><br/><strong>Use with caution.</strong> Only check this if you can guarantee there will be data stored for this field on all objects that have this field. i.e. the field should be required and should have data entered for all previous entries with this field. Unchecking this, if already checked, is considered a breaking change to the GraphQL Schema.', 'wpgraphql-acf' ),
 			'name'          => 'graphql_non_null',
 			'type'          => 'true_false',
 			'ui'            => 1,

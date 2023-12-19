@@ -8,7 +8,7 @@ body:
 
         Please remember, a bug report is not the place to ask questions. You can
         use [Slack](https://join.slack.com/t/wp-graphql/shared_invite/zt-3vloo60z-PpJV2PFIwEathWDOxCTTLA) for that, or start a topic in [GitHub
-        Discussions](https://github.com/wp-graphql/wp-graphql/discussions).
+        Discussions](https://github.com/wp-graphql/wpgraphql-acf/discussions).
   - type: textarea
     attributes:
       label: Description
@@ -35,8 +35,8 @@ body:
     attributes:
       label: PHP or JSON export of the ACF Field Group(s)
       description: >-
-        Paste or attach the PHP or JSON export of the ACF Field Group(s) related to the problem. 
-        
+        Paste or attach the PHP or JSON export of the ACF Field Group(s) related to the problem.
+
         Attach as Github supported file type, ie .txt or .zip
   - type: textarea
     attributes:
@@ -76,7 +76,7 @@ body:
     attributes:
       label: Please confirm that you have searched existing issues in the repo.
       description: >-
-        You can do this by searching https://github.com/wp-graphql/wp-graphql/issues.
+        You can do this by searching https://github.com/wp-graphql/wpgraphql-acf/issues and https://github.com/wp-graphql/wp-graphql/issues.
       options:
         - label: 'Yes'
           required: true

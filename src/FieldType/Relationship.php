@@ -20,13 +20,13 @@ class Relationship {
 		$admin_fields[] = [
 			'type'          => 'select',
 			'name'          => 'graphql_connection_type',
-			'label'         => __( 'GraphQL Connection Type', 'wp-graphql-acf' ),
+			'label'         => __( 'GraphQL Connection Type', 'wpgraphql-acf' ),
 			'choices'       => [
-				'one_to_one'  => __( 'One to One Connection', 'wp-graphql-acf' ),
-				'one_to_many' => __( 'One to Many Connection', 'wp-graphql-acf' ),
+				'one_to_one'  => __( 'One to One Connection', 'wpgraphql-acf' ),
+				'one_to_many' => __( 'One to Many Connection', 'wpgraphql-acf' ),
 			],
 			'default_value' => 'one_to_many',
-			'instructions'  => __( 'Select whether the field should be presented in the schema as a standard GraphQL "Connection" that can return 0, 1 or more nodes, or a "One to One" connection that can return exactly 0 or 1 node. Changing this field will change the GraphQL Schema and could cause breaking changes.', 'wp-graphql-acf' ),
+			'instructions'  => __( 'Select whether the field should be presented in the schema as a standard GraphQL "Connection" that can return 0, 1 or more nodes, or a "One to One" connection that can return exactly 0 or 1 node. Changing this field will change the GraphQL Schema and could cause breaking changes.', 'wpgraphql-acf' ),
 			'conditions'    => [],
 		];
 		return $admin_fields;
@@ -75,7 +75,7 @@ class Relationship {
 							return absint( $id ) ?: null;
 						},
 						$ids
-					) 
+					)
 				);
 
 				$resolver = new PostObjectConnectionResolver( $root, $args, $context, $info, 'any' );

@@ -45,7 +45,7 @@ class TaxonomyRegistration {
 	 * @return array
 	 */
 	public function add_tabs( array $tabs ): array {
-		$tabs['graphql'] = __( 'GraphQL', 'wp-graphql-acf' );
+		$tabs['graphql'] = __( 'GraphQL', 'wpgraphql-acf' );
 		return $tabs;
 	}
 
@@ -63,8 +63,8 @@ class TaxonomyRegistration {
 				'prefix'       => 'acf_taxonomy',
 				'value'        => isset( $acf_taxonomy['show_in_graphql'] ) && (bool) $acf_taxonomy['show_in_graphql'],
 				'ui'           => true,
-				'label'        => __( 'Show in GraphQL', 'wp-graphql-acf' ),
-				'instructions' => __( 'Whether to show the Taxonomy in the WPGraphQL Schema.', 'wp-graphql-acf' ),
+				'label'        => __( 'Show in GraphQL', 'wpgraphql-acf' ),
+				'instructions' => __( 'Whether to show the Taxonomy in the WPGraphQL Schema.', 'wpgraphql-acf' ),
 				'default'      => false,
 			]
 		);
@@ -84,8 +84,8 @@ class TaxonomyRegistration {
 				'key'          => 'graphql_single_name',
 				'prefix'       => 'acf_taxonomy',
 				'value'        => $graphql_single_name,
-				'label'        => __( 'GraphQL Single Name', 'wp-graphql-acf' ),
-				'instructions' => __( 'How the type should be referenced in the GraphQL Schema.', 'wp-graphql-acf' ),
+				'label'        => __( 'GraphQL Single Name', 'wpgraphql-acf' ),
+				'instructions' => __( 'How the type should be referenced in the GraphQL Schema.', 'wpgraphql-acf' ),
 				'default'      => $graphql_single_name,
 				'conditions'   => [
 					'field'    => 'show_in_graphql',
@@ -112,8 +112,8 @@ class TaxonomyRegistration {
 				'key'          => 'graphql_plural_name',
 				'prefix'       => 'acf_taxonomy',
 				'value'        => $graphql_plural_name,
-				'label'        => __( 'GraphQL Plural Name', 'wp-graphql-acf' ),
-				'instructions' => __( 'How the type should be referenced in the GraphQL Schema.', 'wp-graphql-acf' ),
+				'label'        => __( 'GraphQL Plural Name', 'wpgraphql-acf' ),
+				'instructions' => __( 'How the type should be referenced in the GraphQL Schema.', 'wpgraphql-acf' ),
 				'default'      => $graphql_plural_name,
 				'conditions'   => [
 					'field'    => 'show_in_graphql',
@@ -203,8 +203,8 @@ class TaxonomyRegistration {
 	 * @return array
 	 */
 	public function add_graphql_type_column( array $columns ): array {
-		$columns['show_in_graphql'] = __( 'Show in GraphQL', 'wp-graphql-acf' );
-		$columns['graphql_type']    = __( 'GraphQL Type', 'wp-graphql-acf' );
+		$columns['show_in_graphql'] = __( 'Show in GraphQL', 'wpgraphql-acf' );
+		$columns['graphql_type']    = __( 'GraphQL Type', 'wpgraphql-acf' );
 		return $columns;
 	}
 

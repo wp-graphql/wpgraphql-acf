@@ -67,7 +67,7 @@ class OptionsPageRegistration {
 	 * @return array
 	 */
 	public function add_tabs( array $tabs ): array {
-		$tabs['graphql'] = __( 'GraphQL', 'wp-graphql-acf' );
+		$tabs['graphql'] = __( 'GraphQL', 'wpgraphql-acf' );
 		return $tabs;
 	}
 
@@ -85,8 +85,8 @@ class OptionsPageRegistration {
 				'prefix'       => 'acf_ui_options_page',
 				'value'        => isset( $acf_ui_options_page['show_in_graphql'] ) && true === (bool) $acf_ui_options_page['show_in_graphql'] ? 1 : 0,
 				'ui'           => true,
-				'label'        => __( 'Show in GraphQL', 'wp-graphql-acf' ),
-				'instructions' => __( 'Whether to show the Post Type in the WPGraphQL Schema.', 'wp-graphql-acf' ),
+				'label'        => __( 'Show in GraphQL', 'wpgraphql-acf' ),
+				'instructions' => __( 'Whether to show the Post Type in the WPGraphQL Schema.', 'wpgraphql-acf' ),
 				'default'      => false,
 			]
 		);
@@ -106,8 +106,8 @@ class OptionsPageRegistration {
 				'key'          => 'graphql_type_name',
 				'prefix'       => 'acf_ui_options_page',
 				'value'        => $graphql_type_name,
-				'label'        => __( 'GraphQL Type Name', 'wp-graphql-acf' ),
-				'instructions' => __( 'How the Options Page should be referenced in the GraphQL Schema.', 'wp-graphql-acf' ),
+				'label'        => __( 'GraphQL Type Name', 'wpgraphql-acf' ),
+				'instructions' => __( 'How the Options Page should be referenced in the GraphQL Schema.', 'wpgraphql-acf' ),
 				'default'      => $graphql_type_name,
 				'required'     => 1,
 				'conditions'   => [
@@ -129,8 +129,8 @@ class OptionsPageRegistration {
 	 * @return array
 	 */
 	public function add_graphql_type_column( array $columns ): array {
-		$columns['show_in_graphql'] = __( 'Show in GraphQL', 'wp-graphql-acf' );
-		$columns['graphql_type']    = __( 'GraphQL Type', 'wp-graphql-acf' );
+		$columns['show_in_graphql'] = __( 'Show in GraphQL', 'wpgraphql-acf' );
+		$columns['graphql_type']    = __( 'GraphQL Type', 'wpgraphql-acf' );
 		return $columns;
 	}
 

@@ -120,17 +120,17 @@ class WPGraphQLAcf {
 
 		// Is ACF active?
 		if ( ! class_exists( 'ACF' ) ) {
-			$this->plugin_load_error_messages[] = __( 'Advanced Custom Fields must be installed and activated', 'wp-graphql-acf' );
+			$this->plugin_load_error_messages[] = __( 'Advanced Custom Fields must be installed and activated', 'wpgraphql-acf' );
 		}
 
 		if ( class_exists( 'WPGraphQL\ACF\ACF' ) ) {
-			$this->plugin_load_error_messages[] = __( 'Multiple versions of WPGraphQL for ACF cannot be active at the same time', 'wp-graphql-acf' );
+			$this->plugin_load_error_messages[] = __( 'Multiple versions of WPGraphQL for ACF cannot be active at the same time', 'wpgraphql-acf' );
 		}
 
 		// Have we met the minimum version requirement?
 		if ( ! class_exists( 'WPGraphQL' ) || ! defined( 'WPGRAPHQL_VERSION' ) || true === version_compare( WPGRAPHQL_VERSION, WPGRAPHQL_FOR_ACF_VERSION_WPGRAPHQL_REQUIRED_MIN_VERSION, 'lt' ) ) {
 			// translators: %s is the version of the plugin
-			$this->plugin_load_error_messages[] = sprintf( __( 'WPGraphQL v%s or higher is required to be installed and active', 'wp-graphql-acf' ), WPGRAPHQL_FOR_ACF_VERSION_WPGRAPHQL_REQUIRED_MIN_VERSION );
+			$this->plugin_load_error_messages[] = sprintf( __( 'WPGraphQL v%s or higher is required to be installed and active', 'wpgraphql-acf' ), WPGRAPHQL_FOR_ACF_VERSION_WPGRAPHQL_REQUIRED_MIN_VERSION );
 		}
 
 		return $this->plugin_load_error_messages;
@@ -160,7 +160,7 @@ class WPGraphQLAcf {
 					<h3>
 						<?php
 							// translators: %s is the version of the plugin
-							echo esc_html( sprintf( __( 'WPGraphQL for Advanced Custom Fields v%s cannot load', 'wp-graphql-acf' ), WPGRAPHQL_FOR_ACF_VERSION ) );
+							echo esc_html( sprintf( __( 'WPGraphQL for Advanced Custom Fields v%s cannot load', 'wpgraphql-acf' ), WPGRAPHQL_FOR_ACF_VERSION ) );
 						?>
 					</h3>
 					<ol>

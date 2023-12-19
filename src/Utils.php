@@ -178,23 +178,23 @@ class Utils {
 
 		$interfaces = [
 			'ContentNode'     => [
-				'label'        => __( 'Post Type', 'wp-graphql-acf' ),
-				'plural_label' => __( 'All Post Types', 'wp-graphql-acf' ),
+				'label'        => __( 'Post Type', 'wpgraphql-acf' ),
+				'plural_label' => __( 'All Post Types', 'wpgraphql-acf' ),
 			],
 			'TermNode'        => [
-				'label'        => __( 'Taxonomy', 'wp-graphql-acf' ),
-				'plural_label' => __( 'All Taxonomies', 'wp-graphql-acf' ),
+				'label'        => __( 'Taxonomy', 'wpgraphql-acf' ),
+				'plural_label' => __( 'All Taxonomies', 'wpgraphql-acf' ),
 			],
 			'ContentTemplate' => [
-				'label'        => __( 'Page Template', 'wp-graphql-acf' ),
-				'plural_label' => __( 'All Templates Assignable to Content', 'wp-graphql-acf' ),
+				'label'        => __( 'Page Template', 'wpgraphql-acf' ),
+				'plural_label' => __( 'All Templates Assignable to Content', 'wpgraphql-acf' ),
 			],
 		];
 
 		if ( function_exists( 'acf_get_options_pages' ) && ! empty( acf_get_options_pages() ) ) {
 			$interfaces['AcfOptionsPage'] = [
-				'label'        => __( 'ACF Options Page', 'wp-graphql-acf' ),
-				'plural_label' => __( 'All Options Pages registered by ACF', 'wp-graphql-acf' ),
+				'label'        => __( 'ACF Options Page', 'wpgraphql-acf' ),
+				'plural_label' => __( 'All Options Pages registered by ACF', 'wpgraphql-acf' ),
 			];
 		}
 
@@ -235,22 +235,22 @@ class Utils {
 		/**
 		 * Add comment to GraphQL types
 		 */
-		$graphql_types['Comment'] = __( 'Comment', 'wp-graphql-acf' );
+		$graphql_types['Comment'] = __( 'Comment', 'wpgraphql-acf' );
 
 		/**
 		 * Add menu to GraphQL types
 		 */
-		$graphql_types['Menu'] = __( 'Menu', 'wp-graphql-acf' );
+		$graphql_types['Menu'] = __( 'Menu', 'wpgraphql-acf' );
 
 		/**
 		 * Add menu items to GraphQL types
 		 */
-		$graphql_types['MenuItem'] = __( 'Menu Item', 'wp-graphql-acf' );
+		$graphql_types['MenuItem'] = __( 'Menu Item', 'wpgraphql-acf' );
 
 		/**
 		 * Add users to GraphQL types
 		 */
-		$graphql_types['User'] = __( 'User', 'wp-graphql-acf' );
+		$graphql_types['User'] = __( 'User', 'wpgraphql-acf' );
 
 		return $graphql_types;
 	}
@@ -334,7 +334,7 @@ class Utils {
 
 		if ( $starts_with_string ) {
 			graphql_debug(
-				__( 'The ACF Field or Field Group could not be added to the schema. GraphQL Field and Type names cannot start with a number', 'wp-graphql-acf' ),
+				__( 'The ACF Field or Field Group could not be added to the schema. GraphQL Field and Type names cannot start with a number', 'wpgraphql-acf' ),
 				[
 					'invalid' => $field_group,
 				]
