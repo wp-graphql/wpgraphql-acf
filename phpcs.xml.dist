@@ -57,7 +57,7 @@
 	<rule ref="WordPress.WP.I18n">
 		<properties>
 			<property name="text_domain" type="array">
-				<element value="wp-graphql-acf" />
+				<element value="wpgraphql-acf" />
 			</property>
 		</properties>
 	</rule>
