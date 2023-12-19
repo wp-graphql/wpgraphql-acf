@@ -8,7 +8,7 @@ body:
 
 
         Please make sure to search the repo for [existing feature
-        requests](https://github.com/wp-graphql/wp-graphql-acf/issues)
+        requests](https://github.com/wp-graphql/wpgraphql-acf/issues)
         before creating a new one.
   - type: textarea
     attributes:
