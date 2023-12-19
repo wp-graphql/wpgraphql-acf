@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.0.0
+
+- [#142](https://github.com/wp-graphql/wpgraphql-acf/pull/142): Update README, versions, plugin assets for deploy to WordPress.org.
+
 ## 2.0.0-beta.7.0.0
 
 ### BREAKING CHANGES
