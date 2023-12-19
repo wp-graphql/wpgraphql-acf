@@ -75,58 +75,58 @@ class AcfExtended {
 		register_graphql_object_type(
 			'ACFE_Country',
 			[
-				'description' => __( 'ACFE Country Object', 'wp-graphql-acf' ),
+				'description' => __( 'ACFE Country Object', 'wpgraphql-acf' ),
 				'fields'      => [
 					'code'       => [
 						// @todo: CountryCode Scalar. See: https://github.com/Urigo/graphql-scalars/blob/master/src/scalars/CountryCode.ts
 						'type'        => 'String',
-						'description' => __( 'A country code as defined by ISO 3166-1 alpha-2', 'wp-graphql-acf' ),
+						'description' => __( 'A country code as defined by ISO 3166-1 alpha-2', 'wpgraphql-acf' ),
 					],
 					'name'       => [
 						'type'        => 'String',
-						'description' => __( 'The name of the country', 'wp-graphql-acf' ),
+						'description' => __( 'The name of the country', 'wpgraphql-acf' ),
 					],
 					'localized'  => [
 						'type'        => 'String',
-						'description' => __( 'The name of the country, localized to the current locale', 'wp-graphql-acf' ),
+						'description' => __( 'The name of the country, localized to the current locale', 'wpgraphql-acf' ),
 					],
 					'native'     => [
 						'type'        => 'String',
-						'description' => __( 'The name of the country, in the country\'s native dialect', 'wp-graphql-acf' ),
+						'description' => __( 'The name of the country, in the country\'s native dialect', 'wpgraphql-acf' ),
 					],
 					'dial'       => [
 						'type'        => 'Integer',
-						'description' => __( 'The calling code for the country', 'wp-graphql-acf' ),
+						'description' => __( 'The calling code for the country', 'wpgraphql-acf' ),
 					],
 					'capital'    => [
 						'type'        => 'String',
-						'description' => __( 'The name of the Country\'s capital city', 'wp-graphql-acf' ),
+						'description' => __( 'The name of the Country\'s capital city', 'wpgraphql-acf' ),
 					],
 					'people'     => [
 						'type'        => 'String',
-						'description' => __( 'The term used to denote the inhabitants of the country', 'wp-graphql-acf' ),
+						'description' => __( 'The term used to denote the inhabitants of the country', 'wpgraphql-acf' ),
 					],
 					'continent'  => [
 						'type'        => 'String',
-						'description' => __( 'The name of the continent the country is in', 'wp-graphql-acf' ),
+						'description' => __( 'The name of the continent the country is in', 'wpgraphql-acf' ),
 					],
 					'latitude'   => [
 						'type'        => 'Float',
-						'description' => __( 'The latitude of the country\'s position', 'wp-graphql-acf' ),
+						'description' => __( 'The latitude of the country\'s position', 'wpgraphql-acf' ),
 						'resolve'     => static function ( $country ) {
 							return $country['coords']['lat'] ?? null;
 						},
 					],
 					'longitude'  => [
 						'type'        => 'Float',
-						'description' => __( 'The longitude of the country\'s position', 'wp-graphql-acf' ),
+						'description' => __( 'The longitude of the country\'s position', 'wpgraphql-acf' ),
 						'resolve'     => static function ( $country ) {
 							return $country['coords']['lng'] ?? null;
 						},
 					],
 					'languages'  => [
 						'type'        => [ 'list_of' => 'ACFE_Language' ],
-						'description' => __( 'A list of languages spoken in the country', 'wp-graphql-acf' ),
+						'description' => __( 'A list of languages spoken in the country', 'wpgraphql-acf' ),
 						'resolve'     => static function ( $root ) {
 							$value = $root['languages'] ?? null;
 							return AcfeLanguages::resolve_languages( $value );
@@ -134,7 +134,7 @@ class AcfExtended {
 					],
 					'currencies' => [
 						'type'        => [ 'list_of' => 'ACFE_Currency' ],
-						'description' => __( 'A list of currencies used in the country', 'wp-graphql-acf' ),
+						'description' => __( 'A list of currencies used in the country', 'wpgraphql-acf' ),
 						'resolve'     => static function ( $root ) {
 							$value = $root['currencies'] ?? null;
 							return AcfeCurrencies::resolve_currencies( $value );
@@ -150,27 +150,27 @@ class AcfExtended {
 				'fields' => [
 					'code'      => [
 						'type'        => 'String',
-						'description' => __( 'The currency code according to ISO 4217: https://en.wikipedia.org/wiki/ISO_4217', 'wp-graphql-acf' ),
+						'description' => __( 'The currency code according to ISO 4217: https://en.wikipedia.org/wiki/ISO_4217', 'wpgraphql-acf' ),
 					],
 					'name'      => [
 						'type'        => 'String',
-						'description' => __( 'The name of the currency', 'wp-graphql-acf' ),
+						'description' => __( 'The name of the currency', 'wpgraphql-acf' ),
 					],
 					'symbol'    => [
 						'type'        => 'String',
-						'description' => __( 'The symbol used to represent the currency (i.e. $)', 'wp-graphql-acf' ),
+						'description' => __( 'The symbol used to represent the currency (i.e. $)', 'wpgraphql-acf' ),
 					],
 					'flag'      => [
 						'type'        => 'String',
-						'description' => __( 'The code representing the flag for the country', 'wp-graphql-acf' ),
+						'description' => __( 'The code representing the flag for the country', 'wpgraphql-acf' ),
 					],
 					'continent' => [
 						'type'        => 'String',
-						'description' => __( 'The name of the continent the currency is used in', 'wp-graphql-acf' ),
+						'description' => __( 'The name of the continent the currency is used in', 'wpgraphql-acf' ),
 					],
 					'countries' => [
 						'type'        => [ 'list_of' => 'ACFE_Country' ],
-						'description' => __( 'A list of countries the currency is used in', 'wp-graphql-acf' ),
+						'description' => __( 'A list of countries the currency is used in', 'wpgraphql-acf' ),
 						'resolve'     => static function ( $root ) {
 							$value = $root['countries'] ?? null;
 							return AcfeCountries::resolve_countries( $value );
@@ -178,7 +178,7 @@ class AcfExtended {
 					],
 					'languages' => [
 						'type'        => [ 'list_of' => 'ACFE_Language' ],
-						'description' => __( 'A list of languages spoken in the country', 'wp-graphql-acf' ),
+						'description' => __( 'A list of languages spoken in the country', 'wpgraphql-acf' ),
 						'resolve'     => static function ( $root ) {
 							$value = $root['languages'] ?? null;
 							return AcfeLanguages::resolve_languages( $value );
@@ -191,35 +191,35 @@ class AcfExtended {
 		register_graphql_object_type(
 			'ACFE_Language',
 			[
-				'description' => __( 'ACFE Language Object', 'wp-graphql-acf' ),
+				'description' => __( 'ACFE Language Object', 'wpgraphql-acf' ),
 				'fields'      => [
 					'code'       => [
 						'type'        => 'String',
-						'description' => __( 'A 2-letter language code as defined by ISO 639-1. https://en.wikipedia.org/wiki/ISO_639-1', 'wp-graphql-acf' ),
+						'description' => __( 'A 2-letter language code as defined by ISO 639-1. https://en.wikipedia.org/wiki/ISO_639-1', 'wpgraphql-acf' ),
 					],
 					'locale'     => [
 						'type'        => 'String',
-						'description' => __( 'The locale in the format of a BCP 47 (RFC 5646) standard string', 'wp-graphql-acf' ),
+						'description' => __( 'The locale in the format of a BCP 47 (RFC 5646) standard string', 'wpgraphql-acf' ),
 					],
 					'alt'        => [
 						'type'        => 'String',
-						'description' => __( 'Alternative locale in the format of a BCP 47 (RFC 5646) standard string', 'wp-graphql-acf' ),
+						'description' => __( 'Alternative locale in the format of a BCP 47 (RFC 5646) standard string', 'wpgraphql-acf' ),
 					],
 					'name'       => [
 						'type'        => 'String',
-						'description' => __( 'The name of the language', 'wp-graphql-acf' ),
+						'description' => __( 'The name of the language', 'wpgraphql-acf' ),
 					],
 					'native'     => [
 						'type'        => 'String',
-						'description' => __( 'The name of the language, in the country\'s native dialect', 'wp-graphql-acf' ),
+						'description' => __( 'The name of the language, in the country\'s native dialect', 'wpgraphql-acf' ),
 					],
 					'dir'        => [
 						'type'        => 'String',
-						'description' => __( 'The direction of the language. (i.e. ltr / rtl / ttb, btt )', 'wp-graphql-acf' ),
+						'description' => __( 'The direction of the language. (i.e. ltr / rtl / ttb, btt )', 'wpgraphql-acf' ),
 					],
 					'flag'       => [
 						'type'        => 'String',
-						'description' => __( 'The code representing the flag for the country', 'wp-graphql-acf' ),
+						'description' => __( 'The code representing the flag for the country', 'wpgraphql-acf' ),
 					],
 					'countries'  => [
 						'type'    => [ 'list_of' => 'ACFE_Country' ],
@@ -285,7 +285,7 @@ class AcfExtended {
 				'fields'          => [
 					'url' => [
 						'type'        => 'String',
-						'description' => __( 'The url linked to', 'wp-graphql-acf' ),
+						'description' => __( 'The url linked to', 'wpgraphql-acf' ),
 						'resolve'     => static function ( $source, $args, $context, $info ) {
 							if ( empty( $source['value'] ) ) {
 								return null;
@@ -341,17 +341,17 @@ class AcfExtended {
 		register_graphql_object_type(
 			'ACFE_Date_Range',
 			[
-				'description' => __( 'A date range made up of a start date and end date', 'wp-graphql-acf' ),
+				'description' => __( 'A date range made up of a start date and end date', 'wpgraphql-acf' ),
 				'fields'      => [
 					'startDate' => [
 						// @todo: DATETIME Scalar
 						'type'        => 'String',
-						'description' => __( 'The start date of a date range returned as an RFC 3339 time string', 'wp-graphql-acf' ),
+						'description' => __( 'The start date of a date range returned as an RFC 3339 time string', 'wpgraphql-acf' ),
 					],
 					'endDate'   => [
 						// @todo: DATETIME Scalar
 						'type'        => 'String',
-						'description' => __( 'The start date of a date range RFC 3339 time string', 'wp-graphql-acf' ),
+						'description' => __( 'The start date of a date range RFC 3339 time string', 'wpgraphql-acf' ),
 					],
 				],
 			]
@@ -360,23 +360,23 @@ class AcfExtended {
 		register_graphql_object_type(
 			'ACFE_Image_Size',
 			[
-				'description' => __( 'Registered image size', 'wp-graphql-acf' ),
+				'description' => __( 'Registered image size', 'wpgraphql-acf' ),
 				'fields'      => [
 					'name'   => [
 						'type'        => 'String',
-						'description' => __( 'Image size identifier.', 'wp-graphql-acf' ),
+						'description' => __( 'Image size identifier.', 'wpgraphql-acf' ),
 					],
 					'width'  => [
 						'type'        => 'Int',
-						'description' => __( 'Image width in pixels. Default 0.', 'wp-graphql-acf' ),
+						'description' => __( 'Image width in pixels. Default 0.', 'wpgraphql-acf' ),
 					],
 					'height' => [
 						'type'        => 'Int',
-						'description' => __( 'Image height in pixels. Default 0.', 'wp-graphql-acf' ),
+						'description' => __( 'Image height in pixels. Default 0.', 'wpgraphql-acf' ),
 					],
 					'crop'   => [
 						'type'        => 'Boolean',
-						'description' => __( 'Image cropping behavior. If false, the image will be scaled (default), If true, image will be cropped to the specified dimensions using center positions', 'wp-graphql-acf' ),
+						'description' => __( 'Image cropping behavior. If false, the image will be scaled (default), If true, image will be cropped to the specified dimensions using center positions', 'wpgraphql-acf' ),
 					],
 				],
 			]

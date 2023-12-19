@@ -45,7 +45,7 @@ class PostTypeRegistration {
 	 * @return array
 	 */
 	public function add_tabs( array $tabs ): array {
-		$tabs['graphql'] = __( 'GraphQL', 'wp-graphql-acf' );
+		$tabs['graphql'] = __( 'GraphQL', 'wpgraphql-acf' );
 		return $tabs;
 	}
 
@@ -63,8 +63,8 @@ class PostTypeRegistration {
 				'prefix'       => 'acf_post_type',
 				'value'        => isset( $acf_post_type['show_in_graphql'] ) && (bool) $acf_post_type['show_in_graphql'],
 				'ui'           => true,
-				'label'        => __( 'Show in GraphQL', 'wp-graphql-acf' ),
-				'instructions' => __( 'Whether to show the Post Type in the WPGraphQL Schema.', 'wp-graphql-acf' ),
+				'label'        => __( 'Show in GraphQL', 'wpgraphql-acf' ),
+				'instructions' => __( 'Whether to show the Post Type in the WPGraphQL Schema.', 'wpgraphql-acf' ),
 				'default'      => false,
 			]
 		);
@@ -84,8 +84,8 @@ class PostTypeRegistration {
 				'key'          => 'graphql_single_name',
 				'prefix'       => 'acf_post_type',
 				'value'        => $graphql_single_name,
-				'label'        => __( 'GraphQL Single Name', 'wp-graphql-acf' ),
-				'instructions' => __( 'How the type should be referenced in the GraphQL Schema.', 'wp-graphql-acf' ),
+				'label'        => __( 'GraphQL Single Name', 'wpgraphql-acf' ),
+				'instructions' => __( 'How the type should be referenced in the GraphQL Schema.', 'wpgraphql-acf' ),
 				'default'      => $graphql_single_name,
 				'required'     => 1,
 				'conditions'   => [
@@ -113,8 +113,8 @@ class PostTypeRegistration {
 				'key'          => 'graphql_plural_name',
 				'prefix'       => 'acf_post_type',
 				'value'        => $graphql_plural_name,
-				'label'        => __( 'GraphQL Plural Name', 'wp-graphql-acf' ),
-				'instructions' => __( 'How the type should be referenced in the GraphQL Schema.', 'wp-graphql-acf' ),
+				'label'        => __( 'GraphQL Plural Name', 'wpgraphql-acf' ),
+				'instructions' => __( 'How the type should be referenced in the GraphQL Schema.', 'wpgraphql-acf' ),
 				'default'      => $graphql_plural_name,
 				'required'     => 1,
 				'conditions'   => [
@@ -205,8 +205,8 @@ class PostTypeRegistration {
 	 * @return array
 	 */
 	public function add_graphql_type_column( array $columns ): array {
-		$columns['show_in_graphql'] = __( 'Show in GraphQL', 'wp-graphql-acf' );
-		$columns['graphql_type']    = __( 'GraphQL Type', 'wp-graphql-acf' );
+		$columns['show_in_graphql'] = __( 'Show in GraphQL', 'wpgraphql-acf' );
+		$columns['graphql_type']    = __( 'GraphQL Type', 'wpgraphql-acf' );
 		return $columns;
 	}
 

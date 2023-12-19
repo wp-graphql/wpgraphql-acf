@@ -6,7 +6,7 @@
 	<file>./access-functions.php</file>
 	<file>./activation.php</file>
 	<file>./deactivation.php</file>
-	<file>./wp-graphql-acf.php</file>
+	<file>./wpgraphql-acf.php</file>
 	<file>./src</file>
 	<exclude-pattern>*/**/tests/</exclude-pattern>
 	<exclude-pattern>*/node_modules/*</exclude-pattern>

@@ -27,7 +27,7 @@ class FlexibleContent {
 							[
 								'eagerlyLoadType' => true,
 								// translators: the %1$s is the name of the Flex Field Layout and the %2$s is the name of the field.
-								'description'     => sprintf( __( 'Layout of the "%1$s" Field of the "%2$s" Field Group Field', 'wp-graphql-acf' ), $field_name, $parent_type ),
+								'description'     => sprintf( __( 'Layout of the "%1$s" Field of the "%2$s" Field Group Field', 'wpgraphql-acf' ), $field_name, $parent_type ),
 								'fields'          => [
 									'fieldGroupName' => [
 										'type'        => 'String',
@@ -35,7 +35,7 @@ class FlexibleContent {
 											$layout = $object['acf_fc_layout'] ?? null;
 											return Utils::format_type_name( $layout_interface_prefix . ' ' . $layout ) . 'Layout';
 										},
-										'description' => __( 'The name of the ACF Flex Field Layout', 'wp-graphql-acf' ),
+										'description' => __( 'The name of the ACF Flex Field Layout', 'wpgraphql-acf' ),
 									],
 								],
 								'resolveType'     => static function ( $object ) use ( $layout_interface_prefix ) {

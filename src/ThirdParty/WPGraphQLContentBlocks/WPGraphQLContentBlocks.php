@@ -55,8 +55,8 @@ class WPGraphQLContentBlocks {
 	 */
 	public function add_blocks_as_possible_type( array $interfaces ): array {
 		$interfaces['AcfBlock'] = [
-			'label'        => __( 'ACF Block', 'wp-graphql-acf' ),
-			'plural_label' => __( 'All Gutenberg Blocks registered by ACF Blocks', 'wp-graphql-acf' ),
+			'label'        => __( 'ACF Block', 'wpgraphql-acf' ),
+			'plural_label' => __( 'All Gutenberg Blocks registered by ACF Blocks', 'wpgraphql-acf' ),
 		];
 
 		return $interfaces;
@@ -80,7 +80,7 @@ class WPGraphQLContentBlocks {
 			[
 				'eagerlyLoadType' => true,
 				'interfaces'      => [ 'EditorBlock' ],
-				'description'     => __( 'Block registered by ACF', 'wp-graphql-acf' ),
+				'description'     => __( 'Block registered by ACF', 'wpgraphql-acf' ),
 				'fields'          => [
 					'name' => [
 						'type' => 'String',

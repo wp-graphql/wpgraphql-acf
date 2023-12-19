@@ -11,12 +11,12 @@ parameters:
     bootstrapFiles:
         - vendor/php-stubs/acf-pro-stubs/acf-pro-stubs.php
         - phpstan/constants.php
-        - wp-graphql-acf.php
+        - wpgraphql-acf.php
         - access-functions.php
         - activation.php
         - deactivation.php
     paths:
-        - wp-graphql-acf.php
+        - wpgraphql-acf.php
         - access-functions.php
         - activation.php
         - deactivation.php
