@@ -5,7 +5,7 @@ namespace WPGraphQL\Acf\ThirdParty\AcfExtended\FieldType;
 class AcfeImageSizes {
 
 	/**
-	 * @return void
+	 * Register support for the ACF Extended acfe_image_sizes field type
 	 */
 	public static function register_field_type(): void {
 		register_graphql_acf_field_type(
@@ -28,12 +28,11 @@ class AcfeImageSizes {
 							static function ( $size ) {
 								return acfe_get_registered_image_sizes( $size );
 							},
-							$value 
-						) 
+							$value
+						)
 					);
 				},
-			] 
+			]
 		);
 	}
-
 }

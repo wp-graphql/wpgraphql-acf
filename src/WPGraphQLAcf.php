@@ -1,13 +1,12 @@
 <?php
 
 use GraphQL\Type\Definition\ResolveInfo;
-use WPGraphQL\Registry\TypeRegistry;
-
+use WPGraphQL\Acf\Admin\OptionsPageRegistration;
 use WPGraphQL\Acf\Admin\PostTypeRegistration;
 use WPGraphQL\Acf\Admin\TaxonomyRegistration;
-use WPGraphQL\Acf\Admin\OptionsPageRegistration;
 use WPGraphQL\Acf\Registry;
 use WPGraphQL\Acf\ThirdParty;
+use WPGraphQL\Registry\TypeRegistry;
 
 class WPGraphQLAcf {
 
@@ -17,12 +16,12 @@ class WPGraphQLAcf {
 	protected $admin_settings;
 
 	/**
-	 * @var array
+	 * @var array<mixed>
 	 */
 	protected $plugin_load_error_messages = [];
 
 	/**
-	 * @return void
+	 * Initialize the plugin
 	 */
 	public function init(): void {
 
@@ -51,7 +50,7 @@ class WPGraphQLAcf {
 	}
 
 	/**
-	 * @return void
+	 * Initialize third party support (i.e. Smart Cache, ACF Extended)
 	 */
 	public function init_third_party_support(): void {
 		$third_party = new ThirdParty();
@@ -59,7 +58,7 @@ class WPGraphQLAcf {
 	}
 
 	/**
-	 * @return void
+	 * Initialize support for Admin Settings
 	 */
 	public function init_admin_settings(): void {
 		$this->admin_settings = new WPGraphQL\Acf\Admin\Settings();
@@ -69,8 +68,6 @@ class WPGraphQLAcf {
 	/**
 	 * Add functionality to the Custom Post Type and Custom Taxonomy registration screens
 	 * and underlying functionality (like exports, php code generation)
-	 *
-	 * @return void
 	 */
 	public function acf_internal_post_type_support(): void {
 		$taxonomy_registration_screen = new TaxonomyRegistration();
@@ -86,7 +83,6 @@ class WPGraphQLAcf {
 	/**
 	 * @param \WPGraphQL\Registry\TypeRegistry $type_registry
 	 *
-	 * @return void
 	 * @throws \Exception
 	 */
 	public function init_registry( TypeRegistry $type_registry ): void {
@@ -111,7 +107,7 @@ class WPGraphQLAcf {
 	/**
 	 * Empty array if the plugin can load. Array of messages if the plugin cannot load.
 	 *
-	 * @return array
+	 * @return array<mixed>
 	 */
 	public function get_plugin_load_error_messages(): array {
 		if ( ! empty( $this->plugin_load_error_messages ) ) {
@@ -139,8 +135,6 @@ class WPGraphQLAcf {
 	/**
 	 * Show admin notice to admins if this plugin is active but either ACF and/or WPGraphQL
 	 * are not active
-	 *
-	 * @return void
 	 */
 	public function show_admin_notice(): void {
 		$can_load_messages = $this->get_plugin_load_error_messages();
@@ -188,10 +182,10 @@ class WPGraphQLAcf {
 	}
 
 	/**
-	 * @param array                 $loaders
+	 * @param array<mixed>          $loaders
 	 * @param \WPGraphQL\AppContext $context
 	 *
-	 * @return array
+	 * @return array<mixed>
 	 */
 	public function register_loaders( array $loaders, \WPGraphQL\AppContext $context ): array {
 		$loaders['acf_options_page'] = new \WPGraphQL\Acf\Data\Loader\AcfOptionsPageLoader( $context );
@@ -201,8 +195,6 @@ class WPGraphQLAcf {
 
 	/**
 	 * Output graphql debug messages if the plugin cannot load properly.
-	 *
-	 * @return void
 	 */
 	public function show_graphql_debug_messages(): void {
 		$messages = $this->get_plugin_load_error_messages();
@@ -221,15 +213,15 @@ class WPGraphQLAcf {
 		 * Add the $source node as the "node" passed to the resolver so ACF Fields assigned to Templates can resolve
 		 * using the $source node as the object to get meta from.
 		 *
-		 * @param mixed           $result         The result of the field resolution
-		 * @param mixed           $source         The source passed down the Resolve Tree
-		 * @param array           $args           The args for the field
-		 * @param \WPGraphQL\AppContext $context The AppContext passed down the ResolveTree
-		 * @param \GraphQL\Type\Definition\ResolveInfo $info The ResolveInfo passed down the ResolveTree
-		 * @param string          $type_name      The name of the type the fields belong to
-		 * @param string          $field_key      The name of the field
+		 * @param mixed                                    $result         The result of the field resolution
+		 * @param mixed                                    $source         The source passed down the Resolve Tree
+		 * @param array<mixed>                             $args           The args for the field
+		 * @param \WPGraphQL\AppContext                    $context The AppContext passed down the ResolveTree
+		 * @param \GraphQL\Type\Definition\ResolveInfo     $info The ResolveInfo passed down the ResolveTree
+		 * @param string                                   $type_name      The name of the type the fields belong to
+		 * @param string                                   $field_key      The name of the field
 		 * @param \GraphQL\Type\Definition\FieldDefinition $field The Field Definition for the resolving field
-		 * @param mixed           $field_resolver The default field resolver
+		 * @param mixed                                    $field_resolver The default field resolver
 		 *
 		 * @return mixed
 		 */
@@ -244,5 +236,4 @@ class WPGraphQLAcf {
 
 		return $result;
 	}
-
 }

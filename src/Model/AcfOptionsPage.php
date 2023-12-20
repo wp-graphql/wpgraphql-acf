@@ -15,14 +15,14 @@ use WPGraphQL\Model\Model;
  * @property string $capability
  * @property string $acfId
  *
- * @package WPGraphQL\Model
+ * @package WPGraphQL\ACF
  */
 class AcfOptionsPage extends Model {
 
 	/**
 	 * AcfOptionsPage constructor.
 	 *
-	 * @param array $options_page The incoming ACF Options Page to be modeled
+	 * @param array<mixed> $options_page The incoming ACF Options Page to be modeled
 	 *
 	 * @throws \Exception Throws Exception.
 	 */
@@ -32,14 +32,14 @@ class AcfOptionsPage extends Model {
 	}
 
 	/**
-	 * @return array
+	 * @return array<mixed>
 	 */
 	public function get_data(): array {
 		return $this->data;
 	}
 
 	/**
-	 * @return void
+	 * Initialize support for ACF Options Pages loading as a GraphQL Model
 	 */
 	protected function init(): void {
 		if ( empty( $this->fields ) ) {

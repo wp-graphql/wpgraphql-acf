@@ -7,7 +7,7 @@ use WPGraphQL\Acf\FieldConfig;
 class DateTimePicker {
 
 	/**
-	 * @return void
+	 * Register support for the "date_time_picker" ACF field type
 	 */
 	public static function register_field_type(): void {
 		register_graphql_acf_field_type(
@@ -41,5 +41,4 @@ class DateTimePicker {
 			]
 		);
 	}
-
 }

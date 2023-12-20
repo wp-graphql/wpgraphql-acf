@@ -7,9 +7,9 @@ use WPGraphQL\Data\Loader\AbstractDataLoader;
 class AcfOptionsPageLoader extends AbstractDataLoader {
 
 	/**
-	 * @param array $keys
+	 * @param array<mixed> $keys
 	 *
-	 * @return array
+	 * @return array<mixed>
 	 * @throws \Exception
 	 */
 	protected function loadKeys( array $keys ): array {

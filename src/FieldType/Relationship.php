@@ -1,17 +1,35 @@
 <?php
 namespace WPGraphQL\Acf\FieldType;
 
-use WPGraphQL\AppContext;
-use WPGraphQL\Data\Connection\PostObjectConnectionResolver;
 use WPGraphQL\Acf\AcfGraphQLFieldType;
 use WPGraphQL\Acf\FieldConfig;
+use WPGraphQL\AppContext;
+use WPGraphQL\Data\Connection\PostObjectConnectionResolver;
 
 class Relationship {
 
 	/**
-	 * @param array                         $admin_fields Admin Fields to display in the GraphQL Tab when configuring an ACF Field within a Field Group
-	 * @param array                         $field The
-	 * @param array                         $config
+	 * Register support for the "textarea" ACF field type
+	 */
+	public static function register_field_type(): void {
+		register_graphql_acf_field_type(
+			'relationship',
+			[
+				'exclude_admin_fields' => [ 'graphql_non_null' ],
+				'admin_fields'         => static function ( $admin_fields, $field, $config, \WPGraphQL\Acf\Admin\Settings $settings ): array {
+					return self::get_admin_fields( $admin_fields, $field, $config, $settings );
+				},
+				'graphql_type'         => static function ( FieldConfig $field_config, AcfGraphQLFieldType $acf_field_type ) {
+					return self::get_graphql_type( $field_config, $acf_field_type );
+				},
+			]
+		);
+	}
+
+	/**
+	 * @param array<mixed>                  $admin_fields Admin Fields to display in the GraphQL Tab when configuring an ACF Field within a Field Group
+	 * @param array<mixed>                  $field The ACF Field the settings belong to
+	 * @param array<mixed>                  $config The
 	 * @param \WPGraphQL\Acf\Admin\Settings $settings
 	 *
 	 * @return mixed
@@ -36,7 +54,6 @@ class Relationship {
 	 * @param \WPGraphQL\Acf\FieldConfig         $field_config
 	 * @param \WPGraphQL\Acf\AcfGraphQLFieldType $acf_field_type
 	 *
-	 * @return string
 	 * @throws \Exception
 	 */
 	public static function get_graphql_type( FieldConfig $field_config, AcfGraphQLFieldType $acf_field_type ): string {
@@ -98,23 +115,5 @@ class Relationship {
 		$field_config->register_graphql_connections( $connection_config );
 
 		return 'connection';
-	}
-
-	/**
-	 * @return void
-	 */
-	public static function register_field_type():void {
-		register_graphql_acf_field_type(
-			'relationship',
-			[
-				'exclude_admin_fields' => [ 'graphql_non_null' ],
-				'admin_fields'         => static function ( $admin_fields, $field, $config, \WPGraphQL\Acf\Admin\Settings $settings ): array {
-					return self::get_admin_fields( $admin_fields, $field, $config, $settings );
-				},
-				'graphql_type'         => static function ( FieldConfig $field_config, AcfGraphQLFieldType $acf_field_type ) {
-					return self::get_graphql_type( $field_config, $acf_field_type );
-				},
-			]
-		);
 	}
 }

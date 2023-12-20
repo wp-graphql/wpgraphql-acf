@@ -2,16 +2,16 @@
 /**
  * ACF extension for WP-GraphQL
  *
- * @package wpgraphql-acf
+ * @package WPGraphQL\ACF
  */
 
 namespace WPGraphQL\Acf\Admin;
 
-use WP_Post;
 use WPGraphQL\Acf\AcfGraphQLFieldType;
 use WPGraphQL\Acf\LocationRules\LocationRules;
-use WPGraphQL\Acf\Utils;
 use WPGraphQL\Acf\Registry;
+use WPGraphQL\Acf\Utils;
+use WP_Post;
 
 
 /**
@@ -32,7 +32,7 @@ class Settings {
 	protected $registry;
 
 	/**
-	 * @return \WPGraphQL\Acf\Registry
+	 * Get the WPGraphQL for ACF Registry
 	 */
 	protected function get_registry(): Registry {
 		if ( ! $this->registry instanceof Registry ) {
@@ -99,8 +99,6 @@ class Settings {
 
 	/**
 	 * Set up the Field Settings for configuring how each field should map to GraphQL
-	 *
-	 * @return void
 	 */
 	protected function setup_field_settings(): void {
 		if ( ! function_exists( 'acf_get_field_types' ) ) {
@@ -139,8 +137,6 @@ class Settings {
 
 	/**
 	 * Handle the AJAX callback for converting ACF Location settings to GraphQL Types
-	 *
-	 * @return void
 	 */
 	public function graphql_types_ajax_callback(): void {
 		if ( ! isset( $_POST['data'] ) ) {
@@ -184,8 +180,6 @@ class Settings {
 
 	/**
 	 * Register the GraphQL Settings metabox for the ACF Field Group post type
-	 *
-	 * @return void
 	 */
 	public function register_meta_boxes(): void {
 		add_meta_box(
@@ -203,9 +197,8 @@ class Settings {
 	/**
 	 * Display the GraphQL Settings fields on the ACF Field Group add/edit admin page
 	 *
-	 * @param array|\WP_Post $field_group The Field Group being edited
+	 * @param array<mixed>|\WP_Post $field_group The Field Group being edited
 	 *
-	 * @return void
 	 * @throws \GraphQL\Error\Error
 	 * @throws \Exception
 	 */
@@ -322,10 +315,8 @@ class Settings {
 	/**
 	 * Add settings to each field to show in GraphQL
 	 *
-	 * @param array $field The field to add the setting to.
-	 * @param string|null $field_type The Type of field being configured.
-	 *
-	 * @return void
+	 * @param array<mixed> $field The field to add the setting to.
+	 * @param string|null  $field_type The Type of field being configured.
 	 */
 	public function add_field_settings( array $field, ?string $field_type = null ): void {
 
@@ -382,9 +373,9 @@ class Settings {
 	/**
 	 * Get the config for the non_null field
 	 *
-	 * @param array $override Array of settings to override the default behavior
+	 * @param array<mixed> $override Array of settings to override the default behavior
 	 *
-	 * @return array
+	 * @return array<mixed>
 	 */
 	public function get_graphql_resolve_type_field_config( array $override = [] ): array {
 		return array_merge(
@@ -415,8 +406,6 @@ class Settings {
 	 * This enqueues admin script.
 	 *
 	 * @param string $screen The screen that scripts are being enqueued to
-	 *
-	 * @return void
 	 */
 	public function enqueue_graphql_acf_scripts( string $screen ): void {
 		global $post;
@@ -453,9 +442,9 @@ class Settings {
 	/**
 	 * Add header to the field group admin page columns showing types and interfaces
 	 *
-	 * @param array $_columns The column headers to add the values to.
+	 * @param array<mixed> $_columns The column headers to add the values to.
 	 *
-	 * @return array The column headers with the added wp-graphql columns
+	 * @return array<mixed> The column headers with the added wp-graphql columns
 	 */
 	public function wpgraphql_admin_table_column_headers( array $_columns ): array {
 		$columns  = [];
@@ -487,7 +476,6 @@ class Settings {
 	 * @param string $column_name The column being processed.
 	 * @param int    $post_id     The field group id being processed
 	 *
-	 * @return void
 	 * @throws \GraphQL\Error\Error
 	 */
 	public function wpgraphql_admin_table_columns_html( string $column_name, int $post_id ): void {
@@ -528,5 +516,4 @@ class Settings {
 				echo null;
 		}
 	}
-
 }

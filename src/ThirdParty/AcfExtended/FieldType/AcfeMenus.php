@@ -7,7 +7,7 @@ use GraphQL\Deferred;
 class AcfeMenus {
 
 	/**
-	 * @return void
+	 * Register support for the ACF Extended acfe_menus field type
 	 */
 	public static function register_field_type(): void {
 		register_graphql_acf_field_type(
@@ -36,14 +36,13 @@ class AcfeMenus {
 										}
 										return $context->get_loader( 'term' )->load( $nav_menu->term_id );
 									},
-									$value 
-								) 
+									$value
+								)
 							);
 						}
 					);
 				},
-			] 
+			]
 		);
 	}
-
 }
