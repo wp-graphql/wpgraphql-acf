@@ -8,9 +8,9 @@ use WPGraphQL\Utils\Utils;
 class CloneField {
 
 	/**
-	 * @return void
+	 * Register support for the 'clone' acf field type
 	 */
-	public static function register_field_type():void {
+	public static function register_field_type(): void {
 		register_graphql_acf_field_type(
 			'clone',
 			[
@@ -86,8 +86,8 @@ class CloneField {
 					return [
 						'graphql_clone_field' => [
 							'type'         => 'message',
-							'label'        => __( 'GraphQL Settings for Clone Fields', 'wp-graphql-acf' ),
-							'instructions' => __( 'Clone Fields will inherit their GraphQL settings from the field(s) being cloned. If all Fields from a Field Group are cloned, an Interface representing the cloned field Group will be applied to this field group.', 'wp-graphql-acf' ),
+							'label'        => __( 'GraphQL Settings for Clone Fields', 'wpgraphql-acf' ),
+							'instructions' => __( 'Clone Fields will inherit their GraphQL settings from the field(s) being cloned. If all Fields from a Field Group are cloned, an Interface representing the cloned field Group will be applied to this field group.', 'wpgraphql-acf' ),
 							'conditions'   => [],
 						],
 					];
@@ -97,12 +97,11 @@ class CloneField {
 	}
 
 	/**
-	 * @param string      $type_name The name of the GraphQL Type representing the prefixed clone field
-	 * @param array       $sub_field_group  The Field Group representing the cloned field
-	 * @param array       $cloned_fields The cloned fields to be registered to the Cloned Field Type
+	 * @param string                     $type_name The name of the GraphQL Type representing the prefixed clone field
+	 * @param array<mixed>               $sub_field_group  The Field Group representing the cloned field
+	 * @param array<mixed>               $cloned_fields The cloned fields to be registered to the Cloned Field Type
 	 * @param \WPGraphQL\Acf\FieldConfig $field_config The ACF Field Config
 	 *
-	 * @return string
 	 * @throws \Exception
 	 */
 	public static function register_prefixed_clone_field_type( string $type_name, array $sub_field_group, array $cloned_fields, FieldConfig $field_config ): string {

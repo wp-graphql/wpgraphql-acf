@@ -77,7 +77,7 @@ jobs:
           echo "Previous tagged schema ${{ steps.get-latest-tag.outputs.tag }}"
 
       - name: Get Previous Released Schema
-        run: curl 'https://github.com/wp-graphql/wp-graphql-acf-2/releases/download/${{ steps.get-latest-tag.outputs.tag }}/schema.graphql' -L  --output /tmp/${{ steps.get-latest-tag.outputs.tag }}.graphql
+        run: curl 'https://github.com/wp-graphql/wpgraphql-acf/releases/download/${{ steps.get-latest-tag.outputs.tag }}/schema.graphql' -L  --output /tmp/${{ steps.get-latest-tag.outputs.tag }}.graphql
 
       # https://github.com/marketplace/actions/graphql-inspector
       - name: Install Schema Inspector

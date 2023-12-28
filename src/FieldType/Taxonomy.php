@@ -1,15 +1,15 @@
 <?php
 namespace WPGraphQL\Acf\FieldType;
 
-use WPGraphQL\AppContext;
-use WPGraphQL\Data\Connection\TermObjectConnectionResolver;
 use WPGraphQL\Acf\AcfGraphQLFieldType;
 use WPGraphQL\Acf\FieldConfig;
+use WPGraphQL\AppContext;
+use WPGraphQL\Data\Connection\TermObjectConnectionResolver;
 
 class Taxonomy {
 
 	/**
-	 * @return void
+	 * Register support for the "taxonomy" ACF field type
 	 */
 	public static function register_field_type(): void {
 		register_graphql_acf_field_type(
@@ -55,5 +55,4 @@ class Taxonomy {
 			]
 		);
 	}
-
 }

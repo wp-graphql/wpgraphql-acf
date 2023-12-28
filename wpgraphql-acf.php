@@ -1,16 +1,18 @@
 <?php
 /**
- * Plugin Name: WPGraphQL ACF
- * Description: Re-imagining the WPGraphQL for ACF plugin
+ * Plugin Name: WPGraphQL for ACF
+ * Description: WPGraphQL for ACF seamlessly integrates Advanced Custom Fields with WPGraphQL.
  * Author: WPGraphQL, Jason Bahl
  * Author URI: https://www.wpgraphql.com
- * Version: 2.0.0-beta.6.0.0
- * Text Domain: wp-graphql-acf
+ * Version: 2.0.0
+ * Text Domain: wpgraphql-acf
  * Requires PHP: 7.3
  * Requires at least: 5.9
  * Tested up to: 6.2
  * License: GPL-3
  * License URI: https://www.gnu.org/licenses/gpl-3.0.html
+ *
+ * @package  WPGraphQL\ACF
  */
 
 // Exit if accessed directly.
@@ -29,7 +31,7 @@ if ( file_exists( __DIR__ . '/vendor/autoload.php' ) ) {
 }
 
 if ( ! defined( 'WPGRAPHQL_FOR_ACF_VERSION' ) ) {
-	define( 'WPGRAPHQL_FOR_ACF_VERSION', '2.0.0-beta.6.0.0' );
+	define( 'WPGRAPHQL_FOR_ACF_VERSION', '2.0.0' );
 }
 
 if ( ! defined( 'WPGRAPHQL_FOR_ACF_VERSION_WPGRAPHQL_REQUIRED_MIN_VERSION' ) ) {

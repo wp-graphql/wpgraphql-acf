@@ -5,9 +5,9 @@ namespace WPGraphQL\Acf\ThirdParty\AcfExtended\FieldType;
 class AcfeCurrencies {
 
 	/**
-	 * @param string|array $currencies
+	 * @param string|array<mixed> $currencies
 	 *
-	 * @return array|null
+	 * @return array<mixed>|null
 	 */
 	public static function resolve_currencies( $currencies ): ?array {
 		if ( empty( $currencies ) ) {
@@ -27,13 +27,13 @@ class AcfeCurrencies {
 				static function ( $currency ) {
 					return acfe_get_currency( $currency );
 				},
-				$currencies 
-			) 
+				$currencies
+			)
 		);
 	}
 
 	/**
-	 * @return void
+	 * Register support for the ACF Extended acfe_currencies field type
 	 */
 	public static function register_field_type(): void {
 		register_graphql_acf_field_type(
@@ -50,5 +50,4 @@ class AcfeCurrencies {
 			]
 		);
 	}
-
 }

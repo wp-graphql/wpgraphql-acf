@@ -1,5 +1,22 @@
 # Changelog
 
+## 2.0.0
+
+- [#142](https://github.com/wp-graphql/wpgraphql-acf/pull/142): Update README, versions, plugin assets for deploy to WordPress.org.
+
+## 2.0.0-beta.7.0.0
+
+### BREAKING CHANGES
+
+- [#136](https://github.com/wp-graphql/wpgraphql-acf/pull/136): fix: clone fields not respecting "prefix_name" setting
+
+### Chores / Bugfixes
+
+- [#126](https://github.com/wp-graphql/wpgraphql-acf/pull/126): fix: Make sure oembed field is also formatted when part of a flexible_content field. Thanks @kpoelhekke!
+- [#131](https://github.com/wp-graphql/wpgraphql-acf/pull/131): ci: replace Appsero Updater.php with a blank class to satisfy WordPress.org reqs.
+- [#132](https://github.com/wp-graphql/wpgraphql-acf/pull/132): fix: options page with custom post_id not resolving properly
+- [#16](https://github.com/wp-graphql/wpgraphql-acf/pull/16): ci: Build the plugin zip, deploy to WordPress.org
+
 ## 2.0.0-beta.6.0.0
 
 ### New Features

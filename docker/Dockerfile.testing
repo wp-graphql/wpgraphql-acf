@@ -9,6 +9,6 @@ FROM ${DOCKER_REGISTRY:-}wp-graphql-testing:latest-wp${WP_VERSION}-php${PHP_VERS
 RUN cp /usr/local/bin/app-setup.sh /usr/local/bin/original-app-setup.sh
 COPY docker/app.setup.sh /usr/local/bin/app-setup.sh
 
-ENV PROJECT_DIR="${PLUGINS_DIR}/wp-graphql-acf"
+ENV PROJECT_DIR="${PLUGINS_DIR}/wpgraphql-acf"
 
-RUN echo "pcov.directory = /var/www/html/wp-content/plugins/wp-graphql-acf" >> /usr/local/etc/php/conf.d/docker-php-ext-pcov.ini
+RUN echo "pcov.directory = /var/www/html/wp-content/plugins/wpgraphql-acf" >> /usr/local/etc/php/conf.d/docker-php-ext-pcov.ini

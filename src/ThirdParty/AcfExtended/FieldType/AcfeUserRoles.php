@@ -9,7 +9,7 @@ use WPGraphQL\AppContext;
 class AcfeUserRoles {
 
 	/**
-	 * @return void
+	 * Register support for the ACF Extended acfe_user_roles field type
 	 */
 	public static function register_field_type(): void {
 		register_graphql_acf_field_type(
@@ -33,14 +33,13 @@ class AcfeUserRoles {
 									static function ( $user_role ) use ( $context ) {
 										return $context->get_loader( 'user_role' )->load( $user_role );
 									},
-									$value 
-								) 
+									$value
+								)
 							);
 						}
 					);
 				},
-			] 
+			]
 		);
 	}
-
 }

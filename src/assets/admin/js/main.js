@@ -116,7 +116,7 @@ $j(document).ready(function () {
 	function setGraphqlFieldVisibility() {
 
 		var showInGraphQLCheckbox = $j('#acf_field_group-show_in_graphql');
-		var graphqlFields = $j('#wp-graphql-acf-meta-box .acf-field');
+		var graphqlFields = $j('#wpgraphql-acf-meta-box .acf-field');
 
 		graphqlFields.each(function (i, el) {
 			if ($j(this).attr('data-name') !== 'show_in_graphql') {

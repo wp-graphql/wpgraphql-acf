@@ -48,7 +48,7 @@ if [ ! -f "${PLUGINS_DIR}/wp-graphql/wp-graphql.php" ]; then
 fi
 
 # Activate the plugin
-wp plugin activate wp-graphql-acf --allow-root
+wp plugin activate wpgraphql-acf --allow-root
 
 
 # If ACF_PRO is not true, or the license key is a default value, we'll be using the FREE version of ACF

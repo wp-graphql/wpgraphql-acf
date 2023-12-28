@@ -7,7 +7,7 @@ use WPGraphQL\Acf\FieldConfig;
 class PostObject {
 
 	/**
-	 * @return void
+	 * Register support for the ACF post_object field type
 	 */
 	public static function register_field_type(): void {
 		register_graphql_acf_field_type(
@@ -23,5 +23,4 @@ class PostObject {
 			]
 		);
 	}
-
 }
