@@ -39,8 +39,9 @@ class User {
 									return null;
 								}
 
+								$values = [];
 								if ( ! is_array( $value ) ) {
-									$value = [ $value ];
+									$values[] = $value;
 								}
 
 								$value = array_map(
@@ -50,9 +51,8 @@ class User {
 										}
 										return absint( $user );
 									},
-									$value
+									$values
 								);
-
 
 								$resolver = new UserConnectionResolver( $root, $args, $context, $info );
 								return $resolver->set_query_arg( 'include', $value )->set_query_arg( 'orderby', 'include' )->get_connection();

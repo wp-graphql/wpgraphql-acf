@@ -26,15 +26,16 @@ class Taxonomy {
 								return null;
 							}
 
+							$values = [];
 							if ( ! is_array( $value ) ) {
-								$value[] = $value;
+								$values[] = $value;
 							}
 
 							$value = array_map(
 								static function ( $id ) {
 									return absint( $id );
 								},
-								$value
+								$values
 							);
 
 							$resolver = new TermObjectConnectionResolver( $root, $args, $context, $info );
