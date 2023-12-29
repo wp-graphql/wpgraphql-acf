@@ -95,6 +95,16 @@ class TaxonomyFieldTest extends \Tests\WPGraphQL\Acf\WPUnit\AcfFieldTestCase {
 
 	public function testQueryTaxononomyFieldOnBlock() {
 
+		// if ACF PRO is not active, skip the test
+		if ( ! defined( 'ACF_PRO' ) ) {
+			$this->markTestSkipped( 'ACF Pro is not active so this test will not run.' );
+		}
+
+		// If WPGraphQL Content Blocks couldn't be activated, skip
+		if ( ! defined( 'WPGRAPHQL_CONTENT_BLOCKS_DIR' ) ) {
+			$this->markTestSkipped( 'This test is skipped when WPGraphQL Content Blocks is not active' );
+		}
+		
 		acf_register_block_type([
 			'name' => 'block_with_category_field',
 			'title' => 'Block with Category Field',
