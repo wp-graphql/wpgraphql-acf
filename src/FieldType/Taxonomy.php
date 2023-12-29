@@ -9,7 +9,6 @@ use WPGraphQL\Data\Connection\TermObjectConnectionResolver;
 class Taxonomy {
 
 	/**
-	 * Register support for the "taxonomy" ACF field type
 	 */
 	public static function register_field_type(): void {
 		register_graphql_acf_field_type(
@@ -26,16 +25,15 @@ class Taxonomy {
 								return null;
 							}
 
-							$values = [];
 							if ( ! is_array( $value ) ) {
-								$values[] = $value;
+								$value[] = $value;
 							}
 
 							$value = array_map(
 								static function ( $id ) {
 									return absint( $id );
 								},
-								$values
+								$value
 							);
 
 							$resolver = new TermObjectConnectionResolver( $root, $args, $context, $info );
