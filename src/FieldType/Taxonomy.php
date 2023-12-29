@@ -9,7 +9,6 @@ use WPGraphQL\Data\Connection\TermObjectConnectionResolver;
 class Taxonomy {
 
 	/**
-	 * Register support for the "taxonomy" ACF field type
 	 */
 	public static function register_field_type(): void {
 		register_graphql_acf_field_type(
@@ -26,29 +25,22 @@ class Taxonomy {
 								return null;
 							}
 
-							$values = [];
 							if ( ! is_array( $value ) ) {
-								$values[] = $value;
-							} else {
-								$values = $value;
+								$value[] = $value;
 							}
 
-							$ids = array_map(
+							$value = array_map(
 								static function ( $id ) {
 									return absint( $id );
 								},
-								$values
+								$value
 							);
-
-							if ( empty( $ids ) ) {
-								return null;
-							}
 
 							$resolver = new TermObjectConnectionResolver( $root, $args, $context, $info );
 							return $resolver
 							// Set the query to include only the IDs passed in from the field
 							// and orderby the ids
-							->set_query_arg( 'include', $ids )
+							->set_query_arg( 'include', $value )
 							->set_query_arg( 'orderby', 'include' )
 							->get_connection();
 						},
