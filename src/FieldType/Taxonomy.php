@@ -26,22 +26,29 @@ class Taxonomy {
 								return null;
 							}
 
+							$values = [];
 							if ( ! is_array( $value ) ) {
-								$value[] = $value;
+								$values[] = $value;
+							} else {
+								$values = $value;
 							}
 
-							$value = array_map(
+							$ids = array_map(
 								static function ( $id ) {
 									return absint( $id );
 								},
-								$value
+								$values
 							);
+
+							if ( empty( $ids ) ) {
+								return null;
+							}
 
 							$resolver = new TermObjectConnectionResolver( $root, $args, $context, $info );
 							return $resolver
 							// Set the query to include only the IDs passed in from the field
 							// and orderby the ids
-							->set_query_arg( 'include', $value )
+							->set_query_arg( 'include', $ids )
 							->set_query_arg( 'orderby', 'include' )
 							->get_connection();
 						},
