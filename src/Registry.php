@@ -571,35 +571,6 @@ class Registry {
 		$graphql_types = $field_group['graphql_types'] ?? [];
 
 		return is_array( $graphql_types ) ? $graphql_types : [ $graphql_types ];
-
-//		$field_group_name = '';
-//
-//		if ( ! empty( $field_group['graphql_field_name'] ) ) {
-//			$field_group_name = $field_group['graphql_field_name'];
-//		} elseif ( ! empty( $field_group['title'] ) ) {
-//			$field_group_name = $field_group['title'];
-//		} elseif ( ! empty( $field_group['name'] ) ) {
-//			$field_group_name = $field_group['name'];
-//		}
-//
-//		if ( empty( $field_group_name ) ) {
-//			return [];
-//		}
-//
-//		$field_group_name = Utils::format_field_name( $field_group_name, true );
-//
-//		$manually_set_graphql_types = isset( $field_group['map_graphql_types_from_location_rules'] ) && (bool) $field_group['map_graphql_types_from_location_rules'];
-//
-//		if ( false === $manually_set_graphql_types || empty( $graphql_types ) ) {
-//			if ( empty( $field_group['graphql_types'] ) ) {
-//				$location_rules = $this->get_location_rules( $acf_field_groups );
-//				if ( isset( $location_rules[ $field_group_name ] ) ) {
-//					$graphql_types = $location_rules[ $field_group_name ];
-//				}
-//			}
-//		}
-//
-//		return ! empty( $graphql_types ) && is_array( $graphql_types ) ? array_unique( array_filter( $graphql_types ) ) : [];
 	}
 
 	/**
