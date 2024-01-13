@@ -570,11 +570,7 @@ class Registry {
 
 		// early return if the field group has graphql_types defined
 		if ( ! empty( $field_group['graphql_types'] ) && is_array( $field_group['graphql_types'] ) ) {
-			return array_unique( array_filter( $field_group['graphql_types'] ) );
-		}
-
-		if ( ! isset( $field_group['map_graphql_types_from_location_rules'] ) || false !== (bool) $field_group['map_graphql_types_from_location_rules'] ) {
-			return [];
+			return array_unique( $field_group['graphql_types'] );
 		}
 
 		if ( empty( $field_group['locations'] ) ) {
@@ -589,9 +585,13 @@ class Registry {
 
 		$field_group_name = Utils::format_field_name( $field_group_name, true );
 
-		$location_rules = $this->get_location_rules( $acf_field_groups );
+		if ( ! isset( $field_group['map_graphql_types_from_location_rules'] ) || true === (bool) $field_group['map_graphql_types_from_location_rules'] ) {
+			return [];
+		}
+
+		$location_rules = $this->get_location_rules( [ $field_group_name ] );
 		if ( isset( $location_rules[ $field_group_name ] ) ) {
-			$graphql_types = $location_rules[ $field_group_name ];
+			$graphql_types = $location_rules[ $field_group_name ] ?? [];
 		}
 
 		return ! empty( $graphql_types ) && is_array( $graphql_types ) ? array_unique( array_filter( $graphql_types ) ) : [];
