@@ -28,6 +28,7 @@ class Registry {
 	 */
 	protected $type_registry;
 
+
 	/**
 	 * @param \WPGraphQL\Registry\TypeRegistry|null $type_registry
 	 *
@@ -44,6 +45,13 @@ class Registry {
 		 * @param \WPGraphQL\Acf\Registry $registry The WPGraphQL for ACF Registry
 		 */
 		do_action( 'wpgraphql/acf/type_registry/init', $this );
+	}
+
+	/**
+	 * @return array
+	 */
+	public function get_registered_fields() {
+		return $this->registered_fields;
 	}
 
 	/**
@@ -473,7 +481,18 @@ class Registry {
 	 * @throws \Exception
 	 */
 	public function map_acf_field_to_graphql( array $acf_field, array $acf_field_group ): ?array {
-		return ( new FieldConfig( $acf_field, $acf_field_group, $this ) )->get_graphql_field_config();
+		$field_config = ( new FieldConfig( $acf_field, $acf_field_group, $this ) )->get_graphql_field_config();
+
+		if ( ! empty( $field_config['acf_field'] ) ) {
+			if ( isset( $field_config['acf_field']['key'] ) && ! in_array( $field_config['acf_field']['key'], $this->registered_fields, true ) ) {
+				$this->registered_fields[] = $field_config['acf_field']['key'];
+			}
+			if ( isset( $field_config['acf_field']['name'] ) && ! in_array( $field_config['acf_field']['name'], $this->registered_fields, true ) ) {
+				$this->registered_fields[] = $field_config['acf_field']['name'];
+			}
+		}
+
+		return $field_config;
 	}
 
 

@@ -284,7 +284,7 @@ class Utils {
 		if (
 			( isset( $acf_field_group['is_options_page'] ) && false === $acf_field_group['is_options_page'] ) &&
 			! isset( $acf_field_group['show_in_graphql'] ) ) {
-			$acf_field_group['show_in_graphql'] = $show_in_rest ?? false;
+			$acf_field_group['show_in_graphql'] = $show_in_rest;
 		}
 
 		if ( isset( $acf_field_group['show_in_graphql'] ) && false === $acf_field_group['show_in_graphql'] ) {
