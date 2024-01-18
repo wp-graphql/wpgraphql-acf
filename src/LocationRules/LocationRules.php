@@ -61,7 +61,7 @@ class LocationRules {
 	 * @param string $graphql_type_name The name of the GraphQL Type
 	 */
 	public function set_graphql_type( string $field_group_name, string $graphql_type_name ): void {
-		$this->mapped_field_groups[ Utils::format_field_name( $field_group_name, true ) ][] = ucfirst( Utils::format_field_name( $graphql_type_name, true ) );
+		$this->mapped_field_groups[ strtolower( Utils::format_field_name( $field_group_name, true ) ) ][] = ucfirst( Utils::format_field_name( $graphql_type_name, true ) );
 	}
 
 	/**

@@ -8,7 +8,6 @@ use WPGraphQL\Acf\LocationRules\LocationRules;
 use WPGraphQL\Acf\Model\AcfOptionsPage;
 use WPGraphQL\AppContext;
 use WPGraphQL\Registry\TypeRegistry;
-use WPGraphQL\Utils\Utils;
 
 class Registry {
 
@@ -95,7 +94,7 @@ class Registry {
 	 * @param array<mixed> $acf_field_group
 	 */
 	public function should_field_group_show_in_graphql( array $acf_field_group ): bool {
-		return \WPGraphQL\Acf\Utils::should_field_group_show_in_graphql( $acf_field_group );
+		return Utils::should_field_group_show_in_graphql( $acf_field_group );
 	}
 
 	/**
@@ -305,7 +304,8 @@ class Registry {
 	 * @throws \Exception
 	 */
 	public function register_options_pages(): void {
-		$graphql_options_pages = \WPGraphQL\Acf\Utils::get_acf_options_pages();
+
+		$graphql_options_pages = Utils::get_acf_options_pages();
 
 		if ( empty( $graphql_options_pages ) ) {
 			return;
@@ -361,7 +361,7 @@ class Registry {
 				]
 			);
 
-			$field_name = Utils::format_field_name( $type_name );
+			$field_name = \WPGraphQL\Utils\Utils::format_field_name( $type_name );
 
 			$interface_name = 'WithAcfOptionsPage' . $type_name;
 
@@ -507,7 +507,7 @@ class Registry {
 	 * @throws \GraphQL\Error\Error
 	 */
 	public function get_field_group_name( array $field_group ): string {
-		return \WPGraphQL\Acf\Utils::get_field_group_name( $field_group );
+		return Utils::get_field_group_name( $field_group );
 	}
 
 	/**
@@ -516,7 +516,7 @@ class Registry {
 	 * @throws \GraphQL\Error\Error
 	 */
 	public function get_graphql_field_name( array $acf_field ): string {
-		return Utils::format_field_name( $this->get_field_group_name( $acf_field ), true );
+		return \WPGraphQL\Utils\Utils::format_field_name( $this->get_field_group_name( $acf_field ), true );
 	}
 
 	/**
@@ -548,7 +548,7 @@ class Registry {
 			return null;
 		}
 
-		return Utils::format_type_name( $replaced );
+		return \WPGraphQL\Utils\Utils::format_type_name( $replaced );
 	}
 
 	/**
@@ -640,9 +640,14 @@ class Registry {
 			return $graphql_types;
 		}
 
-		$field_group_name = \WPGraphQL\Acf\Utils::get_field_group_name( $field_group );
+		$field_group_name = Utils::get_field_group_name( $field_group );
+		$field_group_name = \WPGraphQL\Utils\Utils::format_field_name( $field_group_name, true );
+		// The fields are mapped as lowercase strings and should be retrieved as such
+		// see: LocationRules.php
+		$field_group_name = strtolower( $field_group_name );
 
 		$location_rules = $this->get_location_rules( $acf_field_groups );
+
 		if ( isset( $location_rules[ $field_group_name ] ) ) {
 			$graphql_types = $location_rules[ $field_group_name ];
 		}
@@ -679,7 +684,7 @@ class Registry {
 			if ( ! empty( $locations ) ) {
 				$with_field_group_interface_name = 'WithAcf' . $type_name;
 
-				$field_name = Utils::format_field_name( $type_name, true );
+				$field_name = \WPGraphQL\Utils\Utils::format_field_name( $type_name, true );
 
 				if ( ! $this->has_registered_field_group( $with_field_group_interface_name ) ) {
 					register_graphql_interface_type(
