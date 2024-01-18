@@ -18,6 +18,18 @@ class Registry {
 	protected $registered_fields = [];
 
 	/**
+	 * Stores location rules once they've been mapped
+	 *
+	 * @var array<mixed>
+	 */
+	protected $mapped_location_rules = [];
+
+	/**
+	 * @var array<mixed>
+	 */
+	protected $all_acf_field_groups = [];
+
+	/**
 	 * @todo should be protected with getter/setter?
 	 * @var array<mixed>
 	 */
@@ -54,6 +66,15 @@ class Registry {
 	}
 
 	/**
+	 * Returns the mapped location rules
+	 *
+	 * @return array<mixed>
+	 */
+	public function get_mapped_location_rules(): array {
+		return $this->mapped_location_rules;
+	}
+
+	/**
 	 * @param string $key
 	 * @param mixed  $field_group
 	 */
@@ -83,6 +104,11 @@ class Registry {
 	 * @return array<mixed>
 	 */
 	public function get_acf_field_groups(): array {
+
+		if ( ! empty( $this->all_acf_field_groups ) ) {
+			return $this->all_acf_field_groups;
+		}
+
 		$all_acf_field_groups = acf_get_field_groups();
 
 		$graphql_field_groups = [];
@@ -97,7 +123,8 @@ class Registry {
 			$graphql_field_groups[ $acf_field_group['key'] ] = $acf_field_group;
 		}
 
-		return $graphql_field_groups;
+		$this->all_acf_field_groups = $graphql_field_groups;
+		return $this->all_acf_field_groups;
 	}
 
 	/**
@@ -532,6 +559,11 @@ class Registry {
 	 * @return array<mixed>
 	 */
 	public function get_location_rules( array $acf_field_groups = [] ): array {
+
+		if ( ! empty( $this->get_mapped_location_rules() ) ) {
+			return $this->get_mapped_location_rules();
+		}
+
 		$field_groups = $acf_field_groups;
 		$rules        = [];
 
@@ -552,7 +584,36 @@ class Registry {
 		$rules = new LocationRules();
 		$rules->determine_location_rules();
 
-		return $rules->get_rules();
+		// Set the mapped location rules for future use
+		$rules_by_group = $rules->get_rules();
+
+		$this->mapped_location_rules = $rules_by_group;
+
+		// Return them
+		return $this->mapped_location_rules;
+	}
+
+	/**
+	 * Get the location rules grouped by location instead of grouped by field group
+	 *
+	 * @return array<mixed>
+	 */
+	public function get_location_rules_grouped_by_location(): array {
+		$location_rules    = $this->get_location_rules();
+		$rules_by_location = [];
+		if ( ! empty( $location_rules ) ) {
+			foreach ( $location_rules as $group => $locations ) {
+				if ( ! empty( $locations ) ) {
+					foreach ( $locations as $location ) {
+						if ( ! array_key_exists( $location, $rules_by_location ) ) {
+							$rules_by_location[ $location ] = [];
+						}
+						$rules_by_location[ $location ][] = $group;
+					}
+				}
+			}
+		}
+		return $rules_by_location;
 	}
 
 	/**
@@ -564,34 +625,26 @@ class Registry {
 	 * @return array<mixed>
 	 */
 	public function get_graphql_locations_for_field_group( array $field_group, array $acf_field_groups ): array {
+
+		$graphql_types = [];
+
 		if ( ! $this->should_field_group_show_in_graphql( $field_group ) ) {
-			return [];
+			return $graphql_types;
 		}
 
-		// early return if the field group has graphql_types defined
 		if ( ! empty( $field_group['graphql_types'] ) && is_array( $field_group['graphql_types'] ) ) {
-			return array_unique( $field_group['graphql_types'] );
+			return $field_group['graphql_types'];
 		}
 
-		if ( empty( $field_group['locations'] ) ) {
-			return [];
+		if ( empty( $field_group['location'] ) ) {
+			return $graphql_types;
 		}
 
 		$field_group_name = \WPGraphQL\Acf\Utils::get_field_group_name( $field_group );
 
-		if ( empty( $field_group_name ) ) {
-			return [];
-		}
-
-		$field_group_name = Utils::format_field_name( $field_group_name, true );
-
-		if ( ! isset( $field_group['map_graphql_types_from_location_rules'] ) || true === (bool) $field_group['map_graphql_types_from_location_rules'] ) {
-			return [];
-		}
-
-		$location_rules = $this->get_location_rules( [ $field_group_name ] );
+		$location_rules = $this->get_location_rules( $acf_field_groups );
 		if ( isset( $location_rules[ $field_group_name ] ) ) {
-			$graphql_types = $location_rules[ $field_group_name ] ?? [];
+			$graphql_types = $location_rules[ $field_group_name ];
 		}
 
 		return ! empty( $graphql_types ) && is_array( $graphql_types ) ? array_unique( array_filter( $graphql_types ) ) : [];
@@ -658,7 +711,7 @@ class Registry {
 				}
 
 				// If the field group has locations defined (Types to be added to)
-				// Add the
+				// Add the WithAcf$FieldGroup Interface to the corresponding graphql_types
 				register_graphql_interfaces_to_types( [ $with_field_group_interface_name ], $locations );
 			}
 
