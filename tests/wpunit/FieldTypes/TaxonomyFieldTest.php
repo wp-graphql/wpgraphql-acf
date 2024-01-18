@@ -104,7 +104,7 @@ class TaxonomyFieldTest extends \Tests\WPGraphQL\Acf\WPUnit\AcfFieldTestCase {
 		if ( ! defined( 'WPGRAPHQL_CONTENT_BLOCKS_DIR' ) ) {
 			$this->markTestSkipped( 'This test is skipped when WPGraphQL Content Blocks is not active' );
 		}
-		
+
 		acf_register_block_type([
 			'name' => 'block_with_category_field',
 			'title' => 'Block with Category Field',
@@ -255,7 +255,7 @@ class TaxonomyFieldTest extends \Tests\WPGraphQL\Acf\WPUnit\AcfFieldTestCase {
 		]);
 
 		$content = '
-		<!-- wp:acf/block-with-category-field {"name":"acf/block-with-category-field","data":{"' . $field_key . '":["' . $category_id . '", "' . $category_2_id . '"]},"align":"","mode":"edit"} /-->
+		<!-- wp:acf/block-with-category-field {"name":"acf/block-with-category-field","data":{"' . $field_key . '":[' . $category_id . ', ' . $category_2_id . ']},"align":"","mode":"edit"} /-->
 		';
 
 		$post_id = self::factory()->post->create([
@@ -282,10 +282,11 @@ class TaxonomyFieldTest extends \Tests\WPGraphQL\Acf\WPUnit\AcfFieldTestCase {
 					'__typename' => 'Category',
 					'databaseId' => $category_id,
 				], 0 ),
-				$this->expectedNode( 'blockTaxonomyTest.category.nodes', [
-					'__typename' => 'Category',
-					'databaseId' => $category_2_id,
-				], 0 ),
+//              Only the first node will be returned because the taxonomy field is set to "multiple: 0" so ACF will only return a single value
+//				$this->expectedNode( 'blockTaxonomyTest.category.nodes', [
+//					'__typename' => 'Category',
+//					'databaseId' => $category_2_id,
+//				], 1 ),
 			], 0 ),
 		]);
 
