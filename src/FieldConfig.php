@@ -186,7 +186,7 @@ class FieldConfig {
 
 		// if the field is explicitly set to not show in graphql, leave it out of the schema
 		// if the field is explicitly set to not show in graphql, leave it out of the schema
-		if ( isset( $this->acf_field['show_in_graphql'] ) && false === $this->acf_field['show_in_graphql'] ) {
+		if ( isset( $this->acf_field['show_in_graphql'] ) && false === (bool) $this->acf_field['show_in_graphql'] ) {
 			return null;
 		}
 
