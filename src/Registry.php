@@ -55,8 +55,8 @@ class Registry {
 	}
 
 	/**
-   * Get the TypeRegistry instance
-   *
+	 * Get the TypeRegistry instance
+	 *
 	 * @return \WPGraphQL\Registry\TypeRegistry
 	 */
 	public function get_type_registry(): TypeRegistry {
