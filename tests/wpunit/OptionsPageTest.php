@@ -4,6 +4,8 @@ class OptionsPageTest extends \Tests\WPGraphQL\Acf\WPUnit\WPGraphQLAcfTestCase {
 
 	public function setUp():void {
 
+		WPGraphQL::clear_schema();
+
 		if ( ! function_exists( 'acf_add_options_page' ) ) {
 			$this->markTestSkipped( 'ACF Options Pages are not available in this test environment' );
 		}

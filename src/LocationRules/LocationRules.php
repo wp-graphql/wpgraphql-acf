@@ -61,7 +61,7 @@ class LocationRules {
 	 * @param string $graphql_type_name The name of the GraphQL Type
 	 */
 	public function set_graphql_type( string $field_group_name, string $graphql_type_name ): void {
-		$this->mapped_field_groups[ Utils::format_field_name( $field_group_name, true ) ][] = ucfirst( Utils::format_field_name( $graphql_type_name, true ) );
+		$this->mapped_field_groups[ strtolower( Utils::format_field_name( $field_group_name, true ) ) ][] = ucfirst( Utils::format_field_name( $graphql_type_name, true ) );
 	}
 
 	/**
@@ -267,12 +267,10 @@ class LocationRules {
 				$this->determine_post_template_rules( $field_group_name, $param, $operator, $value );
 				break;
 			case 'post_status':
-				$this->determine_post_status_rules( $field_group_name, $param, $operator, $value );
 				break;
 			case 'post_format':
 			case 'post_category':
 			case 'post_taxonomy':
-				$this->determine_post_taxonomy_rules( $field_group_name, $param, $operator, $value );
 				break;
 			case 'post':
 				$this->determine_post_rules( $field_group_name, $param, $operator, $value );
@@ -497,37 +495,6 @@ class LocationRules {
 	 * @param string $operator         The operator of the rule
 	 * @param string $value            The value of the rule
 	 */
-	public function determine_post_status_rules( string $field_group_name, string $param, string $operator, string $value ): void {
-		// @todo: Should post status affect the GraphQL Schema at all?
-		// If a field group is set to show on "post_status == publish" as the only rule, what post type does that apply to? All? 🤔
-		// If a field group is set to show on "post_status != draft" does that mean the field group should be available on all post types in the Schema by default?
-		// This seems like a very difficult rule to translate to the Schema.
-		// Like, lets say I add a field group called: "Editor Notes" that I want to show for any status that is not "publish". In theory, if that's my only rule, that seems like it should apply to all post types across the board, and show in the Admin in any state of the post, other than publish. 🤔
-
-		// ACF Admin behavior seems to add it to the Admin on all post types, so WPGraphQL
-		// should respect this rule and also add it to all post types. The resolver should
-		// then determine whether to resolve the data or not, based on this rule.
-
-		// If Post Status is used to qualify a field group location,
-		// It will be added to the Schema for any Post Type that is set to show in GraphQL
-		$allowed_post_types = get_post_types( [ 'show_in_graphql' => true ] );
-		foreach ( $allowed_post_types as $post_type ) {
-			$post_type_object = get_post_type_object( $post_type );
-			$graphql_name     = $post_type_object->graphql_single_name ?? null;
-			if ( ! empty( $graphql_name ) ) {
-				$this->set_graphql_type( $field_group_name, $graphql_name );
-			}
-		}
-	}
-
-	/**
-	 * Determines how the ACF Rules should apply to the WPGraphQL Schema
-	 *
-	 * @param string $field_group_name The name of the ACF Field Group the rule applies to
-	 * @param string $param            The parameter of the rule
-	 * @param string $operator         The operator of the rule
-	 * @param string $value            The value of the rule
-	 */
 	public function determine_post_format_rules( string $field_group_name, string $param, string $operator, string $value ): void {
 		$post_format_taxonomy   = get_taxonomy( 'post_format' );
 		$post_format_post_types = $post_format_taxonomy->object_type ?? [];
@@ -559,56 +526,26 @@ class LocationRules {
 	 * @param string $operator         The operator of the rule
 	 * @param string $value            The value of the rule
 	 */
-	public function determine_post_taxonomy_rules( string $field_group_name, string $param, string $operator, string $value ): void {
-
-		// If Post Taxonomy is used to qualify a field group location,
-		// It will be added to the Schema for the Post post type
-		$this->set_graphql_type( $field_group_name, 'Post' );
-	}
-
-	/**
-	 * Determines how the ACF Rules should apply to the WPGraphQL Schema
-	 *
-	 * @param string $field_group_name The name of the ACF Field Group the rule applies to
-	 * @param string $param            The parameter of the rule
-	 * @param string $operator         The operator of the rule
-	 * @param string $value            The value of the rule
-	 */
 	public function determine_post_rules( string $field_group_name, string $param, string $operator, string $value ): void {
 
 		// If a Single post is used to qualify a field group location,
 		// It will be added to the Schema for the GraphQL Type for the post_type of the Post
 		// it is assigned to
 
-		if ( '==' === $operator ) {
-			if ( absint( $value ) ) {
-				$post = get_post( absint( $value ) );
-				if ( $post instanceof \WP_Post ) {
-					$post_type_object = get_post_type_object( $post->post_type );
-					if ( $post_type_object && true === $post_type_object->show_in_graphql && isset( $post_type_object->graphql_single_name ) ) {
-						$this->set_graphql_type( $field_group_name, $post_type_object->graphql_single_name );
-					}
+		if ( ( '==' === $operator ) && absint( $value ) ) {
+			$post = get_post( absint( $value ) );
+			if ( $post instanceof \WP_Post ) {
+				$post_type_object = get_post_type_object( $post->post_type );
+				if ( $post_type_object && true === $post_type_object->show_in_graphql && isset( $post_type_object->graphql_single_name ) ) {
+					$this->set_graphql_type( $field_group_name, $post_type_object->graphql_single_name );
 				}
 			}
 		}
 
 		// If a single post is used as not equal,
-		// the field group should be added to ALL post types in the Schema
+		// the field group should not be added to any type
 		if ( '!=' === $operator ) {
-			$allowed_post_types = get_post_types( [ 'show_in_graphql' => true ] );
-
-			if ( empty( $allowed_post_types ) ) {
-				return;
-			}
-
-			// loop over and set all post types
-			foreach ( $allowed_post_types as $allowed_post_type ) {
-				$post_type_object = get_post_type_object( $allowed_post_type );
-				$graphql_name     = $post_type_object->graphql_single_name ?? null;
-				if ( ! empty( $graphql_name ) ) {
-					$this->set_graphql_type( $field_group_name, $graphql_name );
-				}
-			}
+			return;
 		}
 	}
 
@@ -626,30 +563,6 @@ class LocationRules {
 		// then the field group should be shown on the Post type
 		if ( in_array( $value, [ 'front_page', 'posts_page' ], true ) ) {
 			$this->set_graphql_type( $field_group_name, 'Page' );
-		}
-
-		// If top_level, parent, or child is set as equal_to or not_equal_to
-		// then the field group should be shown on all hierarchical post types
-		if ( in_array( $value, [ 'top_level', 'parent', 'child' ], true ) ) {
-			$hierarchical_post_types = get_post_types(
-				[
-					'show_in_graphql' => true,
-					'hierarchical'    => true,
-				]
-			);
-
-			if ( empty( $hierarchical_post_types ) ) {
-				return;
-			}
-
-			// loop over and set all post types
-			foreach ( $hierarchical_post_types as $allowed_post_type ) {
-				$post_type_object = get_post_type_object( $allowed_post_type );
-				$graphql_name     = $post_type_object->graphql_single_name ?? null;
-				if ( ! empty( $graphql_name ) ) {
-					$this->set_graphql_type( $field_group_name, $graphql_name );
-				}
-			}
 		}
 	}
 

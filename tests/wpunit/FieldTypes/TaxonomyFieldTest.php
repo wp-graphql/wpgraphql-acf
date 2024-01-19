@@ -255,7 +255,7 @@ class TaxonomyFieldTest extends \Tests\WPGraphQL\Acf\WPUnit\AcfFieldTestCase {
 		]);
 
 		$content = '
-		<!-- wp:acf/block-with-category-field {"name":"acf/block-with-category-field","data":{"' . $field_key . '":["' . $category_id . '", "' . $category_2_id . '"]},"align":"","mode":"edit"} /-->
+		<!-- wp:acf/block-with-category-field {"name":"acf/block-with-category-field","data":{"' . $field_key . '":[' . $category_id . ', ' . $category_2_id . ']},"align":"","mode":"edit"} /-->
 		';
 
 		$post_id = self::factory()->post->create([
