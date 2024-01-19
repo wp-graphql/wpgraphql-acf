@@ -143,12 +143,10 @@ class WPGraphQLAcf {
 	 *
 	 * NOTE: this currently only works if classic editor is not being used
 	 *
-	 * @param bool $should Whether to resolve using the parent object. Default true.
-	 * @param int $object_id The ID of the object to resolve meta for
+	 * @param bool   $should Whether to resolve using the parent object. Default true.
+	 * @param int    $object_id The ID of the object to resolve meta for
 	 * @param string $meta_key The key for the meta to resolve
-	 * @param bool $single Whether a single value should be returned
-	 *
-	 * @return bool
+	 * @param bool   $single Whether a single value should be returned
 	 */
 	public function preview_support( bool $should, int $object_id, string $meta_key, bool $single ): bool {
 		if ( ! $this->registry instanceof Registry ) {
