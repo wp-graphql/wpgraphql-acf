@@ -238,7 +238,7 @@ class Settings {
 				'type'         => 'text',
 				'prefix'       => 'acf_field_group',
 				'name'         => 'graphql_field_name',
-				'required'     => isset( $field_group['show_in_graphql'] ) && $field_group['show_in_graphql'],
+				'required'     => isset( $field_group['show_in_graphql'] ) && (bool) $field_group['show_in_graphql'],
 				'placeholder'  => __( 'FieldGroupTypeName', 'wpgraphql-acf' ),
 				'value'        => ! empty( $field_group['graphql_field_name'] ) ? $field_group['graphql_field_name'] : '',
 			],

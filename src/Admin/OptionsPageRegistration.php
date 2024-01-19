@@ -38,9 +38,9 @@ class OptionsPageRegistration {
 		$show_in_graphql = false;
 
 		if ( isset( $args['show_in_graphql'] ) ) {
-			$show_in_graphql = $args['show_in_graphql'];
+			$show_in_graphql = (bool) $args['show_in_graphql'];
 		} elseif ( isset( $post['show_in_graphql'] ) ) {
-			$show_in_graphql = $post['show_in_graphql'];
+			$show_in_graphql = (bool) $post['show_in_graphql'];
 		}
 
 		$args['show_in_graphql'] = $show_in_graphql;

@@ -890,7 +890,7 @@ class LocationRules {
 			}
 
 			$acf_block = acf_get_block_type( $value );
-			if ( ! isset( $acf_block['show_in_graphql'] ) || false === $acf_block['show_in_graphql'] ) {
+			if ( ! isset( $acf_block['show_in_graphql'] ) || false === (bool) $acf_block['show_in_graphql'] ) {
 				return;
 			}
 			$type_name = isset( $acf_block['graphql_field_name'] ) ? Utils::format_type_name( $acf_block['graphql_field_name'] ) : Utils::format_type_name( $acf_block['name'] );
@@ -945,7 +945,7 @@ class LocationRules {
 
 			// Get the options page to unset
 			$options_page = acf_get_options_page( $value );
-			if ( ! isset( $options_page['show_in_graphql'] ) || false === $options_page['show_in_graphql'] ) {
+			if ( ! isset( $options_page['show_in_graphql'] ) || false === (bool) $options_page['show_in_graphql'] ) {
 				return;
 			}
 			if ( ! empty( $options_page['graphql_single_name'] ) ) {

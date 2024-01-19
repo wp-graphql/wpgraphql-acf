@@ -287,7 +287,7 @@ class Utils {
 			$acf_field_group['show_in_graphql'] = $show_in_rest ?? false;
 		}
 
-		if ( isset( $acf_field_group['show_in_graphql'] ) && false === $acf_field_group['show_in_graphql'] ) {
+		if ( isset( $acf_field_group['show_in_graphql'] ) && false === (bool) $acf_field_group['show_in_graphql'] ) {
 			$should = false;
 		}
 
