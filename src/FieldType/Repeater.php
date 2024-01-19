@@ -1,14 +1,14 @@
 <?php
 namespace WPGraphQL\Acf\FieldType;
 
-use WPGraphQL\Utils\Utils;
 use WPGraphQL\Acf\AcfGraphQLFieldType;
 use WPGraphQL\Acf\FieldConfig;
+use WPGraphQL\Utils\Utils;
 
 class Repeater {
 
 	/**
-	 * @return void
+	 * Register support for the "repeater" ACF field type
 	 */
 	public static function register_field_type(): void {
 		register_graphql_acf_field_type(
@@ -45,5 +45,4 @@ class Repeater {
 			]
 		);
 	}
-
 }

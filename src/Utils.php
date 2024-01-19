@@ -1,18 +1,18 @@
 <?php
 namespace WPGraphQL\Acf;
 
+use WPGraphQL\Acf\Model\AcfOptionsPage;
 use WPGraphQL\Model\Comment;
 use WPGraphQL\Model\Menu;
 use WPGraphQL\Model\MenuItem;
 use WPGraphQL\Model\Post;
 use WPGraphQL\Model\Term;
 use WPGraphQL\Model\User;
-use WPGraphQL\Acf\Model\AcfOptionsPage;
 
 class Utils {
 
 	/**
-	 * @var null|\WPGraphQL\Acf\FieldTypeRegistry
+	 * @var \WPGraphQL\Acf\FieldTypeRegistry|null
 	 */
 	protected static $type_registry;
 
@@ -72,8 +72,6 @@ class Utils {
 
 	/**
 	 * Clear the Type Registry for tests
-	 *
-	 * @return void
 	 */
 	public static function clear_field_type_registry(): void {
 		self::$type_registry = null;
@@ -81,8 +79,6 @@ class Utils {
 
 	/**
 	 * Return the Field Type Registry instance
-	 *
-	 * @return \WPGraphQL\Acf\FieldTypeRegistry
 	 */
 	public static function get_type_registry(): FieldTypeRegistry {
 		if ( self::$type_registry instanceof FieldTypeRegistry ) {
@@ -97,8 +93,6 @@ class Utils {
 	 * Given the name of an ACF Field Type (text, textarea, etc) return the AcfGraphQLFieldType definition
 	 *
 	 * @param string $acf_field_type The name of the ACF Field Type (text, textarea, etc)
-	 *
-	 * @return \WPGraphQL\Acf\AcfGraphQLFieldType|null
 	 */
 	public static function get_graphql_field_type( string $acf_field_type ): ?AcfGraphQLFieldType {
 		return self::get_type_registry()->get_field_type( $acf_field_type );
@@ -112,7 +106,7 @@ class Utils {
 	 *
 	 * Some fields, such as "Accordion" are not supported currently.
 	 *
-	 * @return array
+	 * @return array<mixed>
 	 */
 	public static function get_supported_acf_fields_types(): array {
 		$registry               = self::get_type_registry();
@@ -130,7 +124,7 @@ class Utils {
 	/**
 	 * Returns an array of ACF Options Pages that are set to show in the graphql schema
 	 *
-	 * @return array [<array>]
+	 * @return array<mixed>
 	 */
 	public static function get_acf_options_pages(): array {
 		$options_pages = [];
@@ -156,7 +150,7 @@ class Utils {
 	/**
 	 * Returns all available GraphQL Types
 	 *
-	 * @return array
+	 * @return array<mixed>
 	 * @throws \Exception
 	 */
 	public static function get_all_graphql_types(): array {
@@ -258,9 +252,7 @@ class Utils {
 	/**
 	 * Whether the ACF Field Group should show in the GraphQL Schema
 	 *
-	 * @param array $acf_field
-	 *
-	 * @return bool
+	 * @param array<mixed> $acf_field
 	 */
 	public static function should_field_show_in_graphql( array $acf_field ): bool {
 		return self::should_field_group_show_in_graphql( $acf_field );
@@ -269,9 +261,7 @@ class Utils {
 	/**
 	 * Whether the ACF Field Group should show in the GraphQL Schema
 	 *
-	 * @param array $acf_field_group
-	 *
-	 * @return bool
+	 * @param array<mixed> $acf_field_group
 	 */
 	public static function should_field_group_show_in_graphql( array $acf_field_group ): bool {
 		$should = true;
@@ -299,9 +289,7 @@ class Utils {
 	 * Given a field group config, return the name of the field group to be used in the GraphQL
 	 * Schema
 	 *
-	 * @param array $field_group The field group config array
-	 *
-	 * @return string
+	 * @param array<mixed> $field_group The field group config array
 	 */
 	public static function get_field_group_name( array $field_group ): string {
 		$field_group_name = '';
@@ -348,17 +336,15 @@ class Utils {
 	/**
 	 * Returns string of the items in the array list. Limit allows string to be limited length.
 	 *
-	 * @param array $list
-	 * @param int $limit
-	 *
-	 * @return string
+	 * @param array<mixed> $items
+	 * @param int          $limit
 	 */
-	public static function array_list_by_limit( array $list, int $limit = 5 ): string {
+	public static function array_list_by_limit( array $items, int $limit = 5 ): string {
 		$flat_list = '';
-		$total     = count( $list );
+		$total     = count( $items );
 
 		// Labels.
-		$labels     = $list;
+		$labels     = $items;
 		$labels     = array_slice( $labels, 0, $limit );
 		$flat_list .= implode( ', ', $labels );
 
@@ -368,5 +354,4 @@ class Utils {
 		}
 		return $flat_list;
 	}
-
 }

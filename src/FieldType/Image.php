@@ -2,15 +2,15 @@
 namespace WPGraphQL\Acf\FieldType;
 
 use GraphQL\Type\Definition\ResolveInfo;
-use WPGraphQL\AppContext;
-use WPGraphQL\Data\Connection\PostObjectConnectionResolver;
 use WPGraphQL\Acf\AcfGraphQLFieldType;
 use WPGraphQL\Acf\FieldConfig;
+use WPGraphQL\AppContext;
+use WPGraphQL\Data\Connection\PostObjectConnectionResolver;
 
 class Image {
 
 	/**
-	 * @return void
+	 * Register support for the "image" ACF field type
 	 */
 	public static function register_field_type(): void {
 		register_graphql_acf_field_type(
@@ -65,5 +65,4 @@ class Image {
 			]
 		);
 	}
-
 }

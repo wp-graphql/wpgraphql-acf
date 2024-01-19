@@ -7,7 +7,7 @@ use GraphQL\Deferred;
 class AcfeTaxonomies {
 
 	/**
-	 * @return void
+	 * Register support for the ACF Extended acfe_taxonomies field type
 	 */
 	public static function register_field_type(): void {
 		register_graphql_acf_field_type(
@@ -32,14 +32,13 @@ class AcfeTaxonomies {
 									static function ( $taxonomy_name ) use ( $context ) {
 										return $context->get_loader( 'taxonomy' )->load( $taxonomy_name );
 									},
-									$value 
-								) 
+									$value
+								)
 							);
 						}
 					);
 				},
-			] 
+			]
 		);
 	}
-
 }

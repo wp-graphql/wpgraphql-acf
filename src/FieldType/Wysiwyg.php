@@ -4,7 +4,7 @@ namespace WPGraphQL\Acf\FieldType;
 class Wysiwyg {
 
 	/**
-	 * @return void
+	 * Register support for the "wysiwyg" ACF field type
 	 */
 	public static function register_field_type(): void {
 		register_graphql_acf_field_type(
@@ -27,5 +27,4 @@ class Wysiwyg {
 			]
 		);
 	}
-
 }

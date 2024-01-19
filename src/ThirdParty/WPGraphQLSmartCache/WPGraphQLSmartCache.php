@@ -12,9 +12,9 @@ class WPGraphQLSmartCache {
 	protected $invalidation;
 
 	/**
-	 * @return void
+	 * Initialize support for WPGraphQL Smart Cache
 	 */
-	public function init():void {
+	public function init(): void {
 
 		/**
 		 * Add support for WPGraphQL Smart Cache invalidation for ACF Option Pages
@@ -26,8 +26,8 @@ class WPGraphQLSmartCache {
 	 * @param \WPGraphQL\SmartCache\Cache\Invalidation $invalidation
 	 *
 	 * @return void
+	 * @phpstan-ignore-next-line
 	 */
-	// @phpstan-ignore-next-line
 	public function initialize_cache_invalidation( \WPGraphQL\SmartCache\Cache\Invalidation $invalidation ) {
 			$this->invalidation = $invalidation;
 
@@ -38,10 +38,8 @@ class WPGraphQLSmartCache {
 	 * Purge Cache after ACF Option Page is updated
 	 *
 	 * @param string $option The name of the option being updated
-	 * @param mixed $value The value of the option being updated
-	 * @param mixed $original_value The original / previous value of the option
-	 *
-	 * @return void
+	 * @param mixed  $value The value of the option being updated
+	 * @param mixed  $original_value The original / previous value of the option
 	 */
 	public function updated_acf_option_cb( string $option, $value, $original_value ): void {
 		// phpcs:ignore
@@ -61,5 +59,4 @@ class WPGraphQLSmartCache {
 		// @phpstan-ignore-next-line
 		$this->invalidation->purge( $id, sprintf( 'update_acf_options_page ( "%s" )', $options_page ) );
 	}
-
 }
