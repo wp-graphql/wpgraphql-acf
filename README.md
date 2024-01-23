@@ -1,6 +1,10 @@
 # WPGraphQL for Advanced Custom Fields
 
+![WPGraphQL for ACF plugin banner](/.wordpress-org/banner-1544x500.png)
+
 WPGraphQL for Advanced Custom Fields is a free, open-source WordPress plugin that adds ACF Fields and Field Groups to the WPGraphQL Schema.
+
+The plugin is [now available on WordPress.org!](https://wordpress.org/plugins/wpgraphql-acf/)
 
 Development of this plugin has been made possible by [WP Engine Atlas](https://wpengine.com/atlas)
 
