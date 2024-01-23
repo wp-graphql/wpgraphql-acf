@@ -8,6 +8,8 @@ The plugin is [now available on WordPress.org!](https://wordpress.org/plugins/wp
 
 Development of this plugin has been made possible by [WP Engine Atlas](https://wpengine.com/atlas)
 
+Learn more at [https://acf.wpgraphql.com](https://acf.wpgraphql.com)
+
 ## Table of Contents
 
 - [Upgrade Notice](#upgrade-notice)
