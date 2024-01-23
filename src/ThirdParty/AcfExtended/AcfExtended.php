@@ -21,8 +21,6 @@ class AcfExtended {
 
 	/**
 	 * Initialize support for ACF Extended
-	 *
-	 * @return void
 	 */
 	public function init(): void {
 
@@ -39,8 +37,6 @@ class AcfExtended {
 
 	/**
 	 * Whether ACF Extended is active
-	 *
-	 * @return bool
 	 */
 	public static function is_acfe_active(): bool {
 		$is_active = class_exists( 'ACFE' ) || defined( 'TESTS_ACF_EXTENDED_IS_ACTIVE' );
@@ -52,10 +48,8 @@ class AcfExtended {
 	/**
 	 * Prevent ACF Extended's "dynamic form" and "dynamic form side" field groups from being mapped to the WPGraphQL Schema as they cause infinite recursion.
 	 *
-	 * @param bool $should
-	 * @param array $acf_field_group
-	 *
-	 * @return bool
+	 * @param bool         $should
+	 * @param array<mixed> $acf_field_group
 	 */
 	public function filter_out_acfe_dynamic_groups( bool $should, array $acf_field_group ): bool {
 		if ( ! empty( $acf_field_group['key'] ) && in_array( $acf_field_group['key'], [ 'group_acfe_dynamic_form', 'group_acfe_dynamic_form_side' ], true ) ) {
@@ -68,7 +62,6 @@ class AcfExtended {
 	/**
 	 * Register initial types for ACF Extended field types to use
 	 *
-	 * @return void
 	 * @throws \Exception
 	 */
 	public function register_initial_types(): void {
@@ -384,7 +377,7 @@ class AcfExtended {
 	}
 
 	/**
-	 * @return void
+	 * Register Field Types suppored by the plugin
 	 */
 	public function register_field_types(): void {
 
@@ -392,35 +385,35 @@ class AcfExtended {
 		// - acfe_button
 		// - acfe_hidden
 		// - acfe_recaptcha (not supported. see: https://www.acf-extended.com/features/fields/recaptcha)
-		//   "The value cannot be retrieved, as the field isn’t saved as custom meta"
+		// "The value cannot be retrieved, as the field isn’t saved as custom meta"
 		// - acfe_post_statuses
-		//   @todo: There seems to be general bugs with Post Statuses in core WPGraphQL Still
+		// @todo: There seems to be general bugs with Post Statuses in core WPGraphQL Still
 		// - acfe_block_types
-		//   @todo
+		// @todo
 		// - acfe_field_groups
-		//   @todo
+		// @todo
 		// - acfe_field_types
-		//   @todo
+		// @todo
 		// - acfe_fields
-		//   @todo
+		// @todo
 		// - acfe_forms
-		//   @todo
+		// @todo
 		// - acfe_options_pages
-		//   @todo
+		// @todo
 		// - acfe_templates
-		//   @todo
+		// @todo
 		// - acfe_payment
-		//   @todo
+		// @todo
 		// - acfe_payment_cart
-		//   Not supported: ACFE Docs state: The value cannot be retrieved as the field isn’t saved as meta data.
+		// Not supported: ACFE Docs state: The value cannot be retrieved as the field isn’t saved as meta data.
 		// - acfe_payment_selector
-		//   NOT supported: ACFE Docs state: The value cannot be retrieved as the field isn’t saved as meta data.
+		// NOT supported: ACFE Docs state: The value cannot be retrieved as the field isn’t saved as meta data.
 		// - acfe_column
-		//   Not supported. ACFE docs state: The value cannot be retrieved as the field isn’t saved as meta data.
+		// Not supported. ACFE docs state: The value cannot be retrieved as the field isn’t saved as meta data.
 		// - acfe_dynamic_render
-		//   Not supported. ACFE docs state: "The value cannot be retrieved as the field isn’t saved as meta data."
+		// Not supported. ACFE docs state: "The value cannot be retrieved as the field isn’t saved as meta data."
 		// - acfe_post_field
-		//   Not supported. ACFE docs state: "The value cannot be retrieved as the field isn’t saved as meta data. Values are saved directly within the WP Post Object instead."
+		// Not supported. ACFE docs state: "The value cannot be retrieved as the field isn’t saved as meta data. Values are saved directly within the WP Post Object instead."
 
 
 		// Supported Fields
@@ -441,5 +434,4 @@ class AcfExtended {
 		AcfeTaxonomies::register_field_type();
 		AcfeUserRoles::register_field_type();
 	}
-
 }

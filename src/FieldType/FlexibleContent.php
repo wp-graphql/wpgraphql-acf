@@ -1,14 +1,14 @@
 <?php
 namespace WPGraphQL\Acf\FieldType;
 
-use WPGraphQL\Utils\Utils;
 use WPGraphQL\Acf\AcfGraphQLFieldType;
 use WPGraphQL\Acf\FieldConfig;
+use WPGraphQL\Utils\Utils;
 
 class FlexibleContent {
 
 	/**
-	 * @return void
+	 * Register support for the "flexible_content" ACF field type
 	 */
 	public static function register_field_type(): void {
 		register_graphql_acf_field_type(
@@ -31,15 +31,15 @@ class FlexibleContent {
 								'fields'          => [
 									'fieldGroupName' => [
 										'type'        => 'String',
-										'resolve'     => static function ( $object ) use ( $layout_interface_prefix ) {
-											$layout = $object['acf_fc_layout'] ?? null;
+										'resolve'     => static function ( $source ) use ( $layout_interface_prefix ) {
+											$layout = $source['acf_fc_layout'] ?? null;
 											return Utils::format_type_name( $layout_interface_prefix . ' ' . $layout ) . 'Layout';
 										},
 										'description' => __( 'The name of the ACF Flex Field Layout', 'wpgraphql-acf' ),
 									],
 								],
-								'resolveType'     => static function ( $object ) use ( $layout_interface_prefix ) {
-									$layout = $object['acf_fc_layout'] ?? null;
+								'resolveType'     => static function ( $source ) use ( $layout_interface_prefix ) {
+									$layout = $source['acf_fc_layout'] ?? null;
 									return Utils::format_type_name( $layout_interface_prefix . ' ' . $layout ) . 'Layout';
 								},
 							]
@@ -88,5 +88,4 @@ class FlexibleContent {
 			]
 		);
 	}
-
 }

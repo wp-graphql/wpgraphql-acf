@@ -38,7 +38,7 @@ use WPGraphQL\Acf\FieldType\Wysiwyg;
 class FieldTypeRegistry {
 
 	/**
-	 * @var array
+	 * @var array<mixed>
 	 */
 	protected $registered_field_types = [];
 
@@ -59,7 +59,7 @@ class FieldTypeRegistry {
 
 
 	/**
-	 * @return void
+	 * Register ACF Field Types
 	 */
 	protected function register_acf_field_types(): void {
 
@@ -105,7 +105,7 @@ class FieldTypeRegistry {
 	/**
 	 * Return the registered field types, names and config in an associative array.
 	 *
-	 * @return array
+	 * @return array<mixed>
 	 */
 	public function get_registered_field_types(): array {
 		return apply_filters( 'wpgraphql/acf/get_registered_field_types', $this->registered_field_types );
@@ -114,7 +114,7 @@ class FieldTypeRegistry {
 	/**
 	 * Return an array of the names of the registered field types
 	 *
-	 * @return array
+	 * @return array<string>
 	 */
 	public function get_registered_field_type_names(): array {
 		return array_keys( $this->get_registered_field_types() );
@@ -125,8 +125,6 @@ class FieldTypeRegistry {
 	 * the field type to GraphQL
 	 *
 	 * @param string $acf_field_type The type of field to get the config for
-	 *
-	 * @return \WPGraphQL\Acf\AcfGraphQLFieldType|null
 	 */
 	public function get_field_type( string $acf_field_type ): ?AcfGraphQLFieldType {
 		return $this->registered_field_types[ $acf_field_type ] ?? null;
@@ -135,10 +133,8 @@ class FieldTypeRegistry {
 	/**
 	 * Register an ACF Field Type
 	 *
-	 * @param string $acf_field_type The name of the ACF Field Type to map to the GraphQL Schema
-	 * @param array|callable $config Config for mapping the ACF Field Type to the GraphQL Schema
-	 *
-	 * @return \WPGraphQL\Acf\AcfGraphQLFieldType
+	 * @param string                $acf_field_type The name of the ACF Field Type to map to the GraphQL Schema
+	 * @param array<mixed>|callable $config Config for mapping the ACF Field Type to the GraphQL Schema
 	 */
 	public function register_field_type( string $acf_field_type, $config = [] ): AcfGraphQLFieldType {
 		if ( isset( $this->registered_field_types[ $acf_field_type ] ) ) {
@@ -149,5 +145,4 @@ class FieldTypeRegistry {
 
 		return $this->registered_field_types[ $acf_field_type ];
 	}
-
 }

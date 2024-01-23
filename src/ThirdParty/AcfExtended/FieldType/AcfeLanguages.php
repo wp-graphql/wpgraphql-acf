@@ -5,9 +5,9 @@ namespace WPGraphQL\Acf\ThirdParty\AcfExtended\FieldType;
 class AcfeLanguages {
 
 	/**
-	 * @param array|string $languages The langauge(s) to resolve as objects
+	 * @param array<mixed>|string $languages The langauge(s) to resolve as objects
 	 *
-	 * @return array|null
+	 * @return array<mixed>|null
 	 */
 	public static function resolve_languages( $languages ): ?array {
 		if ( empty( $languages ) ) {
@@ -27,13 +27,13 @@ class AcfeLanguages {
 				static function ( $language ) {
 					return acfe_get_language( $language );
 				},
-				$languages 
-			) 
+				$languages
+			)
 		);
 	}
 
 	/**
-	 * @return void
+	 * Register support for the ACF Extended acfe_languages field type
 	 */
 	public static function register_field_type(): void {
 		register_graphql_acf_field_type(
@@ -47,5 +47,4 @@ class AcfeLanguages {
 			]
 		);
 	}
-
 }

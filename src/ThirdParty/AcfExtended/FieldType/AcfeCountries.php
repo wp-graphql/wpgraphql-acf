@@ -5,9 +5,9 @@ namespace WPGraphQL\Acf\ThirdParty\AcfExtended\FieldType;
 class AcfeCountries {
 
 	/**
-	 * @param array|string $countries
+	 * @param array<mixed>|string $countries
 	 *
-	 * @return array|null
+	 * @return array<mixed>|null
 	 */
 	public static function resolve_countries( $countries ): ?array {
 		if ( empty( $countries ) ) {
@@ -27,13 +27,13 @@ class AcfeCountries {
 				static function ( $country ) {
 					return acfe_get_country( $country );
 				},
-				$countries 
-			) 
+				$countries
+			)
 		);
 	}
 
 	/**
-	 * @return void
+	 * Register support for the ACF Extended acfe_countries field type
 	 */
 	public static function register_field_type(): void {
 		register_graphql_acf_field_type(
@@ -50,5 +50,4 @@ class AcfeCountries {
 			]
 		);
 	}
-
 }

@@ -8,17 +8,17 @@ use WPGraphQL\AppContext;
 class FieldConfig {
 
 	/**
-	 * @var array
+	 * @var array<mixed>
 	 */
 	protected $acf_field;
 
 	/**
-	 * @var array
+	 * @var array<mixed>
 	 */
 	protected $raw_field;
 
 	/**
-	 * @var array
+	 * @var array<mixed>
 	 */
 	protected $acf_field_group;
 
@@ -48,6 +48,10 @@ class FieldConfig {
 	protected $graphql_parent_type_name;
 
 	/**
+	 * @param array<mixed>            $acf_field The ACF Field being mapped to the GraphQL Schema
+	 * @param array<mixed>            $acf_field_group The ACF Field Group the field belongs to
+	 * @param \WPGraphQL\Acf\Registry $registry The WPGraphQL for ACF Type Registry
+	 *
 	 * @throws \GraphQL\Error\Error
 	 */
 	public function __construct( array $acf_field, array $acf_field_group, Registry $registry ) {
@@ -61,31 +65,30 @@ class FieldConfig {
 	}
 
 	/**
-	 * @return \WPGraphQL\Acf\Registry
+	 * Get the WPGraphQL for ACF TypeRegistry instance
 	 */
 	public function get_registry(): Registry {
 		return $this->registry;
 	}
 
 	/**
-	 * @return string|null
+	 * Get the GraphQL Type Name for the current ACF Field Group
 	 */
 	public function get_graphql_field_group_type_name(): ?string {
 		return $this->graphql_field_group_type_name;
 	}
 
 	/**
-	 * @return \WPGraphQL\Acf\AcfGraphQLFieldType|null
+	 * Get the AcfGraphQLFieldType definition for an ACF Field
 	 */
 	public function get_graphql_field_type(): ?AcfGraphQLFieldType {
 		return $this->graphql_field_type;
 	}
 
 	/**
-	 * @param array       $acf_field
-	 * @param string|null $prepend
+	 * @param array<mixed> $acf_field
+	 * @param string|null  $prepend
 	 *
-	 * @return string
 	 * @throws \GraphQL\Error\Error
 	 */
 	public function get_parent_graphql_type_name( array $acf_field, ?string $prepend = '' ): string {
@@ -111,7 +114,7 @@ class FieldConfig {
 	}
 
 	/**
-	 * @return string
+	 * Get the GraphQL field name of the ACF Field
 	 */
 	public function get_graphql_field_name(): string {
 		return $this->graphql_field_name;
@@ -119,8 +122,6 @@ class FieldConfig {
 
 	/**
 	 * Determine whether an ACF Field is supported by GraphQL
-	 *
-	 * @return bool
 	 */
 	protected function is_supported_field_type(): bool {
 		$supported_types = Utils::get_supported_acf_fields_types();
@@ -130,7 +131,6 @@ class FieldConfig {
 	/**
 	 * Get the description of the field for the GraphQL Schema
 	 *
-	 * @return string
 	 * @throws \GraphQL\Error\Error
 	 */
 	public function get_field_description(): string {
@@ -157,36 +157,36 @@ class FieldConfig {
 	}
 
 	/**
-	 * @return array
+	 * @return array<mixed>
 	 */
 	public function get_acf_field(): array {
 		return $this->acf_field;
 	}
 
 	/**
-	 * @return array
+	 * @return array<mixed>
 	 */
 	public function get_raw_acf_field(): array {
 		return $this->raw_field;
 	}
 
 	/**
-	 * @return array
+	 * @return array<mixed>
 	 */
 	public function get_acf_field_group(): array {
 		return $this->acf_field_group;
 	}
 
 	/**
-	 * @return array|null
+	 * @return array<mixed>|null
 	 * @throws \GraphQL\Error\Error
 	 * @throws \Exception
 	 */
-	public function get_graphql_field_config():?array {
+	public function get_graphql_field_config(): ?array {
 
 		// if the field is explicitly set to not show in graphql, leave it out of the schema
 		// if the field is explicitly set to not show in graphql, leave it out of the schema
-		if ( isset( $this->acf_field['show_in_graphql'] ) && false === $this->acf_field['show_in_graphql'] ) {
+		if ( isset( $this->acf_field['show_in_graphql'] ) && false === (bool) $this->acf_field['show_in_graphql'] ) {
 			return null;
 		}
 
@@ -302,8 +302,6 @@ class FieldConfig {
 	 * the field using get_field()
 	 *
 	 * @param string $field_type The ACF Field Type of field being resolved
-	 *
-	 * @return bool
 	 */
 	public function should_format_field_value( string $field_type ): bool {
 
@@ -321,10 +319,10 @@ class FieldConfig {
 	}
 
 	/**
-	 * @param string $selector
-	 * @param string|null $parent_field_name
+	 * @param string          $selector
+	 * @param string|null     $parent_field_name
 	 * @param string|int|null $post_id
-	 * @param bool $should_format
+	 * @param bool            $should_format
 	 *
 	 * @return false|mixed
 	 */
@@ -339,11 +337,11 @@ class FieldConfig {
 	}
 
 	/**
-	 * @param mixed       $root
-	 * @param array       $args
-	 * @param \WPGraphQL\AppContext  $context
+	 * @param mixed                                $root
+	 * @param array<mixed>                         $args
+	 * @param \WPGraphQL\AppContext                $context
 	 * @param \GraphQL\Type\Definition\ResolveInfo $info
-	 * @param array $acf_field The ACF Field to resolve for
+	 * @param array<mixed>                         $acf_field The ACF Field to resolve for
 	 *
 	 * @return mixed
 	 */
@@ -545,17 +543,14 @@ class FieldConfig {
 
 	/**
 	 * @param string $to_type
-	 *
-	 * @return string
 	 */
 	public function get_connection_name( string $to_type ): string {
 		return \WPGraphQL\Utils\Utils::format_type_name( 'Acf' . ucfirst( $to_type ) . 'Connection' );
 	}
 
 	/**
-	 * @param array $config The Connection Config to use
+	 * @param array<mixed> $config The Connection Config to use
 	 *
-	 * @return void
 	 * @throws \Exception
 	 */
 	public function register_graphql_connections( array $config ): void {
@@ -597,5 +592,4 @@ class FieldConfig {
 
 		$this->registry->register_field_group( $connection_key, $connection_config );
 	}
-
 }

@@ -10,7 +10,7 @@ use WPGraphQL\Utils\Utils;
 class TaxonomyRegistration {
 
 	/**
-	 * @return void
+	 * Initialize support for extending ACF Taxonomy Registration
 	 */
 	public function init(): void {
 
@@ -40,9 +40,9 @@ class TaxonomyRegistration {
 	}
 
 	/**
-	 * @param array $tabs
+	 * @param array<mixed> $tabs
 	 *
-	 * @return array
+	 * @return array<mixed>
 	 */
 	public function add_tabs( array $tabs ): array {
 		$tabs['graphql'] = __( 'GraphQL', 'wpgraphql-acf' );
@@ -50,9 +50,7 @@ class TaxonomyRegistration {
 	}
 
 	/**
-	 * @param array $acf_taxonomy
-	 *
-	 * @return void
+	 * @param array<mixed> $acf_taxonomy
 	 */
 	public function render_settings_tab( array $acf_taxonomy ): void {
 		acf_render_field_wrap(
@@ -127,10 +125,10 @@ class TaxonomyRegistration {
 	}
 
 	/**
-	 * @param array $args
-	 * @param array $taxonomy
+	 * @param array<mixed> $args
+	 * @param array<mixed> $taxonomy
 	 *
-	 * @return array
+	 * @return array<mixed>
 	 */
 	public function add_taxonomy_registration_fields( array $args, array $taxonomy ): array {
 
@@ -168,8 +166,6 @@ class TaxonomyRegistration {
 
 	/**
 	 * @param string $screen
-	 *
-	 * @return void
 	 */
 	public function enqueue_admin_scripts( string $screen ): void {
 		global $post;
@@ -198,9 +194,9 @@ class TaxonomyRegistration {
 	/**
 	 * Given a list of columns, add "graphql_type" as a column.
 	 *
-	 * @param array $columns The columns on the post type table
+	 * @param array<mixed> $columns The columns on the post type table
 	 *
-	 * @return array
+	 * @return array<mixed>
 	 */
 	public function add_graphql_type_column( array $columns ): array {
 		$columns['show_in_graphql'] = __( 'Show in GraphQL', 'wpgraphql-acf' );
@@ -213,8 +209,6 @@ class TaxonomyRegistration {
 	 *
 	 * @param string $column_name The name of the column being rendered
 	 * @param int    $post_id     The ID of the post the column is being displayed for
-	 *
-	 * @return void
 	 */
 	public function render_graphql_columns( string $column_name, int $post_id ): void {
 		$post_type = acf_get_internal_post_type( $post_id, 'acf-taxonomy' );
@@ -237,5 +231,4 @@ class TaxonomyRegistration {
 			default:
 		}
 	}
-
 }

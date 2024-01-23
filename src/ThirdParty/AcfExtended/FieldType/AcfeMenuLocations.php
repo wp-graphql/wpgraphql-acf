@@ -5,7 +5,7 @@ namespace WPGraphQL\Acf\ThirdParty\AcfExtended\FieldType;
 class AcfeMenuLocations {
 
 	/**
-	 * @return void
+	 * Register support for the ACF Extended acfe_menu_locations field type
 	 */
 	public static function register_field_type(): void {
 		register_graphql_acf_field_type(
@@ -25,8 +25,7 @@ class AcfeMenuLocations {
 
 					return $value;
 				},
-			] 
+			]
 		);
 	}
-
 }

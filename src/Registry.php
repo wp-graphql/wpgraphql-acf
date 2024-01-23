@@ -3,23 +3,34 @@
 namespace WPGraphQL\Acf;
 
 use GraphQL\Type\Definition\ResolveInfo;
+use WPGraphQL\Acf\Data\Loader\AcfOptionsPageLoader;
 use WPGraphQL\Acf\LocationRules\LocationRules;
+use WPGraphQL\Acf\Model\AcfOptionsPage;
 use WPGraphQL\AppContext;
 use WPGraphQL\Registry\TypeRegistry;
-use WPGraphQL\Utils\Utils;
-use WPGraphQL\Acf\Data\Loader\AcfOptionsPageLoader;
-use WPGraphQL\Acf\Model\AcfOptionsPage;
 
 class Registry {
 
 	/**
-	 * @var array
+	 * @var array<mixed>
 	 */
 	protected $registered_fields = [];
 
 	/**
+	 * Stores location rules once they've been mapped
+	 *
+	 * @var array<mixed>
+	 */
+	protected $mapped_location_rules = [];
+
+	/**
+	 * @var array<mixed>
+	 */
+	protected $all_acf_field_groups = [];
+
+	/**
 	 * @todo should be protected with getter/setter?
-	 * @var array
+	 * @var array<mixed>
 	 */
 	public $registered_field_groups;
 
@@ -27,6 +38,7 @@ class Registry {
 	 * @var \WPGraphQL\Registry\TypeRegistry The WPGraphQL TypeRegistry
 	 */
 	protected $type_registry;
+
 
 	/**
 	 * @param \WPGraphQL\Registry\TypeRegistry|null $type_registry
@@ -47,17 +59,31 @@ class Registry {
 	}
 
 	/**
-	 * @return \WPGraphQL\Registry\TypeRegistry
+	 * @return array<mixed>
+	 */
+	public function get_registered_fields() {
+		return $this->registered_fields;
+	}
+
+	/**
+	 * Get the TypeRegistry instance
 	 */
 	public function get_type_registry(): TypeRegistry {
 		return $this->type_registry;
 	}
 
 	/**
+	 * Returns the mapped location rules
+	 *
+	 * @return array<mixed>
+	 */
+	public function get_mapped_location_rules(): array {
+		return $this->mapped_location_rules;
+	}
+
+	/**
 	 * @param string $key
 	 * @param mixed  $field_group
-	 *
-	 * @return void
 	 */
 	public function register_field_group( string $key, $field_group ): void {
 		$this->registered_field_groups[ $key ] = $field_group;
@@ -65,8 +91,6 @@ class Registry {
 
 	/**
 	 * @param string $key
-	 *
-	 * @return bool
 	 */
 	public function has_registered_field_group( string $key ): bool {
 		return (bool) isset( $this->registered_field_groups[ $key ] );
@@ -75,20 +99,23 @@ class Registry {
 	/**
 	 * Whether the ACF Field Group should show in the GraphQL Schema
 	 *
-	 * @param array $acf_field_group
-	 *
-	 * @return bool
+	 * @param array<mixed> $acf_field_group
 	 */
 	public function should_field_group_show_in_graphql( array $acf_field_group ): bool {
-		return \WPGraphQL\Acf\Utils::should_field_group_show_in_graphql( $acf_field_group );
+		return Utils::should_field_group_show_in_graphql( $acf_field_group );
 	}
 
 	/**
 	 * Get the ACF Field Groups that should be registered to the Schema
 	 *
-	 * @return array
+	 * @return array<mixed>
 	 */
 	public function get_acf_field_groups(): array {
+
+		if ( ! empty( $this->all_acf_field_groups ) ) {
+			return $this->all_acf_field_groups;
+		}
+
 		$all_acf_field_groups = acf_get_field_groups();
 
 		$graphql_field_groups = [];
@@ -103,13 +130,13 @@ class Registry {
 			$graphql_field_groups[ $acf_field_group['key'] ] = $acf_field_group;
 		}
 
-		return $graphql_field_groups;
+		$this->all_acf_field_groups = $graphql_field_groups;
+		return $this->all_acf_field_groups;
 	}
 
 	/**
 	 * Register Initial Types to the Schema
 	 *
-	 * @return void
 	 * @throws \Exception
 	 */
 	public function register_initial_graphql_types(): void {
@@ -266,9 +293,9 @@ class Registry {
 	/**
 	 * Given an ACF Field Group config, return the interface names that it should apply
 	 *
-	 * @param array $acf_field_group The ACF Field Group config
+	 * @param array<mixed> $acf_field_group The ACF Field Group config
 	 *
-	 * @return array
+	 * @return array<mixed>
 	 * @throws \GraphQL\Error\Error
 	 */
 	public function get_field_group_interfaces( array $acf_field_group ): array {
@@ -281,12 +308,12 @@ class Registry {
 	}
 
 	/**
-	 * @return void
 	 * @throws \GraphQL\Error\Error
 	 * @throws \Exception
 	 */
-	public function register_options_pages():void {
-		$graphql_options_pages = \WPGraphQL\Acf\Utils::get_acf_options_pages();
+	public function register_options_pages(): void {
+
+		$graphql_options_pages = Utils::get_acf_options_pages();
 
 		if ( empty( $graphql_options_pages ) ) {
 			return;
@@ -342,7 +369,7 @@ class Registry {
 				]
 			);
 
-			$field_name = Utils::format_field_name( $type_name );
+			$field_name = \WPGraphQL\Utils\Utils::format_field_name( $type_name );
 
 			$interface_name = 'WithAcfOptionsPage' . $type_name;
 
@@ -379,15 +406,15 @@ class Registry {
 	 *
 	 * @since   5.0.0
 	 *
-	 * @param   (int|string|array) $parent The field group or field settings. Also accepts the field group ID or key.
-	 * @return  array
+	 * @param   (int|string|array<mixed>) $parent_field_group The field group or field settings. Also accepts the field group ID or key.
+	 * @return  array<mixed>
 	 */
-	protected function get_acf_fields( $parent ): array {
+	protected function get_acf_fields( $parent_field_group ): array {
 
 		// Allow field group selector as $parent.
-		if ( ! is_array( $parent ) ) {
-			$parent = acf_get_field_group( $parent );
-			if ( ! $parent ) {
+		if ( ! is_array( $parent_field_group ) ) {
+			$parent_field_group = acf_get_field_group( $parent_field_group );
+			if ( ! $parent_field_group ) {
 				return [];
 			}
 		}
@@ -396,25 +423,25 @@ class Registry {
 		$fields = [];
 
 		// Check local fields first.
-		if ( acf_have_local_fields( $parent['key'] ) ) {
-			$raw_fields = acf_get_local_fields( $parent['key'] );
+		if ( acf_have_local_fields( $parent_field_group['key'] ) ) {
+			$raw_fields = acf_get_local_fields( $parent_field_group['key'] );
 			foreach ( $raw_fields as $raw_field ) {
 				$fields[] = $raw_field;
 			}
 
 			// Then check database.
 		} else {
-			$raw_fields = acf_get_raw_fields( $parent['ID'] );
+			$raw_fields = acf_get_raw_fields( $parent_field_group['ID'] );
 			foreach ( $raw_fields as $raw_field ) {
 				$fields[] = $raw_field;
 			}
 		}
 
-		if ( isset( $parent['isFlexLayout'] ) && true === $parent['isFlexLayout'] ) {
+		if ( isset( $parent_field_group['isFlexLayout'] ) && true === $parent_field_group['isFlexLayout'] ) {
 			$fields = array_filter(
 				$fields,
-				static function ( $field ) use ( $parent ) {
-					return isset( $field['parent_layout'] ) && $parent['key'] === $field['parent_layout'] ? $field : null;
+				static function ( $field ) use ( $parent_field_group ) {
+					return isset( $field['parent_layout'] ) && $parent_field_group['key'] === $field['parent_layout'] ? $field : null;
 				}
 			);
 		}
@@ -424,9 +451,11 @@ class Registry {
 	}
 
 	/**
-	 * @param array $acf_field_group
+	 * Get fields for an ACF Field Group as they should be mapped to the Schema
 	 *
-	 * @return array
+	 * @param array<mixed> $acf_field_group
+	 *
+	 * @return array<mixed>
 	 * @throws \GraphQL\Error\Error
 	 */
 	public function get_fields_for_field_group( array $acf_field_group ): array {
@@ -465,15 +494,26 @@ class Registry {
 	}
 
 	/**
-	 * @param array $acf_field
-	 * @param array $acf_field_group
+	 * @param array<mixed> $acf_field
+	 * @param array<mixed> $acf_field_group
 	 *
-	 * @return array|null
+	 * @return array<mixed>|null
 	 * @throws \GraphQL\Error\Error
 	 * @throws \Exception
 	 */
 	public function map_acf_field_to_graphql( array $acf_field, array $acf_field_group ): ?array {
-		return ( new FieldConfig( $acf_field, $acf_field_group, $this ) )->get_graphql_field_config();
+		$field_config = ( new FieldConfig( $acf_field, $acf_field_group, $this ) )->get_graphql_field_config();
+
+		if ( ! empty( $field_config['acf_field'] ) ) {
+			if ( isset( $field_config['acf_field']['key'] ) && ! in_array( $field_config['acf_field']['key'], $this->registered_fields, true ) ) {
+				$this->registered_fields[] = $field_config['acf_field']['key'];
+			}
+			if ( isset( $field_config['acf_field']['name'] ) && ! in_array( $field_config['acf_field']['name'], $this->registered_fields, true ) ) {
+				$this->registered_fields[] = $field_config['acf_field']['name'];
+			}
+		}
+
+		return $field_config;
 	}
 
 
@@ -481,29 +521,28 @@ class Registry {
 	 * Given a field group config, return the name of the field group to be used in the GraphQL
 	 * Schema
 	 *
-	 * @param array $field_group The field group config array
+	 * @param array<mixed> $field_group The field group config array
 	 *
-	 * @return string
 	 * @throws \GraphQL\Error\Error
 	 */
 	public function get_field_group_name( array $field_group ): string {
-		return \WPGraphQL\Acf\Utils::get_field_group_name( $field_group );
+		return Utils::get_field_group_name( $field_group );
 	}
 
 	/**
-	 * @param array $acf_field The ACF Field config
+	 * @param array<mixed> $acf_field The ACF Field config
 	 *
-	 * @return string
 	 * @throws \GraphQL\Error\Error
 	 */
 	public function get_graphql_field_name( array $acf_field ): string {
-		return Utils::format_field_name( $this->get_field_group_name( $acf_field ), true );
+		return \WPGraphQL\Utils\Utils::format_field_name( $this->get_field_group_name( $acf_field ), true );
 	}
 
 	/**
-	 * @param array $field_group
+	 * Get the GraphQL Type name of an ACF Field Group
 	 *
-	 * @return string|null
+	 * @param array<mixed> $field_group
+	 *
 	 * @throws \GraphQL\Error\Error
 	 */
 	public function get_field_group_graphql_type_name( array $field_group ): ?string {
@@ -528,17 +567,22 @@ class Registry {
 			return null;
 		}
 
-		return Utils::format_type_name( $replaced );
+		return \WPGraphQL\Utils\Utils::format_type_name( $replaced );
 	}
 
 	/**
 	 * Gets the location rules
 	 *
-	 * @param array $acf_field_groups
+	 * @param array<mixed> $acf_field_groups
 	 *
-	 * @return array
+	 * @return array<mixed>
 	 */
 	public function get_location_rules( array $acf_field_groups = [] ): array {
+
+		if ( ! empty( $this->get_mapped_location_rules() ) ) {
+			return $this->get_mapped_location_rules();
+		}
+
 		$field_groups = $acf_field_groups;
 		$rules        = [];
 
@@ -559,49 +603,72 @@ class Registry {
 		$rules = new LocationRules();
 		$rules->determine_location_rules();
 
-		return $rules->get_rules();
+		// Set the mapped location rules for future use
+		$rules_by_group = $rules->get_rules();
+
+		$this->mapped_location_rules = $rules_by_group;
+
+		// Return them
+		return $this->mapped_location_rules;
+	}
+
+	/**
+	 * Get the location rules grouped by location instead of grouped by field group
+	 *
+	 * @return array<mixed>
+	 */
+	public function get_location_rules_grouped_by_location(): array {
+		$location_rules    = $this->get_location_rules();
+		$rules_by_location = [];
+		if ( ! empty( $location_rules ) ) {
+			foreach ( $location_rules as $group => $locations ) {
+				if ( ! empty( $locations ) ) {
+					foreach ( $locations as $location ) {
+						if ( ! array_key_exists( $location, $rules_by_location ) ) {
+							$rules_by_location[ $location ] = [];
+						}
+						$rules_by_location[ $location ][] = $group;
+					}
+				}
+			}
+		}
+		return $rules_by_location;
 	}
 
 	/**
 	 * Get the GraphQL Types a Field Group should be registered to show on
 	 *
-	 * @param array $field_group The ACF Field Group config to determine the Types for
-	 * @param array $acf_field_groups
+	 * @param array<mixed> $field_group The ACF Field Group config to determine the Types for
+	 * @param array<mixed> $acf_field_groups
 	 *
-	 * @return array
+	 * @return array<mixed>
 	 */
 	public function get_graphql_locations_for_field_group( array $field_group, array $acf_field_groups ): array {
+
+		$graphql_types = [];
+
 		if ( ! $this->should_field_group_show_in_graphql( $field_group ) ) {
-			return [];
+			return $graphql_types;
 		}
 
-		$graphql_types = $field_group['graphql_types'] ?? [];
-
-		$field_group_name = '';
-
-		if ( ! empty( $field_group['graphql_field_name'] ) ) {
-			$field_group_name = $field_group['graphql_field_name'];
-		} elseif ( ! empty( $field_group['title'] ) ) {
-			$field_group_name = $field_group['title'];
-		} elseif ( ! empty( $field_group['name'] ) ) {
-			$field_group_name = $field_group['name'];
+		if ( ! empty( $field_group['graphql_types'] ) && is_array( $field_group['graphql_types'] ) ) {
+			return $field_group['graphql_types'];
 		}
 
-		if ( empty( $field_group_name ) ) {
-			return [];
+		if ( empty( $field_group['location'] ) ) {
+			return $graphql_types;
 		}
 
-		$field_group_name = Utils::format_field_name( $field_group_name, true );
+		$field_group_name = Utils::get_field_group_name( $field_group );
+		$field_group_name = \WPGraphQL\Utils\Utils::format_field_name( $field_group_name, true );
+		// The fields are mapped as lowercase strings and should be retrieved as such
+		// see: LocationRules.php
+		$field_group_name = strtolower( $field_group_name );
 
-		$manually_set_graphql_types = isset( $field_group['map_graphql_types_from_location_rules'] ) && (bool) $field_group['map_graphql_types_from_location_rules'];
+		$location_rules = $this->get_location_rules( $acf_field_groups );
 
-		if ( false === $manually_set_graphql_types || empty( $graphql_types ) ) {
-			if ( empty( $field_group['graphql_types'] ) ) {
-				$location_rules = $this->get_location_rules( $acf_field_groups );
-				if ( isset( $location_rules[ $field_group_name ] ) ) {
-					$graphql_types = $location_rules[ $field_group_name ];
-				}
-			}
+		if ( isset( $location_rules[ $field_group_name ] ) ) {
+			$graphql_types = $location_rules[ $field_group_name ];
 		}
 
 		return ! empty( $graphql_types ) && is_array( $graphql_types ) ? array_unique( array_filter( $graphql_types ) ) : [];
@@ -610,8 +677,7 @@ class Registry {
 	/**
 	 * Given an array of Acf Field Groups, add them to the Schema
 	 *
-	 * @param array $acf_field_groups ACF Field Groups to register to the WPGraphQL Schema
-	 * @return void
+	 * @param array<mixed> $acf_field_groups ACF Field Groups to register to the WPGraphQL Schema
 	 * @throws \Exception
 	 */
 	public function register_acf_field_groups_to_graphql( array $acf_field_groups = [] ): void {
@@ -637,7 +703,7 @@ class Registry {
 			if ( ! empty( $locations ) ) {
 				$with_field_group_interface_name = 'WithAcf' . $type_name;
 
-				$field_name = Utils::format_field_name( $type_name, true );
+				$field_name = \WPGraphQL\Utils\Utils::format_field_name( $type_name, true );
 
 				if ( ! $this->has_registered_field_group( $with_field_group_interface_name ) ) {
 					register_graphql_interface_type(
@@ -669,7 +735,7 @@ class Registry {
 				}
 
 				// If the field group has locations defined (Types to be added to)
-				// Add the
+				// Add the WithAcf$FieldGroup Interface to the corresponding graphql_types
 				register_graphql_interfaces_to_types( [ $with_field_group_interface_name ], $locations );
 			}
 
@@ -725,5 +791,4 @@ class Registry {
 			}
 		}
 	}
-
 }
