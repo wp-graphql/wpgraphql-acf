@@ -4,7 +4,7 @@ Tags: GraphQL, ACF, API, NextJS, Faust, Headless, Decoupled, React, Vue, Svelte,
 Requires at least: 6.0
 Tested up to: 6.4
 Requires PHP: 7.4
-Stable Tag: 2.0.0
+Stable Tag: 2.1.0
 License: GPL-3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -104,11 +104,21 @@ Learn more about how [Appsero collects and uses data](https://appsero.com/privac
 
 == Upgrade Notice ==
 
+= 2.1.0 =
+
+While fixing some [performance issues](https://github.com/wp-graphql/wpgraphql-acf/pull/152) we had to adjust the fallback logic for mapping ACF Field Groups to the Schema if they do not have "graphql_types" defined.
+
+ACF Field Groups that did not have "graphql_types" defined AND were assigned to Location Rules based on "post_status", "post_format", "post_category" or "post_taxonomy" _might_ not show in the Schema until their "graphql_types" are explicitly defined.
+
 = 2.0.0 =
 
 This release is a complete re-architecture of WPGraphQL for ACF, introducing breaking changes to the GraphQL Schema and PHP API. Please read the [upgrade guide](https://acf.wpgraphql.com/upgrade-guide/) before upgrading.
 
 == Changelog ==
+
+= 2.1.0 =
+
+
 
 = 2.0.0 =
 
