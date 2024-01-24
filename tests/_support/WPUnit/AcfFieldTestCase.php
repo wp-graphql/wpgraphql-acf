@@ -551,6 +551,45 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 
 	}
 
+	public function testFieldDoesNotShowInSchemaIfShowInGraphqlIsZero() {
+
+		$field_key = $this->register_acf_field([
+			'show_in_graphql' => 0
+		]);
+
+		$query = '
+		query GetType( $name: String! ) {
+		  __type( name: $name ) {
+		    name
+		    fields {
+		      name
+		    }
+		  }
+		}
+		';
+
+		$actual = $this->graphql( [
+			'query' => $query,
+			'variables' => [
+				'name' => 'AcfTestGroup',
+			]
+		]);
+
+		codecept_debug( $actual );
+
+		// the query should succeed
+		self::assertQuerySuccessful( $actual, [
+			// the instructions should be used for the description
+			$this->not()->expectedNode( '__type.fields', [
+				'name' => $this->get_formatted_field_name(),
+			]),
+		] );
+
+		// remove the local field
+		acf_remove_local_field( $field_key );
+
+	}
+
 	public function testFieldDoesNotShowInSchemaIfShowInGraphqlIsFalse() {
 
 		$field_key = $this->register_acf_field([

@@ -19,10 +19,9 @@ class AcfGraphQLFieldResolver {
 	}
 
 	/**
-	 * @return \WPGraphQL\Acf\AcfGraphQLFieldType
+	 * Get the AcfGraphQLFieldType definition
 	 */
 	public function get_acf_graphql_field_type(): AcfGraphQLFieldType {
 		return $this->acf_graphql_field_type;
 	}
-
 }

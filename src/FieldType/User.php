@@ -2,15 +2,15 @@
 namespace WPGraphQL\Acf\FieldType;
 
 use GraphQL\Type\Definition\ResolveInfo;
-use WPGraphQL\AppContext;
-use WPGraphQL\Data\Connection\UserConnectionResolver;
 use WPGraphQL\Acf\AcfGraphQLFieldType;
 use WPGraphQL\Acf\FieldConfig;
+use WPGraphQL\AppContext;
+use WPGraphQL\Data\Connection\UserConnectionResolver;
 
 class User {
 
 	/**
-	 * @return void
+	 * Register support for the "user" ACF field type
 	 */
 	public static function register_field_type(): void {
 		register_graphql_acf_field_type(
@@ -39,8 +39,9 @@ class User {
 									return null;
 								}
 
+								$values = [];
 								if ( ! is_array( $value ) ) {
-									$value = [ $value ];
+									$values[] = $value;
 								}
 
 								$value = array_map(
@@ -50,9 +51,8 @@ class User {
 										}
 										return absint( $user );
 									},
-									$value 
+									$values
 								);
-
 
 								$resolver = new UserConnectionResolver( $root, $args, $context, $info );
 								return $resolver->set_query_arg( 'include', $value )->set_query_arg( 'orderby', 'include' )->get_connection();
@@ -63,8 +63,7 @@ class User {
 					// The connection will be registered to the Schema so we return null for the field type
 					return 'connection';
 				},
-			] 
+			]
 		);
 	}
-
 }

@@ -1,13 +1,12 @@
 <?php
 
 use GraphQL\Type\Definition\ResolveInfo;
-use WPGraphQL\Registry\TypeRegistry;
-
+use WPGraphQL\Acf\Admin\OptionsPageRegistration;
 use WPGraphQL\Acf\Admin\PostTypeRegistration;
 use WPGraphQL\Acf\Admin\TaxonomyRegistration;
-use WPGraphQL\Acf\Admin\OptionsPageRegistration;
 use WPGraphQL\Acf\Registry;
 use WPGraphQL\Acf\ThirdParty;
+use WPGraphQL\Registry\TypeRegistry;
 
 class WPGraphQLAcf {
 
@@ -17,12 +16,18 @@ class WPGraphQLAcf {
 	protected $admin_settings;
 
 	/**
-	 * @var array
+	 * @var array<mixed>
 	 */
 	protected $plugin_load_error_messages = [];
 
 	/**
+	 * @var \WPGraphQL\Acf\Registry|null
+	 */
+	protected $registry;
+
+	/**
 	 * @return void
+	 * Initialize the plugin
 	 */
 	public function init(): void {
 
@@ -39,6 +44,8 @@ class WPGraphQLAcf {
 		add_action( 'after_setup_theme', [ $this, 'acf_internal_post_type_support' ] );
 		add_action( 'graphql_register_types', [ $this, 'init_registry' ] );
 
+		add_filter( 'graphql_resolve_revision_meta_from_parent', [ $this, 'preview_support' ], 10, 4 );
+
 		add_filter( 'graphql_data_loaders', [ $this, 'register_loaders' ], 10, 2 );
 		add_filter( 'graphql_resolve_node_type', [ $this, 'resolve_acf_options_page_node' ], 10, 2 );
 		/**
@@ -51,7 +58,7 @@ class WPGraphQLAcf {
 	}
 
 	/**
-	 * @return void
+	 * Initialize third party support (i.e. Smart Cache, ACF Extended)
 	 */
 	public function init_third_party_support(): void {
 		$third_party = new ThirdParty();
@@ -59,7 +66,7 @@ class WPGraphQLAcf {
 	}
 
 	/**
-	 * @return void
+	 * Initialize support for Admin Settings
 	 */
 	public function init_admin_settings(): void {
 		$this->admin_settings = new WPGraphQL\Acf\Admin\Settings();
@@ -69,8 +76,6 @@ class WPGraphQLAcf {
 	/**
 	 * Add functionality to the Custom Post Type and Custom Taxonomy registration screens
 	 * and underlying functionality (like exports, php code generation)
-	 *
-	 * @return void
 	 */
 	public function acf_internal_post_type_support(): void {
 		$taxonomy_registration_screen = new TaxonomyRegistration();
@@ -86,32 +91,111 @@ class WPGraphQLAcf {
 	/**
 	 * @param \WPGraphQL\Registry\TypeRegistry $type_registry
 	 *
-	 * @return void
 	 * @throws \Exception
 	 */
 	public function init_registry( TypeRegistry $type_registry ): void {
 
 		// Register general types that should be available to the Schema regardless
 		// of the specific fields and field groups registered by ACF
-		$registry = new Registry( $type_registry );
-		$registry->register_initial_graphql_types();
-		$registry->register_options_pages();
+		$this->registry = new Registry( $type_registry );
+		$this->registry->register_initial_graphql_types();
+		$this->registry->register_options_pages();
 
 		// Get the field groups that should be mapped to the Schema
-		$acf_field_groups = $registry->get_acf_field_groups();
+		$acf_field_groups = $this->registry->get_acf_field_groups();
 
 		// If there are no acf field groups to show in GraphQL, do nothing
 		if ( empty( $acf_field_groups ) ) {
 			return;
 		}
 
-		$registry->register_acf_field_groups_to_graphql( $acf_field_groups );
+		$this->registry->register_acf_field_groups_to_graphql( $acf_field_groups );
+	}
+
+	/**
+	 * @param int $post_id The ID of the post to check if it's a preview of another post
+	 *
+	 * @return bool|\WP_Post
+	 */
+	protected function is_preview_post( int $post_id ) {
+		$post = get_post( $post_id );
+
+		if ( ! $post ) {
+			return false; // Post does not exist
+		}
+
+		// Check if it's a revision (autosave)
+		if ( 'revision' === $post->post_type && 'inherit' === $post->post_status ) {
+			$parent_post = get_post( $post->post_parent );
+
+			// Check if parent post is either a draft or published
+			if ( $parent_post && in_array( $parent_post->post_status, [ 'draft', 'publish' ], true ) ) {
+				return $parent_post; // It's a preview of a draft or published post
+			}
+		}
+
+		return false; // Not a preview post
+	}
+
+
+	/**
+	 * Add support for resolving ACF Fields when queried for asPreview
+	 *
+	 * NOTE: this currently only works if classic editor is not being used
+	 *
+	 * @param bool   $should Whether to resolve using the parent object. Default true.
+	 * @param int    $object_id The ID of the object to resolve meta for
+	 * @param string $meta_key The key for the meta to resolve
+	 * @param bool   $single Whether a single value should be returned
+	 */
+	public function preview_support( bool $should, int $object_id, string $meta_key, bool $single ): bool {
+		if ( ! $this->registry instanceof Registry ) {
+			return (bool) $should;
+		}
+
+		$preview_post = $this->is_preview_post( $object_id );
+		if ( ! $preview_post instanceof WP_Post ) {
+			return (bool) $should;
+		}
+
+		// If the block editor is being used for the post, bail early as the Block Editor doesn't
+		// properly support revisions of post meta
+		// see: https://github.com/WordPress/gutenberg/issues/16006#issuecomment-657965028
+		if ( use_block_editor_for_post( $preview_post ) ) {
+			graphql_debug( __( 'The post you are querying as a preview uses the Block Editor and saving & previewing meta is not fully supported by the block editor. This is a WordPress block editor bug. See: https://github.com/WordPress/gutenberg/issues/16006#issuecomment-657965028', 'wpgraphql-acf' ) );
+			return (bool) $should;
+		}
+
+		$registered_fields = $this->registry->get_registered_fields();
+
+		if ( in_array( $meta_key, $registered_fields, true ) ) {
+			return false;
+		}
+
+		foreach ( $registered_fields as $field_name ) {
+			// For flex fields/repeaters, the meta keys are structured a bit funky.
+			// This checks to see if the $meta_key starts with the same string as one of the
+			// acf fields (a flex/repeater field) and then checks if it's preceeded by an underscore and a number.
+			if ( strpos( $meta_key, $field_name ) === 0 ) {
+				// match any string that starts with the field name, followed by an underscore, followed by a number, followed by another string
+				// ex my_flex_field_0_text_field or some_repeater_field_12_25MostPopularDogToys
+				$pattern = '/' . $field_name . '_\d+_\w+/m';
+				preg_match( $pattern, $meta_key, $matches );
+
+				// If the meta key matches the pattern, treat it as a sub-field of an ACF Field Group
+				if ( null !== $matches ) {
+					return false;
+				}
+			}
+		}
+
+		return $should;
 	}
 
 	/**
 	 * Empty array if the plugin can load. Array of messages if the plugin cannot load.
 	 *
-	 * @return array
+	 * @return array<mixed>
 	 */
 	public function get_plugin_load_error_messages(): array {
 		if ( ! empty( $this->plugin_load_error_messages ) ) {
@@ -139,8 +223,6 @@ class WPGraphQLAcf {
 	/**
 	 * Show admin notice to admins if this plugin is active but either ACF and/or WPGraphQL
 	 * are not active
-	 *
-	 * @return void
 	 */
 	public function show_admin_notice(): void {
 		$can_load_messages = $this->get_plugin_load_error_messages();
@@ -188,10 +270,10 @@ class WPGraphQLAcf {
 	}
 
 	/**
-	 * @param array                 $loaders
+	 * @param array<mixed>          $loaders
 	 * @param \WPGraphQL\AppContext $context
 	 *
-	 * @return array
+	 * @return array<mixed>
 	 */
 	public function register_loaders( array $loaders, \WPGraphQL\AppContext $context ): array {
 		$loaders['acf_options_page'] = new \WPGraphQL\Acf\Data\Loader\AcfOptionsPageLoader( $context );
@@ -201,8 +283,6 @@ class WPGraphQLAcf {
 
 	/**
 	 * Output graphql debug messages if the plugin cannot load properly.
-	 *
-	 * @return void
 	 */
 	public function show_graphql_debug_messages(): void {
 		$messages = $this->get_plugin_load_error_messages();
@@ -221,15 +301,15 @@ class WPGraphQLAcf {
 		 * Add the $source node as the "node" passed to the resolver so ACF Fields assigned to Templates can resolve
 		 * using the $source node as the object to get meta from.
 		 *
-		 * @param mixed           $result         The result of the field resolution
-		 * @param mixed           $source         The source passed down the Resolve Tree
-		 * @param array           $args           The args for the field
-		 * @param \WPGraphQL\AppContext $context The AppContext passed down the ResolveTree
-		 * @param \GraphQL\Type\Definition\ResolveInfo $info The ResolveInfo passed down the ResolveTree
-		 * @param string          $type_name      The name of the type the fields belong to
-		 * @param string          $field_key      The name of the field
+		 * @param mixed                                    $result         The result of the field resolution
+		 * @param mixed                                    $source         The source passed down the Resolve Tree
+		 * @param array<mixed>                             $args           The args for the field
+		 * @param \WPGraphQL\AppContext                    $context The AppContext passed down the ResolveTree
+		 * @param \GraphQL\Type\Definition\ResolveInfo     $info The ResolveInfo passed down the ResolveTree
+		 * @param string                                   $type_name      The name of the type the fields belong to
+		 * @param string                                   $field_key      The name of the field
 		 * @param \GraphQL\Type\Definition\FieldDefinition $field The Field Definition for the resolving field
-		 * @param mixed           $field_resolver The default field resolver
+		 * @param mixed                                    $field_resolver The default field resolver
 		 *
 		 * @return mixed
 		 */
@@ -244,5 +324,4 @@ class WPGraphQLAcf {
 
 		return $result;
 	}
-
 }

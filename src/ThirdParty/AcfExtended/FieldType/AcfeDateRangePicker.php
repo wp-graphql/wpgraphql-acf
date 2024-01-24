@@ -7,7 +7,7 @@ use WPGraphQL\Acf\FieldConfig;
 class AcfeDateRangePicker {
 
 	/**
-	 * @return void
+	 * Register support for the ACF Extended acfe_date_range_picker field type
 	 */
 	public static function register_field_type(): void {
 		register_graphql_acf_field_type(
@@ -44,5 +44,4 @@ class AcfeDateRangePicker {
 			]
 		);
 	}
-
 }

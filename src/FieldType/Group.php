@@ -1,15 +1,15 @@
 <?php
 namespace WPGraphQL\Acf\FieldType;
 
-use WPGraphQL\AppContext;
-use WPGraphQL\Utils\Utils;
 use WPGraphQL\Acf\AcfGraphQLFieldType;
 use WPGraphQL\Acf\FieldConfig;
+use WPGraphQL\AppContext;
+use WPGraphQL\Utils\Utils;
 
 class Group {
 
 	/**
-	 * @return void
+	 * Register support for the "group" ACF field type
 	 */
 	public static function register_field_type(): void {
 		register_graphql_acf_field_type(
@@ -49,5 +49,4 @@ class Group {
 			]
 		);
 	}
-
 }

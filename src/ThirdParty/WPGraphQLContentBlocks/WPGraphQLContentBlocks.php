@@ -8,8 +8,6 @@ class WPGraphQLContentBlocks {
 
 	/**
 	 * Initialize support for WPGraphQL Content Blocks
-	 *
-	 * @return void
 	 */
 	public function init(): void {
 
@@ -35,11 +33,9 @@ class WPGraphQLContentBlocks {
 	 * @param string                   $block_name                             The name of the block Interfaces will be applied to
 	 * @param \WP_Block_Editor_Context $block_editor_context                   The context of the Block Editor
 	 * @param \WP_Post_Type            $post_type                              The Post Type an Interface might be applied to the block for
-	 * @param array                    $all_registered_blocks                  Array of all registered blocks
-	 * @param array|bool               $supported_blocks_for_post_type_context Array of all supported blocks for the context
-	 * @param array                    $block_and_graphql_enabled_post_types   Array of Post Types that have block editor and GraphQL support
-	 *
-	 * @return bool
+	 * @param array<mixed>             $all_registered_blocks                  Array of all registered blocks
+	 * @param array<mixed>|bool        $supported_blocks_for_post_type_context Array of all supported blocks for the context
+	 * @param array<mixed>             $block_and_graphql_enabled_post_types   Array of Post Types that have block editor and GraphQL support
 	 */
 	public function filter_editor_block_interfaces( bool $should, string $block_name, \WP_Block_Editor_Context $block_editor_context, \WP_Post_Type $post_type, array $all_registered_blocks, $supported_blocks_for_post_type_context, array $block_and_graphql_enabled_post_types ): bool {
 		if ( ! empty( $all_registered_blocks[ $block_name ]->post_types ) && ! in_array( $post_type->name, $all_registered_blocks[ $block_name ]->post_types, true ) ) {
@@ -49,9 +45,9 @@ class WPGraphQLContentBlocks {
 	}
 
 	/**
-	 * @param array $interfaces The interfaces shown as possible types for ACF Field Groups to be associated with
+	 * @param array<mixed> $interfaces The interfaces shown as possible types for ACF Field Groups to be associated with
 	 *
-	 * @return array
+	 * @return array<mixed>
 	 */
 	public function add_blocks_as_possible_type( array $interfaces ): array {
 		$interfaces['AcfBlock'] = [
@@ -67,7 +63,6 @@ class WPGraphQLContentBlocks {
 	 *
 	 * @param \WPGraphQL\Acf\Registry $registry The WPGraphQL for ACF Registry
 	 *
-	 * @return void
 	 * @throws \Exception
 	 */
 	public function register_types( Registry $registry ): void {
@@ -117,6 +112,4 @@ class WPGraphQLContentBlocks {
 
 		register_graphql_interfaces_to_types( [ 'AcfBlock' ], $graphql_enabled_acf_blocks );
 	}
-
-
 }

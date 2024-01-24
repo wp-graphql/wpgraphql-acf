@@ -1,5 +1,25 @@
 # Changelog
 
+## 2.1.0
+
+## Upgrade Notice
+
+While fixing some [performance issues](https://github.com/wp-graphql/wpgraphql-acf/pull/152) we had to adjust the fallback logic for mapping ACF Field Groups to the Schema if they do not have "graphql_types" defined.
+
+ACF Field Groups that did not have "graphql_types" defined AND were assigned to Location Rules based on "post_status", "post_format", "post_category" or "post_taxonomy" _might_ not show in the Schema until their "graphql_types" are explicitly defined.
+
+## New Features
+
+- [#156](https://github.com/wp-graphql/wpgraphql-acf/pull/156): feat: Use published ACF values in resolvers for fields associated with posts that use the block editor, since the Block Editor has a bug preventing meta from being saved for previews. Adds a debug message if ACF fields are queried for with "asPreview" on post(s) that use the block editor.
+
+### Chores / Bugfixes
+
+- [#156](https://github.com/wp-graphql/wpgraphql-acf/pull/156): fix: ACF Fields not resolving when querying "asPreview"
+- [#155](https://github.com/wp-graphql/wpgraphql-acf/pull/155): fix: "show_in_graphql" setting not being respected when turned "off"
+- [#152](https://github.com/wp-graphql/wpgraphql-acf/pull/152): fix: performance issues with mapping ACF Field Groups to the Schema
+- [#148](https://github.com/wp-graphql/wpgraphql-acf/pull/148): fix: bug when querying taxonomy field on blocks
+- [#146](https://github.com/wp-graphql/wpgraphql-acf/pull/146): chore: update phpcs to match core WPGraphQL
+
 ## 2.0.0
 
 - [#142](https://github.com/wp-graphql/wpgraphql-acf/pull/142): Update README, versions, plugin assets for deploy to WordPress.org.

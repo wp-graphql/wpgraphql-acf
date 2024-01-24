@@ -6,7 +6,7 @@ use WPGraphQL\Acf\FieldConfig;
 class Range {
 
 	/**
-	 * @return void
+	 * Register support for the "range" ACF field type
 	 */
 	public static function register_field_type(): void {
 		register_graphql_acf_field_type(
@@ -17,8 +17,7 @@ class Range {
 					$value = $field_config->resolve_field( $root, $args, $context, $info );
 					return (float) $value;
 				},
-			] 
+			]
 		);
 	}
-
 }

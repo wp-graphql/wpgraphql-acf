@@ -4,7 +4,7 @@ namespace WPGraphQL\Acf;
 class ThirdParty {
 
 	/**
-	 * @return void
+	 * Initialize support for 3rd party libraries / plugins
 	 */
 	public function init(): void {
 
@@ -20,5 +20,4 @@ class ThirdParty {
 		$content_blocks = new ThirdParty\WPGraphQLContentBlocks\WPGraphQLContentBlocks();
 		$content_blocks->init();
 	}
-
 }
