@@ -266,12 +266,6 @@ class LocationRules {
 			case 'page_template':
 				$this->determine_post_template_rules( $field_group_name, $param, $operator, $value );
 				break;
-			case 'post_status':
-				break;
-			case 'post_format':
-			case 'post_category':
-			case 'post_taxonomy':
-				break;
 			case 'post':
 				$this->determine_post_rules( $field_group_name, $param, $operator, $value );
 				break;
@@ -283,15 +277,6 @@ class LocationRules {
 				// If page or page_parent is set, regardless of operator and value,
 				// we can add the field group to the Page type
 				$this->set_graphql_type( $field_group_name, 'Page' );
-				break;
-			case 'current_user':
-			case 'current_user_role':
-				// @todo:
-				// Right now, if you set current_user or current_user_role as the only rule,
-				// ACF adds the field group to every possible location in the Admin.
-				// This seems a bit heavy handed. 🤔
-				// We need to think through this a bit more, and how this rule
-				// Can be composed with other rules, etc.
 				break;
 			case 'user_form':
 			case 'user_role':
@@ -307,9 +292,6 @@ class LocationRules {
 				break;
 			case 'comment':
 				$this->determine_comment_rules( $field_group_name, $param, $operator, $value );
-				break;
-			case 'widget':
-				// @todo: Widgets are not currently supported in WPGraphQL
 				break;
 			case 'block':
 				$this->determine_block_rules( $field_group_name, $param, $operator, $value );
