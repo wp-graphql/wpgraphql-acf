@@ -105,15 +105,22 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 		return null;
 	}
 
-	/***
+	/**
+	 * Test class should override this with the fragment to test with
+	 *
 	 * @return string
 	 */
 	public function get_query_fragment(): string {
-		return '
-			fragment QueryFragment on AcfTestGroup {
-				testText
-			}
-		';
+		return 'null';
+	}
+
+	/**
+	 * Test class should override this with the expected value
+	 *
+	 * @return mixed
+	 */
+	public function get_expected_value() {
+		return 'null';
 	}
 
 	/**
@@ -971,12 +978,57 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 		acf_remove_local_field( $field_key );
 	}
 
+	public function testQueryFieldOnPostReturnsExpectedValue() {
+		$field_key = $this->register_acf_field();
 
+		// Save data to the post
+		update_field( $field_key, $this->get_data_to_store(), $this->published_post->ID );
+
+		$fragment = $this->get_query_fragment();
+
+		if ( 'null' === $fragment ) {
+			$this->markTestIncomplete( 'get_query_fragment() not defined' );
+		}
+
+		$expected_value = $this->get_expected_value();
+
+		if ( 'null' === $expected_value ) {
+			$this->markTestIncomplete( 'get_expected_value() not defined' );
+		}
+
+		$query = '
+		query AcfFieldOnPost ($id: ID!) {
+		  post( id: $id idType: DATABASE_ID) {
+		    databaseId
+		    __typename
+		    ...on WithAcfAcfTestGroup {
+		      acfTestGroup {
+		        ...AcfTestGroupFragment
+		      }
+		    }
+		  }
+		}
+		' . $fragment;
+
+		$actual = $this->graphql([
+			'query' => $query,
+			'variables' => [
+				'id' => $this->published_post->ID,
+			]
+		]);
+
+		self::assertQuerySuccessful( $actual, [
+			$this->expectedField( 'post.databaseId', $this->published_post->ID ),
+			$this->expectedField( 'post.__typename', 'Post' ),
+			$this->expectedField( 'post.acfTestGroup.' . $this->get_formatted_field_name(), $this->get_expected_value() )
+		]);
+
+
+	}
 
 	/**
 	 * @todo: implement the below tests
 	 */
-//	abstract public function testQueryFieldOnPostReturnsExpectedValue();
 //	abstract public function testQueryFieldOnPageReturnsExpectedValue();
 //	abstract public function testQueryFieldOnCommentReturnsExpectedValue();
 //	abstract public function testQueryFieldOnTagReturnsExpectedValue();
@@ -1088,7 +1140,7 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 	 */
 	public function testQueryCloneFieldOnPost(): void {
 
-		$this->markTestIncomplete( 'Clone Fields are being refactored...' );
+		// $this->markTestIncomplete( 'Clone Fields are being refactored...' );
 
 		// if ACF PRO is not active, skip the test
 		if ( ! defined( 'ACF_PRO' ) ) {

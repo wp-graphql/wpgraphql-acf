@@ -57,8 +57,19 @@ class TextFieldTest extends \Tests\WPGraphQL\Acf\WPUnit\AcfFieldTestCase {
 		';
 	}
 
-	public function get_block_data_to_store() {
+	public function get_block_data_to_store(): string {
 		return 'text value...';
+	}
+
+	public function get_query_fragment(): string {
+		return '
+		fragment AcfTestGroupFragment on AcfTestGroup {
+		  testText
+		}';
+	}
+
+	public function get_expected_value() {
+		return $this->get_data_to_store();
 	}
 
 	public function get_expected_block_fragment_response() {
