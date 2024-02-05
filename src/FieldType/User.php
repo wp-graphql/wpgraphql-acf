@@ -39,7 +39,7 @@ class User {
 									return null;
 								}
 
-								$values = [];
+								$values = is_array( $value ) ? $value : [];
 								if ( ! is_array( $value ) ) {
 									$values[] = $value;
 								}
@@ -53,6 +53,10 @@ class User {
 									},
 									$values
 								);
+
+								if ( empty( $value ) ) {
+									return null;
+								}
 
 								$resolver = new UserConnectionResolver( $root, $args, $context, $info );
 								return $resolver->set_query_arg( 'include', $value )->set_query_arg( 'orderby', 'include' )->get_connection();
