@@ -95,20 +95,20 @@ class Relationship {
 					)
 				);
 
-				$resolver = new PostObjectConnectionResolver( $root, $args, $context, $info, 'any' );
+				if ( empty( $ids ) ) {
+					return null;
+				}
 
+				// override the args to filter by a specific set of IDs
+				$args['where']['in']     = $ids;
+				$resolver = new PostObjectConnectionResolver( $root, $args, $context, $info, 'any' );
 
 				if ( $is_one_to_one ) {
 					$resolver = $resolver->one_to_one();
 				}
 
-				return $resolver
-					// the relationship field doesn't require related things to be published
-					// so we set the status to "any"
-					->set_query_arg( 'post_status', 'any' )
-					->set_query_arg( 'post__in', $ids )
-					->set_query_arg( 'orderby', 'post__in' )
-					->get_connection();
+				$resolver->set_query_arg( 'post_status', 'any' );
+				return $resolver->get_connection();
 			},
 		];
 
