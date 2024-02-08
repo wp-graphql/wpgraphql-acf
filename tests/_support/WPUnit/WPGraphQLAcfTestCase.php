@@ -123,6 +123,28 @@ class WPGraphQLAcfTestCase extends \Tests\WPGraphQL\TestCase\WPGraphQLTestCase {
 			],
 		]);
 
+		$this->published_post_by_editor = self::factory()->post->create_and_get([
+			'post_type' => 'post',
+			'post_status' => 'publish',
+			'post_author' => $this->editor->ID,
+			'post_title' => 'Test post by editor title',
+			'tax_input' => [
+				'post_tag' => [ $this->tag->term_id ],
+				'category' => [ $this->category->term_id ],
+			],
+		]);
+
+		$this->published_post_by_author = self::factory()->post->create_and_get([
+			'post_type' => 'post',
+			'post_status' => 'publish',
+			'post_author' => $this->author->ID,
+			'post_title' => 'Test post by author title',
+			'tax_input' => [
+				'post_tag' => [ $this->tag->term_id ],
+				'category' => [ $this->category->term_id ],
+			],
+		]);
+
 		$this->published_page = self::factory()->post->create_and_get([
 			'post_type' => 'page',
 			'post_status' => 'publish',

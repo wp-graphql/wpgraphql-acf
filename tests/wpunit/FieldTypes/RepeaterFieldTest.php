@@ -99,8 +99,20 @@ class RepeaterFieldTest extends \Tests\WPGraphQL\Acf\WPUnit\AcfFieldTestCase {
 		';
 	}
 
+	// Skip the test for older versions of ACF 🤷‍♂️
+	public function testQueryFieldOnPostReturnsExpectedValue() {
+		if ( ! defined( 'ACF_VERSION' ) || version_compare( ACF_VERSION, '6.1', '<' ) ) {
+			$this->markTestSkipped( 'Skipping test for old versions of WPGraphQL' );
+		}
+
+		parent::testQueryFieldOnPostReturnsExpectedValue();
+	}
+
 	public function get_block_data_to_store() {
-		return 1;
+		return [
+			'test_repeater_0_nested_text' => 'nested text field value...',
+			'_test_repeater_0_nested_text' => 'field_nested_text'
+		];
 	}
 
 	public function get_extra_block_data_to_store( $acf_field_key = '', $acf_field_name = '' ): array {
