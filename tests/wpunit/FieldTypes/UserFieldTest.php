@@ -28,8 +28,8 @@ class UserFieldTest extends \Tests\WPGraphQL\Acf\WPUnit\AcfFieldTestCase {
 		return 'OBJECT';
 	}
 
-	public function get_data_to_store():string {
-		return $this->admin->ID;
+	public function get_data_to_store() {
+		return [ $this->admin->ID ];
 	}
 
 	public function get_block_query_fragment() {
@@ -55,6 +55,29 @@ class UserFieldTest extends \Tests\WPGraphQL\Acf\WPUnit\AcfFieldTestCase {
 				[
 					'__typename' => 'User',
 					'databaseId' => $this->admin->ID
+				]
+			]
+		];
+	}
+
+	public function get_query_fragment(): string {
+		return '
+		fragment AcfTestGroupFragment on AcfTestGroup {
+		  testUser {
+		    nodes {
+		      __typename
+		      databaseId
+		    }
+		  }
+		}';
+	}
+
+	public function get_expected_value() {
+		return [
+			'nodes' => [
+				[
+					'__typename' => 'User',
+					'databaseId' => $this->admin->ID,
 				]
 			]
 		];
