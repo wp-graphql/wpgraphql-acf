@@ -1,5 +1,13 @@
 # Changelog
 
+## 2.1.1
+
+### Chores / Bugfixes
+
+- [#167](https://github.com/wp-graphql/wpgraphql-acf/pull/167): fix: pagination on connection fields
+- [#166](https://github.com/wp-graphql/wpgraphql-acf/pull/166): fix: errors when querying fields of the `acfe_date_range_picker` field type
+- [#165](https://github.com/wp-graphql/wpgraphql-acf/pull/165): fix: user field returning all publicly queryable users
+
 ## 2.1.0
 
 ## Upgrade Notice
