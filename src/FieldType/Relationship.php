@@ -100,8 +100,8 @@ class Relationship {
 				}
 
 				// override the args to filter by a specific set of IDs
-				$args['where']['in']     = $ids;
-				$resolver = new PostObjectConnectionResolver( $root, $args, $context, $info, 'any' );
+				$args['where']['in'] = $ids;
+				$resolver            = new PostObjectConnectionResolver( $root, $args, $context, $info, 'any' );
 
 				if ( $is_one_to_one ) {
 					$resolver = $resolver->one_to_one();

@@ -64,7 +64,7 @@ class User {
 								}
 
 								$args['where']['include'] = $value;
-								$resolver = new UserConnectionResolver( $root, $args, $context, $info );
+								$resolver                 = new UserConnectionResolver( $root, $args, $context, $info );
 								$resolver->set_query_arg( 'orderby', 'include' );
 								return $resolver->get_connection();
 							},

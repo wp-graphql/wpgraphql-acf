@@ -63,7 +63,7 @@ class Gallery {
 								}
 
 								$args['where']['in'] = $value;
-								$resolver = new PostObjectConnectionResolver( $root, $args, $context, $info, 'attachment' );
+								$resolver            = new PostObjectConnectionResolver( $root, $args, $context, $info, 'attachment' );
 								$resolver->set_query_arg( 'post_status', 'any' );
 								return $resolver->get_connection();
 							},
