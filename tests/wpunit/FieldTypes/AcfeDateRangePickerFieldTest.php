@@ -68,4 +68,65 @@ class AcfeDateRangePickerFieldTest extends \Tests\WPGraphQL\Acf\WPUnit\AcfeField
 		}
 	}
 
+	public function get_query_fragment(): string {
+		return '
+		fragment AcfTestGroupFragment on AcfTestGroup {
+		  testAcfeDateRangePicker {
+		    startDate
+		    endDate
+		  }
+		}';
+	}
+
+
+	public function testQueryDateRangePickerFieldOnPost() {
+
+		$this->register_acf_field();
+
+		$start_date = '20240205'; // feb 5 2024
+		$end_date   = '20240207'; // feb 7 2024
+
+		update_field( $this->get_field_name() . '_start', $start_date, $this->published_post->ID );
+		update_field( $this->get_field_name() . '_end', $end_date, $this->published_post->ID );
+
+		$formatted_end_date = \DateTime::createFromFormat( 'Ymd|', $end_date );
+		$formatted_end_date = $formatted_end_date->format( \DateTimeInterface::RFC3339 );
+
+		$formatted_start_date = \DateTime::createFromFormat( 'Ymd|', $start_date );
+		$formatted_start_date = $formatted_start_date->format( \DateTimeInterface::RFC3339 );
+
+		$expected_value = [
+			'startDate' => $formatted_start_date,
+			'endDate' => $formatted_end_date
+		];
+
+		$fragment = $this->get_query_fragment();
+
+		$query = '
+		query getPostById( $id: ID! ) {
+			post( id:$id idType:DATABASE_ID) {
+				__typename
+				databaseId
+				acfTestGroup {
+					...AcfTestGroupFragment
+				}
+			}
+		}
+		' . $fragment;
+
+		$actual = $this->graphql([
+			'query' => $query,
+			'variables' => [
+				'id' => $this->published_post->ID,
+			]
+		]);
+
+		self::assertQuerySuccessful( $actual, [
+			$this->expectedField( 'post.databaseId', $this->published_post->ID ),
+			$this->expectedField( 'post.__typename', 'Post' ),
+			$this->expectedField( 'post.acfTestGroup.testAcfeDateRangePicker', $expected_value )
+		]);
+
+	}
+
 }

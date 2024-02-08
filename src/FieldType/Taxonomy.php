@@ -44,13 +44,9 @@ class Taxonomy {
 								return null;
 							}
 
-							$resolver = new TermObjectConnectionResolver( $root, $args, $context, $info );
-							return $resolver
-							// Set the query to include only the IDs passed in from the field
-							// and orderby the ids
-							->set_query_arg( 'include', $ids )
-							->set_query_arg( 'orderby', 'include' )
-							->get_connection();
+							$args['where']['include'] = $ids;
+
+							return ( new TermObjectConnectionResolver( $root, $args, $context, $info ) )->get_connection();
 						},
 					];
 
