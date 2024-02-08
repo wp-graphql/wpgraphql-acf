@@ -39,7 +39,7 @@ class User {
 									return null;
 								}
 
-								$values = [];
+								$values = is_array( $value ) ? $value : [];
 								if ( ! is_array( $value ) ) {
 									$values[] = $value;
 								} else {
