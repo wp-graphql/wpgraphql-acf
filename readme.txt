@@ -4,7 +4,7 @@ Tags: GraphQL, ACF, API, NextJS, Faust, Headless, Decoupled, React, Vue, Svelte,
 Requires at least: 6.0
 Tested up to: 6.4
 Requires PHP: 7.4
-Stable Tag: 2.1.0
+Stable Tag: 2.1.1
 License: GPL-3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -115,6 +115,14 @@ ACF Field Groups that did not have "graphql_types" defined AND were assigned to 
 This release is a complete re-architecture of WPGraphQL for ACF, introducing breaking changes to the GraphQL Schema and PHP API. Please read the [upgrade guide](https://acf.wpgraphql.com/upgrade-guide/) before upgrading.
 
 == Changelog ==
+
+= 2.1.1 =
+
+**Chores / Bugfixes**
+
+- [#167](https://github.com/wp-graphql/wpgraphql-acf/pull/167): fix: pagination on connection fields
+- [#166](https://github.com/wp-graphql/wpgraphql-acf/pull/166): fix: errors when querying fields of the `acfe_date_range_picker` field type
+- [#165](https://github.com/wp-graphql/wpgraphql-acf/pull/165): fix: user field returning all publicly queryable users
 
 = 2.1.0 =
 
