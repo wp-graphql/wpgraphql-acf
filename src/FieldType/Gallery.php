@@ -58,11 +58,14 @@ class Gallery {
 									$value
 								) : $value;
 
-								$resolver = new PostObjectConnectionResolver( $root, $args, $context, $info, 'attachment' );
-								return $resolver
-								->set_query_arg( 'post__in', $value )
-								->set_query_arg( 'orderby', 'post__in' )
-								->get_connection();
+								if ( empty( $value ) ) {
+									return null;
+								}
+
+								$args['where']['in'] = $value;
+								$resolver            = new PostObjectConnectionResolver( $root, $args, $context, $info, 'attachment' );
+								$resolver->set_query_arg( 'post_status', 'any' );
+								return $resolver->get_connection();
 							},
 						]
 					);

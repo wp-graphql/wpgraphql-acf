@@ -42,12 +42,17 @@ class User {
 								$values = is_array( $value ) ? $value : [];
 								if ( ! is_array( $value ) ) {
 									$values[] = $value;
+								} else {
+									$values = $value;
 								}
 
 								$value = array_map(
 									static function ( $user ) {
 										if ( is_array( $user ) && isset( $user['ID'] ) ) {
 											return absint( $user['ID'] );
+										}
+										if ( is_object( $user ) && isset( $user->ID ) ) {
+											return absint( $user->ID );
 										}
 										return absint( $user );
 									},
@@ -58,8 +63,10 @@ class User {
 									return null;
 								}
 
-								$resolver = new UserConnectionResolver( $root, $args, $context, $info );
-								return $resolver->set_query_arg( 'include', $value )->set_query_arg( 'orderby', 'include' )->get_connection();
+								$args['where']['include'] = $value;
+								$resolver                 = new UserConnectionResolver( $root, $args, $context, $info );
+								$resolver->set_query_arg( 'orderby', 'include' );
+								return $resolver->get_connection();
 							},
 						]
 					);

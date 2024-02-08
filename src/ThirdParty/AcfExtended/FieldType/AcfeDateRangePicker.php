@@ -15,9 +15,20 @@ class AcfeDateRangePicker {
 			[
 				'graphql_type' => 'ACFE_Date_Range',
 				'resolve'      => static function ( $root, $args, $context, $info, $field_type, FieldConfig $field_config ) {
+					$value      = $field_config->resolve_field( $root, $args, $context, $info );
+					$start_date = $value['start'] ?? null;
+					$end_date   = $value['end'] ?? null;
 					$acf_field  = $field_config->get_acf_field();
-					$start_date = $field_config->resolve_field( $root, $args, $context, $info, [ 'name' => $acf_field['name'] . '_start' ] );
-					$end_date   = $field_config->resolve_field( $root, $args, $context, $info, [ 'name' => $acf_field['name'] . '_end' ] );
+
+					// handle resolving from a block
+					if ( empty( $start_date ) ) {
+						$start_date = $field_config->resolve_field( $root, $args, $context, $info, [ 'name' => $acf_field['name'] . '_start' ] );
+					}
+
+					// handle resolving from a block
+					if ( empty( $end_date ) ) {
+						$end_date = $field_config->resolve_field( $root, $args, $context, $info, [ 'name' => $acf_field['name'] . '_end' ] );
+					}
 
 					if ( ! empty( $start_date ) ) {
 						$_start_date = \DateTime::createFromFormat( 'Ymd|', $start_date );
