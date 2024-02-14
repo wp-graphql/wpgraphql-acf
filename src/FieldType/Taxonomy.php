@@ -44,10 +44,13 @@ class Taxonomy {
 								return null;
 							}
 
+							// set the default ordering if not overridden by args input on the field
 							$args['where']['include'] = $ids;
 							$args['where']['orderby'] = $args['where']['orderby'] ?? 'include';
+							$args['where']['order']   = $args['where']['order'] ?? 'ASC';
 
 							return ( new TermObjectConnectionResolver( $root, $args, $context, $info ) )->get_connection();
+
 						},
 					];
 
