@@ -45,6 +45,7 @@ class Taxonomy {
 							}
 
 							$args['where']['include'] = $ids;
+							$args['where']['orderby'] = $args['where']['orderby'] ?? 'include';
 
 							return ( new TermObjectConnectionResolver( $root, $args, $context, $info ) )->get_connection();
 						},
