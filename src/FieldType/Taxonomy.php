@@ -50,7 +50,6 @@ class Taxonomy {
 							$args['where']['order']   = $args['where']['order'] ?? 'ASC';
 
 							return ( new TermObjectConnectionResolver( $root, $args, $context, $info ) )->get_connection();
-
 						},
 					];
 

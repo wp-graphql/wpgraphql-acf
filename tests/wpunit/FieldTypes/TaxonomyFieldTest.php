@@ -185,6 +185,10 @@ class TaxonomyFieldTest extends \Tests\WPGraphQL\Acf\WPUnit\AcfFieldTestCase {
 			], 2 ),
 		]);
 
+		foreach ( $cats as $cat ) {
+			wp_delete_term( $cat, 'category' );
+		}
+
 	}
 
 	public function testQueryTaxononomyFieldOnBlock() {
