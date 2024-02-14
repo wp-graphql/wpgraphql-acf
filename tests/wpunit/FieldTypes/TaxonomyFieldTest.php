@@ -93,6 +93,104 @@ class TaxonomyFieldTest extends \Tests\WPGraphQL\Acf\WPUnit\AcfFieldTestCase {
 		];
 	}
 
+	public function testQueryReturnsTermsInOrderTheyWereSaved() {
+
+		$field_key = $this->register_acf_field([
+			'type' => 'taxonomy',
+			'name' => 'tax_term_order_test',
+			'show_in_graphql' => true,
+			'graphql_field_name' => 'termOrderTest',
+			'required' => 1,
+			'taxonomy' => 'category',
+			'add_term' => 0,
+			'save_terms' => 0,
+			'load_terms' => 0,
+			'return_format' => 'id',
+			'field_type' => 'multi_select',
+			'multiple' => 1,
+			'bidirectonal' => 0,
+			'bidirectional_target' => [],
+		], [
+			'name' => 'Taxonomy Order Test',
+			'graphql_field_name' => 'TaxonomyOrderTest',
+			'location' => [
+				[
+					[
+						'param' => 'post_type',
+						'operator' => '==',
+						'value' => 'post',
+					]
+				]
+			],
+			'graphql_types' => [ 'Post' ],
+		]);
+
+		$cat_aaa = self::factory()->category->create([
+			'name' => 'AAA'
+		]);
+
+		$cat_bbb = self::factory()->category->create([
+			'name' => 'BBB'
+		]);
+
+		$cat_ccc = self::factory()->category->create([
+			'name' => 'CCC'
+		]);
+
+		$cats = [$cat_ccc, $cat_aaa, $cat_bbb];
+
+		update_field( $field_key, $cats, $this->published_post );
+
+		$query = '
+		query GetPost($id:ID!) {
+		  post(id:$id idType:DATABASE_ID) {
+		    id
+		    databaseId
+		    taxonomyOrderTest {
+		      termOrderTest {
+		        nodes {
+		          __typename
+		          databaseId
+		        }
+		      }
+		    }
+		  }
+		}
+		';
+
+		$actual = $this->graphql([
+			'query' => $query,
+			'variables' => [
+				'id' => $this->published_post->ID,
+			]
+		]);
+
+		codecept_debug( [
+			'$actual' => $actual,
+			'$cats' => $cats,
+		]);
+
+		self::assertQuerySuccessful( $actual, [
+			$this->expectedNode( 'post.taxonomyOrderTest.termOrderTest.nodes', [
+				'__typename' => 'Category',
+				'databaseId' => $cats[0]
+			], 0 ),
+			$this->expectedNode( 'post.taxonomyOrderTest.termOrderTest.nodes', [
+				'__typename' => 'Category',
+				'databaseId' => $cats[1]
+			], 1 ),
+			$this->expectedNode( 'post.taxonomyOrderTest.termOrderTest.nodes', [
+				'__typename' => 'Category',
+				'databaseId' => $cats[2]
+			], 2 ),
+		]);
+
+		foreach ( $cats as $cat ) {
+			wp_delete_term( $cat, 'category' );
+		}
+
+	}
+
 	public function testQueryTaxononomyFieldOnBlock() {
 
 		// if ACF PRO is not active, skip the test
@@ -294,4 +392,6 @@ class TaxonomyFieldTest extends \Tests\WPGraphQL\Acf\WPUnit\AcfFieldTestCase {
 		wp_delete_term( $category_id, 'category' );
 		wp_delete_term( $category_2_id, 'category' );
 	}
+
+
 }
