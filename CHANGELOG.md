@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.1.2
+
+### Chores / Bugfixes
+
+- [#178](https://github.com/wp-graphql/wpgraphql-acf/pull/178): fix: Taxonomy field returns incorrect data if set to store objects instead of IDs
+- [#174](https://github.com/wp-graphql/wpgraphql-acf/pull/174): fix: taxonomy field resolves sorted in the incorrect order
+
 ## 2.1.1
 
 ### Chores / Bugfixes
