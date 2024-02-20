@@ -33,21 +33,23 @@ class Taxonomy {
 								$values = $value;
 							}
 
-							$ids = array_filter( array_map(
-								static function ( $value ) {
-									$id = $value;
-									if ( is_array( $value ) && isset( $value['term_id'] ) ) {
-										$id = $value['term_id'];
-									}
-									if ( isset( $value->term_id ) ) {
-										$id = $value->term_id;
-									}
+							$ids = array_filter(
+								array_map(
+									static function ( $value ) {
+										$id = $value;
+										if ( is_array( $value ) && isset( $value['term_id'] ) ) {
+											$id = $value['term_id'];
+										}
+										if ( isset( $value->term_id ) ) {
+											$id = $value->term_id;
+										}
 
-									$id = absint( $id );
-									return ! empty( $id ) ? $id : null;
-								},
-								$values
-							) );
+										$id = absint( $id );
+										return ! empty( $id ) ? $id : null;
+									},
+									$values
+								) 
+							);
 
 							if ( empty( $ids ) ) {
 								return null;
@@ -58,7 +60,7 @@ class Taxonomy {
 							$args['where']['orderby'] = $args['where']['orderby'] ?? 'include';
 							$args['where']['order']   = $args['where']['order'] ?? 'ASC';
 							$args['first']            = count( $ids );
-							$resolver = new TermObjectConnectionResolver( $root, $args, $context, $info, 'any' );
+							$resolver                 = new TermObjectConnectionResolver( $root, $args, $context, $info, 'any' );
 							return $resolver->get_connection();
 						},
 					];
