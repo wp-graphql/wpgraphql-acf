@@ -37,7 +37,7 @@ body:
       description: >-
         Paste or attach the PHP or JSON export of the ACF Field Group(s) related to the problem.
 
-        Attach as Github supported file type, ie .txt or .zip
+        Attach as Github supported file type, ie .txt or .zip. I recommend exporting the ACF Field group as JSON then compressing as a .zip to upload.
   - type: textarea
     attributes:
       label: Additional context
