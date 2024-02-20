@@ -34,7 +34,14 @@ class Taxonomy {
 							}
 
 							$ids = array_map(
-								static function ( $id ) {
+								static function ( $value ) {
+									$id = null;
+									if ( is_array( $value ) ) {
+										$id = $value['term_id'];
+									}
+									if ( isset( $value->term_id ) ) {
+										$id = $value->term_id;
+									}
 									return absint( $id );
 								},
 								$values
