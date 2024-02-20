@@ -33,11 +33,22 @@ class Taxonomy {
 								$values = $value;
 							}
 
-							$ids = array_map(
-								static function ( $id ) {
-									return absint( $id );
-								},
-								$values
+							$ids = array_filter(
+								array_map(
+									static function ( $value ) {
+										$id = $value;
+										if ( is_array( $value ) && isset( $value['term_id'] ) ) {
+											$id = $value['term_id'];
+										}
+										if ( isset( $value->term_id ) ) {
+											$id = $value->term_id;
+										}
+
+										$id = absint( $id );
+										return ! empty( $id ) ? $id : null;
+									},
+									$values
+								) 
 							);
 
 							if ( empty( $ids ) ) {
@@ -45,11 +56,12 @@ class Taxonomy {
 							}
 
 							// set the default ordering if not overridden by args input on the field
-							$args['where']['include'] = $ids;
+							$args['where']['include'] = array_values( $ids );
 							$args['where']['orderby'] = $args['where']['orderby'] ?? 'include';
 							$args['where']['order']   = $args['where']['order'] ?? 'ASC';
-
-							return ( new TermObjectConnectionResolver( $root, $args, $context, $info ) )->get_connection();
+							$args['first']            = count( $ids );
+							$resolver                 = new TermObjectConnectionResolver( $root, $args, $context, $info, 'any' );
+							return $resolver->get_connection();
 						},
 					];
 
