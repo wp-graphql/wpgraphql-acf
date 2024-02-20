@@ -393,5 +393,88 @@ class TaxonomyFieldTest extends \Tests\WPGraphQL\Acf\WPUnit\AcfFieldTestCase {
 		wp_delete_term( $category_2_id, 'category' );
 	}
 
+	public function testTaxonomyFieldReturnsExpectedNodeWhenObjectIsSavedInsteadOfId() {
+
+		register_taxonomy( 'test_taxonomy', 'post', [
+			'show_in_graphql' => true,
+			'graphql_single_name' => 'TestCustomTaxonomy',
+			'graphql_plural_name' => 'TestCustomTaxonomies',
+		] );
+
+		$term_object = self::factory()->term->create_and_get( [
+			'taxonomy' => 'test_taxonomy',
+			'name' => 'Test Term',
+		] );
+
+		$field_key = $this->register_acf_field([
+			'type' => 'taxonomy',
+			'name' => 'taxonomy_field_test',
+			'show_in_graphql' => true,
+			'graphql_field_name' => 'testTaxonomyField',
+			'required' => 1,
+			'taxonomy' => 'category',
+			'add_term' => 0,
+			'save_terms' => 0,
+			'load_terms' => 0,
+			'return_format' => 'object',
+			'field_type' => 'select',
+			'multiple' => 0,
+			'bidirectonal' => 0,
+			'bidirectional_target' => [],
+		], [
+			'name' => 'Post Taxonomy Test',
+			'graphql_field_name' => 'TaxonomyFieldTest',
+			'location' => [
+				[
+					[
+						'param' => 'post_type',
+						'operator' => '==',
+						'value' => 'post',
+					]
+				]
+			],
+			'graphql_types' => [ 'Post' ],
+		]);
+
+		update_field( $field_key, $term_object->term_id, $this->published_post->ID );
+
+		$query = '
+		query GetPostAndTaxonomyField( $id: ID! ){
+		  post(id:$id idType:DATABASE_ID) {
+		    id
+		    title
+		      taxonomyFieldTest {
+		        testTaxonomyField {
+		          nodes {
+		            __typename
+		            databaseId
+		          }
+		        }
+		      }
+           }
+        }';
+
+		$variables = [
+			'id' => $this->published_post->ID,
+		];
+
+		$actual = $this->graphql([
+			'query'     => $query,
+			'variables' => $variables,
+		]);
+
+		self::assertQuerySuccessful( $actual, [
+			$this->expectedNode( 'post.taxonomyFieldTest.testTaxonomyField.nodes', [
+				'__typename' => 'TestCustomTaxonomy',
+				'databaseId' => $term_object->term_id,
+			], 0 ),
+		]);
+
+		// cleanup
+		unregister_taxonomy( 'test_taxonomy' );
+		wp_delete_term( $term_object->term_id, 'test_taxonomy' );
+
+	}
+
 
 }
