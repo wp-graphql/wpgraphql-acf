@@ -471,8 +471,8 @@ class TaxonomyFieldTest extends \Tests\WPGraphQL\Acf\WPUnit\AcfFieldTestCase {
 		]);
 
 		// cleanup
-		unregister_taxonomy( 'test_taxonomy' );
 		wp_delete_term( $term_object->term_id, 'test_taxonomy' );
+		unregister_taxonomy( 'test_taxonomy' );
 
 	}
 
