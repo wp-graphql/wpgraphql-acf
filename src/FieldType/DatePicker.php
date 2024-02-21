@@ -18,7 +18,7 @@ class DatePicker {
 				'graphql_description_after'  => function( FieldConfig $field_config ) {
 					$field_type = $field_config->get_acf_field()['type'] ?? null;
 
-					return '(' . sprintf( __( 'ACF Fields of the %s type return a date string in the format `YYYYMMDD` according to the RFC3339 spec: https://datatracker.ietf.org/doc/html/rfc3339.', 'wp-graphql-acf' ), $field_type ) . ')';
+					return '(' . sprintf( __( 'ACF Fields of the %s type return a date string according to the RFC3339 spec: https://datatracker.ietf.org/doc/html/rfc3339.', 'wp-graphql-acf' ), $field_type ) . ')';
 				},
 				'resolve'      => static function ( $root, $args, $context, $info, $field_type, FieldConfig $field_config ) {
 					$value = $field_config->resolve_field( $root, $args, $context, $info );
