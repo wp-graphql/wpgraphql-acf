@@ -14,6 +14,13 @@ class DateTimePicker {
 			'date_time_picker',
 			[
 				'graphql_type' => 'String',
+				// Apply a description to be appended to the field description.
+				// @todo: consider removing when CustomScalar types are supported along with the @specifiedBy directive
+				'graphql_description_after'  => function( FieldConfig $field_config ) {
+					$field_type = $field_config->get_acf_field()['type'] ?? null;
+
+					return '(' . sprintf( __( 'ACF Fields of the %s type return a date string in the format `YYYYMMDD` according to the RFC3339 spec: https://datatracker.ietf.org/doc/html/rfc3339.', 'wp-graphql-acf' ), $field_type ) . ')';
+				},
 				'resolve'      => static function ( $root, $args, $context, $info, $field_type, FieldConfig $field_config ) {
 					$value = $field_config->resolve_field( $root, $args, $context, $info );
 

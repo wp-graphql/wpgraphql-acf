@@ -339,12 +339,12 @@ class AcfExtended {
 					'startDate' => [
 						// @todo: DATETIME Scalar
 						'type'        => 'String',
-						'description' => __( 'The start date of a date range returned as an RFC 3339 time string', 'wpgraphql-acf' ),
+						'description' => __( 'The start date of a date range returned as an RFC 3339 time string (https://datatracker.ietf.org/doc/html/rfc3339)', 'wpgraphql-acf' ),
 					],
 					'endDate'   => [
 						// @todo: DATETIME Scalar
 						'type'        => 'String',
-						'description' => __( 'The start date of a date range RFC 3339 time string', 'wpgraphql-acf' ),
+						'description' => __( 'The start date of a date range RFC 3339 time string (https://datatracker.ietf.org/doc/html/rfc3339)', 'wpgraphql-acf' ),
 					],
 				],
 			]
