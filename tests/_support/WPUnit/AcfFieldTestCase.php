@@ -672,10 +672,13 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 			// the instructions should be used for the description
 			// if "graphql_description" is not provided
 			$this->expectedNode( '__type.fields', [
-				'name' => $this->get_formatted_field_name(),
-				'description' => $instructions
+				$this->expectedField( 'name', $this->get_formatted_field_name() ),
+				$this->expectedField( 'description', self::NOT_NULL ),
 			]),
+
 		] );
+
+		$this->assertStringContainsString( $instructions, $actual['data']['__type']['fields'][0]['description'] );
 
 		// remove the local field
 		acf_remove_local_field( $field_key );
@@ -720,10 +723,13 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 			// the instructions should be used for the description
 			// if "graphql_description" is not provided
 			$this->expectedNode( '__type.fields', [
-				'name' => $this->get_formatted_field_name(),
-				'description' => $graphql_description
+				$this->expectedField( 'name', $this->get_formatted_field_name() ),
+				$this->expectedField( 'description', self::NOT_NULL ),
 			]),
 		] );
+
+		$this->assertStringContainsString( $graphql_description, $actual['data']['__type']['fields'][0]['description'] );
+
 
 		// remove the local field
 		acf_remove_local_field( $field_key );

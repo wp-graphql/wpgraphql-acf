@@ -135,6 +135,9 @@ class FieldConfig {
 	 */
 	public function get_field_description(): string {
 
+		$graphql_field_type = $this->get_graphql_field_type();
+		$field_type_config  = ( $graphql_field_type instanceof AcfGraphQLFieldType ) ? $graphql_field_type->get_config() : [];
+
 		// Use the explicit graphql_description, if set
 		if ( ! empty( $this->acf_field['graphql_description'] ) ) {
 			$description = $this->acf_field['graphql_description'];
@@ -151,6 +154,14 @@ class FieldConfig {
 				$this->acf_field['type'] ?? '',
 				$this->registry->get_field_group_graphql_type_name( $this->acf_field_group )
 			);
+		}
+
+		if ( isset( $field_type_config['graphql_description_after'] ) ) {
+			if ( is_callable( $field_type_config['graphql_description_after'] ) ) {
+				$description .= ' ' . call_user_func( $field_type_config['graphql_description_after'], $this );
+			} else {
+				$description .= ' ' . $field_type_config['graphql_description_after'];
+			}
 		}
 
 		return $description;
