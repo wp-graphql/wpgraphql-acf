@@ -68,32 +68,44 @@ class Relationship {
 			'resolve'  => static function ( $root, $args, AppContext $context, $info ) use ( $field_config, $is_one_to_one ) {
 				$value = $field_config->resolve_field( $root, $args, $context, $info );
 
-				$ids = [];
-
 				if ( empty( $value ) ) {
 					return null;
 				}
 
+				$values = [];
 				if ( ! is_array( $value ) ) {
-					$ids[] = $value;
+					$values[] = $value;
 				} else {
-					$ids = $value;
+					$values = $value;
 				}
 
 				$ids = array_filter(
 					array_map(
-						static function ( $id ) {
-							if ( is_object( $id ) && isset( $id->ID ) ) {
-								$id = $id->ID;
+						static function ( $value ) {
+
+							$id = $value;
+							if ( is_array( $value ) && isset( $value['ID'] ) ) {
+								$id = $value['ID'];
+							}
+							if ( is_object( $value ) && isset( $value->ID ) ) {
+								$id = $value->ID;
 							}
 							// filter out values that are not IDs
 							// this means that external urls or urls to things like
 							// archive links will not resolve.
-							return absint( $id ) ?: null;
+							$id = absint( $id );
+							return ! empty( $id ) ? $id : null;
 						},
-						$ids
+						$values
 					)
 				);
+
+//				wp_send_json( [
+//					'$values' => $values,
+//					'$ids'    => $ids,
+//				]);
+//
+//				wp_send_json( $ids );
 
 				if ( empty( $ids ) ) {
 					return null;
