@@ -98,4 +98,122 @@ class GroupFieldTest extends \Tests\WPGraphQL\Acf\WPUnit\AcfFieldTestCase {
 		];
 	}
 
+	/**
+	 * @see: https://github.com/wp-graphql/wpgraphql-acf/issues/184
+	 * @see: https://github.com/wp-graphql/wpgraphql-acf/issues/151
+	 * @return void
+	 */
+	public function testCloneGroupFieldResolvesDataAsExpected() {
+
+		// if ACF PRO is not active, skip the test
+		if ( ! defined( 'ACF_PRO' ) ) {
+			$this->markTestSkipped( 'ACF Pro is not active so this test will not run.' );
+		}
+
+		$field_key = $this->register_acf_field([
+			'key' => 'field_65df9360bebef',
+			'label' => 'My Text Field',
+			'name' => 'my_text_field',
+			'type' => 'text',
+			'show_in_graphql' => 1,
+			'graphql_field_name' => 'myTextField',
+			'graphql_non_null' => 0,
+		], [
+			'key' => 'group_65df9360afcb0',
+			'graphql_field_name' => 'myCollectionOfFieldTypes',
+			'show_in_graphql' => 1,
+			'map_graphql_types_from_location_rules' => 0,
+			'graphql_types' => '',
+			'location' => [
+				[
+					[
+						'param' => 'post_type',
+						'operator' => '==',
+						'value' => 'post',
+					],
+				],
+			],
+			'active' => true,
+		]);
+
+
+		$cloned_field_key = $this->register_acf_field([
+			'label' => 'My Group Field',
+			'name' => 'my_group_field',
+			'show_in_graphql' => 1,
+			'type' => 'group',
+			'graphql_field_name' => 'myGroupField',
+			'graphql_non_null' => 0,
+			'sub_fields' => [
+				[
+					'key' => 'field_65e1ff262ce23',
+					'label'=> 'Clone of My Collection of Field Types (no prefix)',
+					'name' => 'clone_of_my_collection_of_field_types_no_prefix',
+					'type' => 'clone',
+					'graphql_field_name' => 'cloneOfMyCollectionOfFieldTypesNoPrefix',
+					'clone' => [
+						'group_65df9360afcb0'
+					],
+					'prefix_name' => 0,
+				]
+			]
+		], [
+			'key' => 'group_65e1feb751e7d',
+			'title' => 'My Group with Clone',
+			'location' => [
+				[
+					[
+						'param' => 'page_template',
+						'operator' => '==',
+						'value' => 'default',
+					],
+				],
+			],
+			'graphql_field_name' => 'myGroupWithClone',
+			'show_in_graphql' => 1,
+			'graphql_types' => [ 'DefaultTemplate' ],
+			'active' => true,
+		]);
+
+		$query = '
+		query NewQuery($id:ID!) {
+		  page(id: $id, idType: DATABASE_ID) {
+		    databaseId
+		    template {
+		      ... on DefaultTemplate {
+		        myGroupWithClone {
+		          myGroupField {
+		            myTextField
+		          }
+		        }
+		      }
+		    }
+		  }
+		}
+		';
+
+		// save text value to the cloned field's meta key
+		$expected_text_value = 'text field value...';
+		update_field( 'my_group_field_my_text_field', $expected_text_value, $this->published_page->ID );
+
+		$actual = $this->graphql([
+			'query' => $query,
+			'variables' => [
+				'id' => $this->published_page->ID,
+			]
+		]);
+
+
+
+		codecept_debug( [
+			'$actual' => $actual,
+		]);
+
+		self::assertQuerySuccessful( $actual, [
+			$this->expectedField( 'page.databaseId', $this->published_page->ID ),
+			$this->expectedField( 'page.template.myGroupWithClone.myGroupField.myTextField', $expected_text_value ),
+		]);
+
+	}
+
 }

@@ -401,11 +401,17 @@ class FieldConfig {
 
 		// If the root being passed down already has a value
 		// for the field key, let's use it to resolve
-		if ( ! empty( $root[ $field_key ] ) ) {
-			return $this->prepare_acf_field_value( $root[ $field_key ], $node, $node_id, $field_config );
+		if ( isset( $field_config['key'] ) && ! empty( $root[ $field_config['key'] ] ) ) {
+			return $this->prepare_acf_field_value( $root[ $field_config['key'] ], $node, $node_id, $field_config );
 		}
 
-		if ( ! empty( $root[ $field_config['name'] ] ) ) {
+		// Check if the cloned field key is being used to pass values down
+		if ( isset( $field_config['__key'] ) && ! empty( $root[ $field_config['__key'] ] ) ) {
+			return $this->prepare_acf_field_value( $root[ $field_config['__key'] ], $node, $node_id, $field_config );
+		}
+
+		// Else check if the values are being passed down via the name
+		if ( isset( $field_config['name'] ) && ! empty( $root[ $field_config['name'] ] ) ) {
 			return $this->prepare_acf_field_value( $root[ $field_config['name'] ], $node, $node_id, $field_config );
 		}
 
