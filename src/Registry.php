@@ -66,7 +66,7 @@ class Registry {
 	}
 
 	/**
-	 * @param array $acf_field
+	 * @param array<mixed> $acf_field
 	 *
 	 * @return void
 	 */
