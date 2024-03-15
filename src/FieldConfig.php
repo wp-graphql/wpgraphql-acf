@@ -245,6 +245,7 @@ class FieldConfig {
 			// bail and let the connection handle registration to the schema
 			// and resolution
 			if ( 'connection' === $field_type ) {
+				$this->registry->register_field( $this->acf_field );
 				return null;
 			}
 
