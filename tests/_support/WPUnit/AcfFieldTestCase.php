@@ -76,6 +76,13 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 	}
 
 	/**
+	 * @return mixed
+	 */
+	public function get_preview_data_to_store() {
+		return 'preview - ' . $this->get_data_to_store();
+	}
+
+	/**
 	 * Override this in the testing class to test the field against blocks
 	 *
 	 * @return null
@@ -122,6 +129,16 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 	public function get_expected_value() {
 		return 'null';
 	}
+
+	/**
+	 * Test class should override this with the expected value
+	 *
+	 * @return mixed
+	 */
+	public function get_expected_preview_value() {
+		return 'null';
+	}
+
 
 	/**
 	 * @return string
@@ -672,10 +689,13 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 			// the instructions should be used for the description
 			// if "graphql_description" is not provided
 			$this->expectedNode( '__type.fields', [
-				'name' => $this->get_formatted_field_name(),
-				'description' => $instructions
+				$this->expectedField( 'name', $this->get_formatted_field_name() ),
+				$this->expectedField( 'description', self::NOT_NULL ),
 			]),
+
 		] );
+
+		$this->assertStringContainsString( $instructions, $actual['data']['__type']['fields'][0]['description'] );
 
 		// remove the local field
 		acf_remove_local_field( $field_key );
@@ -720,10 +740,13 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 			// the instructions should be used for the description
 			// if "graphql_description" is not provided
 			$this->expectedNode( '__type.fields', [
-				'name' => $this->get_formatted_field_name(),
-				'description' => $graphql_description
+				$this->expectedField( 'name', $this->get_formatted_field_name() ),
+				$this->expectedField( 'description', self::NOT_NULL ),
 			]),
 		] );
+
+		$this->assertStringContainsString( $graphql_description, $actual['data']['__type']['fields'][0]['description'] );
+
 
 		// remove the local field
 		acf_remove_local_field( $field_key );
@@ -1023,6 +1046,111 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 			$this->expectedField( 'post.acfTestGroup.' . $this->get_formatted_field_name(), $this->get_expected_value() )
 		]);
 
+
+	}
+
+	public function testQueryFieldOnPostAsPreviewReturnsExpectedValue() {
+
+		// disable the block editor
+		add_filter('use_block_editor_for_post', '__return_false');
+
+		$field_key = $this->register_acf_field();
+
+		// Save data to the post
+		update_field( $field_key, $this->get_data_to_store(), $this->published_post->ID );
+
+		$fragment = $this->get_query_fragment();
+
+		if ( 'null' === $fragment ) {
+			$this->markTestIncomplete( 'get_query_fragment() not defined' );
+		}
+
+		$expected_value = $this->get_expected_value();
+
+		if ( 'null' === $expected_value ) {
+			$this->markTestIncomplete( 'get_expected_value() not defined' );
+		}
+
+		$expected_preview_value = $this->get_expected_preview_value();
+
+		if ( 'null' === $expected_preview_value ) {
+			$this->markTestIncomplete( 'get_expected_preview_value() not defined' );
+		}
+
+		$preview_data_to_store = $this->get_preview_data_to_store();
+
+		if ( 'null' === $preview_data_to_store ) {
+			$this->markTestIncomplete( 'get_preview_data_to_store() not defined' );
+		}
+
+		$query = '
+		query AcfFieldOnPost ($id: ID! $asPreview:Boolean) {
+		  post( id: $id idType: DATABASE_ID asPreview: $asPreview) {
+		    databaseId
+		    __typename
+		    title
+		    ...on WithAcfAcfTestGroup {
+		      acfTestGroup {
+		        ...AcfTestGroupFragment
+		      }
+		    }
+		  }
+		}
+		' . $fragment;
+
+		$actual = $this->graphql([
+			'query' => $query,
+			'variables' => [
+				'id' => $this->published_post->ID,
+				'asPreview' => false,
+			]
+		]);
+
+		// querying as preview without any preview revision will
+		// return the same result as querying as published
+		self::assertQuerySuccessful( $actual, [
+			$this->expectedField( 'post.databaseId', $this->published_post->ID ),
+			$this->expectedField( 'post.__typename', 'Post' ),
+			$this->expectedField( 'post.acfTestGroup.' . $this->get_formatted_field_name(), $this->get_expected_value() )
+		]);
+
+		// set the current user as admin
+		wp_set_current_user( $this->admin->ID );
+
+		// create a preview revision
+		$preview_id = wp_create_post_autosave( [
+			'post_ID' => $this->published_post->ID,
+			'post_type' => 'post',
+			'post_title' => 'Preview Title',
+		] );
+
+		if ( is_wp_error( $preview_id ) ) {
+			// Handle error; autosave creation failed
+			codecept_debug( 'Error creating autosave: ' . $preview_id->get_error_message() );
+		}
+
+		// update the preview revision with the preview data
+		update_field( $field_key, $this->get_preview_data_to_store(), $preview_id );
+
+		$actual = $this->graphql([
+			'query' => $query,
+			'variables' => [
+				'id' => $this->published_post->ID,
+				'asPreview' => true,
+			]
+		]);
+
+		self::assertQuerySuccessful( $actual, [
+			$this->expectedField( 'post.databaseId', $preview_id ),
+			$this->expectedField( 'post.__typename', 'Post' ),
+			$this->expectedField( 'post.title', 'Preview Title' ),
+			$this->expectedField( 'post.acfTestGroup.' . $this->get_formatted_field_name(), $this->get_expected_preview_value() )
+		]);
+
+		wp_delete_post( $preview_id, true );
+
+		// re-enable the block editor
+		add_filter('use_block_editor_for_post', '__return_true');
 
 	}
 

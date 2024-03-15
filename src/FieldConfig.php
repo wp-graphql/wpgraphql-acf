@@ -135,6 +135,9 @@ class FieldConfig {
 	 */
 	public function get_field_description(): string {
 
+		$graphql_field_type = $this->get_graphql_field_type();
+		$field_type_config  = ( $graphql_field_type instanceof AcfGraphQLFieldType ) ? $graphql_field_type->get_config() : [];
+
 		// Use the explicit graphql_description, if set
 		if ( ! empty( $this->acf_field['graphql_description'] ) ) {
 			$description = $this->acf_field['graphql_description'];
@@ -151,6 +154,14 @@ class FieldConfig {
 				$this->acf_field['type'] ?? '',
 				$this->registry->get_field_group_graphql_type_name( $this->acf_field_group )
 			);
+		}
+
+		if ( isset( $field_type_config['graphql_description_after'] ) ) {
+			if ( is_callable( $field_type_config['graphql_description_after'] ) ) {
+				$description .= ' ' . call_user_func( $field_type_config['graphql_description_after'], $this );
+			} else {
+				$description .= ' ' . $field_type_config['graphql_description_after'];
+			}
 		}
 
 		return $description;
@@ -234,6 +245,7 @@ class FieldConfig {
 			// bail and let the connection handle registration to the schema
 			// and resolution
 			if ( 'connection' === $field_type ) {
+				$this->registry->register_field( $this->acf_field );
 				return null;
 			}
 
@@ -390,11 +402,17 @@ class FieldConfig {
 
 		// If the root being passed down already has a value
 		// for the field key, let's use it to resolve
-		if ( ! empty( $root[ $field_key ] ) ) {
-			return $this->prepare_acf_field_value( $root[ $field_key ], $node, $node_id, $field_config );
+		if ( isset( $field_config['key'] ) && ! empty( $root[ $field_config['key'] ] ) ) {
+			return $this->prepare_acf_field_value( $root[ $field_config['key'] ], $node, $node_id, $field_config );
 		}
 
-		if ( ! empty( $root[ $field_config['name'] ] ) ) {
+		// Check if the cloned field key is being used to pass values down
+		if ( isset( $field_config['__key'] ) && ! empty( $root[ $field_config['__key'] ] ) ) {
+			return $this->prepare_acf_field_value( $root[ $field_config['__key'] ], $node, $node_id, $field_config );
+		}
+
+		// Else check if the values are being passed down via the name
+		if ( isset( $field_config['name'] ) && ! empty( $root[ $field_config['name'] ] ) ) {
 			return $this->prepare_acf_field_value( $root[ $field_config['name'] ], $node, $node_id, $field_config );
 		}
 

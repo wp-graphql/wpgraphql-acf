@@ -165,10 +165,17 @@ class TaxonomyRegistration {
 	}
 
 	/**
-	 * @param string $screen
+	 * Enqueue the admin scripts for the ACF Post Type settings.
+	 * This script is only enqueued on the ACF Taxonomy edit screen.
+	 *
+	 * @param ?string $screen
 	 */
-	public function enqueue_admin_scripts( string $screen ): void {
+	public function enqueue_admin_scripts( ?string $screen ): void {
 		global $post;
+
+		if ( empty( $screen ) ) {
+			return;
+		}
 
 		// if the screen is not a new post / edit post screen, do nothing
 		if ( ! ( 'post-new.php' === $screen || 'post.php' === $screen ) ) {
