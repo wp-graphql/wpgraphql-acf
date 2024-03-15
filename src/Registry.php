@@ -66,6 +66,22 @@ class Registry {
 	}
 
 	/**
+	 * @param array<mixed> $acf_field
+	 *
+	 * @return void
+	 */
+	public function register_field( $acf_field ) {
+
+		if ( isset( $acf_field['name'] ) && ! in_array( $acf_field['name'], $this->registered_fields, true ) ) {
+			$this->registered_fields[] = $acf_field['name'];
+		}
+
+		if ( isset( $acf_field['key'] ) && ! in_array( $acf_field['key'], $this->registered_fields, true ) ) {
+			$this->registered_fields[] = $acf_field['key'];
+		}
+	}
+
+	/**
 	 * Get the TypeRegistry instance
 	 */
 	public function get_type_registry(): TypeRegistry {
@@ -505,11 +521,8 @@ class Registry {
 		$field_config = ( new FieldConfig( $acf_field, $acf_field_group, $this ) )->get_graphql_field_config();
 
 		if ( ! empty( $field_config['acf_field'] ) ) {
-			if ( isset( $field_config['acf_field']['key'] ) && ! in_array( $field_config['acf_field']['key'], $this->registered_fields, true ) ) {
-				$this->registered_fields[] = $field_config['acf_field']['key'];
-			}
-			if ( isset( $field_config['acf_field']['name'] ) && ! in_array( $field_config['acf_field']['name'], $this->registered_fields, true ) ) {
-				$this->registered_fields[] = $field_config['acf_field']['name'];
+			if ( isset( $field_config['acf_field'] ) ) {
+				$this->register_field( $field_config['acf_field'] );
 			}
 		}
 
