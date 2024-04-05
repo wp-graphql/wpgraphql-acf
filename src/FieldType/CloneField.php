@@ -45,13 +45,17 @@ class CloneField {
 					);
 
 					if ( ! empty( $cloned_group_interfaces ) ) {
-						if ( ! $prefix_name ) {
-							register_graphql_interfaces_to_types( $cloned_group_interfaces, [ $parent_type ] );
-						} else {
-							$type_name = self::register_prefixed_clone_field_type( $type_name, $sub_field_group, $cloned_fields, $field_config );
-							register_graphql_interfaces_to_types( $cloned_group_interfaces, [ $type_name ] );
-							return $type_name;
-						}
+//						if ( ! $prefix_name ) {
+//							register_graphql_interfaces_to_types( $cloned_group_interfaces, [ $parent_type ] );
+//						} else {
+//							$type_name = self::register_prefixed_clone_field_type( $type_name, $sub_field_group, $cloned_fields, $field_config );
+//							register_graphql_interfaces_to_types( $cloned_group_interfaces, [ $type_name ] );
+//							return $type_name;
+//						}
+
+						$type_name = self::register_prefixed_clone_field_type( $type_name, $sub_field_group, $cloned_fields, $field_config );
+						register_graphql_interfaces_to_types( $cloned_group_interfaces, [ $type_name ] );
+						return $type_name;
 					}
 
 
