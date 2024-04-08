@@ -3,7 +3,6 @@ namespace WPGraphQL\Acf\FieldType;
 
 use WPGraphQL\Acf\AcfGraphQLFieldType;
 use WPGraphQL\Acf\FieldConfig;
-use WPGraphQL\Utils\Utils;
 
 class CloneField {
 
@@ -15,72 +14,6 @@ class CloneField {
 			'clone',
 			[
 				'graphql_type' => static function ( FieldConfig $field_config, AcfGraphQLFieldType $acf_field_type ) {
-					$sub_field_group = $field_config->get_raw_acf_field();
-					$parent_type     = $field_config->get_parent_graphql_type_name( $sub_field_group );
-					$field_name      = $field_config->get_graphql_field_name();
-					$registry        = $field_config->get_registry();
-					$type_name       = Utils::format_type_name( $parent_type . ' ' . $field_name );
-					$prefix_name     = $sub_field_group['prefix_name'] ?? false;
-
-					$cloned_fields = array_filter(
-						array_map(
-							static function ( $cloned ) {
-								return acf_get_field( $cloned );
-							},
-							$sub_field_group['clone']
-						)
-					);
-
-					$cloned_group_interfaces = array_filter(
-						array_map(
-							static function ( $cloned ) use ( $field_config ) {
-								$cloned_group = acf_get_field_group( $cloned );
-								if ( empty( $cloned_group ) ) {
-									return null;
-								}
-								return $field_config->get_registry()->get_field_group_graphql_type_name( $cloned_group ) . '_Fields';
-							},
-							$sub_field_group['clone']
-						)
-					);
-
-					if ( ! empty( $cloned_group_interfaces ) ) {
-//						if ( ! $prefix_name ) {
-//							register_graphql_interfaces_to_types( $cloned_group_interfaces, [ $parent_type ] );
-//						} else {
-//							$type_name = self::register_prefixed_clone_field_type( $type_name, $sub_field_group, $cloned_fields, $field_config );
-//							register_graphql_interfaces_to_types( $cloned_group_interfaces, [ $type_name ] );
-//							return $type_name;
-//						}
-
-						$type_name = self::register_prefixed_clone_field_type( $type_name, $sub_field_group, $cloned_fields, $field_config );
-						register_graphql_interfaces_to_types( $cloned_group_interfaces, [ $type_name ] );
-						return $type_name;
-					}
-
-
-					// If the "Clone" field has cloned individual fields
-					if ( ! empty( $cloned_fields ) ) {
-
-						// If the clone field is NOT set to use "prefix_name"
-						if ( ! $prefix_name ) {
-
-							// Map over the cloned fields and register them to the parent type
-							foreach ( $cloned_fields as $cloned_field ) {
-								$field_config = $registry->map_acf_field_to_graphql( $cloned_field, $sub_field_group );
-								if ( ! empty( $field_config['name'] ) ) {
-									register_graphql_field( $parent_type, $field_config['name'], $field_config );
-								}
-							}
-
-							// If the Clone field is set to use "prefix_name"
-							// Register a new Object Type with the cloned fields, and return
-							// the new type.
-						} else {
-							return self::register_prefixed_clone_field_type( $type_name, $sub_field_group, $cloned_fields, $field_config );
-						}
-					}
-					// Bail by returning a NULL type
 					return 'NULL';
 				},
 				// The clone field adds its own settings field to display
