@@ -32,12 +32,10 @@ class Group {
 					// if the field group is actually a cloned field group, we
 					// can return the GraphQL Type of the cloned field group
 					if ( isset( $sub_field_group['_clone'] ) ) {
-
 						$cloned_from = acf_get_field( $sub_field_group['_clone'] );
 
 						if ( ! empty( $cloned_from['clone'] ) && is_array( $cloned_from['clone'] ) ) {
 							foreach ( $cloned_from['clone'] as $clone_field ) {
-
 								$cloned_group = acf_get_field_group( $clone_field );
 
 								if ( ! $cloned_group ) {
@@ -52,7 +50,6 @@ class Group {
 								break;
 							}
 						}
-
 					}
 
 					// If the group is a clone field, return the cloned type instead of registering

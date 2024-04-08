@@ -76,7 +76,7 @@ class FlexibleContent {
 							$layout_sub_fields = ! empty( $layout['sub_fields'] ) && is_array( $layout['sub_fields'] ) ? $layout['sub_fields'] : [];
 
 							$layout['sub_fields'] = array_merge( $sub_fields, $layout_sub_fields );
-
+							
 							$layouts[] = $layout;
 						}
 					}

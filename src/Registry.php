@@ -320,14 +320,13 @@ class Registry {
 		$interfaces[]     = 'AcfFieldGroup';
 		$interfaces[]     = $fields_interface;
 
-		$fields = $this->get_acf_fields( $acf_field_group );
+		$fields                 = $this->get_acf_fields( $acf_field_group );
 		$clone_field_interfaces = [];
 		if ( ! empty( $fields ) ) {
 			foreach ( $fields as $field ) {
 				// if the field is a clone field, track it
 				if ( ! empty( $field['clone'] ) && is_array( $field['clone'] ) ) {
 					foreach ( $field['clone'] as $clone_field ) {
-
 						$cloned_group = acf_get_field_group( $clone_field );
 
 						if ( ! $cloned_group ) {
@@ -338,7 +337,7 @@ class Registry {
 							continue;
 						}
 
-						$cloned_type_name = $this->get_field_group_graphql_type_name( $cloned_group );
+						$cloned_type_name         = $this->get_field_group_graphql_type_name( $cloned_group );
 						$clone_field_interfaces[] = $cloned_type_name . '_Fields';
 					}
 				}
