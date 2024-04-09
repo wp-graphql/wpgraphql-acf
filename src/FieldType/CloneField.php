@@ -19,7 +19,6 @@ class CloneField {
 					$sub_field_group = $field_config->get_raw_acf_field();
 					$parent_type     = $field_config->get_parent_graphql_type_name( $sub_field_group );
 					$field_name      = $field_config->get_graphql_field_name();
-					$registry        = $field_config->get_registry();
 					$type_name       = Utils::format_type_name( $parent_type . ' ' . $field_name );
 					$prefix_name     = $sub_field_group['prefix_name'] ?? false;
 
@@ -52,13 +51,11 @@ class CloneField {
 						)
 					);
 
-
 					if ( ! empty( $cloned_group_interfaces ) ) {
 						$type_name = self::register_prefixed_clone_field_type( $type_name, $sub_field_group, $cloned_fields, $field_config );
 						register_graphql_interfaces_to_types( $cloned_group_interfaces, [ $type_name ] );
 						return $type_name;
 					}
-
 
 					// If the "Clone" field has cloned individual fields
 					if ( ! empty( $cloned_fields ) ) {
