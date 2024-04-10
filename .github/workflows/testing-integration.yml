@@ -25,7 +25,7 @@ jobs:
         acf_version: [ 5.12.4, 6.1.8 ]
         include:
           - php: '8.2'
-            wordpress: '6.5.0'
+            wordpress: '6.5'
             acf_pro: true
             wpgraphql_content_blocks: true
           - php: '8.2'
