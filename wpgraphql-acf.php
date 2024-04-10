@@ -6,7 +6,7 @@
  * Author URI: https://www.wpgraphql.com
  * Version: 2.2.0
  * Text Domain: wpgraphql-acf
- * Requires PHP: 7.4
+ * Requires PHP: 7.3
  * Requires at least: 5.9
  * Tested up to: 6.5
  * License: GPL-3
