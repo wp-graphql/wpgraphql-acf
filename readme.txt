@@ -1,7 +1,7 @@
 === WPGraphQL for ACF ===
 Contributors: jasonbahl, wpgraphql
 Tags: GraphQL, ACF, API, NextJS, Faust, Headless, Decoupled, React, Vue, Svelte, JSON, REST
-Requires at least: 6.0
+Requires at least: 5.9
 Tested up to: 6.5
 Requires PHP: 7.4
 Stable Tag: 2.2.0
