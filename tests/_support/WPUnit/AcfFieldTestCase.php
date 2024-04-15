@@ -1051,13 +1051,6 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 
 	public function testQueryFieldOnPostAsPreviewReturnsExpectedValue() {
 
-		// disable the block editor
-		add_filter('use_block_editor_for_post', '__return_false');
-
-		$field_key = $this->register_acf_field();
-
-		// Save data to the post
-		update_field( $field_key, $this->get_data_to_store(), $this->published_post->ID );
 
 		$fragment = $this->get_query_fragment();
 
@@ -1082,6 +1075,14 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 		if ( 'null' === $preview_data_to_store ) {
 			$this->markTestIncomplete( 'get_preview_data_to_store() not defined' );
 		}
+
+		// disable the block editor
+		add_filter('use_block_editor_for_post', '__return_false');
+
+		$field_key = $this->register_acf_field();
+
+		// Save data to the post
+		update_field( $field_key, $this->get_data_to_store(), $this->published_post->ID );
 
 		$query = '
 		query AcfFieldOnPost ($id: ID! $asPreview:Boolean) {
