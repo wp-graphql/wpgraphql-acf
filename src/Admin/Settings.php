@@ -151,7 +151,7 @@ class Settings {
 		}
 
 		$form_data           = [];
-		$sanitized_post_data = wp_strip_all_tags( $_POST['data'] );
+		$sanitized_post_data = wp_strip_all_tags( $_REQUEST['data'] );
 
 		parse_str( $sanitized_post_data, $form_data );
 
