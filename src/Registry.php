@@ -728,7 +728,16 @@ class Registry {
 
 		// Iterate over the field groups and add them to the Schema
 		foreach ( $acf_field_groups as $acf_field_group ) {
-			$type_name  = $this->get_field_group_graphql_type_name( $acf_field_group );
+			$type_name = $this->get_field_group_graphql_type_name( $acf_field_group );
+
+			if ( empty( $type_name ) ) {
+				continue;
+			}
+
+			if ( $this->has_registered_field_group( $type_name ) ) {
+				continue;
+			}
+
 			$locations  = $this->get_graphql_locations_for_field_group( $acf_field_group, $acf_field_groups );
 			$fields     = $this->get_fields_for_field_group( $acf_field_group );
 			$interfaces = $this->get_field_group_interfaces( $acf_field_group );
