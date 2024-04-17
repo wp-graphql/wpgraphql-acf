@@ -106,7 +106,7 @@ class FieldConfig {
 				$type_name = $this->registry->get_field_group_graphql_type_name( $parent_group );
 				$type_name = $this->get_parent_graphql_type_name( $parent_group, $type_name );
 			} else {
-				$type_name = $this->get_parent_graphql_type_name( $acf_field, '' );
+				$type_name = ''; //$this->get_parent_graphql_type_name( $acf_field, '' );
 			}
 		}
 
@@ -603,7 +603,9 @@ class FieldConfig {
 		}
 
 		// Register the connection to the Field Group Type
-		register_graphql_connection( $connection_config );
+		if ( defined( 'WPGRAPHQL_VERSION' ) && version_compare( WPGRAPHQL_VERSION, '1.23.0', '<=' ) ) {
+			register_graphql_connection( $connection_config );
+		}
 
 		// Register the connection to the Field Group Fields Interface
 		register_graphql_connection( array_merge( $connection_config, [ 'fromType' => $type_name . '_Fields' ] ) );
