@@ -105,8 +105,6 @@ class FieldConfig {
 			} elseif ( ! empty( $parent_group ) ) {
 				$type_name = $this->registry->get_field_group_graphql_type_name( $parent_group );
 				$type_name = $this->get_parent_graphql_type_name( $parent_group, $type_name );
-			} else {
-				$type_name = ''; 
 			}
 		}
 
