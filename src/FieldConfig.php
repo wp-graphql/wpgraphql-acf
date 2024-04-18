@@ -411,7 +411,7 @@ class FieldConfig {
 
 		// Else check if the values are being passed down via the name
 		if ( isset( $field_config['name'] ) && ! empty( $root[ '_' . $field_config['name'] ] ) ) {
-			return $this->prepare_acf_field_value( $root[ '_' .  $field_config['name'] ], $node, $node_id, $field_config );
+			return $this->prepare_acf_field_value( $root[ '_' . $field_config['name'] ], $node, $node_id, $field_config );
 		}
 
 		// Else check if the values are being passed down via the name
@@ -608,7 +608,7 @@ class FieldConfig {
 		// Register the connection to the Field Group Type
 		if ( defined( 'WPGRAPHQL_VERSION' ) && version_compare( WPGRAPHQL_VERSION, '1.23.0', '<=' ) ) {
 			register_graphql_connection( $connection_config );
-	    }
+		}
 
 		// Register the connection to the Field Group Fields Interface
 		register_graphql_connection( array_merge( $connection_config, [ 'fromType' => $type_name . '_Fields' ] ) );
