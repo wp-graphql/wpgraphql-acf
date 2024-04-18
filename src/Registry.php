@@ -475,7 +475,7 @@ class Registry {
 
 			// Then check database.
 		} else {
-			$raw_fields = acf_get_raw_fields( $parent_field_group['ID'] );
+			$raw_fields = isset( $parent_field_group['ID'] ) ? acf_get_fields( $parent_field_group['ID'] ) : [];
 			foreach ( $raw_fields as $raw_field ) {
 				$fields[] = $raw_field;
 			}
@@ -743,7 +743,7 @@ class Registry {
 			$interfaces = $this->get_field_group_interfaces( $acf_field_group );
 
 			// If there's no fields or type name, we can't register the type to the Schema
-			if ( empty( $fields ) || empty( $type_name ) ) {
+			if ( empty( $fields ) ) {
 				continue;
 			}
 
