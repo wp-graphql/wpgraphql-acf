@@ -159,7 +159,7 @@ class Settings {
 			wp_send_json( __( 'No form data.', 'wpgraphql-acf' ) );
 		}
 
-		if ( empty( $form_data ) || ! isset( $form_data['acf_field_group']['location'] ) ) {
+		if ( empty( $form_data['acf_field_group']['location'] ) ) {
 			wp_send_json( __( 'No field group locations found.', 'wpgraphql-acf' ) );
 		}
 

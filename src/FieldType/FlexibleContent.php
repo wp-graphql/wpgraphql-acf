@@ -69,14 +69,14 @@ class FlexibleContent {
 
 										return isset( $field['parent_layout'] ) && $layout['key'] === $field['parent_layout'] ? $field : null;
 									},
-									acf_get_raw_fields( $layout['key'] )
+									acf_get_fields( $layout['key'] )
 								)
 							);
 
 							$layout_sub_fields = ! empty( $layout['sub_fields'] ) && is_array( $layout['sub_fields'] ) ? $layout['sub_fields'] : [];
 
 							$layout['sub_fields'] = array_merge( $sub_fields, $layout_sub_fields );
-							
+
 							$layouts[] = $layout;
 						}
 					}

@@ -38,14 +38,22 @@ class Group {
 							foreach ( $cloned_from['clone'] as $clone_field ) {
 								$cloned_group = acf_get_field_group( $clone_field );
 
+								// if there is no cloned group, continue to the next clone field
 								if ( ! $cloned_group ) {
 									continue;
 								}
 
+								// if the cloned group is not an ACF field group, continue to the next clone field
+								if ( ! acf_is_field_group( $cloned_group ) ) {
+									continue;
+								}
+
+								// if the cloned group should not show in GraphQL, continue to the next clone field
 								if ( ! $field_config->get_registry()->should_field_group_show_in_graphql( $cloned_group ) ) {
 									continue;
 								}
 
+								// determine the GraphQL Type of the cloned field group
 								$cloned_type = $field_config->get_registry()->get_field_group_graphql_type_name( $cloned_group );
 								break;
 							}
@@ -55,7 +63,20 @@ class Group {
 					// If the group is a clone field, return the cloned type instead of registering
 					// another Type in the registry
 					if ( $cloned_type ) {
-						return Utils::format_type_name( $cloned_type . ' ' . $field_name );
+						$cloned_type_name = Utils::format_type_name( $cloned_type . ' ' . $field_name );
+						if ( $field_config->get_registry()->has_registered_field_group( $cloned_type_name ) ) {
+							return $cloned_type_name;
+						}
+
+						$sub_field_group['graphql_type_name']  = $cloned_type_name;
+						$sub_field_group['graphql_field_name'] = $cloned_type_name;
+						$field_config->get_registry()->register_acf_field_groups_to_graphql(
+							[
+								$sub_field_group,
+							]
+						);
+
+						return $cloned_type_name;
 					}
 
 					$field_config->get_registry()->register_acf_field_groups_to_graphql(

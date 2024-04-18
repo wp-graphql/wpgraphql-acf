@@ -475,7 +475,8 @@ class Registry {
 
 			// Then check database.
 		} else {
-			$raw_fields = isset( $parent_field_group['ID'] ) ? acf_get_fields( $parent_field_group['ID'] ) : [];
+			$parent_field_group_id = $parent_field_group['ID'] ?? null;
+			$raw_fields = acf_get_raw_fields( $parent_field_group_id );
 			foreach ( $raw_fields as $raw_field ) {
 				$fields[] = $raw_field;
 			}
