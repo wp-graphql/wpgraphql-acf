@@ -70,7 +70,6 @@ class Group {
 
 						$sub_field_group['graphql_type_name']  = $cloned_type_name;
 						$sub_field_group['graphql_field_name'] = $cloned_type_name;
-						$sub_field_group['interfaces'][] = $cloned_type . '_Fields';
 						$field_config->get_registry()->register_acf_field_groups_to_graphql(
 							[
 								$sub_field_group,
