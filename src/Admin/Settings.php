@@ -139,39 +139,45 @@ class Settings {
 	 * Handle the AJAX callback for converting ACF Location settings to GraphQL Types
 	 */
 	public function graphql_types_ajax_callback(): void {
-		if ( ! isset( $_POST['data'] ) ) {
+		if ( ! isset( $_REQUEST['data'] ) ) {
 			echo esc_html( __( 'No location rules were found', 'wpgraphql-acf' ) );
 
 			/** @noinspection ForgottenDebugOutputInspection */
 			wp_die();
 		}
 
-		$form_data           = [];
-		$sanitized_post_data = wp_strip_all_tags( $_POST['data'] );
-
-		parse_str( $sanitized_post_data, $form_data );
-
-		if ( empty( $form_data ) || ! isset( $form_data['acf_field_group'] ) ) {
-			wp_send_json( __( 'No form data.', 'wpgraphql-acf' ) );
-		}
-
-		if ( empty( $_POST['nonce'] ) || ! wp_verify_nonce( sanitize_text_field( $_POST['nonce'] ), 'wp_graphql_acf' ) ) {
+		if ( empty( $_REQUEST['nonce'] ) || ! wp_verify_nonce( sanitize_text_field( $_REQUEST['nonce'] ), 'wp_graphql_acf' ) ) {
 			wp_send_json_error();
 		}
 
+		$form_data           = [];
+		$sanitized_post_data = wp_strip_all_tags( $_REQUEST['data'] );
+
+		parse_str( $sanitized_post_data, $form_data );
+
+		if ( empty( $form_data ) ) {
+			wp_send_json( __( 'No form data.', 'wpgraphql-acf' ) );
+		}
+
+		if ( empty( $form_data['acf_field_group']['location'] ) ) {
+			wp_send_json( __( 'No field group locations found.', 'wpgraphql-acf' ) );
+		}
+
 		$field_group = $form_data['acf_field_group'];
-		$rules       = new LocationRules( [ $field_group ] );
+
+		$rules = new LocationRules( [ $field_group ] );
 		$rules->determine_location_rules();
 
-		$group_title = $field_group['title'] ?? '';
+		$group_title = $form_data['post_title'] ?? '';
 		$group_name  = $field_group['graphql_field_name'] ?? $group_title;
 		$group_name  = \WPGraphQL\Utils\Utils::format_field_name( $group_name, true );
 
 		$all_rules = $rules->get_rules();
-		if ( isset( $all_rules[ $group_name ] ) ) {
+
+		if ( isset( $all_rules[ strtolower( $group_name ) ] ) ) {
 			wp_send_json(
 				[
-					'graphql_types' => array_values( $all_rules[ $group_name ] ),
+					'graphql_types' => array_values( $all_rules[ strtolower( $group_name ) ] ),
 				]
 			);
 		}

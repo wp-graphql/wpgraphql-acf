@@ -10,6 +10,8 @@ ACF_VERSION=${ACF_VERSION-"latest"}
 ACF_PRO=${ACF_PRO-false}
 WPGRAPHQL_CONTENT_BLOCKS=${WPGRAPHQL_CONTENT_BLOCKS-false}
 WPGRAPHQL_CONTENT_BLOCKS_VERSION=${WPGRAPHQL_CONTENT_BLOCKS_VERSION-"latest"}
+WPGRAPHQL_GIT_REPO=${WPGRAPHQL_GIT_REPO-}
+WPGRAPHQL_GIT_BRANCH=${WPGRAPHQL_GIT_BRANCH-"develop"}
 
 #// fallback to hello.php as a hack. dont love this, but we have to pass a slug.
 export WPGRAPHQL_CONTENT_BLOCKS_PLUGIN_SLUG=${WPGRAPHQL_CONTENT_BLOCKS_PLUGIN_SLUG-'hello.php'}
@@ -36,15 +38,31 @@ apt-get -y update
 apt-get -y install jq
 
 if [ ! -f "${PLUGINS_DIR}/wp-graphql/wp-graphql.php" ]; then
-    # WPGRAPHQL_VERSION in format like v1.2.3 or latest
-    echo "Install wp-graphql version (${WPGRAPHQL_VERSION})"
-    if [[ -z ${WPGRAPHQL_VERSION} || "${WPGRAPHQL_VERSION}" == "latest" ]]; then
-        echo "Installing latest WPGraphQL from WordPress.org"
-        wp plugin install wp-graphql --activate --allow-root
-    else
-    	echo "Installing WPGraphQL from Github"
-        wp plugin install "https://downloads.wordpress.org/plugin/wp-graphql.${WPGRAPHQL_VERSION-1.4.3}.zip" --allow-root --activate
-    fi
+
+
+	# if WPGRAPHQL_GIT_REPO is set, we'll install from the repo
+	if [[ -n ${WPGRAPHQL_GIT_REPO} ]]; then
+		echo "Installing WPGraphQL from GitHub repo ${WPGRAPHQL_GIT_REPO}"
+		# Clone the repository
+		git clone -b ${WPGRAPHQL_GIT_BRANCH} ${WPGRAPHQL_GIT_REPO} "${PLUGINS_DIR}/wp-graphql"
+		# Navigate to the plugin directory
+		cd "${PLUGINS_DIR}/wp-graphql"
+		# Install dependencies with Composer
+		composer install --no-dev
+		# Optionally activate the plugin using wp-cli
+		wp plugin activate wp-graphql --allow-root
+	else
+		# WPGRAPHQL_VERSION in format like v1.2.3 or latest
+		echo "Install wp-graphql version (${WPGRAPHQL_VERSION})"
+		if [[ -z ${WPGRAPHQL_VERSION} || "${WPGRAPHQL_VERSION}" == "latest" ]]; then
+			echo "Installing latest WPGraphQL from WordPress.org"
+			wp plugin install wp-graphql --activate --allow-root
+		else
+			echo "Installing WPGraphQL from Github"
+			wp plugin install "https://downloads.wordpress.org/plugin/wp-graphql.${WPGRAPHQL_VERSION-1.4.3}.zip" --allow-root --activate
+		fi
+	fi
+
 fi
 
 # Activate the plugin
