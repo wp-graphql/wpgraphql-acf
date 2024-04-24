@@ -283,11 +283,28 @@ $j(document).ready(function () {
 		});
 	}
 
+	// Function to collect all nested fields under 'acf_field_group[location]'
+	function collectFieldGroupData() {
+
+		const selectors = [
+			'[name^="acf_field_group[location]"]',
+			'[name^="acf_field_group[graphql_field_name]"]',
+			'[name^="post_title"]',
+			'[name^="acf_field_group[active]"]',
+		];
+
+		// Select the fields that start with either of the specific name patterns
+		var fields = $j(selectors.join(','));
+
+		// Serialize only these fields
+		var serializedData = fields.serialize();
+
+		return serializedData;
+	}
+
 	function getGraphqlTypesFromLocationRules() {
 		var showInGraphQLCheckbox = $j('#acf_field_group-show_in_graphql');
 		var form = $j('#post');
-		var formInputs = $j('#post :input');
-		var serialized = formInputs.serialize();
 		var checkboxes = $j('.acf-field[data-name="graphql_types"] .acf-checkbox-list input[type="checkbox"]');
 		var manualMapTypes = $j('#acf_field_group-map_graphql_types_from_location_rules');
 
@@ -309,7 +326,7 @@ $j(document).ready(function () {
 			// Make the request
 			$j.post(ajaxurl, {
 				action: 'get_acf_field_group_graphql_types',
-				data: serialized,
+				data: collectFieldGroupData(),
 				nonce: wp_graphql_acf.nonce
 			}, function (res) {
 				var types = res && res['graphql_types'] ? res['graphql_types'] : [];
