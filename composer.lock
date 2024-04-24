@@ -158,16 +158,16 @@
         },
         {
             "name": "axepress/wp-graphql-stubs",
-            "version": "v1.23.0",
+            "version": "v1.24.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/AxeWP/wp-graphql-stubs.git",
-                "reference": "490c514d3ce26598e73face0994cc1efcc1cd814"
+                "reference": "ade83e88c4cc2281763d87aadd79aed0e42c7b80"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/AxeWP/wp-graphql-stubs/zipball/490c514d3ce26598e73face0994cc1efcc1cd814",
-                "reference": "490c514d3ce26598e73face0994cc1efcc1cd814",
+                "url": "https://api.github.com/repos/AxeWP/wp-graphql-stubs/zipball/ade83e88c4cc2281763d87aadd79aed0e42c7b80",
+                "reference": "ade83e88c4cc2281763d87aadd79aed0e42c7b80",
                 "shasum": ""
             },
             "require": {
@@ -198,7 +198,7 @@
             ],
             "support": {
                 "issues": "https://github.com/AxeWP/wp-graphql-stubs/issues",
-                "source": "https://github.com/AxeWP/wp-graphql-stubs/tree/v1.23.0"
+                "source": "https://github.com/AxeWP/wp-graphql-stubs/tree/v1.24.0"
             },
             "funding": [
                 {
@@ -206,7 +206,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-04-10T12:33:14+00:00"
+            "time": "2024-04-24T01:20:07+00:00"
         },
         {
             "name": "behat/gherkin",
@@ -6416,16 +6416,16 @@
         },
         {
             "name": "squizlabs/php_codesniffer",
-            "version": "3.9.1",
+            "version": "3.9.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PHPCSStandards/PHP_CodeSniffer.git",
-                "reference": "267a4405fff1d9c847134db3a3c92f1ab7f77909"
+                "reference": "aac1f6f347a5c5ac6bc98ad395007df00990f480"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PHPCSStandards/PHP_CodeSniffer/zipball/267a4405fff1d9c847134db3a3c92f1ab7f77909",
-                "reference": "267a4405fff1d9c847134db3a3c92f1ab7f77909",
+                "url": "https://api.github.com/repos/PHPCSStandards/PHP_CodeSniffer/zipball/aac1f6f347a5c5ac6bc98ad395007df00990f480",
+                "reference": "aac1f6f347a5c5ac6bc98ad395007df00990f480",
                 "shasum": ""
             },
             "require": {
@@ -6492,7 +6492,7 @@
                     "type": "open_collective"
                 }
             ],
-            "time": "2024-03-31T21:03:09+00:00"
+            "time": "2024-04-23T20:25:34+00:00"
         },
         {
             "name": "symfony/browser-kit",
