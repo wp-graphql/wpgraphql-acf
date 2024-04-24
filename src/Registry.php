@@ -311,7 +311,7 @@ class Registry {
 	 *
 	 * @param array<mixed> $acf_field_group The ACF Field Group config
 	 *
-	 * @return array<mixed>
+	 * @return array<string> The interface names that the Field Group should apply
 	 * @throws \GraphQL\Error\Error
 	 */
 	public function get_field_group_interfaces( array $acf_field_group ): array {
@@ -319,8 +319,36 @@ class Registry {
 		$interfaces       = isset( $acf_field_group['interfaces'] ) && is_array( $acf_field_group['interfaces'] ) ? $acf_field_group['interfaces'] : [];
 		$interfaces[]     = 'AcfFieldGroup';
 		$interfaces[]     = $fields_interface;
-		$interfaces       = array_unique( array_values( $interfaces ) );
-		return array_unique( $interfaces );
+
+		$fields                 = $this->get_acf_fields( $acf_field_group );
+		$clone_field_interfaces = [];
+		if ( ! empty( $fields ) ) {
+			foreach ( $fields as $field ) {
+				// if the field is a clone field, track it
+				if ( ! empty( $field['clone'] ) && is_array( $field['clone'] ) ) {
+					foreach ( $field['clone'] as $clone_field ) {
+						$cloned_group = acf_get_field_group( $clone_field );
+
+						if ( ! $cloned_group ) {
+							continue;
+						}
+
+						if ( ! $this->should_field_group_show_in_graphql( $cloned_group ) ) {
+							continue;
+						}
+
+						$cloned_type_name         = $this->get_field_group_graphql_type_name( $cloned_group );
+						$clone_field_interfaces[] = $cloned_type_name . '_Fields';
+					}
+				}
+			}
+		}
+
+		if ( ! empty( $clone_field_interfaces ) ) {
+			$interfaces = array_merge( $interfaces, $clone_field_interfaces );
+		}
+
+		return array_unique( array_values( $interfaces ) );
 	}
 
 	/**
@@ -447,7 +475,8 @@ class Registry {
 
 			// Then check database.
 		} else {
-			$raw_fields = acf_get_raw_fields( $parent_field_group['ID'] );
+			$parent_field_group_id = $parent_field_group['ID'] ?? null;
+			$raw_fields            = acf_get_raw_fields( $parent_field_group_id );
 			foreach ( $raw_fields as $raw_field ) {
 				$fields[] = $raw_field;
 			}
@@ -700,13 +729,22 @@ class Registry {
 
 		// Iterate over the field groups and add them to the Schema
 		foreach ( $acf_field_groups as $acf_field_group ) {
-			$type_name  = $this->get_field_group_graphql_type_name( $acf_field_group );
+			$type_name = $this->get_field_group_graphql_type_name( $acf_field_group );
+
+			if ( empty( $type_name ) ) {
+				continue;
+			}
+
+			if ( $this->has_registered_field_group( $type_name ) ) {
+				continue;
+			}
+
 			$locations  = $this->get_graphql_locations_for_field_group( $acf_field_group, $acf_field_groups );
 			$fields     = $this->get_fields_for_field_group( $acf_field_group );
 			$interfaces = $this->get_field_group_interfaces( $acf_field_group );
 
 			// If there's no fields or type name, we can't register the type to the Schema
-			if ( empty( $fields ) || empty( $type_name ) ) {
+			if ( empty( $fields ) ) {
 				continue;
 			}
 

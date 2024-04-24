@@ -69,7 +69,7 @@ class FlexibleContent {
 
 										return isset( $field['parent_layout'] ) && $layout['key'] === $field['parent_layout'] ? $field : null;
 									},
-									acf_get_raw_fields( $layout['key'] )
+									acf_get_fields( $layout['key'] )
 								)
 							);
 
