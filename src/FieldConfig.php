@@ -541,20 +541,6 @@ class FieldConfig {
 			$value = apply_filters( 'the_content', $value );
 		}
 
-		if ( ! empty( $acf_field_config['type'] ) && in_array(
-			$acf_field_config['type'],
-			[
-				'date_picker',
-				'time_picker',
-				'date_time_picker',
-			],
-			true
-		) ) {
-			if ( ! empty( $value ) && ! empty( $acf_field_config['return_format'] ) ) {
-				$value = gmdate( $acf_field_config['return_format'], strtotime( $value ) );
-			}
-		}
-
 		if ( ! empty( $acf_field_config['type'] ) && in_array( $acf_field_config['type'], [ 'number', 'range' ], true ) ) {
 			$value = (float) $value ?: null;
 		}
