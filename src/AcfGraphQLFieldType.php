@@ -167,9 +167,10 @@ class AcfGraphQLFieldType {
 		$admin_fields = $this->get_admin_fields( $field, $default_admin_settings, $settings );
 
 		// Remove excluded fields
-		if ( isset( $this->config['exclude_admin_fields'] ) && is_array( $this->config['exclude_admin_fields'] ) ) {
-			foreach ( $this->config['exclude_admin_fields'] as $excluded ) {
-				unset( $admin_fields[ $excluded ] );
+		$excluded_fields = $this->get_config( 'exclude_admin_fields' );
+		if ( ! empty( $excluded_fields ) && is_array( $excluded_fields ) ) {
+			foreach ( $excluded_fields as $excluded_field ) {
+				unset( $admin_fields[ $excluded_field ] );
 			}
 		}
 
