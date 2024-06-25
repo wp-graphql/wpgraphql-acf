@@ -54,7 +54,7 @@ class PageLinkFieldTest extends \Tests\WPGraphQL\Acf\WPUnit\AcfFieldTestCase {
 	 */
 	public function get_expected_clone_value(): array {
 		return [
-			'expected-url-goes-here'
+			'/test-post-title/'
 		];
 	}
 
