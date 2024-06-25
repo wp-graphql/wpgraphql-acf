@@ -107,6 +107,7 @@ class WPGraphQLAcfTestCase extends \Tests\WPGraphQL\TestCase\WPGraphQLTestCase {
 		$this->clearSchema();
 		Utils::clear_field_type_registry();
 
+		$this->set_permalink_structure( '/%postname%/' );
 		$active_plugins = get_option( 'active_plugins' );
 
 		// whether the tests are being run with ACF pro or not
@@ -204,6 +205,16 @@ class WPGraphQLAcfTestCase extends \Tests\WPGraphQL\TestCase\WPGraphQLTestCase {
 
 		}
 
+	}
+
+	/**
+	 * @param string $structure
+	 */
+	public function set_permalink_structure( $structure = '' ) {
+		global $wp_rewrite;
+		$wp_rewrite->init();
+		$wp_rewrite->set_permalink_structure( $structure );
+		$wp_rewrite->flush_rules();
 	}
 
 	/**
