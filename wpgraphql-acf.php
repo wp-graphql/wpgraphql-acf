@@ -11,6 +11,7 @@
  * Tested up to: 6.5
  * License: GPL-3
  * License URI: https://www.gnu.org/licenses/gpl-3.0.html
+ * Requires Plugins: wp-graphql
  *
  * @package  WPGraphQL\ACF
  */
