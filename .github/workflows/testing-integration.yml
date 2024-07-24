@@ -28,32 +28,26 @@ jobs:
             wordpress: '6.5'
             acf_pro: true
             wpgraphql_content_blocks: true
-            coverage: 0
           - php: '8.0'
             wordpress: '6.4'
             acf_pro: true
             wpgraphql_content_blocks: true
-            coverage: 0
           - php: '8.2'
             wordpress: '6.5'
             acf_pro: false
             wpgraphql_content_blocks: false
-            coverage: 1
           - php: '8.1'
             wordpress: '6.5'
             acf_pro: false
             wpgraphql_content_blocks: false
-            coverage: 0
           - php: '8.0'
             wordpress: '6.4'
             acf_pro: false
             wpgraphql_content_blocks: false
-            coverage: 0
           - php: '7.4'
             wordpress: '6.1'
             acf_pro: true
             wpgraphql_content_blocks: true
-            coverage: 0
             acf_version: '6.1.8'
       fail-fast: false
     name: WordPress ${{ matrix.wordpress }}, PHP ${{ matrix.php }}, ACF ${{matrix.acf_version}}, ACF & ACF EXTENDED PRO ${{matrix.acf_pro}}, WPGRAPHQL Content Blocks ${{matrix.wpgraphql_content_blocks}}
