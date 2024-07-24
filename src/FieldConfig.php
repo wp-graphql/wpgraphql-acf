@@ -436,7 +436,6 @@ class FieldConfig {
 			return $pre_value;
 		}
 
-		$parent_field      = null;
 		$parent_field_name = null;
 		if ( ! empty( $field_config['parent'] ) ) {
 			$parent_field = acf_get_field( $field_config['parent'] );
@@ -444,7 +443,6 @@ class FieldConfig {
 				$parent_field_name = $parent_field['name'];
 			}
 		}
-
 
 		// resolve block field
 		if ( is_array( $node ) && isset( $node['blockName'], $node['attrs'] ) ) {
