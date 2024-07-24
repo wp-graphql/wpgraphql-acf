@@ -446,7 +446,6 @@ class FieldConfig {
 
 		// resolve block field
 		if ( is_array( $node ) && isset( $node['blockName'], $node['attrs'] ) ) {
-
 			$block = $node['attrs'];
 
 			// Ensure the block has an ID
