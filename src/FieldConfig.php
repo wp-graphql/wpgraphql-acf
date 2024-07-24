@@ -436,7 +436,6 @@ class FieldConfig {
 			return $pre_value;
 		}
 
-		$parent_field      = null;
 		$parent_field_name = null;
 		if ( ! empty( $field_config['parent'] ) ) {
 			$parent_field = acf_get_field( $field_config['parent'] );
@@ -445,12 +444,19 @@ class FieldConfig {
 			}
 		}
 
-
 		// resolve block field
-		if ( is_array( $node ) && isset( $node['blockName'] ) && isset( $node['attrs'] ) ) {
-			$block    = acf_prepare_block( $node['attrs'] );
+		if ( is_array( $node ) && isset( $node['blockName'], $node['attrs'] ) ) {
+			$block = $node['attrs'];
+
+			// Ensure the block has an ID
+			if ( ! isset( $block['id'] ) ) {
+				$block['id'] = uniqid( 'block_', true );
+			}
+
+			$block    = acf_prepare_block( $block );
 			$block_id = acf_get_block_id( $node['attrs'] );
 			$block_id = acf_ensure_block_id_prefix( $block_id );
+
 			acf_setup_meta( $block['data'], $block_id, true );
 
 			$return_value = $this->get_field( $field_config['name'], $parent_field_name, $block_id, $should_format_value );
