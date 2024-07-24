@@ -11,6 +11,7 @@
 - [#224](https://github.com/wp-graphql/wpgraphql-acf/pull/224): chore: update issue templates config.yml to link to Discord instead of Slack
 - [#223](https://github.com/wp-graphql/wpgraphql-acf/pull/223): chore: update branding assets
 - [#214](https://github.com/wp-graphql/wpgraphql-acf/pull/214): chore: bump composer/composer from 2.7.4 to 2.7.7 in the composer group across 1 directory
+- [#231](https://github.com/wp-graphql/wpgraphql-acf/pull/231): fix: block type tests failing
 
 ## 2.3.0
 
