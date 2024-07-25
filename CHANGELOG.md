@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.4.1
+
+### Chores / Bugfixes
+
+- chore: update "tested up to" and stable version tags.
+
 ## 2.4.0
 
 ### New Features

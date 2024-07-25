@@ -1,10 +1,10 @@
 === WPGraphQL for ACF ===
-Contributors: jasonbahl, wpgraphql
-Tags: GraphQL, ACF, API, NextJS, Faust, Headless, Decoupled, React, Vue, Svelte, JSON, REST
+Contributors: jasonbahl
+Tags: GraphQL, ACF, API, NextJS, Headless
 Requires at least: 5.9
 Tested up to: 6.5
 Requires PHP: 7.3
-Stable Tag: 2.2.0
+Stable Tag: 2.4.1
 License: GPL-3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -119,6 +119,12 @@ ACF Field Groups that did not have "graphql_types" defined AND were assigned to 
 This release is a complete re-architecture of WPGraphQL for ACF, introducing breaking changes to the GraphQL Schema and PHP API. Please read the [upgrade guide](https://acf.wpgraphql.com/upgrade-guide/) before upgrading.
 
 == Changelog ==
+
+= 2.4.1 =
+
+**Chores / Bugfixes**
+
+- chore: update "tested up to" and stable version tags.
 
 = 2.4.0 =
 
