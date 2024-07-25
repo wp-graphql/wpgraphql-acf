@@ -1,10 +1,10 @@
 === WPGraphQL for ACF ===
-Contributors: jasonbahl, wpgraphql
-Tags: GraphQL, ACF, API, NextJS, Faust, Headless, Decoupled, React, Vue, Svelte, JSON, REST
+Contributors: jasonbahl
+Tags: GraphQL, ACF, API, NextJS, Headless
 Requires at least: 5.9
 Tested up to: 6.5
 Requires PHP: 7.3
-Stable Tag: 2.2.0
+Stable Tag: 2.4.1
 License: GPL-3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -120,6 +120,12 @@ This release is a complete re-architecture of WPGraphQL for ACF, introducing bre
 
 == Changelog ==
 
+= 2.4.1 =
+
+**Chores / Bugfixes**
+
+- chore: update "tested up to" and stable version tags.
+
 = 2.4.0 =
 
 **New Features**
@@ -131,6 +137,7 @@ This release is a complete re-architecture of WPGraphQL for ACF, introducing bre
 - [#224](https://github.com/wp-graphql/wpgraphql-acf/pull/224): chore: update issue templates config.yml to link to Discord instead of Slack
 - [#223](https://github.com/wp-graphql/wpgraphql-acf/pull/223): chore: update branding assets
 - [#214](https://github.com/wp-graphql/wpgraphql-acf/pull/214): chore: bump composer/composer from 2.7.4 to 2.7.7 in the composer group across 1 directory
+- [#231](https://github.com/wp-graphql/wpgraphql-acf/pull/231): fix: block type tests failing
 
 = 2.3.0 =
 
