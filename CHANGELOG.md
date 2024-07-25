@@ -1,22 +1,35 @@
 # Changelog
 
+## 2.4.0
+
+### New Features
+
+- [#211](https://github.com/wp-graphql/wpgraphql-acf/pull/211): feat: add wp-graphql as required plugin dependency. Thanks @stefanmomm!
+
+### Chores / Bugfixes
+
+- [#224](https://github.com/wp-graphql/wpgraphql-acf/pull/224): chore: update issue templates config.yml to link to Discord instead of Slack
+- [#223](https://github.com/wp-graphql/wpgraphql-acf/pull/223): chore: update branding assets
+- [#214](https://github.com/wp-graphql/wpgraphql-acf/pull/214): chore: bump composer/composer from 2.7.4 to 2.7.7 in the composer group across 1 directory
+- [#231](https://github.com/wp-graphql/wpgraphql-acf/pull/231): fix: block type tests failing
+
 ## 2.3.0
 
 ## Update Notice
 
 This release refactored some internals regarding how Clone fields and Group fields behave. There was no intentional breaking changes to the Schema, but if you are using Clone and Group fields there is a chance that if you were benefiting from a "bug as a feature" there might be some changes that could impact your Schema and/or resolvers, we recommend testing this update on a staging site to ensure things are still working for you as expected. Should you run into any problems, please [open a new issue](https://github.com/wp-graphql/wpgraphql-acf/issues/new/choose) and provide as much detail as possible to help us reproduce the scenario. Thanks! 🙏
 
-## New Features
+### New Features
 
 - [#193](https://github.com/wp-graphql/wpgraphql-acf/pull/193): feat: improved handling of clone and group fields
 
-## Chores / Bugfixes
+### Chores / Bugfixes
 
 - [#194](https://github.com/wp-graphql/wpgraphql-acf/pull/194): ci: test against WordPress 6.5
 
 ## 2.2.0
 
-## New Features
+### New Features
 
 - [#181](https://github.com/wp-graphql/wpgraphql-acf/pull/181): feat: update docs Date fields to link to the RFC3339 spec
 

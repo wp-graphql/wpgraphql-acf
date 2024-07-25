@@ -414,10 +414,10 @@ abstract class AcfFieldTestCase extends WPGraphQLAcfTestCase {
 			],
 		]);
 
-		codecept_debug([
-			'$content' => $content,
-			'$parsed_blocks' => parse_blocks( $content ),
-		]);
+//		codecept_debug([
+//			'$content' => $content,
+//			'$parsed_blocks' => parse_blocks( $content ),
+//		]);
 
 		// assert the data is returned as expected
 		self::assertQuerySuccessful( $actual, [
