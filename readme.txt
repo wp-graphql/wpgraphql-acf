@@ -45,7 +45,7 @@ Learn more about Semver at [semver.org](https://semver.org).
 == Support ==
 
 - [General Help Requests](https://github.com/wp-graphql/wp-graphql/discussions): For general questions and help requests, create a new topic in Github Discussions
-- [Slack Community](https://join.slack.com/t/wp-graphql/shared_invite/zt-3vloo60z-PpJV2PFIwEathWDOxCTTLA): The WPGraphQL Slack is a great place to communicate in real-time. Ask questions, discuss features, get to know other folks using WPGraphQL.
+- [Discord Community](https://www.wpgraphql.com/discord): The WPGraphQL Discord is a great place to communicate in real-time. Ask questions, discuss features, get to know other folks using WPGraphQL.
 - [Bug Reports](https://github.com/wp-graphql/wp-graphql/issues/new?assignees=&labels=&projects=&template=bug_report.yml): Report a bug in WPGraphQL
 - [Feature Requests](https://github.com/wp-graphql/wp-graphql/issues/new?assignees=&labels=&projects=&template=feature_request.yml): Suggest an idea, feature, or enhancement for WPGraphQL.
 - [Report a Security Vulnerability](https://github.com/wp-graphql/wp-graphql/security/advisories/new): Report a security vulnerability.
