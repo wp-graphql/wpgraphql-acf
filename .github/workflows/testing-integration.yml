@@ -82,11 +82,11 @@ jobs:
           WP_VERSION: ${{ matrix.wordpress }}
         # NOTE: We test against WPGraphQL Content Blocks if ACF Pro is active
         run: |
-          docker-compose build \
+          docker compose build \
             --build-arg WP_VERSION=${{ matrix.wordpress }} \
             --build-arg PHP_VERSION=${{ matrix.php }} \
             --build-arg DOCKER_REGISTRY=ghcr.io/wp-graphql/
-          docker-compose run \
+          docker compose run \
             -e PHP_VERSION=${{ matrix.php }} \
             -e WP_VERSION=${{ matrix.wordpress }} \
             -e COVERAGE=${{ matrix.coverage }} \
