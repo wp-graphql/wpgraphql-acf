@@ -99,7 +99,7 @@ case "$subcommand" in
                     ;;
                 t )
                     source .env.testing
-                    docker-compose run --rm testing
+                    docker compose run --rm testing
                     ;;
                 \? ) print_usage_instructions;;
                 * ) print_usage_instructions;;
