@@ -304,7 +304,7 @@ class FieldConfig {
 		 * @param array|null                 $field_config   The field config array passed to the schema registration
 		 * @param \WPGraphQL\Acf\FieldConfig $instance       Instance of the FieldConfig class
 		 */
-		return apply_filters( 'wpgraphql/acf/get_graphql_field_config', $field_config, $this );
+		return \apply_filters( 'wpgraphql/acf/get_graphql_field_config', $field_config, $this );
 	}
 
 	/**
@@ -429,7 +429,7 @@ class FieldConfig {
 		 * @param bool             $format    Whether to apply formatting to the field
 		 * @param string           $field_key The key of the field being resolved
 		 */
-		$pre_value = apply_filters( 'wpgraphql/acf/pre_resolve_acf_field', null, $root, $node_id, $field_config, $should_format_value, $field_key );
+		$pre_value = \apply_filters( 'wpgraphql/acf/pre_resolve_acf_field', null, $root, $node_id, $field_config, $should_format_value, $field_key );
 
 		// If the filter has returned a value, we can return the value that was returned.
 		if ( null !== $pre_value ) {
@@ -457,7 +457,7 @@ class FieldConfig {
 			$block_id = acf_get_block_id( $node['attrs'] );
 			$block_id = acf_ensure_block_id_prefix( $block_id );
 
-			acf_setup_meta( $block['data'], $block_id, true );
+			acf_setup_meta( $block['data'] ?? [], $block_id, true );
 
 			$return_value = $this->get_field( $field_config['name'], $parent_field_name, $block_id, $should_format_value );
 			acf_reset_meta( $block_id );
@@ -498,7 +498,7 @@ class FieldConfig {
 		 * @param mixed $root The Root node or object of the field being resolved
 		 * @param mixed $node_id The ID of the node being resolved
 		 */
-		return apply_filters( 'wpgraphql/acf/field_value', $prepared_value, $field_config, $root, $node_id );
+		return \apply_filters( 'wpgraphql/acf/field_value', $prepared_value, $field_config, $root, $node_id );
 	}
 
 	/**
@@ -534,17 +534,17 @@ class FieldConfig {
 
 		if ( isset( $acf_field_config['new_lines'] ) ) {
 			if ( 'wpautop' === $acf_field_config['new_lines'] ) {
-				$value = wpautop( $value );
+				$value = \wpautop( $value );
 			}
 			if ( 'br' === $acf_field_config['new_lines'] ) {
-				$value = nl2br( $value );
+				$value = \nl2br( $value );
 			}
 		}
 
 		// @todo: This was ported over, but I'm not 💯 sure what this is solving and
 		// why it's only applied on options pages and not other pages 🤔
 		if ( 'wysiwyg' === $acf_field_config['type'] ) {
-			$value = apply_filters( 'the_content', $value );
+			$value = \apply_filters( 'the_content', $value );
 		}
 
 		if ( ! empty( $acf_field_config['type'] ) && in_array(

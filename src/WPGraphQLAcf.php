@@ -161,7 +161,7 @@ class WPGraphQLAcf {
 		// If the block editor is being used for the post, bail early as the Block Editor doesn't
 		// properly support revisions of post meta
 		// see: https://github.com/WordPress/gutenberg/issues/16006#issuecomment-657965028
-		if ( use_block_editor_for_post( $preview_post ) ) {
+		if ( \use_block_editor_for_post( $preview_post ) ) {
 			graphql_debug( __( 'The post you are querying as a preview uses the Block Editor and saving & previewing meta is not fully supported by the block editor. This is a WordPress block editor bug. See: https://github.com/WordPress/gutenberg/issues/16006#issuecomment-657965028', 'wpgraphql-acf' ) );
 			return (bool) $should;
 		}

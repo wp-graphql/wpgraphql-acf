@@ -146,7 +146,7 @@ abstract class AcfFieldCest {
 	 */
 	public function testSavingShowInGraphqlField( FunctionalTester $I ): void {
 
-		$version = $_ENV['ACF_VERSION'];
+		$version = $_ENV['ACF_VERSION'] ?? getenv('ACF_VERSION') ?? 'latest';
 
 		if ( version_compare( $version, '6.0', 'lt' ) ) {
 			$I->markTestSkipped( 'Skip this test for ACF versions below 6.0. The test fails in github actions (but not locally) so lazily skipping for now.' );
