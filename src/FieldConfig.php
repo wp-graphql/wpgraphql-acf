@@ -148,9 +148,10 @@ class FieldConfig {
 			// translators: %s is the name of the ACF Field Group
 			$description = sprintf(
 				// translators: %1$s is the ACF Field Type and %2$s is the name of the ACF Field Group
-				__( 'Field of the "%1$s" Field Type added to the schema as part of the "%2$s" Field Group', 'wpgraphql-acf' ),
+				__( 'Field of the "%1$s" Field Type added to the schema as part of the "%2$s" Field Group (%3$s)', 'wpgraphql-acf' ),
 				$this->acf_field['type'] ?? '',
-				$this->registry->get_field_group_graphql_type_name( $this->acf_field_group )
+				$this->registry->get_field_group_graphql_type_name( $this->acf_field_group ),
+				$this->acf_field_group['key']
 			);
 		}
 

@@ -16,7 +16,7 @@ class Group {
 			'group',
 			[
 				'graphql_type' => static function ( FieldConfig $field_config, AcfGraphQLFieldType $acf_field_type ) {
-					$sub_field_group = $field_config->get_acf_field();
+					$sub_field_group = $field_config->get_raw_acf_field();
 					$parent_type     = $field_config->get_parent_graphql_type_name( $sub_field_group );
 					$field_name      = $field_config->get_graphql_field_name();
 
