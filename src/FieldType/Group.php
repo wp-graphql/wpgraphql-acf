@@ -25,6 +25,7 @@ class Group {
 					$sub_field_group['graphql_type_name']  = $type_name;
 					$sub_field_group['graphql_field_name'] = $type_name;
 					$sub_field_group['parent']             = $sub_field_group['key'];
+					$sub_field_group['fields']             = ! empty( $sub_field_group['sub_fields'] ) ? $sub_field_group['sub_fields'] : acf_get_raw_fields( $sub_field_group['ID'] );
 
 					// Determine if the group is a clone field
 					$cloned_type = null;
@@ -88,13 +89,22 @@ class Group {
 					return $type_name;
 				},
 				'resolve'      => static function ( $root, $args, AppContext $context, $info, $field_type, FieldConfig $field_config ) {
+
+				
 					$value = $field_config->resolve_field( $root, $args, $context, $info );
 
-					if ( ! empty( $value ) ) {
-						return $value;
+					
+
+					$sub_field_keys = [];
+					if ( ! empty( $info->fieldDefinition->config['acf_field']['sub_fields'] ) ) {
+						foreach ( $info->fieldDefinition->config['acf_field']['sub_fields'] as $sub_field ) {
+							$key = $sub_field['__key'] ?? $sub_field['key'];
+							$sub_field_keys[ $key ] = $sub_field['key'];
+						}
 					}
 
 					$root['value']           = $value;
+					$root['sub_field_keys']  = $sub_field_keys;
 					$root['acf_field_group'] = $field_config->get_acf_field();
 
 					return $root;

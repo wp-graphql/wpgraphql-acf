@@ -366,15 +366,17 @@ class FieldConfig {
 		$field_key    = null;
 		$is_cloned    = false;
 
-		if ( ! empty( $field_config['__key'] ) ) {
+		
+
+		if ( ! empty( $root['sub_field_keys'] ) && is_array( $root['sub_field_keys'] ) ) {
+			if ( isset( $root['sub_field_keys'][ $field_config['key'] ] ) ) {
+				$field_key = $root['sub_field_keys'][ $field_config['key'] ];
+			}
+		} else if ( ! empty( $field_config['__key'] ) ) {
 			$field_key = $field_config['__key'];
 			$is_cloned = true;
 		} elseif ( ! empty( $field_config['key'] ) ) {
 			$field_key = $field_config['key'];
-		}
-
-		if ( empty( $field_key ) ) {
-			return null;
 		}
 
 		if ( $is_cloned ) {
@@ -385,6 +387,9 @@ class FieldConfig {
 			}
 		}
 
+		if ( empty( $field_key ) ) {
+			return null;
+		}	
 
 		$should_format_value = false;
 
@@ -398,6 +403,12 @@ class FieldConfig {
 
 		// if the field_config is empty or not an array, set it as an empty array as a fallback
 		$field_config = ! empty( $field_config ) ? $field_config : [];
+		
+		$root = $root['value'] ?? $root;
+
+		if ( ! empty( $root[ $field_key ] ) ) {
+			return $this->prepare_acf_field_value( $root[ $field_key ], $node, $node_id, $field_config );
+		}
 
 		// If the root being passed down already has a value
 		// for the field key, let's use it to resolve
