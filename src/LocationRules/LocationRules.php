@@ -719,14 +719,22 @@ class LocationRules {
 		}
 
 		if ( '==' === $operator ) {
-			$acf_block = acf_get_block_type( $value );
+			if ( 'all' === $value ) {
+				$acf_blocks = acf_get_block_types();
+				foreach ( $acf_blocks as $acf_block ) {
+					$type_name = \WPGraphQL\Acf\Utils::get_field_group_name( $acf_block );
+					$this->set_graphql_type( $field_group_name, $type_name );
+				}
+			} else {
+				$acf_block = acf_get_block_type( $value );
 
-			if ( empty( $acf_block ) || ! \WPGraphQL\Acf\Utils::should_field_group_show_in_graphql( $acf_block ) ) {
-				return;
+				if ( empty( $acf_block ) || ! \WPGraphQL\Acf\Utils::should_field_group_show_in_graphql( $acf_block ) ) {
+					return;
+				}
+
+				$type_name = \WPGraphQL\Acf\Utils::get_field_group_name( $acf_block );
+				$this->set_graphql_type( $field_group_name, $type_name );
 			}
-
-			$type_name = \WPGraphQL\Acf\Utils::get_field_group_name( $acf_block );
-			$this->set_graphql_type( $field_group_name, $type_name );
 		}
 
 		if ( '!=' === $operator ) {
