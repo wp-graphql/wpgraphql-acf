@@ -46,7 +46,7 @@ class WPGraphQLAcf {
 
 		add_filter( 'graphql_resolve_revision_meta_from_parent', [ $this, 'preview_support' ], 10, 4 );
 
-		add_filter( 'graphql_data_loaders', [ $this, 'register_loaders' ], 10, 2 );
+		add_filter( 'graphql_data_loader_classes', [ $this, 'register_loaders' ], 10, 2 );
 		add_filter( 'graphql_resolve_node_type', [ $this, 'resolve_acf_options_page_node' ], 10, 2 );
 		/**
 		 * This filters any field that returns the `ContentTemplate` type
