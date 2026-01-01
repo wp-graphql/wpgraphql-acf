@@ -29,22 +29,13 @@ class DateTimePicker {
 						return null;
 					}
 
-					$acf_field = $field_config->get_acf_field();
+					$timestamp = strtotime( $value );
 
-					// Get the return format from the ACF Field
-					$return_format = $acf_field['return_format'] ?? null;
-
-					if ( empty( $return_format ) ) {
-						return $value;
-					}
-
-					$date_time = \DateTime::createFromFormat( $return_format, $value );
-
-					if ( empty( $date_time ) ) {
+					if ( false === $timestamp ) {
 						return null;
 					}
 
-					return $date_time->format( DateTimeInterface::RFC3339 );
+					return gmdate( DateTimeInterface::RFC3339, $timestamp );
 				},
 			]
 		);
