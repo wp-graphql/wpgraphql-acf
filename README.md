@@ -1,3 +1,5 @@
+> **This repository is no longer where WPGraphQL for ACF is developed.** The plugin now lives in the [WPGraphQL monorepo](https://github.com/wp-graphql/wp-graphql) under `plugins/wp-graphql-acf`. Please [open issues there](https://github.com/wp-graphql/wp-graphql/issues/new/choose) and pick "WPGraphQL for ACF" from the plugin dropdown. Open issues from this repository are being moved over, and this repository will be archived once that is complete. See [#272](https://github.com/wp-graphql/wpgraphql-acf/issues/272).
+
 # WPGraphQL for Advanced Custom Fields
 
 ![WPGraphQL for ACF plugin banner](/.wordpress-org/banner-1544x500.png)
